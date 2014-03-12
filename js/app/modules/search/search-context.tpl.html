@@ -1,0 +1,64 @@
+<!--
+  -  Copyright 2014 Graz University of Technology - KTI (Knowledge Technologies Institute)
+  - 
+  -  Licensed under the Apache License, Version 2.0 (the "License");
+  -  you may not use this file except in compliance with the License.
+  -  You may obtain a copy of the License at
+  - 
+  -  http://www.apache.org/licenses/LICENSE-2.0
+  - 
+  -  Unless required by applicable law or agreed to in writing, software
+  -  distributed under the License is distributed on an "AS IS" BASIS,
+  -  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  -  See the License for the specific language governing permissions and
+  -  limitations under the License.
+-->
+
+<!-- tag search result -->
+<div class="searchResultBox" ng-show="showTagSearchResults">
+  <span class="searchResultBoxHeading" ng-click="toggleTagSearchResults()">
+    <span ng-class="{'glyphicon glyphicon-collapse-down':expandTagResults, 'glyphicon glyphicon-expand':!expandTagResults}"></span>
+    {{t('found_by_tag_search')}}
+  </span>
+  <div class="horizontalLine"></div>
+
+  <div collapse="!expandTagResults">
+  <div style="color:#949494; text-align:right;">{{tagSearchResultsCount}} result(s) found.</div>
+
+    <div ng-show="!ajaxLoading" ng-repeat="entry in tagSearchResults" class="collection-entry kb-fluid-container pull-left" ng-click="entityClickAction(entry)"> 
+      <div class="collection-entry-preview-box">
+        <div style=" position:relative; z-index: 9;" id="collection-entry-preview-box-glyphicon" class="glyphicon " ng-class="{'glyphicon-file': (entry.entityType == entityTypes.file), 'glyphicon-link' : (entry.entityType == entityTypes.link)}"></div>  
+      </div>
+      <div class="collection-entry-description-box">
+        <div shortenentryname  title="{{entry.label}}">{{entry.label}}</div>
+        <!-- <div>9 Element(s)</div> -->
+      </div>
+    </div>
+
+  <div class="clearfix"></div>
+  </div>
+</div>
+
+<!-- text search result -->
+<div class="searchResultBox" ng-show="showContentSearchResults">
+ <span class="searchResultBoxHeading" ng-click="toggleContentSearchResults()">
+  <span ng-class="{'glyphicon glyphicon-collapse-down':expandContentResults, 'glyphicon glyphicon-expand':!expandContentResults}"></span>
+  {{t('found_by_content_search')}}
+  </span>
+  <div class="horizontalLine"></div>
+  <div collapse="!expandContentResults">
+  <div style="color:#949494; text-align:right;">{{contentSearchResultsCount}} result(s) found.</div>
+  
+   <div ng-show="!ajaxLoading" ng-repeat="entry in contentSearchResults" class="collection-entry kb-fluid-container pull-left" ng-click="entityClickAction(entry)"> 
+      <div class="collection-entry-preview-box">
+        <div style=" position:relative; z-index: 9;" id="collection-entry-preview-box-glyphicon" class="glyphicon " ng-class="{'glyphicon-file': (entry.entityType == entityTypes.file), 'glyphicon-link' : (entry.entityType == entityTypes.link)}"></div>  
+      </div>
+      <div class="collection-entry-description-box">
+        <div shortenentryname  title="{{entry.label}}">{{entry.label}}</div>
+        <!-- <div>9 Element(s)</div> -->
+      </div>
+    </div>
+
+  <div class="clearfix"></div>
+  </div>
+</div>

@@ -1,0 +1,181 @@
+/**
+ * Copyright 2014 Graz University of Technology - KTI (Knowledge Technologies Institute)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+// Encoding: UTF-8
+'use strict';
+
+/**
+* AUTHORISATION MODULE 
+*/
+angular.module('module.authorisation',['module.i18n', 'module.cookies']);
+
+/**
+* CONSTANTS
+*/
+angular.module('module.authorisation').constant('AUTH_CONSTANTS', {
+  authCookieName: 'kbAuthData'
+});
+
+/**
+* CONFIG
+*/
+angular.module('module.authorisation').config(function($stateProvider) {
+
+  var login = {
+    name : 'login',
+    url: '/login',
+    templateUrl: MODULES_PREFIX + '/authorisation/login.tpl.html',
+    controller: 'AuthController',
+    access:{
+      isFree: true
+    } 
+  };
+
+  $stateProvider.state(login);
+
+});
+
+/**
+* CONTROLLER
+*/
+angular.module('module.authorisation').controller("AuthController", [
+  '$scope', '$rootScope', '$state','$http', '$location', 'UserService', 'i18nService', 
+  function($scope, $rootScope, $state, $http, $location, UserSrv, i18nService) {
+
+  /**
+  * TRANSLATION INJECTION
+  */
+  $scope.t = function(identifier){
+    return i18nService.t(identifier);
+  }
+
+  /**
+  * METHODS
+  */
+  $scope.login = function(auth){
+    // login user
+    if(angular.isString(auth.username) && angular.isString(auth.password))
+    {
+      $rootScope.activateLoadingIndicator();
+      UserSrv.login(auth).then(
+        function(){
+          $state.transitionTo('app.collection', { collUri: 'root'});
+          $rootScope.deactivateLoadingIndicator();
+        },
+        function(){
+          auth.$error.incorrect = true;
+          $rootScope.deactivateLoadingIndicator();
+        }
+        );
+    }
+  }
+
+  $scope.logout = function(){
+    UserSrv.logout();
+    //hacky but works
+    document.location.reload();
+  }
+
+}]);
+
+/**
+* SERVICES
+*/
+angular.module('module.authorisation').service('UserService', ['$q', '$rootScope', 'cookiesSrv', 'AUTH_CONSTANTS', 'UriToolbox',
+ function($q, $rootScope, cookiesSrv, AUTH_CONSTANTS, UriToolbox) {
+
+  var self = this;
+
+  this.getUserCookie = function(){
+    return JSON.parse(cookiesSrv.getCookie(AUTH_CONSTANTS.authCookieName));
+  };
+
+  this.getUser = function(){
+    return self.getUserCookie();
+  };
+
+  this.getUsername = function(){
+    return self.getUserCookie().username;
+  };
+
+  this.getUserUri = function(){
+    return self.getUserCookie().uri;  
+  };
+
+  this.getUserSpace = function(){
+    return self.getUserCookie().space;
+  }
+
+  this.getKey = function(){
+    return self.getUserCookie().key;  
+  };
+
+  this.login = function(auth){
+
+   var defer = $q.defer();
+
+   new SSAuthCheckCred().handle(
+    function(result){
+      var userKey = result.key;
+
+      new SSUserLogin().handle(
+        function(result){
+
+         var authData = {
+          username: auth.username,
+          key: userKey,
+          uri: result.uri,
+          space: UriToolbox.extractUriHostPart(result.uri)
+         };
+
+        if(auth.remember){
+         cookiesSrv.setCookie(AUTH_CONSTANTS.authCookieName, JSON.stringify(authData));
+       }else{ 
+         cookiesSrv.setSessionCookie(AUTH_CONSTANTS.authCookieName, JSON.stringify(authData));
+       }
+       
+       defer.resolve();
+       $rootScope.$apply();
+     },
+     function(result){ defer.reject();  $rootScope.$apply(); },
+     auth.username,
+     result.key
+     );  
+    },
+    function(result){
+      defer.reject();
+      $rootScope.$apply();
+    },
+    auth.username,
+    auth.password
+    );
+
+   return defer.promise;
+ };
+
+ this.logout = function(){
+  cookiesSrv.eatCookie(AUTH_CONSTANTS.authCookieName);
+};
+
+this.isAuthenticated = function(){
+
+  if(cookiesSrv.getCookie(AUTH_CONSTANTS.authCookieName) != null){
+    return true;
+  } else {
+    return false;
+  }
+};
+}]); 

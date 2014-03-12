@@ -1,0 +1,286 @@
+/**
+ * Copyright 2014 Graz University of Technology - KTI (Knowledge Technologies Institute)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+ 
+// Encoding: UTF-8
+'use strict';
+
+/**
+* SEARCH MODULE 
+*/
+angular.module('module.search',['module.i18n', 'module.cookies']);
+
+angular.module('module.search').constant('MAX_SEARCH_RESULTS', 20);
+
+/**
+* CONFIG
+*/
+angular.module('module.search').config(function($stateProvider) {
+
+  $stateProvider
+  .state('search', {
+    url:'/search',
+    abstract:true,
+    templateUrl: PATH_PREFIX + '/main.tpl.html',
+    controller: 'SearchController'
+  });
+
+  $stateProvider.state('search.keywords', {
+    url:'/keywords=:keywords',
+    views: {
+      "context": {
+        templateUrl: MODULES_PREFIX + '/search/search-context.tpl.html',
+        controller: function($stateParams, $scope) {
+          $scope.clearSearch();
+          $scope.performKeywordSearch($stateParams.keywords);
+          $scope.performTagSearch($stateParams.keywords);
+        },
+      },
+      "context-info":{
+        templateUrl: MODULES_PREFIX + '/search/search-context-info.tpl.html'
+      },
+      "breadcrumbs":{
+        templateUrl: MODULES_PREFIX + '/search/search-breadcrumbs.tpl.html'
+      }
+    } 
+  });
+
+  $stateProvider.state('search.tag', {
+    url:'/tag=:tag',
+    views: {
+      "context": {
+        templateUrl: MODULES_PREFIX + '/search/search-context.tpl.html',
+        controller: function($stateParams, $scope) {
+          $scope.clearSearch();
+          $scope.performTagSearch($stateParams.tag);
+        },
+      },
+      "context-info":{
+        templateUrl: MODULES_PREFIX + '/search/search-context-info.tpl.html'
+      },
+      "breadcrumbs":{
+        templateUrl: MODULES_PREFIX + '/search/search-breadcrumbs.tpl.html'
+      }
+    } 
+  });
+
+});
+
+/**
+* CONTROLLER
+*/
+angular.module('module.search').controller("SearchController", [
+  '$scope', '$rootScope', '$http', '$location', '$state', 'UserService', 'i18nService', 'SearchToolbox', 'UriToolbox','$q', 'EntityModel', '$dialogs', 'EntityFetchService','MAX_SEARCH_RESULTS', 'ENTITY_TYPES',
+  function($scope, $rootScope, $http, $location, $state, UserSrv, i18nService, SearchToolbox, UriToolbox, $q, EntityModel, $dialogs, EntityFetchService, MAX_SEARCH_RESULTS, ENTITY_TYPES) {
+
+    $scope.entityTypes = ENTITY_TYPES;
+    
+    $scope.showContentSearchResults = false;
+    $scope.expandContentResults = false;
+
+    $scope.showTagSearchResults = false;
+    $scope.expandTagResults = false;
+
+    $scope.contentSearchResultsCount = 0;
+    $scope.tagSearchResultsCount = 0;
+
+    $scope.contentSearchResults = new Array();
+    $scope.tagSearchResults = new Array();
+
+  /**
+  * TRANSLATION INJECTION
+  */
+  $scope.t = function(identifier){
+    return i18nService.t(identifier);
+  }
+
+  /**
+  * METHODS
+  */
+  $scope.searchAction = function(){
+
+    if($scope.searchForm.$invalid){
+      return;
+    }
+
+    //todo unerwünschte zeichen filtern (zb +) --> angular filter
+    if($scope.searchString != undefined || $scope.searchString != ""){
+      var keywords = SearchToolbox.plusSeparateStringArray($scope.searchString.split(" "));
+      $state.transitionTo('search.keywords', {keywords: keywords});
+    }
+  }; 
+
+  $scope.performKeywordSearch = function(keywordsPlusSeparated){
+
+    $scope.searchString = SearchToolbox.explodePlusSeparatedStringIntoString(keywordsPlusSeparated);
+
+    var keywordsArray = SearchToolbox.explodeByPlus(keywordsPlusSeparated);
+    if(keywordsArray.length > 0)
+    {
+      $rootScope.activateLoadingIndicator();
+      var promise = searchByFullText(keywordsArray);
+      promise.finally(function(){
+        $rootScope.deactivateLoadingIndicator();
+        $scope.showContentSearchResults = true;
+      });
+
+      $scope.toggleContentSearchResults();
+    }
+  };
+
+  $scope.performTagSearch = function(tagsPlusSeparated){
+
+    $scope.searchString = SearchToolbox.explodePlusSeparatedStringIntoString(tagsPlusSeparated);
+
+    var tagsArray = SearchToolbox.explodeByPlus(tagsPlusSeparated);
+    if(tagsArray.length > 0)
+    {
+      $rootScope.activateLoadingIndicator();
+      var promise = searchByTags(tagsArray);
+      promise.finally(function(){
+        $rootScope.deactivateLoadingIndicator();
+        $scope.showTagSearchResults = true;
+      });
+
+      $scope.toggleTagSearchResults();
+    }
+  };
+
+  $scope.transitionToHome = function(){
+    $state.go('app.collection',{collUri: "root"});
+  }
+
+  var searchByTags = function(tagsArray){
+   var defer = $q.defer();
+
+   new SSSearchWithTags().handle(
+    function(result){
+
+      var entities = new Array()
+
+      if(result.searchResults.length > 0){
+        var entities = initEntitiesBySearchResult(result.searchResults);
+        $scope.tagSearchResults = entities;
+        $scope.tagSearchResultsCount = result.searchResults.length;
+      }
+
+      defer.resolve(entities);
+      $rootScope.$apply();
+    }, 
+    function(error){ console.log(error); }, 
+    UserSrv.getUserUri(),
+    UserSrv.getKey(),
+    jSGlobals.or, 
+    tagsArray, 
+    MAX_SEARCH_RESULTS
+    );
+
+   return defer.promise;
+ };
+
+ var searchByFullText = function(keywordsArray){
+  var defer = $q.defer();
+
+  new SSSearchWithSolr().handle(
+    function(result){
+
+      var entities = new Array()
+
+      if(result.searchResults.length > 0){
+        var entities = initEntitiesBySearchResult(result.searchResults);
+        $scope.contentSearchResults = entities;
+        $scope.contentSearchResultsCount = result.searchResults.length;
+      } 
+
+      defer.resolve(entities);
+      $rootScope.$apply();
+    }, 
+    function(error){ console.log(error); }, 
+    UserSrv.getUserUri(),
+    UserSrv.getKey(),
+    jSGlobals.or, 
+    keywordsArray
+    );
+
+  return defer.promise;
+};
+
+var initEntitiesBySearchResult = function(searchResult){
+
+  var entities = new Array();
+
+  angular.forEach(searchResult, function(value, key){
+    var entity = new EntityModel();
+    entity.init(value);
+    entity.init({entityType: value.type});
+    entity.init({uriPathnameHash: UriToolbox.extractUriHostPartWithoutProtocol(value.uri)});
+    entities.push(entity);
+  });
+
+  return entities;
+};
+
+  $scope.entityClickAction = function(entity){
+
+    var promise = EntityFetchService.getEntityByUri(entity.uri, true, true, true);
+
+    promise.then(
+      function(entity){
+
+        var dialog = $dialogs.entryDetail(entity, true);
+      },
+      function(error){
+        console.log(error);
+      } 
+      );
+
+  };
+
+$scope.toggleContentSearchResults = function(){
+  if($scope.expandContentResults){
+
+    $scope.expandContentResults = false;
+  }else{
+
+    $scope.expandContentResults = true;
+  }
+};
+
+$scope.toggleTagSearchResults = function(){
+  if($scope.expandTagResults){
+
+    $scope.expandTagResults = false;
+  }else{
+
+    $scope.expandTagResults = true;
+  }
+};
+
+ $scope.clearSearch = function(){
+    $scope.showContentSearchResults = false;
+    $scope.expandContentResults = false;
+
+    $scope.showTagSearchResults = false;
+    $scope.expandTagResults = false;
+
+    $scope.contentSearchResultsCount = 0;
+    $scope.tagSearchResultsCount = 0;
+
+    $scope.contentSearchResults = new Array();
+    $scope.tagSearchResults = new Array();
+ };
+
+}]);
+

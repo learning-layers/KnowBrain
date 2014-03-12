@@ -1,0 +1,37 @@
+<!--
+  -  Copyright 2014 Graz University of Technology - KTI (Knowledge Technologies Institute)
+  - 
+  -  Licensed under the Apache License, Version 2.0 (the "License");
+  -  you may not use this file except in compliance with the License.
+  -  You may obtain a copy of the License at
+  - 
+  -  http://www.apache.org/licenses/LICENSE-2.0
+  - 
+  -  Unless required by applicable law or agreed to in writing, software
+  -  distributed under the License is distributed on an "AS IS" BASIS,
+  -  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  -  See the License for the specific language governing permissions and
+  -  limitations under the License.
+-->
+
+<span class="glyphicon ajax-loader-white" ng-show="ajaxLoading"></span>
+
+<a href="" ng-click="clickEventloadRootCollection()" class="breadcrumbs-inactive" ng-show="!ajaxLoading">
+  <span class="glyphicon glyphicon-home glyphicon-home-kb"></span>
+</a>
+
+<span ng-repeat="entry in currentCollection.collHierarchy" ng-show="!ajaxLoading && !$first" on-Finish-Ng-Repeat-Load>
+  <span class="glyphicon path-glyph-chevron glyphicon-chevron-right"></span>&nbsp;
+  <a href="" ng-click="openCollection(entry.uriPathnameHash)" class="breadcrumbs-inactive">
+    <span class="glyphicon glyphicon-folder-close"></span>
+    <span class="breadcrumb-parent-folders">&nbsp;{{entry.label}}</span>
+  </a>
+</span>
+
+<span ng-show="!ajaxLoading && !currentCollection.isRoot">
+  <span class="glyphicon path-glyph-chevron glyphicon-chevron-right"></span>&nbsp;
+  <span class="breadcrumbs-active">
+    <span class="glyphicon glyphicon-folder-open"></span>
+    <span>&nbsp;{{currentCollection.label}}</span>
+  </span>
+</span>
