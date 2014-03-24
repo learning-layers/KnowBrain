@@ -18,6 +18,7 @@ You need a SSS installation for using the KnowBrain:
 ##How to Get the Source Code
 
 You can check out the code, as follows:
+
 `$git clone https://github.com/learning-layers/KnowBrain.git`
 
 ##Installation
