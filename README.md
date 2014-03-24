@@ -1,5 +1,4 @@
 #KnowBrain
-==
 
 ## Description
 The KnowBrain (KB) is a self-hosting dropbox like knowledge repository. 
