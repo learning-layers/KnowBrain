@@ -6,8 +6,11 @@ Its using the REST-API for the low-Level(storing, sharing and (re)structuring hi
 
 **Important!**
 You need a SSS installation for using the KnowBrain:
+
 The SSS is available here: http://sourceforge.net/p/learning-layers/code/HEAD/tree/trunk/SocialSemanticServer/
+
 Installation: http://developer.learning-layers.eu/documentation/social-semantic-server/setup/
+
 REST-API: http://developer.learning-layers.eu/documentation/social-semantic-server/rest-api/
 
 ##How to Get the Source Code
@@ -17,7 +20,9 @@ You can check out the code, as follows:
 
 ##Installation
 Follow these 3 small steps:
+
 1) Deploy the KnowBrain source into an ordinary webserver e.g apache (htdocs) 
+
 2) Edit the REST-API script links in the KB index.html file:
 
 * social server globals
