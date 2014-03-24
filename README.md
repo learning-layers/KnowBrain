@@ -23,16 +23,16 @@ You can check out the code, as follows:
 ##Installation
 Follow these 3 small steps:
 
-1. Deploy the KnowBrain source into an ordinary webserver e.g apache (htdocs) 
+1) Deploy the KnowBrain source into an ordinary webserver e.g apache (htdocs) 
 
-2. Edit the REST-API script links in the KB index.html file:
+2) Edit the REST-API script links in the KB index.html file:
 
 * social server globals
 * social server connector wrappers
 * social server connectors
 * social server entities
 
-3. now you should be able to reach the SSS and login to the KB (open index.html in a modern web-browser)
+3) now you should be able to reach the SSS and login to the KB (open index.html in a modern web-browser)
 
 **Please note:** 
 This is an early Version. It's functions have only been tested in Google Chrome browser.
