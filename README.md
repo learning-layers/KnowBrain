@@ -9,7 +9,7 @@ It's using the REST-API for
 - discussing 
 and tagging digital artifacts of the [Social Semantic Server](http://ceur-ws.org/Vol-1026/paper11.pdf)(SSS). 
 
-**Important!**
+**Important:**
 You need a SSS installation for using the KnowBrain:
 - The SSS is available here: https://github.com/learning-layers/SocialSemanticServer
 - Installation: http://developer.learning-layers.eu/documentation/social-semantic-server/setup/
