@@ -114,12 +114,14 @@ angular.module('module.i18n').constant('I18N_MESSAGES', {
   link_url: 'Url:',
   url_placeholder: 'Example: http://know-center.tugraz.at/',
   link_is: 'Link is:',
+  follow_link: 'Follow link',
 
   //entity detail
   download_resource: 'Download resource',
   update_resource: 'Update resource',
   download_as: 'Download as:',
   download: 'download',
+  downloading: 'downloading',
   read_only: 'Read only',
   write: 'Write',
   add_a_tag: 'add a tag',

@@ -448,14 +448,14 @@ angular.module('module.models').factory('EntityModel', ['$q', '$rootScope','User
     this.pos = null;
     this.mimeType = null;
 
-    this.servHandleFileDownload = function(){
+    this.servHandleFileDownload = function(defer){
       var self = this;
 
       return function(fileAsBlob){
 
         var a = document.createElement("a");
 
-        if(jSGlobals.endsWith(this.label, "." + self.mimeType)){
+        if(jSGlobals.endsWith(self.label, "." + self.mimeType)){
           a.download    = self.label;
         }else{
           a.download    = self.label + "." + self.mimeType;  
@@ -465,6 +465,7 @@ angular.module('module.models').factory('EntityModel', ['$q', '$rootScope','User
         a.textContent = jSGlobals.download;
 
         a.click();
+        defer.resolve();
       };
     }
   }
@@ -489,16 +490,20 @@ angular.module('module.models').factory('EntityModel', ['$q', '$rootScope','User
   };
 
   Entity.prototype.downloadFile = function(){
+    var defer = $q.defer();
+
     if(this.entityType != ENTITY_TYPES.file)
-      return;
+      return null;
 
     new SSFileDownload().handle(
-      this.servHandleFileDownload(),
-      function(error){ console.log(error); },
+      this.servHandleFileDownload(defer),
+      function(error){ defer.reject(); console.log(error); },
       UserSrv.getUserUri(),
       UserSrv.getKey(),
       this.uri
       );
+
+    return defer.promise;
   };
 
   return (Entity);

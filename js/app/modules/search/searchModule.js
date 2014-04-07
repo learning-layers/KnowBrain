@@ -65,6 +65,7 @@ angular.module('module.search').config(function($stateProvider) {
         controller: function($stateParams, $scope) {
           $scope.clearSearch();
           $scope.performTagSearch($stateParams.tag);
+          $scope.performKeywordSearch($stateParams.tag);
         },
       },
       "context-info":{
@@ -115,9 +116,17 @@ angular.module('module.search').controller("SearchController", [
       return;
     }
 
-    //todo unerwünschte zeichen filtern (zb +) --> angular filter
+    //todo filter not allowed chars
     if($scope.searchString != undefined || $scope.searchString != ""){
-      var keywords = SearchToolbox.plusSeparateStringArray($scope.searchString.split(" "));
+      
+      var keywords = Array();
+      angular.forEach($scope.searchString.split(","), function(string, key){
+        angular.forEach(string.replace(/^\s+|\s+$/g, '').split(" "), function(subString, key2){
+          keywords.push(subString);
+        });
+      });
+
+      keywords = SearchToolbox.plusSeparateStringArray(keywords);
       $state.transitionTo('search.keywords', {keywords: keywords});
     }
   }; 

@@ -95,7 +95,7 @@ angular.module('dialogs.controllers',['ui.bootstrap.modal', 'module.i18n', 'modu
 		}; // end yes
 	}])
 
-	 .controller('entryDetailController',['$scope', '$modalInstance','entry', '$q', 'i18nService', 'CurrentCollectionService', 'RATING_MAX', 'ENTITY_TYPES', 'TagFetchService', 'isSearchResult', 'UserService', 'UriToolbox', '$state', function($scope, $modalInstance, entry, $q, i18nService, CurrentCollectionService, RATING_MAX, ENTITY_TYPES, TagFetchService, isSearchResult, UserSrv, UriToolbox, $state){
+	 .controller('entryDetailController',['$scope', '$modalInstance','entry', '$q', 'i18nService', 'CurrentCollectionService', 'RATING_MAX', 'ENTITY_TYPES', 'TagFetchService', 'isSearchResult', 'UserService', 'UriToolbox', '$state', '$window', function($scope, $modalInstance, entry, $q, i18nService, CurrentCollectionService, RATING_MAX, ENTITY_TYPES, TagFetchService, isSearchResult, UserSrv, UriToolbox, $state, $window){
 
 	 	$scope.entry = entry;
 	 	$scope.entryTags = new Array();
@@ -210,8 +210,21 @@ angular.module('dialogs.controllers',['ui.bootstrap.modal', 'module.i18n', 'modu
 			if($scope.entry.entityType != ENTITY_TYPES.file)
 				return;
 
-			$scope.entry.downloadFile();
+			$scope.entry.downloading = true;
 
+			var promise = $scope.entry.downloadFile();
+
+			promise.finally(function(){
+				$scope.entry.downloading = false;
+			});
+
+		};
+
+		$scope.openLink = function(){
+			if($scope.entry.entityType != ENTITY_TYPES.link)
+				return;
+
+			$window.open(entry.uri);
 		};
 
 		$scope.queryTags = function($queryString){
