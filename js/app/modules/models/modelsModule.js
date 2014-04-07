@@ -149,7 +149,7 @@ angular.module('module.models').factory('BaseModel', ['$q', '$rootScope', 'UserS
         self.disc = {uri:null,entries: new Array()};
       }     
 
-      new SSDiscEntryAdd().handle(
+      new SSDiscUserEntryAdd().handle(
         function(result){ 
 
           var newComment = {
@@ -756,7 +756,7 @@ this.getDiscussionByUri = function(discUri){
   var defer = $q.defer();
   var self = this;
 
-  new SSDiscWithEntries().handle(
+  new SSDiscUserWithEntriesGet().handle(
     function(result){ defer.resolve(result); }, 
     function(error){ console.log(error); }, 
     UserSrv.getUserUri(),
