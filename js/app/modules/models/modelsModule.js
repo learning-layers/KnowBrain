@@ -149,7 +149,7 @@ angular.module('module.models').factory('BaseModel', ['$q', '$rootScope', 'UserS
         self.disc = {uri:null,entries: new Array()};
       }     
 
-      new SSDiscEntryAdd().handle(
+      new SSDiscUserEntryAdd().handle(
         function(result){ 
 
           var newComment = {
