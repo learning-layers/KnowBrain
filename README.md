@@ -39,5 +39,5 @@ Follow these 3 small steps:
 This is an early Version. It's functions have only been tested in Google Chrome browser.
 
 ##Contact:
-* Dieter Theiler, Know-Center, Graz University of Technology, dtheiler@know-center.at
+* Dieter Theiler, Know-Center, Graz University of Technology, dtheiler@tugraz.at
 * Dominik Moesslang, Know-Center, Graz University of Technology, dominik.moesslang@student.tugraz.at
