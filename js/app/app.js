@@ -41,6 +41,7 @@ angular.module('knowbrain', [
   'module.search',
   'module.models',
   'module.utilities',
+  'module.sharing',
   // dialog module
   'dialogs',
   'ngTagsInput'

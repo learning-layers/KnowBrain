@@ -131,6 +131,10 @@ body {
     width: 755px;
 }
 
+.modal-small .modal-dialog {
+    width: 400px;
+}
+
 @media (max-width: 800px) {
     .modal-huge .modal-dialog {
         width: 95%;
@@ -187,6 +191,7 @@ body {
 #kb-search-bar-input {
   padding: 0px; 
   border: 0px;
+}
 }
 
 #kb-search-bar-input .tags {
@@ -770,6 +775,79 @@ body {
 
 .entry-detail-location-list > li > span {
   margin-right: 5px;
+}
+
+/* SHARE ENTITY */
+
+.share-entity-header {
+  height: 51px; 
+  padding:0px;
+}
+
+.share-entity-modal-body {
+  padding:0px; 
+  height:300px;
+}
+
+.share-entity-close-button {
+  margin-right:10px; 
+  margin-top: 10px;
+}
+
+.share-entity-type-icon {
+  margin-right: 10px; 
+  float: left; 
+  position: relative; 
+  margin-left: 15px; 
+  margin-top: 15px;
+}
+
+.share-entity-modal-title {
+	margin-right: 10px; 
+  float: left; 
+  position: relative; 
+  margin-left: 15px; 
+  margin-top: 15px;
+}
+
+.share-entity-preview-box {
+    position: relative;
+    height: 70px;
+}
+
+.share-entity-preview-box div {
+    font-size: 60px;
+    padding-top: 0px;
+    margin: auto;
+}
+
+#share-entity-preview-box-glyphicon {
+    padding-top: 8px;
+}
+
+.share-entity-description-box {
+    position: relative;
+    overflow: hidden;
+    font-size: 12px;
+    margin-top: 3px;
+    text-align: center;
+    display:table;
+    height:100px;
+}
+
+.share-entity-description-box-content {
+    position: relative;
+    height: 40px;
+    overflow: hidden;
+    font-size: 12px;
+    margin-top: 3px;
+    text-align: center;
+    display:table-cell;
+    vertical-align:middle;
+}
+
+.post {
+	 resize: none; 
 }
 
 /* tag input */

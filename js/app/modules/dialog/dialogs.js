@@ -4,7 +4,7 @@
 
 //== Controllers =============================================================//
 
-angular.module('dialogs.controllers',['ui.bootstrap.modal', 'module.i18n', 'module.collection'])
+angular.module('dialogs.controllers',['ui.bootstrap.modal', 'module.i18n', 'module.collection', 'module.sharing'])
 
 	/**
 	 * Error Dialog Controller 
@@ -95,7 +95,7 @@ angular.module('dialogs.controllers',['ui.bootstrap.modal', 'module.i18n', 'modu
 		}; // end yes
 	}])
 
-	 .controller('entryDetailController',['$scope', '$modalInstance','entry', '$q', 'i18nService', 'CurrentCollectionService', 'RATING_MAX', 'ENTITY_TYPES', 'TagFetchService', 'isSearchResult', 'UserService', 'UriToolbox', '$state', '$window', function($scope, $modalInstance, entry, $q, i18nService, CurrentCollectionService, RATING_MAX, ENTITY_TYPES, TagFetchService, isSearchResult, UserSrv, UriToolbox, $state, $window){
+	 .controller('entryDetailController',['$scope', '$modalInstance','entry', '$q', 'i18nService', 'CurrentCollectionService', 'RATING_MAX', 'ENTITY_TYPES', 'TagFetchService', 'isSearchResult', 'UserService', 'UriToolbox', '$state', '$window', '$dialogs', function($scope, $modalInstance, entry, $q, i18nService, CurrentCollectionService, RATING_MAX, ENTITY_TYPES, TagFetchService, isSearchResult, UserSrv, UriToolbox, $state, $window, $dialogs){
 
 	 	$scope.entry = entry;
 	 	$scope.entryTags = new Array();
@@ -260,6 +260,11 @@ angular.module('dialogs.controllers',['ui.bootstrap.modal', 'module.i18n', 'modu
 			$scope.close();
     	$state.transitionTo('app.collection', { collUri: UriToolbox.extractUriPathnameHash(location.uri)});
   };
+  
+  		$scope.shareEntity = function(){
+  			console.log($scope.entry);
+  			$dialogs.shareEntity($scope.entry);
+  		};
 
 }])
 
@@ -405,6 +410,18 @@ angular.module('dialogs.services',['ui.bootstrap.modal','dialogs.controllers'])
 					controller: 'addResourceWizzardController',
 					keyboard : true,
 					backdrop : true
+				});
+			},
+			shareEntity : function(entry){
+				return $modal.open({
+					templateUrl: MODULES_PREFIX + '/sharing/shareEntity.tpl.html',
+					controller: 'SharingController',
+					keyboard : true,
+					backdrop : true,
+					windowClass: 'modal-small',
+					resolve : {
+						entry : function() { return entry; },
+					}
 				});
 			}
 		};

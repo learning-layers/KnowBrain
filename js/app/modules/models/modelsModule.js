@@ -29,6 +29,7 @@ angular.module('module.models',[]);
 
 angular.module('module.models').constant('SPACE_ENUM', {private:'privateSpace', shared:'sharedSpace', follow:'followSpace'});
 angular.module('module.models').constant('ENTITY_TYPES', {collection:'coll', file:'file', link:'entity'});
+angular.module('module.models').constant('SHARING_OPTIONS', {private:'private', friends:'friends', global:'global', custom:'custom'});
 angular.module('module.models').constant('RATING_MAX', 5);
 
 angular.module('module.models').factory('BaseModel', ['$q', '$rootScope', 'UserService', 'FetchServiceHelper', function($q, $rootScope, UserSrv, FetchServiceHelper){
@@ -816,6 +817,29 @@ angular.module('module.models').service("TagFetchService", ['$q', '$rootScope','
     return defer.promise; 
   };
 
+}]);
+
+angular.module('module.models').service('UserModel', ['$q', '$rootScope','UserService', function($q, $rootScope, UserSrv) {
+
+    this.getAllUsers = function() {
+      //  var defer = $q.defer();
+       // var self = this;
+
+        new SSUserAll().handle(
+            function(result){
+
+            console.log(result);
+             //   defer.resolve(result);
+            },
+            function(error){
+                console.log(error);
+            },
+            UserSrv.getUserUri(),
+            UserSrv.getKey()
+        );
+
+       // return defer.promise;
+    }
 }]);
 
 
