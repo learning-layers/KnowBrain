@@ -115,7 +115,7 @@ angular.module('module.models').factory('BaseModel', ['$q', '$rootScope', 'UserS
         function(result){
           defer.resolve(result); 
           $rootScope.$apply();
-        }, 
+        },
         function(error){
           defer.reject(error); 
           $rootScope.$apply();
