@@ -340,8 +340,8 @@ angular.module('module.collection').controller("CollectionController", [
     $dialogs.addResourceWizzard();
   };
 
-  $scope.shareCurrentCollection = function(){
-    CurrentCollectionService.getCurrentCollection().shareCollection();
+  $scope.setCollPublic = function(){
+    CurrentCollectionService.getCurrentCollection().setCollPublic();
   };
 
   this.getCumulatedTagsOfCurrentCollection = function(){
@@ -369,20 +369,7 @@ angular.module('module.collection').controller("AddResourceController", [ '$scop
     return;
   }
 
-  var space;
-
-  if(CurrentCollectionService.getCurrentCollection().space == SPACE_ENUM.shared){
-    space = SPACE_ENUM.shared;
-  }else{
-    if(coll.private){
-      space = SPACE_ENUM.private;
-    }else{
-      space = SPACE_ENUM.shared;
-    }
-  }
-  
-
-  var promise = CurrentCollectionService.getCurrentCollection().createCollection(coll.label, space);
+  var promise = CurrentCollectionService.getCurrentCollection().createCollection(coll.label);
   promise.then(function(result){
     //nothing to do
   },function(error){
@@ -416,7 +403,7 @@ angular.module('module.collection').controller("AddResourceController", [ '$scop
     }
 
 
-    var promise = CurrentCollectionService.getCurrentCollection().createLink(link.label, link.url, CurrentCollectionService.getCurrentCollection().space);
+    var promise = CurrentCollectionService.getCurrentCollection().createLink(link.label, link.url);
     promise.then(function(result){
       //nothing to do
     },function(error){
@@ -493,7 +480,6 @@ angular.module('module.collection').controller("UploadController", ['$q', '$scop
 
     var entries = [];
     var entryLabels = [];
-    var entrySpaces = [];
     var uploadCounter = 0;
     var fileCount = $scope.filesArray.length;
 
@@ -513,7 +499,6 @@ angular.module('module.collection').controller("UploadController", ['$q', '$scop
             file.uriPathnameHash = UriToolbox.extractUriPathnameHash(entry.uri);
             entries.push(entry.uri);
             entryLabels.push(entry.label);
-            entrySpaces.push(entry.space);
             uploadCounter++;
             newEntrieObjects.push(entry);
 
@@ -530,7 +515,7 @@ angular.module('module.collection').controller("UploadController", ['$q', '$scop
 
     defer.promise.then(
       function(){
-        currColl.addEntries(entries, entryLabels, entrySpaces).then(
+        currColl.addEntries(entries, entryLabels).then(
           function(result){
             angular.forEach(newEntrieObjects, function(newEntry, key){
               currColl.entries.push(newEntry);

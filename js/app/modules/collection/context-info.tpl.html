@@ -35,7 +35,7 @@
   <span ng-show="!currentCollection.isRoot">
     <h5>Collection space:</h5>
     <button type="button" ng-class="{'btn-danger btn btn-xs disabled': (currentCollection.space == spaceEnum.shared), 'btn-success btn btn-xs disabled': (currentCollection.space == spaceEnum.private)}">{{t(currentCollection.space)}}</button>
-    <button type="button" ng-click="shareCurrentCollection()" ng-show="currentCollection.space != spaceEnum.shared" class="btn btn-xs btn-default"><span class="glyphicon glyphicon-share"></span>&nbsp;{{t('share')}}</button>
+    <button type="button" ng-click="setCollPublic()" ng-show="currentCollection.space != spaceEnum.shared" class="btn btn-xs btn-default"><span class="glyphicon glyphicon-share"></span>&nbsp;{{t('share')}}</button>
   </span>
 
   <span ng-show="!currentCollection.isRoot">

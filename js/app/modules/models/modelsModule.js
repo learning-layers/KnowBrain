@@ -32,17 +32,27 @@ angular.module('module.models').constant('ENTITY_TYPES', {collection:'coll', fil
 angular.module('module.models').constant('SHARING_OPTIONS', {private:'private', friends:'friends', global:'global', custom:'custom'});
 angular.module('module.models').constant('RATING_MAX', 5);
 
-angular.module('module.models').factory('BaseModel', ['$q', '$rootScope', 'UserService', 'FetchServiceHelper', function($q, $rootScope, UserSrv, FetchServiceHelper){
+angular.module('module.models').factory('BaseModel', ['$q', '$rootScope', 'UserService', 'FetchServiceHelper', "SPACE_ENUM", function($q, $rootScope, UserSrv, FetchServiceHelper, SPACE_ENUM){
 
   function Model(){};
 
   Model.prototype = {
     init : function(configuration){
-
+      
       var initialConfiguration = configuration || {};
-
+      
       for(var config in initialConfiguration){  
         this[config] = initialConfiguration[config];
+        
+        //TODO dtheiler: replace this when differentiation between shared and public is possible in KnowBrain
+        if(config === sSVarU.circleTypes){
+          
+          this[sSVarU.space] = sSColl.getCollSpace(initialConfiguration[config]);
+          
+          if(this[sSVarU.space] === SPACE_ENUM.follow){
+            this[sSVarU.space] = SPACE_ENUM.shared;
+          }
+        }
       }
     },
     saveLabel: function(newLabel){
@@ -106,7 +116,7 @@ angular.module('module.models').factory('BaseModel', ['$q', '$rootScope', 'UserS
         function(result){
           defer.resolve(result); 
           $rootScope.$apply();
-        }, 
+        },
         function(error){
           defer.reject(error); 
           $rootScope.$apply();
@@ -205,12 +215,13 @@ angular.module('module.models').factory('CollectionModel', ['$q', '$rootScope','
     this.entries = [];
     this.author = '';
     this.label = '';
+    this.circleTypes = [];
     this.space = SPACE_ENUM.private;
     this.parentColl = null;
     this.isRoot = false;
     this.collHierarchy = [];
     this.cumulatedTags = [];
-  }
+  }    
 
   Collection.prototype = Object.create(BaseModel.prototype);
   Collection.prototype.constructor = Collection;
@@ -223,7 +234,7 @@ angular.module('module.models').factory('CollectionModel', ['$q', '$rootScope','
     BaseModel.prototype.saveLabel.call(this, newLabel);
   };
 
-  Collection.prototype.createCollection = function(label, space){
+  Collection.prototype.createCollection = function(label){
     var defer = $q.defer();
     var self = this;
 
@@ -232,7 +243,7 @@ angular.module('module.models').factory('CollectionModel', ['$q', '$rootScope','
 
         var entry = new EntityModel();
 
-        entry.init({uri:result.uri, label:label, parentColl: this, space: space, entityType: ENTITY_TYPES.collection});
+        entry.init({uri:result.uri, label:label, parentColl: this, space: self.space, entityType: ENTITY_TYPES.collection});
         entry.init({uriPathnameHash: UriToolbox.extractUriPathnameHash(result.uri)});
 
         self.entries.push(entry);
@@ -248,7 +259,6 @@ angular.module('module.models').factory('CollectionModel', ['$q', '$rootScope','
       UserSrv.getKey(),
       this.uri,
       null,
-      space,
       label,
       true
       );
@@ -304,7 +314,7 @@ angular.module('module.models').factory('CollectionModel', ['$q', '$rootScope','
     return defer.promise;
   };
 
-  Collection.prototype.addEntries = function(entries, entryLabels, entrySpaces){
+  Collection.prototype.addEntries = function(entries, entryLabels){
 
     var defer = $q.defer();
     new SSCollUserEntriesAdd().handle(
@@ -320,21 +330,21 @@ angular.module('module.models').factory('CollectionModel', ['$q', '$rootScope','
       UserSrv.getKey(),
       this.uri,
       entries,
-      entryLabels,
-      entrySpaces
+      entryLabels
       );
 
     return defer.promise;
 
   };
 
-  Collection.prototype.createLink = function(label, url, space){
+  Collection.prototype.createLink = function(label, url){
     var defer = $q.defer();
     var self = this;
+    
     new SSCollUserEntryAdd().handle(
       function(result){
         var link = new EntityModel();
-        link.init({label:label, uri:url, space:space, entityType: ENTITY_TYPES.link});
+        link.init({label:label, uri:url, entityType: ENTITY_TYPES.link});
         link.init({uriPathnameHash: UriToolbox.extractUriHostPartWithoutProtocol(url)});
         self.entries.push(link);
 
@@ -349,7 +359,6 @@ angular.module('module.models').factory('CollectionModel', ['$q', '$rootScope','
       UserSrv.getKey(),
       this.uri,
       url,
-      space,
       label,
       false
       );
@@ -396,11 +405,11 @@ angular.module('module.models').factory('CollectionModel', ['$q', '$rootScope','
     return ret;
   };
 
-  Collection.prototype.shareCollection = function(){
+  Collection.prototype.setCollPublic = function(){
 
     var self = this;
 
-    new SSCollUserShare().handle(
+    new SSEntityUserPublicSet().handle(
       function(result){
         if(result.worked){
           self.space = SPACE_ENUM.shared;
@@ -412,8 +421,7 @@ angular.module('module.models').factory('CollectionModel', ['$q', '$rootScope','
       },
       UserSrv.getUserUri(),
       UserSrv.getKey(),
-      this.uri,
-      this.parentColl.uri
+      this.uri
       );
 
   };
