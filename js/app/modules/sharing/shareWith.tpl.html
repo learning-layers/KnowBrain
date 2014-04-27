@@ -1,0 +1,51 @@
+<!--
+- Code contributed to the Learning Layers project
+- http://www.learning-layers.eu
+- Development is partly funded by the FP7 Programme of the European Commission under
+- Grant Agreement FP7-ICT-318209.
+- Copyright (c) 2014, Graz University of Technology - KTI (Knowledge Technologies Institute).
+- For a list of contributors see the AUTHORS file at the top-level directory of this distribution.
+-
+- Licensed under the Apache License, Version 2.0 (the "License");
+- you may not use this file except in compliance with the License.
+- You may obtain a copy of the License at
+-
+- http://www.apache.org/licenses/LICENSE-2.0
+-
+- Unless required by applicable law or agreed to in writing, software
+- distributed under the License is distributed on an "AS IS" BASIS,
+- WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+- See the License for the specific language governing permissions and
+- limitations under the License.
+-->
+
+<div class="share-entity-header modal-header">
+    <button type="button" class="share-entity-close-button close"
+            ng-click="close()" style="margin-top: 5px;" aria-hidden="true">&times;</button>
+
+    <span class="share-entity-type-icon glyphicon glyphicon-share"></span>
+    <span class="share-entity-modal-title modal-title">Share with</span>
+
+    <div class="clearfix"></div>
+</div>
+
+<div class="share-entity-modal-body modal-body">
+    <div class="col-md-12 column" style="padding: 20px;">
+        <div class="row clearfix">
+            <h3>Friends</h3>
+            <span>Filter: </span><input type='text' ng-model='userFilter' />
+        </div>
+        <div class="row clearfix" id="friendsContainer">
+            <div class="checkbox" style="float:left" ng-repeat="user in shareWithArray | filter:userFilter">
+               <label>
+                   <input type="checkbox"><img class="profile-pic-small" src="images/small_profile_pic_dummy.png"><span>{{user.username}}</span>
+               </label>
+           </div>
+            <div class="checkbox" style="float:left" ng-repeat="user in shareWithArray | filter:userFilter">
+                <label>
+                    <input type="checkbox"><img class="profile-pic-small" src="images/small_profile_pic_dummy.png"><span>{{user.username}}</span>
+                </label>
+            </div>
+        </div>
+    </div>
+</div>

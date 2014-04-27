@@ -420,10 +420,22 @@ angular.module('dialogs.services',['ui.bootstrap.modal','dialogs.controllers'])
 					backdrop : true,
 					windowClass: 'modal-small',
 					resolve : {
-						entry : function() { return entry; },
+						entry : function() { return entry; }
 					}
 				});
-			}
+			},
+            shareWith : function(shareWithArray){
+                return $modal.open({
+                    templateUrl: MODULES_PREFIX + '/sharing/shareWith.tpl.html',
+                    controller: 'ShareWithController',
+                    keyboard : true,
+                    backdrop : true,
+                    windowClass: 'modal-huge',
+                    resolve : {
+                        shareWithArray : function() { return shareWithArray; }
+                    }
+                });
+            },
 		};
 	}]); // end $dialogs / dialogs.services
 

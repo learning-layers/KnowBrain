@@ -25,12 +25,12 @@
 /**
  * SEARCH MODULE
  */
-angular.module('module.sharing', ['module.i18n']);
+var sharingModule = angular.module('module.sharing', ['module.i18n', 'ui.bootstrap.modal', 'dialogs.services']);
 
 /**
  * CONFIG
  */
-angular.module('module.sharing').config(function ($stateProvider) {
+sharingModule.config(function ($stateProvider) {
 
     $stateProvider.state('sharing', {
         url: '/sharing',
@@ -43,8 +43,8 @@ angular.module('module.sharing').config(function ($stateProvider) {
 /**
  * CONTROLLER
  */
-angular.module('module.sharing').controller("SharingController", [
-    '$scope', '$modalInstance', 'i18nService', 'UserModel',  'ENTITY_TYPES', 'SHARING_OPTIONS', 'entry', function ($scope, $modalInstance, i18nService, UserModel, ENTITY_TYPES, SHARING_OPTIONS, entry) {
+sharingModule.controller("SharingController", [
+    '$scope', '$modalInstance', '$dialogs', 'i18nService', 'UserService', 'UserModel', 'ENTITY_TYPES', 'SHARING_OPTIONS', 'entry', function ($scope, $modalInstance, $dialogs, i18nService, UserService, UserModel, ENTITY_TYPES, SHARING_OPTIONS, entry) {
 
         $scope.entry = entry;
         $scope.entityTypes = ENTITY_TYPES;
@@ -68,24 +68,35 @@ angular.module('module.sharing').controller("SharingController", [
         };
 
         $scope.shareWithHandler = function (option) {
-            switch(option) {
-                case SHARING_OPTIONS.private: {
+            switch (option) {
+                case SHARING_OPTIONS.private:
+                {
                     break;
                 }
-                case SHARING_OPTIONS.friends: {
+                case SHARING_OPTIONS.friends:
+                {
 
                     break;
                 }
-                case SHARING_OPTIONS.global: {
+                case SHARING_OPTIONS.global:
+                {
 
                     break;
                 }
-                case SHARING_OPTIONS.custom: {
-                    UserModel.getAllUsers();
+                case SHARING_OPTIONS.custom:
+                {
+
+                    var entities = [];
+                    var user = UserService.getUserCookie();
+                    entities.push(user);
+
+                    $dialogs.shareWith(entities);
+                    //UserModel.getAllUsers();
                     break;
                 }
             }
         };
+
         $scope.shareResource = function () {
             console.log("Method called: shareResource()");
 
@@ -93,3 +104,7 @@ angular.module('module.sharing').controller("SharingController", [
 
     }]);
 
+sharingModule.controller("ShareWithController", ['$scope', 'i18nService', 'shareWithArray', function ($scope, $i18nService, shareWithArray) {
+
+    $scope.shareWithArray = shareWithArray;
+}]);
