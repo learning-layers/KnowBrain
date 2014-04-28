@@ -32,19 +32,29 @@
 <div class="share-entity-modal-body modal-body">
     <div class="col-md-12 column" style="padding: 20px;">
         <div class="row clearfix">
-            <h3>Friends</h3>
-            <span>Filter: </span><input type='text' ng-model='userFilter' />
+            <p>Friends</p>
+            <span>Filter: </span><input type='text' ng-model='shareWithCtrl.userFilter.label' />
         </div>
-        <div class="row clearfix" id="friendsContainer">
-            <div class="checkbox" style="float:left" ng-repeat="user in shareWithArray | filter:userFilter">
+        <div class="row clearfix" style="height: 150px; padding:20px" id="friendsContainer">
+
+            <div class="checkbox-inline" ng-repeat="user in shareWithCtrl.allUsers | filter:shareWithCtrl.userFilter">
                <label>
-                   <input type="checkbox"><img class="profile-pic-small" src="images/small_profile_pic_dummy.png"><span>{{user.username}}</span>
+                   <input type="checkbox" ng-click="shareWithCtrl.checkboxChanged(user.uri, $event)" ng-checked="shareWithCtrl.isUserChecked(user)" ng-disabled="shareWithCtrl.isUserChecked(user)" class="sharedUsers"><img class="profile-pic-small" src="images/small_profile_pic_dummy.png"><span>{{user.label}}</span>
                </label>
            </div>
-            <div class="checkbox" style="float:left" ng-repeat="user in shareWithArray | filter:userFilter">
-                <label>
-                    <input type="checkbox"><img class="profile-pic-small" src="images/small_profile_pic_dummy.png"><span>{{user.username}}</span>
-                </label>
+        </div>
+
+        {{shareWithCtrl.sharingOptions}}
+        <div class="row clearfix">
+            <div class="col-md-6 column">
+            </div>
+            <div class="col-md-6 column">
+                <div class="btn-group" style="float: right">
+                    <button class="btn btn-default" type="button" ng-click="shareWithCtrl.updateSharedUsers()">OK
+                    </button>
+                    <button class="btn btn-default" type="button" ng-click="shareWithCtrl.close()">Cancel
+                    </button>
+                </div>
             </div>
         </div>
     </div>

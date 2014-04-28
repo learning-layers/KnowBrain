@@ -23,19 +23,19 @@
 
 <div ng-controller="CollectionController" ng-show="!ajaxLoading"> 
 
-  <h3 style="margin-top:0px; padding-top:0xp; margin-bottom:20px; width:290px;" ng-show="!currentCollection.isRoot">
+  <h3 style="margin-top:0px; padding-top:0px; margin-bottom:20px; width:290px;" ng-show="!currentCollection.isRoot">
   <edit-in-place model="currentCollection.label" save-method="currentCollection.saveLabel(newLabel)"></edit-in-place>
 
   <div class="clearfix"></div>
   </h3>
 
-  <h3 ng-show="currentCollection.isRoot" style="margin-top:0px; padding-top:0xp; margin-bottom:20px;">{{t('root_collection')}}</h3>
+  <h3 ng-show="currentCollection.isRoot" style="margin-top:0px; padding-top:0px; margin-bottom:20px;">{{t('root_collection')}}</h3>
 
 
   <span ng-show="!currentCollection.isRoot">
     <h5>Collection space:</h5>
     <button type="button" ng-class="{'btn-danger btn btn-xs disabled': (currentCollection.space == spaceEnum.shared), 'btn-success btn btn-xs disabled': (currentCollection.space == spaceEnum.private)}">{{t(currentCollection.space)}}</button>
-    <button type="button" ng-click="setCollPublic()" ng-show="currentCollection.space != spaceEnum.shared" class="btn btn-xs btn-default"><span class="glyphicon glyphicon-share"></span>&nbsp;{{t('share')}}</button>
+    <button type="button" ng-click="shareCollection()" ng-show="currentCollection.space != spaceEnum.shared" class="btn btn-xs btn-default"><span class="glyphicon glyphicon-share"></span>&nbsp;{{t('share')}}</button>
   </span>
 
   <span ng-show="!currentCollection.isRoot">

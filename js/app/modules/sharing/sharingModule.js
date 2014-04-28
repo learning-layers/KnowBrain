@@ -43,68 +43,136 @@ sharingModule.config(function ($stateProvider) {
 /**
  * CONTROLLER
  */
-sharingModule.controller("SharingController", [
-    '$scope', '$modalInstance', '$dialogs', 'i18nService', 'UserService', 'UserModel', 'ENTITY_TYPES', 'SHARING_OPTIONS', 'entry', function ($scope, $modalInstance, $dialogs, i18nService, UserService, UserModel, ENTITY_TYPES, SHARING_OPTIONS, entry) {
+sharingModule.controller("SharingController", ['$scope','$modalInstance', '$dialogs', 'i18nService', 'UserService', 'UserModel', 'SharingModel', 'ENTITY_TYPES', 'SHARING_OPTIONS', 'entity', function ($scope, $modalInstance, $dialogs, i18nService, UserService, UserModel, SharingModel, ENTITY_TYPES, SHARING_OPTIONS, entity) {
 
-        $scope.entry = entry;
-        $scope.entityTypes = ENTITY_TYPES;
-        $scope.sharingOptions = SHARING_OPTIONS;
-        $scope.shareWith = SHARING_OPTIONS.private;
+        this.entity = entity;
+        this.entityTypes = ENTITY_TYPES;
+        this.sharingOptions = SHARING_OPTIONS;
+
+        this.shareWith = SHARING_OPTIONS.private;
+        this.sharedUsers = [];
 
         /**
          * TRANSLATION INJECTION
          */
-        $scope.t = function (identifier) {
+        this.t = function (identifier) {
             return i18nService.t(identifier);
         };
-
 
         /**
          * METHODS
          */
 
-        $scope.close = function () {
-            $modalInstance.close();
+        this.close = function () {
+
+
+            $modalInstance.dismiss('Cancel');
         };
 
-        $scope.shareWithHandler = function (option) {
-            switch (option) {
-                case SHARING_OPTIONS.private:
-                {
-                    break;
-                }
-                case SHARING_OPTIONS.friends:
-                {
+        this.share = function () {
 
+            switch(this.shareWith) {
+                case SHARING_OPTIONS.public:
+                    SharingModel.shareEntityPublic(this.entity);
                     break;
-                }
-                case SHARING_OPTIONS.global:
-                {
 
-                    break;
-                }
                 case SHARING_OPTIONS.custom:
-                {
-
-                    var entities = [];
-                    var user = UserService.getUserCookie();
-                    entities.push(user);
-
-                    $dialogs.shareWith(entities);
-                    //UserModel.getAllUsers();
+                    SharingModel.shareEntityCustom(this.entity, this.sharedUsers);
                     break;
-                }
             }
-        };
+            $modalInstance.close();
+        }
 
-        $scope.shareResource = function () {
-            console.log("Method called: shareResource()");
 
+
+        this.shareWithHandler = function () {
+
+            var self = this;
+
+            console.log(this.shareWith);
+            if (this.shareWith == SHARING_OPTIONS.custom) {
+
+                //TODO get shared Users
+                //var promises = [];
+                // $q.all(promises).then(
+
+                var sharedUsers = [];
+
+
+                var promise = UserModel.getAllUsers();
+
+                promise.then(function (result) {
+
+                    var userUris = result.users;
+
+                    var allUsers = [];
+
+                    for (var i = 0; i < userUris.length; i++) {
+                        var obj = {};
+                        obj["label"] = sSUser.getUserLabelFromUri(userUris[i]);
+                        obj["uri"] = userUris[i];
+                        allUsers.push(obj);
+                    }
+
+                    var shareWithDialog = $dialogs.shareWith(allUsers, sharedUsers)
+
+                    shareWithDialog.result.then(function (sharedUsers) {
+                        self.sharedUsers = sharedUsers;
+                    }, function (error) {
+
+                       //TODO: Reset sharedWith
+                       self.shareWith = SHARING_OPTIONS.private;
+                       console.log(error);
+                    });
+                });
+            }
         };
 
     }]);
 
-sharingModule.controller("ShareWithController", ['$scope', 'i18nService', 'shareWithArray', function ($scope, $i18nService, shareWithArray) {
+sharingModule.controller("ShareWithController", ['$modalInstance', 'i18nService', 'allUsers', 'sharedUsers', function ($modalInstance, $i18nService, allUsers, sharedUsersBefore) {
 
-    $scope.shareWithArray = shareWithArray;
+    var sharedUsers = [];
+
+    this.allUsers = allUsers;
+
+    this.isUserChecked = function (user) {
+
+        if (sharedUsersBefore.indexOf(user.uri) > -1) {
+            console.log("user checked");
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+
+    this.checkboxChanged = function (userUri, $event) {
+
+        if ($event.currentTarget.checked) {
+            sharedUsers.push(userUri);
+        }
+        else {
+            var i = sharedUsers.indexOf(userUri);
+
+            if (i > -1) {
+                sharedUsers.splice(i, 1);
+            }
+        }
+    };
+
+    this.updateSharedUsers = function () {
+
+        if(angular.equals(sharedUsers, sharedUsersBefore)) {
+            $modalInstance.dismiss('No change');
+        }
+        else {
+            $modalInstance.close(sharedUsers);
+        }
+    }
+
+    this.close = function () {
+        $modalInstance.dismiss('cancel');
+    };
+
 }]);

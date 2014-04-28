@@ -56,7 +56,7 @@ angular.module('module.collection').config(function ($stateProvider) {
             }
 
             $scope.loadCurrentCollection(collUri);
-        },
+        }
       },
       "context-info":{
         templateUrl: MODULES_PREFIX + '/collection/context-info.tpl.html'
@@ -88,7 +88,7 @@ angular.module('module.collection').config(function ($stateProvider) {
           }
 
           $scope.loadCurrentEntity(promise, $stateParams.entry, $stateParams.collUri);
-        },
+        }
       },
       "context-info":{
         templateUrl: MODULES_PREFIX + '/collection/context-info.tpl.html'
@@ -343,6 +343,10 @@ angular.module('module.collection').controller("CollectionController", [
   $scope.setCollPublic = function(){
     CurrentCollectionService.getCurrentCollection().setCollPublic();
   };
+
+  $scope.shareCollection = function() {
+      $dialogs.shareEntity(CurrentCollectionService.getCurrentCollection());
+  }
 
   this.getCumulatedTagsOfCurrentCollection = function(){
     var promise = CurrentCollectionService.getCurrentCollection().getCumulatedTags();

@@ -41,29 +41,30 @@
                 <div class="share-entity-preview-box">
                     <div style="position: relative; z-index: 9;"
                          id="share-entity-preview-box-glyphicon" class="glyphicon "
-                         ng-class="{'glyphicon-folder-close': (entry.entityType == entityTypes.collection), 'glyphicon-file': (entry.entityType == entityTypes.file), 'glyphicon-link' : (entry.entityType == entityTypes.link)}">
+                         ng-class="{'glyphicon-folder-close': (shareCtrl.entity.entityType == shareCtrl.entityTypes.collection), 'glyphicon-file': (shareCtrl.entity.entityType == shareCtrl.entityTypes.file), 'glyphicon-link' : (shareCtrl.entity.entityType == shareCtrl.entityTypes.link)}">
                     </div>
                 </div>
 
             </div>
             <div class="col-md-9 column" id="share-entity-description-box">
-                <div class="share-entity-description-box-content">{{entry.label}}</div>
+                <div class="share-entity-description-box-content">{{shareCtrl.entity.label}}</div>
             </div>
         </div>
 
         <div class="row clearfix">
             <div class="col-md-6 column">
-                <select class="form-control" ng-model="shareWith" ng-options="k as v for (k, v) in sharingOptions"
-                        ng-change="shareWithHandler(shareWith)"></select>
+                <select id="sharingOptionsSelect" class="form-control" ng-model="shareCtrl.shareWith" ng-options="k as v for (k, v) in shareCtrl.sharingOptions"
+                        ng-change="shareCtrl.shareWithHandler()"></select>
             </div>
             <div class="col-md-6 column">
                 <div class="btn-group">
-                    <button class="btn btn-default" type="button">
+                    <button class="btn btn-default" type="button" ng-click="shareCtrl.share()">
                         <em class="glyphicon glyphicon-share"></em> Share
                     </button>
-                    <button class="btn btn-default" type="button" ng-click="close()">Cancel
+                    <button class="btn btn-default" type="button" ng-click="shareCtrl.close()">Cancel
                     </button>
                 </div>
             </div>
         </div>
     </div>
+</div>

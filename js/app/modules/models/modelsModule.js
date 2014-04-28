@@ -29,7 +29,7 @@ angular.module('module.models',[]);
 
 angular.module('module.models').constant('SPACE_ENUM', {private:'privateSpace', shared:'sharedSpace', follow:'followSpace'});
 angular.module('module.models').constant('ENTITY_TYPES', {collection:'coll', file:'file', link:'entity'});
-angular.module('module.models').constant('SHARING_OPTIONS', {private:'private', friends:'friends', global:'global', custom:'custom'});
+angular.module('module.models').constant('SHARING_OPTIONS', {private:'private', friends:'friends', public:'public', custom:'custom'});
 angular.module('module.models').constant('RATING_MAX', 5);
 
 angular.module('module.models').factory('BaseModel', ['$q', '$rootScope', 'UserService', 'FetchServiceHelper', "SPACE_ENUM", function($q, $rootScope, UserSrv, FetchServiceHelper, SPACE_ENUM){
@@ -451,7 +451,7 @@ angular.module('module.models').factory('CollectionModel', ['$q', '$rootScope','
 
 }]);
 
-angular.module('module.models').factory('EntityModel', ['$q', '$rootScope','UserService', 'BaseModel', 'SPACE_ENUM', 'ENTITY_TYPES', function($q, $rootScope, UserSrv, BaseModel, SPACE_ENUM, ENTITY_TYPES){
+angular.module('module.models').factory('EntityModel', ['$q', '$rootScope','UserService', 'BaseModel', 'SPACE_ENUM', 'ENTITY_TYPES', 'SHARING_OPTIONS', function($q, $rootScope, UserSrv, BaseModel, SPACE_ENUM, ENTITY_TYPES, SHARING_OPTIONS){
 
   function Entity(){
     this.parentColl = null;
@@ -830,14 +830,15 @@ angular.module('module.models').service("TagFetchService", ['$q', '$rootScope','
 angular.module('module.models').service('UserModel', ['$q', '$rootScope','UserService', function($q, $rootScope, UserSrv) {
 
     this.getAllUsers = function() {
-      //  var defer = $q.defer();
-       // var self = this;
+
+        var defer = $q.defer();
+        var self = this;
 
         new SSUserAll().handle(
             function(result){
 
-            console.log(result);
-             //   defer.resolve(result);
+                console.log(result);
+                defer.resolve(result);
             },
             function(error){
                 console.log(error);
@@ -846,8 +847,55 @@ angular.module('module.models').service('UserModel', ['$q', '$rootScope','UserSe
             UserSrv.getKey()
         );
 
-       // return defer.promise;
-    }
+       return defer.promise;
+    };
+
+    this.getUserLabel = function(uri) {
+        var defer = $q.defer();
+        var self = this;
+
+        return new getUserLabelFromUri(uri);
+    };
+
 }]);
 
 
+angular.module('module.models').service('SharingModel', ['$q', 'UserService', function($q, UserSrv) {
+
+    this.shareEntityPublic = function(entity) {
+
+        new SSEntityUserPublicSet().handle(
+            function(result){
+                console.log(result)
+            },
+            function(error){
+                console.log(error);
+            },
+            UserSrv.getUserUri(),
+            UserSrv.getKey(),
+            entity.uri
+        );
+    };
+
+    this.shareEntityCustom = function(entity, shareWithArray) {
+
+        console.log("Sharing with:");
+        console.log(shareWithArray);
+        new SSEntityUserShare().handle(
+            function(result) {
+                console.log(result)
+            },
+            function(error) {
+                console.log(error);
+            },
+            UserSrv.getUserUri(),
+            UserSrv.getKey(),
+            entity.uri,
+            null,
+            shareWithArray
+        )
+
+    }
+
+
+}]);

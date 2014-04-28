@@ -262,7 +262,6 @@ angular.module('dialogs.controllers',['ui.bootstrap.modal', 'module.i18n', 'modu
   };
   
   		$scope.shareEntity = function(){
-  			console.log($scope.entry);
   			$dialogs.shareEntity($scope.entry);
   		};
 
@@ -400,7 +399,7 @@ angular.module('dialogs.services',['ui.bootstrap.modal','dialogs.controllers'])
 								isSearchResult = false;
 
 							return isSearchResult; 
-						},
+						}
 					}
 				});
 			},
@@ -412,30 +411,31 @@ angular.module('dialogs.services',['ui.bootstrap.modal','dialogs.controllers'])
 					backdrop : true
 				});
 			},
-			shareEntity : function(entry){
+			shareEntity : function(entity){
 				return $modal.open({
 					templateUrl: MODULES_PREFIX + '/sharing/shareEntity.tpl.html',
-					controller: 'SharingController',
+					controller: 'SharingController as shareCtrl',
 					keyboard : true,
 					backdrop : true,
 					windowClass: 'modal-small',
 					resolve : {
-						entry : function() { return entry; }
+                        entity : function() { return entity; }
 					}
 				});
 			},
-            shareWith : function(shareWithArray){
+            shareWith : function(allUsers, sharedUsers){
                 return $modal.open({
                     templateUrl: MODULES_PREFIX + '/sharing/shareWith.tpl.html',
-                    controller: 'ShareWithController',
+                    controller: 'ShareWithController as shareWithCtrl',
                     keyboard : true,
                     backdrop : true,
                     windowClass: 'modal-huge',
                     resolve : {
-                        shareWithArray : function() { return shareWithArray; }
+                        allUsers : function() { return allUsers; },
+                        sharedUsers : function() { return sharedUsers; }
                     }
                 });
-            },
+            }
 		};
 	}]); // end $dialogs / dialogs.services
 
