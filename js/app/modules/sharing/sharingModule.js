@@ -43,7 +43,7 @@ sharingModule.config(function ($stateProvider) {
 /**
  * CONTROLLER
  */
-sharingModule.controller("SharingController", ['$scope','$modalInstance', '$dialogs', 'i18nService', 'UserService', 'UserModel', 'SharingModel', 'ENTITY_TYPES', 'SHARING_OPTIONS', 'entity', function ($scope, $modalInstance, $dialogs, i18nService, UserService, UserModel, SharingModel, ENTITY_TYPES, SHARING_OPTIONS, entity) {
+sharingModule.controller("SharingController", ['$scope','$modalInstance', '$dialogs', '$q', 'i18nService', 'UserService', 'UserModel', 'SharingModel', 'ENTITY_TYPES', 'SHARING_OPTIONS', 'entity', function ($scope, $modalInstance, $dialogs, $q, i18nService, UserService, UserModel, SharingModel, ENTITY_TYPES, SHARING_OPTIONS, entity) {
 
         this.entity = entity;
         this.entityTypes = ENTITY_TYPES;
@@ -77,13 +77,12 @@ sharingModule.controller("SharingController", ['$scope','$modalInstance', '$dial
                     break;
 
                 case SHARING_OPTIONS.custom:
+                    console.log(this.sharedUsers);
                     SharingModel.shareEntityCustom(this.entity, this.sharedUsers);
                     break;
             }
             $modalInstance.close();
         }
-
-
 
         this.shareWithHandler = function () {
 
@@ -92,20 +91,23 @@ sharingModule.controller("SharingController", ['$scope','$modalInstance', '$dial
             console.log(this.shareWith);
             if (this.shareWith == SHARING_OPTIONS.custom) {
 
-                //TODO get shared Users
-                //var promises = [];
-                // $q.all(promises).then(
 
-                var sharedUsers = [];
+                var promises = [];
+                var allUsersPromise = UserModel.getAllUsers();
+                promises.push(allUsersPromise);
 
+                var entityUsersPromise = SharingModel.getEntityUsers(this.entity);
+                promises.push(entityUsersPromise);
 
-                var promise = UserModel.getAllUsers();
-
-                promise.then(function (result) {
-
-                    var userUris = result.users;
+                $q.all(promises).then(function (results) {
+                    console.log(results);
 
                     var allUsers = [];
+                    var sharedUsers = [];
+                    var userUris;
+
+                    userUris = results[0].users;
+                    sharedUsers = results[1].users;
 
                     for (var i = 0; i < userUris.length; i++) {
                         var obj = {};
@@ -114,10 +116,12 @@ sharingModule.controller("SharingController", ['$scope','$modalInstance', '$dial
                         allUsers.push(obj);
                     }
 
-                    var shareWithDialog = $dialogs.shareWith(allUsers, sharedUsers)
+                    var shareWithDialog = $dialogs.shareWith(allUsers, sharedUsers);
 
                     shareWithDialog.result.then(function (sharedUsers) {
-                        self.sharedUsers = sharedUsers;
+                        console.log(sharedUsers);
+                        self.sharedUsers = getUserUris(sharedUsers);
+
                     }, function (error) {
 
                        //TODO: Reset sharedWith
@@ -128,6 +132,17 @@ sharingModule.controller("SharingController", ['$scope','$modalInstance', '$dial
             }
         };
 
+        var getUserUris = function(users) {
+
+            var userUris = [];
+
+            for(var i = 0; i < users.length; i++) {
+                userUris.push(users[i].uri);
+            }
+
+            return userUris;
+        }
+
     }]);
 
 sharingModule.controller("ShareWithController", ['$modalInstance', 'i18nService', 'allUsers', 'sharedUsers', function ($modalInstance, $i18nService, allUsers, sharedUsersBefore) {
@@ -137,9 +152,7 @@ sharingModule.controller("ShareWithController", ['$modalInstance', 'i18nService'
     this.allUsers = allUsers;
 
     this.isUserChecked = function (user) {
-
-        if (sharedUsersBefore.indexOf(user.uri) > -1) {
-            console.log("user checked");
+        if(findUserInArray(user, sharedUsersBefore) > 0) {
             return true;
         }
         else {
@@ -147,16 +160,16 @@ sharingModule.controller("ShareWithController", ['$modalInstance', 'i18nService'
         }
     }
 
-    this.checkboxChanged = function (userUri, $event) {
+    this.checkboxChanged = function (user, $event) {
 
         if ($event.currentTarget.checked) {
-            sharedUsers.push(userUri);
+
+            sharedUsers.push(user);
         }
         else {
-            var i = sharedUsers.indexOf(userUri);
-
-            if (i > -1) {
-                sharedUsers.splice(i, 1);
+            var i = findUserInArray(user, sharedUsers);
+            if(i > 0) {
+                sharedUsers.splice(i,1);
             }
         }
     };
@@ -174,5 +187,16 @@ sharingModule.controller("ShareWithController", ['$modalInstance', 'i18nService'
     this.close = function () {
         $modalInstance.dismiss('cancel');
     };
+
+    var findUserInArray = function(user, array) {
+
+        for(var i = 0; i < array.length; i++) {
+            if(array[i].label == user.label) {
+                return i;
+            }
+        }
+
+        return -1;
+    }
 
 }]);

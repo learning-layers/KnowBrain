@@ -39,7 +39,7 @@
 
             <div class="checkbox-inline" ng-repeat="user in shareWithCtrl.allUsers | filter:shareWithCtrl.userFilter">
                <label>
-                   <input type="checkbox" ng-click="shareWithCtrl.checkboxChanged(user.uri, $event)" ng-checked="shareWithCtrl.isUserChecked(user)" ng-disabled="shareWithCtrl.isUserChecked(user)" class="sharedUsers"><img class="profile-pic-small" src="images/small_profile_pic_dummy.png"><span>{{user.label}}</span>
+                   <input type="checkbox" ng-click="shareWithCtrl.checkboxChanged(user, $event)" ng-checked="shareWithCtrl.isUserChecked(user)" ng-disabled="shareWithCtrl.isUserChecked(user)" class="sharedUsers"><img class="profile-pic-small" src="images/small_profile_pic_dummy.png"><span>{{user.label}}</span>
                </label>
            </div>
         </div>

@@ -862,6 +862,27 @@ angular.module('module.models').service('UserModel', ['$q', '$rootScope','UserSe
 
 angular.module('module.models').service('SharingModel', ['$q', 'UserService', function($q, UserSrv) {
 
+    this.getEntityUsers = function(entity) {
+
+        var defer = $q.defer();
+        var self = this;
+
+        new SSEntityUserEntityUsersGet().handle(
+            function(result){
+                console.log(result);
+                defer.resolve(result);
+            },
+            function(error){
+                console.log(error);
+            },
+            UserSrv.getUserUri(),
+            UserSrv.getKey(),
+            entity.uri
+        );
+
+        return defer.promise;
+    };
+
     this.shareEntityPublic = function(entity) {
 
         new SSEntityUserPublicSet().handle(
@@ -891,7 +912,6 @@ angular.module('module.models').service('SharingModel', ['$q', 'UserService', fu
             UserSrv.getUserUri(),
             UserSrv.getKey(),
             entity.uri,
-            null,
             shareWithArray
         )
 
