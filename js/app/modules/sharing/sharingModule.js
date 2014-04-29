@@ -100,7 +100,6 @@ sharingModule.controller("SharingController", ['$scope','$modalInstance', '$dial
                 promises.push(entityUsersPromise);
 
                 $q.all(promises).then(function (results) {
-                    console.log(results);
 
                     var allUsers = [];
                     var sharedUsers = [];
@@ -190,8 +189,11 @@ sharingModule.controller("ShareWithController", ['$modalInstance', 'i18nService'
 
     var findUserInArray = function(user, array) {
 
+        console.log(array);
+        console.log(user.uri);
+
         for(var i = 0; i < array.length; i++) {
-            if(array[i].label == user.label) {
+            if(array[i].uri == user.uri) {
                 return i;
             }
         }

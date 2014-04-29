@@ -35,19 +35,18 @@
         <textarea class="post form-control" maxlength="100"
                   placeholder="comment" rows="3"></textarea>
 
-        <div class="row clearfix">
-            <div class="col-md-3 column" style="padding: 20px;">
+        <div class="row clearfix share-entity-preview-box">
+            <div class="col-md-3 column">
 
-                <div class="share-entity-preview-box">
-                    <div style="position: relative; z-index: 9;"
-                         id="share-entity-preview-box-glyphicon" class="glyphicon "
+                <div class="share-entity-preview-box-icon">
+                    <div style="position: relative; z-index: 9;" class="glyphicon share-entity-preview-box-glyphicon"
                          ng-class="{'glyphicon-folder-close': (shareCtrl.entity.entityType == shareCtrl.entityTypes.collection), 'glyphicon-file': (shareCtrl.entity.entityType == shareCtrl.entityTypes.file), 'glyphicon-link' : (shareCtrl.entity.entityType == shareCtrl.entityTypes.link)}">
                     </div>
                 </div>
 
             </div>
-            <div class="col-md-9 column" id="share-entity-description-box">
-                <div class="share-entity-description-box-content">{{shareCtrl.entity.label}}</div>
+            <div class="col-md-9">
+                <span class="share-entity-preview-box-label">{{shareCtrl.entity.label}}</span>
             </div>
         </div>
 

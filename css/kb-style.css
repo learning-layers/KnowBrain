@@ -811,39 +811,29 @@ body {
 }
 
 .share-entity-preview-box {
-    position: relative;
-    height: 70px;
+    padding: 20px;
 }
 
-.share-entity-preview-box div {
+.share-entity-preview-box-icon {
+    position: relative;
+}
+
+.share-entity-preview-box-icon div {
     font-size: 60px;
     padding-top: 0px;
     margin: auto;
 }
 
-#share-entity-preview-box-glyphicon {
+.share-entity-preview-box-glyphicon {
     padding-top: 8px;
+    line-height: 70px;
 }
 
-.share-entity-description-box {
-    position: relative;
+.share-entity-preview-box-label {
     overflow: hidden;
-    font-size: 12px;
+    font-size: 16px;
     margin-top: 3px;
-    text-align: center;
-    display:table;
-    height:100px;
-}
-
-.share-entity-description-box-content {
-    position: relative;
-    height: 40px;
-    overflow: hidden;
-    font-size: 12px;
-    margin-top: 3px;
-    text-align: center;
-    display:table-cell;
-    vertical-align:middle;
+    line-height: 70px;
 }
 
 .post {
