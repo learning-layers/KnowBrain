@@ -177,7 +177,7 @@ body {
 /* NAVIGATION */
 
 #kb-navbar {
-	border-bottom: 1px solid #5e5e5e;
+	/*border-bottom: 1px solid #5e5e5e;*/
 }
 
 #kb-nav-search-bar {
@@ -209,6 +209,7 @@ body {
 
 #path {
 	border-top: 1px solid #5e5e5e;
+    border-bottom: 1px solid #5e5e5e;
 	background-color: #3c7dc8;
 	padding-top: 5px;
 	padding-left: 15px;
