@@ -77,7 +77,7 @@ angular.module('module.authorisation').controller("AuthController", [
       $rootScope.activateLoadingIndicator();
       UserSrv.login(auth).then(
         function(){
-          $state.transitionTo('app.collection', { collUri: 'root'});
+          $state.transitionTo('app.collection.content', { collUri: 'root'});
           $rootScope.deactivateLoadingIndicator();
         },
         function(){

@@ -23,9 +23,9 @@
 <div id="kb-navbar" class="navbar navbar-default navbar-fixed-top" role="navigation">
     <div class="kb-fluid-container">
         <ul class="nav navbar-nav">
-            <li><a href="#">Profile</a></li>
-            <li><a href="#">Q&A</a></li>
-            <li><a href="#">Dropbox</a></li>
+            <li><a href="#/social">Profile</a></li>
+            <li><a href="#/qa">Q&A</a></li>
+            <li><a href="#/collection">Dropbox</a></li>
             <div class="col-xs-8 pull-left" style="padding-top:10px; padding-bottom:10px;"
                  ng-controller="SearchController">
                 <a href="#"
@@ -70,12 +70,12 @@
 
 
 
-<div id="content">
-    <div id="path" class="">
+<div id="content" data-ui-view="content">
+   <!-- <div id="path" class="">
         <div data-ui-view="breadcrumbs" style="position:relative; float:left; margin:0px; padding:0px;"></div>
         <div class="clearfix"></div>
     </div>
     <div id="context" data-ui-view="context" role="main"></div>
     <div id="context-info" data-ui-view="context-info"></div>
-    <div class="clearfix"></div>
+    <div class="clearfix"></div>-->
 </div>
