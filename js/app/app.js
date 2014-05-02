@@ -53,7 +53,7 @@ angular.module('knowbrain', [
         .state('app', {
             abstract:true,
             templateUrl: PATH_PREFIX + '/main.tpl.html',
-            controller: 'CollectionController'
+            controller: 'MainController'
         });
 
     $urlRouterProvider.otherwise('/collection/root');

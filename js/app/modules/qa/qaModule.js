@@ -36,11 +36,8 @@ angular.module('module.qa').config(function($stateProvider) {
     $stateProvider
         .state('app.qa', {
             url:'/qa',
-            views: {
-                "content": {
-                    templateUrl: MODULES_PREFIX + '/qa/qa.tpl.html'
-                }
-            }
+            controller: 'QAController',
+            templateUrl: MODULES_PREFIX + '/qa/qa.tpl.html'
         });
 
 });
@@ -48,6 +45,6 @@ angular.module('module.qa').config(function($stateProvider) {
 /**
 * CONTROLLER
 */
-angular.module('module.social').controller("QAController", [function(){
-
+angular.module('module.social').controller("QAController", ['$scope', function($scope){
+    $scope.errorMessage = "To be implemented";
 }]);

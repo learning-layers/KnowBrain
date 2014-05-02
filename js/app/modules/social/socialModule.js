@@ -36,11 +36,9 @@ angular.module('module.social').config(function($stateProvider) {
     $stateProvider
         .state('app.social', {
             url:'/social',
-            views: {
-                "content": {
-                    templateUrl: MODULES_PREFIX + '/social/social.tpl.html'
-                }
-            }
+            controller: 'SocialController',
+            templateUrl: MODULES_PREFIX + '/social/social.tpl.html'
+
         });
 
 });
@@ -48,6 +46,6 @@ angular.module('module.social').config(function($stateProvider) {
 /**
 * CONTROLLER
 */
-angular.module('module.social').controller("SocialController", [function(){
-
+angular.module('module.social').controller("SocialController", ['$scope', function($scope){
+    $scope.errorMessage = "To be implemented";
 }]);

@@ -34,11 +34,8 @@ angular.module('module.collection').config(function ($stateProvider) {
 
     $stateProvider
         .state('app.collection', {
-            views: {
-                "content": {
-                    templateUrl: MODULES_PREFIX + '/collection/knowbox.tpl.html'
-                }
-            }
+            controller:'CollectionController',
+            templateUrl: MODULES_PREFIX + '/collection/knowbox.tpl.html'
 
         });
 
