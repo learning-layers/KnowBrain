@@ -351,7 +351,7 @@ angular.module('module.collection').controller("CollectionController", [
   };
 
   $scope.tagSearchClicked = function(tag){
-    $state.go('search.tag', { tag: tag});
+    $state.go('app.search.tag', { tag: tag});
   };
 
 }]);  

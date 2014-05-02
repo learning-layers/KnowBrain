@@ -173,7 +173,7 @@ angular.module('module.search').controller("SearchController", [
   };
 
   $scope.transitionToHome = function(){
-    $state.go('app.collection',{collUri: "root"});
+    $state.go('app.collection.content',{collUri: "root"});
   }
 
   var searchByTags = function(tagsArray){
