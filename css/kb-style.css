@@ -916,3 +916,7 @@ body {
 .searchResultBoxHeading:hover span{
   color: #5e5e5e;
 }
+
+.img-rounded {
+    border-radius:6px;
+}
