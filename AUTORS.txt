@@ -5,3 +5,5 @@ The main KnowBrain developers are:
 
 - Dominik Moesslang
 - Dieter Theiler
+- Armin Hutzler
+- Lukas Greussing
