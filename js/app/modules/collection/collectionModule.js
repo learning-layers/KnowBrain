@@ -529,7 +529,7 @@ angular.module('module.collection').controller("UploadController", ['$q', '$scop
   $scope.openEntry = function(indexOfFileArray){
     if($scope.filesArray[indexOfFileArray].uploaded){
      var hash = $scope.filesArray[indexOfFileArray].uriPathnameHash;
-     $state.transitionTo('app.entry', { collUri: CurrentCollectionService.getCurrentCollection().uriPathnameHash, entry:hash});
+     $state.transitionTo('app.collection.entry', { collUri: CurrentCollectionService.getCurrentCollection().uriPathnameHash, entry:hash});
    }      
  };
 

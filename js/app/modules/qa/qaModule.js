@@ -45,6 +45,6 @@ angular.module('module.qa').config(function($stateProvider) {
 /**
 * CONTROLLER
 */
-angular.module('module.social').controller("QAController", ['$scope', function($scope){
+angular.module('module.qa').controller("QAController", ['$scope', function($scope){
     $scope.errorMessage = "To be implemented";
 }]);
