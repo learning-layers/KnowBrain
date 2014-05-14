@@ -81,7 +81,7 @@ angular.module('module.models').factory('BaseModel', ['$q', '$rootScope', 'UserS
       var defer = $q.defer();
       var self = this;
 
-      new SSRatingUserSet().handle(
+      new SSRatingSet().handle(
         function(result){
           if(result.worked){
             var promise = FetchServiceHelper.getEntityDescribtion(self, true, true, true);
@@ -133,7 +133,7 @@ angular.module('module.models').factory('BaseModel', ['$q', '$rootScope', 'UserS
       var defer = $q.defer();
       var self = this;
 
-      new SSTagsUserRemove().handle(
+      new SSTagsRemove().handle(
         function(result){
           defer.resolve(result); 
           $rootScope.$apply();
@@ -164,7 +164,7 @@ angular.module('module.models').factory('BaseModel', ['$q', '$rootScope', 'UserS
         self.disc = {uri:null,entries: new Array()};
       }     
 
-      new SSDiscUserEntryAdd().handle(
+      new SSDiscEntryAdd().handle(
         function(result){ 
 
           var newComment = {
@@ -237,7 +237,7 @@ angular.module('module.models').factory('CollectionModel', ['$q', '$rootScope','
     var defer = $q.defer();
     var self = this;
 
-    new SSCollUserEntryAdd().handle(
+    new SSCollEntryAdd().handle(
       function(result){
 
         var entry = new EntityModel();
@@ -269,7 +269,7 @@ angular.module('module.models').factory('CollectionModel', ['$q', '$rootScope','
     var defer = $q.defer();
     var self = this;
 
-    new SSCollUserHierarchyGet().handle(
+    new SSCollHierarchyGet().handle(
       function(result){
         defer.resolve(result); 
         $rootScope.$apply();
@@ -316,7 +316,7 @@ angular.module('module.models').factory('CollectionModel', ['$q', '$rootScope','
   Collection.prototype.addEntries = function(entries, entryLabels){
 
     var defer = $q.defer();
-    new SSCollUserEntriesAdd().handle(
+    new SSCollEntriesAdd().handle(
       function(result){
         defer.resolve(result); 
         $rootScope.$apply();
@@ -340,7 +340,7 @@ angular.module('module.models').factory('CollectionModel', ['$q', '$rootScope','
     var defer = $q.defer();
     var self = this;
     
-    new SSCollUserEntryAdd().handle(
+    new SSCollEntryAdd().handle(
       function(result){
         var link = new EntityModel();
         link.init({label:label, uri:url, entityType: ENTITY_TYPES.link});
@@ -370,7 +370,7 @@ angular.module('module.models').factory('CollectionModel', ['$q', '$rootScope','
     var defer = $q.defer();
     var self = this;
 
-    new SSCollUserEntriesDelete().handle(
+    new SSCollEntriesDelete().handle(
       function(result){
         
         if(result.worked){
@@ -408,7 +408,7 @@ angular.module('module.models').factory('CollectionModel', ['$q', '$rootScope','
 
     var self = this;
 
-    new SSEntityUserPublicSet().handle(
+    new SSEntityPublicSet().handle(
       function(result){
         if(result.worked){
           self.space = SPACE_ENUM.shared;
@@ -430,7 +430,7 @@ angular.module('module.models').factory('CollectionModel', ['$q', '$rootScope','
     var defer = $q.defer();
     var self = this;
 
-    new SSCollUserCumulatedTagsGet().handle(
+    new SSCollCumulatedTagsGet().handle(
       function(result){ 
         self.cumulatedTags = TagCloudToolbox.getWeightedTagsFromTagFrequencies(result.tagFrequs);
         defer.resolve();
@@ -591,7 +591,7 @@ angular.module('module.models').service("CollectionFetchService", ['$q', '$rootS
 this.getRootCollection = function(){
   var defer = $q.defer();
 
-  new SSCollUserRootGet().handle(
+  new SSCollRootGet().handle(
     function(result){
       var model = initCollection(result);
       model.isRoot = true;
@@ -621,7 +621,7 @@ this.getCollectionByUri = function(collUri){
   var defer = $q.defer();
   var self = this;
 
-  new SSCollUserWithEntries().handle(
+  new SSCollWithEntries().handle(
     function(result){
       var model = initCollection(result);
       
@@ -769,7 +769,7 @@ this.getDiscussionByUri = function(discUri){
   var defer = $q.defer();
   var self = this;
 
-  new SSDiscUserWithEntriesGet().handle(
+  new SSDiscWithEntriesGet().handle(
     function(result){ defer.resolve(result); }, 
     function(error){ console.log(error); }, 
     UserSrv.getUserUri(),
@@ -795,7 +795,7 @@ angular.module('module.models').service("TagFetchService", ['$q', '$rootScope','
     var defer = $q.defer();
     var self = this;
 
-    new SSTagUserFrequsGet().handle(
+    new SSTagFrequsGet().handle(
       function(result){
         var tagArray = new Array();
         angular.forEach(result.tagFrequs, function(value, key){

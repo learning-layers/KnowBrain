@@ -114,7 +114,7 @@ angular.module('dialogs.controllers',['ui.bootstrap.modal', 'module.i18n', 'modu
 
 		var getLocations = function(){
 
-			new SSCollsUserEntityIsInGet().handle(
+			new SSCollsEntityIsInGet().handle(
 				function(result){
 					$scope.locations = result.colls;
 					$scope.$apply();
