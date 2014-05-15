@@ -77,7 +77,7 @@ angular.module('module.authorisation').controller("AuthController", [
       $rootScope.activateLoadingIndicator();
       UserSrv.login(auth).then(
         function(){
-          $state.transitionTo('app.collection', { collUri: 'root'});
+          $state.transitionTo('app.collection.content', { collUri: 'root'});
           $rootScope.deactivateLoadingIndicator();
         },
         function(){
@@ -128,48 +128,41 @@ angular.module('module.authorisation').service('UserService', ['$q', '$rootScope
     return self.getUserCookie().key;  
   };
 
-  this.login = function(auth){
-
-   var defer = $q.defer();
-
-   new SSAuthCheckCred().handle(
-    function(result){
-      var userKey = result.key;
-
-      new SSUserLogin().handle(
-        function(result){
-
+   this.login = function(auth){
+     
+     var defer = $q.defer();
+     
+     new SSAuthCheckCred(
+       
+       function(result){
+         var userKey = result.key;
+         var userUri = result.uri;
+       
          var authData = {
-          username: auth.username,
-          key: userKey,
-          uri: result.uri,
-          space: UriToolbox.extractUriHostPart(result.uri)
+           username: auth.username,
+           key: userKey,
+           uri: userUri,
+           space: UriToolbox.extractUriHostPart(userUri)
          };
 
-        if(auth.remember){
-         cookiesSrv.setCookie(AUTH_CONSTANTS.authCookieName, JSON.stringify(authData));
-       }else{ 
-         cookiesSrv.setSessionCookie(AUTH_CONSTANTS.authCookieName, JSON.stringify(authData));
-       }
-       
-       defer.resolve();
-       $rootScope.$apply();
-     },
-     function(result){ defer.reject();  $rootScope.$apply(); },
-     auth.username,
-     result.key
-     );  
-    },
-    function(result){
-      defer.reject();
-      $rootScope.$apply();
-    },
-    auth.username,
-    auth.password
-    );
+         if(auth.remember){
+           cookiesSrv.setCookie(AUTH_CONSTANTS.authCookieName, JSON.stringify(authData));
+         }else{ 
+           cookiesSrv.setSessionCookie(AUTH_CONSTANTS.authCookieName, JSON.stringify(authData));
+         }
 
-   return defer.promise;
- };
+         defer.resolve();
+         $rootScope.$apply();
+       },
+       function(result){
+         defer.reject();
+         $rootScope.$apply();
+       },
+       auth.username,
+       auth.password);
+       
+     return defer.promise;
+   };
 
  this.logout = function(){
   cookiesSrv.eatCookie(AUTH_CONSTANTS.authCookieName);

@@ -44,11 +44,20 @@ angular.module('knowbrain', [
   'module.sharing',
   // dialog module
   'dialogs',
-  'ngTagsInput'
+  'ngTagsInput',
+  'module.social',
+  'module.qa'
 
   ]).config(['$stateProvider', '$urlRouterProvider', '$locationProvider', '$tooltipProvider',function ($stateProvider, $urlRouterProvider, $locationProvider, $tooltipProvider) {
 
-    $urlRouterProvider.otherwise('/app/collection/root'); 
+    $stateProvider
+        .state('app', {
+            abstract:true,
+            templateUrl: PATH_PREFIX + '/main.tpl.html',
+            controller: 'MainController'
+        });
+
+    $urlRouterProvider.otherwise('/collection/root');
 
   }]).run(['$rootScope', '$location', 'UserService', function($rootScope, $location, UserSrv) {
 
@@ -82,5 +91,9 @@ angular.module('knowbrain').controller('AppController', ['$scope', '$location', 
   $scope.t = function(identifier){
     return i18nService.t(identifier);
   };
+
+}]);
+
+angular.module('knowbrain').controller('MainController', [function(){
 
 }]);

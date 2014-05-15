@@ -69,7 +69,7 @@ angular.module('dialogs.controllers',['ui.bootstrap.modal', 'module.i18n', 'modu
 		$scope.msg = (angular.isDefined(msg)) ? msg : 'Unknown application notification.';
 		
 		//-- Methods -----//
-		
+
 		$scope.close = function(){
 			$modalInstance.close();
 		}; // end close
@@ -114,7 +114,7 @@ angular.module('dialogs.controllers',['ui.bootstrap.modal', 'module.i18n', 'modu
 
 		var getLocations = function(){
 
-			new SSCollsUserEntityIsInGet().handle(
+			new SSCollsEntityIsInGet(
 				function(result){
 					$scope.locations = result.colls;
 					$scope.$apply();
@@ -156,7 +156,9 @@ angular.module('dialogs.controllers',['ui.bootstrap.modal', 'module.i18n', 'modu
 		};
 
 		$scope.tagAdded = function(tag) {
+            console.log(tag);
 			entry.addTag(tag).then(
+
 				function(result){
 					CurrentCollectionService.getCurrentCollection().getCumulatedTags();
 				},
@@ -258,7 +260,7 @@ angular.module('dialogs.controllers',['ui.bootstrap.modal', 'module.i18n', 'modu
 				entry.uriPathnameHash =  UriToolbox.extractUriPathnameHash(entry.uri);
 			}
 			$scope.close();
-    	$state.transitionTo('app.collection', { collUri: UriToolbox.extractUriPathnameHash(location.uri)});
+    	$state.transitionTo('app.collection.content', { collUri: UriToolbox.extractUriPathnameHash(location.uri)});
   };
   
   		$scope.shareEntity = function(){

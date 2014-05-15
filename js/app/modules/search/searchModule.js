@@ -35,14 +35,13 @@ angular.module('module.search').constant('MAX_SEARCH_RESULTS', 20);
 angular.module('module.search').config(function($stateProvider) {
 
   $stateProvider
-  .state('search', {
+  .state('app.search', {
     url:'/search',
-    abstract:true,
-    templateUrl: PATH_PREFIX + '/main.tpl.html',
-    controller: 'SearchController'
+    controller: 'SearchController',
+    templateUrl: MODULES_PREFIX + '/search/search.tpl.html'
   });
 
-  $stateProvider.state('search.keywords', {
+  $stateProvider.state('app.search.keywords', {
     url:'/keywords=:keywords',
     views: {
       "context": {
@@ -59,10 +58,11 @@ angular.module('module.search').config(function($stateProvider) {
       "breadcrumbs":{
         templateUrl: MODULES_PREFIX + '/search/search-breadcrumbs.tpl.html'
       }
-    } 
+    },
+      controller: 'SearchController'
   });
 
-  $stateProvider.state('search.tag', {
+  $stateProvider.state('app.search.tag', {
     url:'/tag=:tag',
     views: {
       "context": {
@@ -132,7 +132,7 @@ angular.module('module.search').controller("SearchController", [
       });
 
       keywords = SearchToolbox.plusSeparateStringArray(keywords);
-      $state.transitionTo('search.keywords', {keywords: keywords});
+      $state.transitionTo('app.search.keywords', {keywords: keywords});
     }
   }; 
 
@@ -173,13 +173,13 @@ angular.module('module.search').controller("SearchController", [
   };
 
   $scope.transitionToHome = function(){
-    $state.go('app.collection',{collUri: "root"});
+    $state.go('app.collection.content',{collUri: "root"});
   }
 
   var searchByTags = function(tagsArray){
    var defer = $q.defer();
 
-   new SSSearchWithTags().handle(
+   new SSSearchWithTags(
     function(result){
 
       var entities = new Array()
@@ -207,7 +207,7 @@ angular.module('module.search').controller("SearchController", [
  var searchByFullText = function(keywordsArray){
   var defer = $q.defer();
 
-  new SSSearchWithSolr().handle(
+  new SSSearchWithSolr(
     function(result){
 
       var entities = new Array()
