@@ -132,7 +132,7 @@ angular.module('module.authorisation').service('UserService', ['$q', '$rootScope
      
      var defer = $q.defer();
      
-     new SSAuthCheckCred().handle(
+     new SSAuthCheckCred(
        
        function(result){
          var userKey = result.key;

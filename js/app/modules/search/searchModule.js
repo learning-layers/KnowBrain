@@ -179,7 +179,7 @@ angular.module('module.search').controller("SearchController", [
   var searchByTags = function(tagsArray){
    var defer = $q.defer();
 
-   new SSSearchWithTags().handle(
+   new SSSearchWithTags(
     function(result){
 
       var entities = new Array()
@@ -207,7 +207,7 @@ angular.module('module.search').controller("SearchController", [
  var searchByFullText = function(keywordsArray){
   var defer = $q.defer();
 
-  new SSSearchWithSolr().handle(
+  new SSSearchWithSolr(
     function(result){
 
       var entities = new Array()
