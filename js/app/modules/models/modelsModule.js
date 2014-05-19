@@ -191,6 +191,7 @@ angular.module('module.models').factory('BaseModel', ['$q', '$rootScope', 'UserS
         self.uri,
         commentText,
         addNewDisc,
+        discType,
         discLabel
         );
 
