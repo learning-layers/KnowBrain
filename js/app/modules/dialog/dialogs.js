@@ -408,7 +408,16 @@ angular.module('dialogs.services',['ui.bootstrap.modal','dialogs.controllers'])
 					keyboard : true,
 					backdrop : true
 				});
-			}
+			},
+
+            createNewGroup: function() {
+                return $modal.open({
+                    templateUrl: MODULES_PREFIX + '/social/newGroup.tpl.html',
+                    controller: 'newGroupController',
+                    keyboard : true,
+                    backdrop : true
+                });
+            }
 		};
 	}]); // end $dialogs / dialogs.services
 

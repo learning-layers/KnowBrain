@@ -35,17 +35,50 @@ angular.module('module.social').config(function($stateProvider) {
 
     $stateProvider
         .state('app.social', {
-            url:'/social',
+             url:'/social',
+            abstract:true,
             controller: 'SocialController',
             templateUrl: MODULES_PREFIX + '/social/social.tpl.html'
-
         });
 
+    $stateProvider.state('app.social.groups', {
+        url: '/groups',
+        templateUrl: MODULES_PREFIX + '/social/groups.tpl.html',
+        controller: "GroupController as groupCtrl"
+    });
+
+    $stateProvider.state('app.social.friends', {
+        url: '/friends',
+        templateUrl: MODULES_PREFIX + '/social/friends.tpl.html',
+        controller: "FriendsController"
+    });
 });
 
 /**
 * CONTROLLER
 */
 angular.module('module.social').controller("SocialController", ['$scope', function($scope){
-    $scope.errorMessage = "To be implemented";
+
+}]);
+
+angular.module('module.social').controller("GroupController", ['$scope', '$dialogs', 'GroupFetchService', function($scope, $dialogs, GroupFetchService){
+    var promise = GroupFetchService.getUserGroups();
+    promise.then(function(result){
+        console.log(result);
+    });
+
+    this.createGroup = function() {
+        $dialogs.createNewGroup();
+
+    }
+
+}]);
+
+angular.module('module.social').controller("FriendsController", ['$scope',function($scope){
+    this.groups = "To be implemented";
+
+}]);
+
+angular.module('module.social').controller("newGroupController", ['$scope',function($scope){
+
 }]);

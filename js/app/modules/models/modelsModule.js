@@ -829,4 +829,23 @@ angular.module('module.models').service("TagFetchService", ['$q', '$rootScope','
 
 }]);
 
+angular.module('module.models').service("GroupFetchService", ['$q','UserService', function($q, UserSrv){
+    this.getUserGroups = function() {
+        var defer = $q.defer();
+        var self = this;
 
+        new SSEntityUserCirclesGet(function(result){
+                defer.resolve(result);
+            },
+            function(error){
+                console.log(error);
+            },
+            UserSrv.getUserUri(),
+            UserSrv.getKey()
+        );
+
+        return defer.promise;
+    }
+
+
+}]);
