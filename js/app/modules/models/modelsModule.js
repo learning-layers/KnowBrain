@@ -829,15 +829,19 @@ angular.module('module.models').service("TagFetchService", ['$q', '$rootScope','
 
 angular.module('module.models').service('UserModel', ['$q', '$rootScope','UserService', function($q, $rootScope, UserSrv) {
 
+    console.log(UserSrv.getUserUri());
+    console.log(UserSrv.getKey());
+
     this.getAllUsers = function() {
 
         var defer = $q.defer();
         var self = this;
 
-        new SSUserAll().handle(
+        new SSUserAll(
             function(result){
-
+                console.log("All users:");
                 console.log(result);
+
                 defer.resolve(result);
             },
             function(error){
@@ -864,11 +868,13 @@ angular.module('module.models').service('SharingModel', ['$q', 'UserService', fu
 
     this.getEntityUsers = function(entity) {
 
+        console.log(entity.uri);
         var defer = $q.defer();
         var self = this;
 
-        new SSEntityUserEntityUsersGet().handle(
+        new SSEntityEntityUsersGet(
             function(result){
+                console.log("Entity is already shared with:");
                 console.log(result);
                 defer.resolve(result);
             },
@@ -885,7 +891,7 @@ angular.module('module.models').service('SharingModel', ['$q', 'UserService', fu
 
     this.shareEntityPublic = function(entity) {
 
-        new SSEntityUserPublicSet().handle(
+        new SSEntityPublicSet(
             function(result){
                 console.log(result)
             },
@@ -898,11 +904,11 @@ angular.module('module.models').service('SharingModel', ['$q', 'UserService', fu
         );
     };
 
-    this.shareEntityCustom = function(entity, shareWithArray) {
+    this.shareEntityCustom = function(entity, shareWithArray, comment) {
 
         console.log("Sharing with:");
         console.log(shareWithArray);
-        new SSEntityUserShare().handle(
+        new SSEntityShare(
             function(result) {
                 console.log(result)
             },
@@ -912,7 +918,8 @@ angular.module('module.models').service('SharingModel', ['$q', 'UserService', fu
             UserSrv.getUserUri(),
             UserSrv.getKey(),
             entity.uri,
-            shareWithArray
+            shareWithArray,
+            comment
         )
 
     }

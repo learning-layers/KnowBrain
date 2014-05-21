@@ -77,8 +77,7 @@ sharingModule.controller("SharingController", ['$scope','$modalInstance', '$dial
                     break;
 
                 case SHARING_OPTIONS.custom:
-                    console.log(this.sharedUsers);
-                    SharingModel.shareEntityCustom(this.entity, this.sharedUsers);
+                    SharingModel.shareEntityCustom(this.entity, this.sharedUsers, "");
                     break;
             }
             $modalInstance.close();
@@ -88,7 +87,6 @@ sharingModule.controller("SharingController", ['$scope','$modalInstance', '$dial
 
             var self = this;
 
-            console.log(this.shareWith);
             if (this.shareWith == SHARING_OPTIONS.custom) {
 
 
@@ -103,22 +101,13 @@ sharingModule.controller("SharingController", ['$scope','$modalInstance', '$dial
 
                     var allUsers = [];
                     var sharedUsers = [];
-                    var userUris;
 
-                    userUris = results[0].users;
+                    allUsers = results[0].users;
                     sharedUsers = results[1].users;
 
-                    for (var i = 0; i < userUris.length; i++) {
-                        var obj = {};
-                        obj["label"] = sSUser.getUserLabelFromUri(userUris[i]);
-                        obj["uri"] = userUris[i];
-                        allUsers.push(obj);
-                    }
-
-                    var shareWithDialog = $dialogs.shareWith(allUsers, sharedUsers);
+                    var shareWithDialog = $dialogs.shareWith(allUsers, sharedUsers, space);
 
                     shareWithDialog.result.then(function (sharedUsers) {
-                        console.log(sharedUsers);
                         self.sharedUsers = getUserUris(sharedUsers);
 
                     }, function (error) {
@@ -189,11 +178,8 @@ sharingModule.controller("ShareWithController", ['$modalInstance', 'i18nService'
 
     var findUserInArray = function(user, array) {
 
-        console.log(array);
-        console.log(user.uri);
-
         for(var i = 0; i < array.length; i++) {
-            if(array[i].uri == user.uri) {
+            if(array[i].label == user.label) {
                 return i;
             }
         }

@@ -37,7 +37,7 @@
         </div>
         <div class="row clearfix" style="height: 150px; padding:20px" id="friendsContainer">
 
-            <div class="checkbox-inline" ng-repeat="user in shareWithCtrl.allUsers | filter:shareWithCtrl.userFilter">
+            <div class="checkbox-inline" ng-repeat="user in shareWithCtrl.allUsers | filter:shareWithCtrl.userFilter" style="padding-left:2%; margin-left:0; width:18%;">
                <label>
                    <input type="checkbox" ng-click="shareWithCtrl.checkboxChanged(user, $event)" ng-checked="shareWithCtrl.isUserChecked(user)" ng-disabled="shareWithCtrl.isUserChecked(user)" class="sharedUsers"><img class="profile-pic-small" src="images/small_profile_pic_dummy.png"><span>{{user.label}}</span>
                </label>
