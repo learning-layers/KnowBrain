@@ -415,7 +415,8 @@ angular.module('dialogs.services',['ui.bootstrap.modal','dialogs.controllers'])
                     templateUrl: MODULES_PREFIX + '/social/newGroup.tpl.html',
                     controller: 'newGroupController',
                     keyboard : true,
-                    backdrop : true
+                    backdrop : true,
+                    windowClass: 'modal-huge'
                 });
             }
 		};
