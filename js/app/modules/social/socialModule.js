@@ -78,9 +78,13 @@ angular.module('module.social').controller("FriendsController", ['$scope',functi
     this.groups = "To be implemented";
 }]);
 
-angular.module('module.social').controller("newGroupController", ['$scope',function($scope){
+angular.module('module.social').controller("newGroupController", ['$scope', '$modalInstance', function($scope, $modalInstance){
     $scope.uploadPic = function() {
         console.log("TODO: Upload profile picture");
+    }
+
+    $scope.close = function() {
+        $modalInstance.dismiss('cancel');
     }
 
 }]);

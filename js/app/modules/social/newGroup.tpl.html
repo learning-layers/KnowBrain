@@ -1,26 +1,47 @@
+<div class="share-entity-header modal-header">
+    <button type="button" class="share-entity-close-button close"
+            ng-click="close()" style="margin-top: 5px;" aria-hidden="true">&times;</button>
+
+    <span class="share-entity-type-icon glyphicon glyphicon-user"></span>
+    <span class="share-entity-modal-title modal-title">New Group</span>
+
+    <div class="clearfix"></div>
+</div>
+
+
 <div class="container" style="width:100%">
-    <div class="row clearfix" style="padding:20px; height:350px">
+    <div class="row clearfix" style="padding:20px;height:250px">
         <div class="col-md-4 column" style="height: 100%;">
             <div id="upload_pic" style="position:relative; width:100%; height: 100%;">
-                <div style="border-style:solid; border-width: 2px; border-color:#e7e7e7;position: relative; line-height: 270px;">
+                <div style="border-style:solid; border-width: 2px; border-color:#e7e7e7; position: relative; line-height: 180px;">
                     <img style="max-width:100%; opacity: 0.5; position:relative;" src="images/group_pic_dummy.jpg"/>
                 </div>
                 <div style="text-align:center; padding-top: 2%"><a style="cursor:pointer" ng-click="uploadPic()"> +
                     Upload group picture</a></div>
             </div>
         </div>
-        <div class="col-md-8 column" style="padding:20px; height:100%">
+        <div class="col-md-8 column" style="height:100%">
             <div style="width: 100%; height:25%;">
                 <label style="display: block">
                     <p>Group name</p>
                 </label>
-                <input  style="width: 50%;" ng-model="groupDescription"/>
+                <input style="width: 50%;" ng-model="groupDescription"/>
             </div>
             <div style="width: 100%; height:75%; margin-top: 20px">
                 <label style="display: block">
                     <p>Group description</p>
                 </label>
-                <textarea style="resize: none; width: 100%; height:70%" ng-model="groupName"/>
+                <textarea style="resize: none; width: 100%; height:70%" ng-model="groupName"></textarea>
+            </div>
+        </div>
+    </div>
+    <div class="row clearfix" style="padding:20px; height:250px; border-style:solid; border-width: 2px; border-color:#e7e7e7;">
+        <div class="col-md-12 column" style="padding:10px;">
+            <div id="group-member-container">
+                <div style="margin-top: 0px ;" ng-show="!ajaxLoading" id="upload-box-small" class="kb-fluid-container pull-left" ng-click="addFriends()" tooltip-placement="right"
+                        >  add
+                    <div id="upload-link-small" class="glyphicon glyphicon-plus-sign" ></div>
+                </div>
             </div>
         </div>
     </div>
