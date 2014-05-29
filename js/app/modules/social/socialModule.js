@@ -44,7 +44,7 @@ angular.module('module.social').config(function($stateProvider) {
     $stateProvider.state('app.social.groups', {
         url: '/groups',
         templateUrl: MODULES_PREFIX + '/social/groups.tpl.html',
-        controller: "GroupController as groupCtrl"
+        controller: "GroupsController as groupCtrl"
     });
 
     $stateProvider.state('app.social.friends', {
@@ -61,16 +61,22 @@ angular.module('module.social').controller("SocialController", ['$scope', functi
 
 }]);
 
-angular.module('module.social').controller("GroupController", ['$scope', '$dialogs', 'GroupFetchService', function($scope, $dialogs, GroupFetchService){
+angular.module('module.social').controller("GroupsController", ['$scope', '$dialogs', 'GroupFetchService', function($scope, $dialogs, GroupFetchService){
+    
     var promise = GroupFetchService.getUserGroups();
+    
     promise.then(function(result){
         console.log(result);
     });
 
     this.createGroup = function() {
-        $dialogs.createNewGroup();
+        var newGroupDialog = $dialogs.createNewGroup();
+        
+        newGroupDialog.result.then(function(result) {
+            console.log(result);
+        });
 
-    }
+    };
 
 }]);
 
@@ -78,13 +84,96 @@ angular.module('module.social').controller("FriendsController", ['$scope',functi
     this.groups = "To be implemented";
 }]);
 
-angular.module('module.social').controller("newGroupController", ['$scope', '$modalInstance', function($scope, $modalInstance){
-    $scope.uploadPic = function() {
+angular.module('module.social').controller("newGroupController", ['$scope', '$dialogs', '$modalInstance', 'UserModel', 'GroupFetchService', function($scope, $dialogs, $modalInstance, UserModel, GroupFetchService){
+	$scope.group = {name: ""};
+	$scope.groupMembers = [];
+	
+	$scope.uploadPic = function() {
         console.log("TODO: Upload profile picture");
-    }
+        console.log($scope.group);
+    };
 
     $scope.close = function() {
         $modalInstance.dismiss('cancel');
+    };
+    
+    $scope.createGroup = function() {
+    	console.log("Creating Group");
+    	
+    	var userUrls = [];
+    	
+    	for(var i=0; i < $scope.groupMembers.length; i++) {
+    		userUrls.push($scope.groupMembers[i].uri);
+    	}
+    	console.log($scope.groupName);
+    	
+    	var promise = GroupFetchService.createGroup($scope.groupName, [], userUrls);
+    	promise.then(function(result) {
+    		console.log("Group created!");
+    		console.log(result);
+    	    $modalInstance.close(result.circleUri);
+    	});
+    };
+    
+    $scope.addMembers = function() {
+    	var promise = UserModel.getAllUsers();
+    	promise.then(function(result) {
+        	var addMembersDialog = $dialogs.addMembers(result.users, $scope.groupMembers);
+        	addMembersDialog.result.then(function() {
+        		console.log($scope.groupMembers);
+        	});
+    	});
     }
+}]);
+
+angular.module('module.social').controller("addMembersController", ['$scope', '$modalInstance', 'members', 'allUsers', function($scope, $modalInstance, members, allUsers){
+	
+	$scope.allUsers = allUsers;
+
+	$scope.close = function() {
+		console.log("Cancel");
+        $modalInstance.dismiss('cancel');
+    };
+    
+    $scope.confirm = function() {
+
+        $modalInstance.close();
+    };
+    
+    $scope.isUserChecked = function (user) {
+        if(findUserInArray(user, members) >= 0) {
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+	
+    $scope.checkboxChanged = function (user, $event) {
+
+        if ($event.currentTarget.checked) {
+
+        	console.log(user.label);
+        	members.push(user);
+        }
+        else {
+            var i = findUserInArray(user, members);
+            if(i > 0) {
+            	members.splice(i,1);
+            }
+        }
+    };
+	
+	var findUserInArray = function(user, array) {
+
+        for(var i = 0; i < array.length; i++) {
+            if(array[i].label == user.label) {
+                return i;
+            }
+        }
+
+        return -1;
+    };
 
 }]);
+

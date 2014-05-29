@@ -418,6 +418,25 @@ angular.module('dialogs.services',['ui.bootstrap.modal','dialogs.controllers'])
                     backdrop : true,
                     windowClass: 'modal-huge'
                 });
+            },
+			
+            addMembers: function(allUsers, members) {
+                return $modal.open({
+                    templateUrl: MODULES_PREFIX + '/social/addMembers.tpl.html',
+                    controller: 'addMembersController',
+                    keyboard : true,
+                    backdrop : true,
+                    windowClass: 'modal-huge',
+                    resolve: {
+                    	allUsers: function() {
+                    		return allUsers;
+                    	},
+                    	members: function() {
+                    		return members;
+                    	}
+                    }
+                    
+                });
             }
 		};
 	}]); // end $dialogs / dialogs.services
