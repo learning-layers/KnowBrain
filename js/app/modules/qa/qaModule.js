@@ -46,5 +46,45 @@ angular.module('module.qa').config(function($stateProvider) {
 * CONTROLLER
 */
 angular.module('module.qa').controller("QAController", ['$scope', function($scope){
-    $scope.errorMessage = "To be implemented";
+		$scope.header = "Q&A";
+		$scope.subheader = "Questions and Answers";
+		
+		$scope.qaType = 'question';
+		$scope.qaTitlePlaceholder = "";
+		$scope.qaTitlePopover = "";
+		$scope.qaExplanationPlaceholder = "";
+		$scope.qaExplanationPopover = "";
+		
+		$scope.qaListHeader = "Top Questions";
+		$scope.qaListFiltersIsCollapsed = false;
+		
+		$scope.qaListType = 'top';
+				
+		$scope.$watch('qaType', function(value) {
+			switch($scope.qaType) {
+				case 'question':
+					$scope.qaTitlePlaceholder = "Enter title of your question";
+					$scope.qaTitlePopover = "Your question title is the first thing another user sees. It should be clear, concise, and contain enough information so that others can see what it’s about at first glance";
+					$scope.qaExplanationPlaceholder = "Add an explanation to your question";
+					$scope.qaExplanationPopover = "TODO: Explain why this question explanation is important";
+					break;
+				case 'discussion':
+					$scope.qaTitlePlaceholder = "Enter title of your discussion";
+					$scope.qaTitlePopover = "Your discussion title is the first thing another user sees. It should be clear, concise, and contain enough information so that others can see what it’s about at first glance";
+					$scope.qaExplanationPlaceholder = "Add an explanation to your discussion";
+					$scope.qaExplanationPopover = "TODO: Explain why this discussion explanation is important";
+					break;
+				case 'chat':
+					$scope.qaTitlePlaceholder = "Enter title of your chat";
+					$scope.qaTitlePopover = "Your chat title is the first thing another user sees. It should be clear, concise, and contain enough information so that others can see what it’s about at first glance";
+					$scope.qaExplanationPlaceholder = "Add an explanation to your chat";
+					$scope.qaExplanationPopover = "TODO: Explain why this chat explanation is important";
+					break;
+				}	
+		});
+		
+		$scope.$watch('qaListType', function(value) {
+			if($scope.qaListType == 'top')
+		});
+				
 }]);

@@ -1,1 +1,89 @@
-<div>{{errorMessage}}</div>
+<div class="container" role="main">
+			
+				<div class="row clearfix">
+					<div class="col-md-12 column">
+						<div class="page-header">
+							<h1>
+								{{header}} <small>{{subheader}}</small>
+							</h1>
+						</div>
+					</div>
+				</div>
+
+				<div class="row clearfix">
+					<div class="col-md-7 column">
+					
+						<div class="btn-group input-group-qa">
+							<label class="btn btn-default" ng-model="qaType" btn-radio="'question'">
+								<span class="glyphicon glyphicon-question-sign"></span>
+									Question
+							</label>
+							
+							<label class="btn btn-default" ng-model="qaType" btn-radio="'discussion'">
+								<span class="glyphicon glyphicon-comment"></span>
+									Discussion
+							</label>
+							
+							<label class="btn btn-default" ng-model="qaType" btn-radio="'chat'">
+								<span class="glyphicon glyphicon-user"></span>
+									Chat
+							</label>
+					
+						</div>
+						
+						<input type="text" class="form-control input-group-qa" placeholder="{{qaTitlePlaceholder}}" popover-animation="true" popover-placement="left" popover-trigger="mouseenter" popover="{{qaTitlePopover}}">
+						
+						<textarea class="form-control input-group-qa" rows="5" placeholder="{{qaExplanationPlaceholder}}" popover-animation="true" popover-placement="left" popover-trigger="mouseenter" popover="{{qaExplanationPopover}}"></textarea>
+						
+						<button type="button" class="btn btn-success btn-lg pull-right">Show me similar questions</button>
+					</div>
+					
+					<div class="col-md-5 column">
+					</div>
+					
+				</div>
+
+				<div class="row clearfix" id="question-list">
+					<div class="row clearfix">
+						<div class="col-md-12 column">
+							<ul class="nav nav-pills pull-left">
+								<li>
+									<h3 id="qaListHeader">{{qaListHeader}}</h3>
+								</li>
+							</ul>
+							
+							<ul class="nav nav-pills pull-left">
+								<li>
+									<input type="search" class="form-control">
+								</li>
+							</ul>
+							
+							<ul class="nav nav-pills pull-right" collapse="qaListFiltersIsCollapsed">
+								<li class="active">
+									<a href="#">
+										<span class="badge">2</span> Interesting
+									</a>
+								</li>
+								<li>
+									<a href="#">
+										<span class="badge">8</span> Featured
+									</a>	
+								</li>
+								<li>
+									<a href="#">Hot</a>
+								</li>
+								<li>
+									<a href="#">Week</a>
+								</li>
+								<li>
+									<a href="#">Month</a>
+								</li>
+							</ul>
+
+						</div>
+					</div>
+				</div>
+				
+				
+
+			</div> <!-- /container -->
