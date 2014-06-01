@@ -46,7 +46,8 @@ angular.module('knowbrain', [
   'ngTagsInput',
   'module.social',
   'module.qa',
-  'module.group'
+  'module.group',
+  'module.entity'
 
   ]).config(['$stateProvider', '$urlRouterProvider', '$locationProvider', '$tooltipProvider',function ($stateProvider, $urlRouterProvider, $locationProvider, $tooltipProvider) {
 

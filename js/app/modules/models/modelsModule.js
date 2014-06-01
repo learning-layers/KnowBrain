@@ -192,7 +192,8 @@ angular.module('module.models').factory('BaseModel', ['$q', '$rootScope', 'UserS
         commentText,
         addNewDisc,
         discType,
-        discLabel
+        discLabel,
+        "some explanation"
         );
 
       return defer.promise;

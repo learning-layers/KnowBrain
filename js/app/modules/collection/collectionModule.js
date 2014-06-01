@@ -25,7 +25,7 @@
 /**
 * COLLECTION MODULE 
 */
-angular.module('module.collection',['module.i18n', 'module.cookies', 'module.models', 'ui.bootstrap', 'module.utilities', 'ui.bootstrap.rating', 'dialogs']);
+angular.module('module.collection',['module.i18n', 'module.cookies', 'module.models', 'ui.bootstrap', 'module.utilities', 'ui.bootstrap.rating', 'dialogs', 'module.entity']);
 
 /**
 * CONFIG 
