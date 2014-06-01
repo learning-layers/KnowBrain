@@ -1,89 +1,180 @@
 <div class="container" role="main">
 			
 				<div class="row clearfix">
-					<div class="col-md-12 column">
-						<div class="page-header">
-							<h1>
-								{{header}} <small>{{subheader}}</small>
-							</h1>
-						</div>
-					</div>
-				</div>
-
-				<div class="row clearfix">
-					<div class="col-md-7 column">
+					<div class="col-md-8 column">
 					
-						<div class="btn-group input-group-qa">
-							<label class="btn btn-default" ng-model="qaType" btn-radio="'question'">
-								<span class="glyphicon glyphicon-question-sign"></span>
+						<div class="btn-group thread-input-group">
+							<label class="btn btn-default" ng-model="threadType" btn-radio="'qa'">
+								<span class="glyphicon glyphicon-question"></span>
 									Question
 							</label>
 							
-							<label class="btn btn-default" ng-model="qaType" btn-radio="'discussion'">
-								<span class="glyphicon glyphicon-comment"></span>
+							<label class="btn btn-default" ng-model="threadType" btn-radio="'disc'">
+								<span class="glyphicon glyphicon-discussion"></span>
 									Discussion
 							</label>
 							
-							<label class="btn btn-default" ng-model="qaType" btn-radio="'chat'">
-								<span class="glyphicon glyphicon-user"></span>
+							<label class="btn btn-default" ng-model="threadType" btn-radio="'chat'">
+								<span class="glyphicon glyphicon-chat"></span>
 									Chat
 							</label>
 					
 						</div>
 						
-						<input type="text" class="form-control input-group-qa" placeholder="{{qaTitlePlaceholder}}" popover-animation="true" popover-placement="left" popover-trigger="mouseenter" popover="{{qaTitlePopover}}">
-						
-						<textarea class="form-control input-group-qa" rows="5" placeholder="{{qaExplanationPlaceholder}}" popover-animation="true" popover-placement="left" popover-trigger="mouseenter" popover="{{qaExplanationPopover}}"></textarea>
-						
-						<button type="button" class="btn btn-success btn-lg pull-right">Show me similar questions</button>
+						<input type="text" class="form-control thread-input-group" ng-model="threadTitle" placeholder="{{titlePlaceholder}}" ng-focus="showHelp('title')"></input>
+	
+						<textarea class="form-control thread-input-group" ng-model="threadExplanation" ng-class="(threadType == 'chat') ? 'hidden' : ''" rows="5" placeholder="{{explanationPlaceholder}}" ng-focus="showHelp('explanation')"></textarea>
+
+						<button type="button" class="btn btn-success btn-lg pull-right" ng-click="addNewThread(threadType, threadTitle, threadExplanation).then(loadAuthorDetails)">Show me similar {{threadTypeLabel}}s</button>
 					</div>
 					
-					<div class="col-md-5 column">
+					<div class="col-md-4 column well help">
+						<p class="lead">
+							Help
+						</p>
+						<p>
+							{{help}}
+						</p>
 					</div>
 					
 				</div>
 
-				<div class="row clearfix" id="question-list">
+				<div class="row clearfix" id="thread-list-nav">
+				
 					<div class="row clearfix">
 						<div class="col-md-12 column">
 							<ul class="nav nav-pills pull-left">
 								<li>
-									<h3 id="qaListHeader">{{qaListHeader}}</h3>
+									<h3 id="thread-list-header">{{listHeader}}</h3>
 								</li>
 							</ul>
 							
 							<ul class="nav nav-pills pull-left">
 								<li>
-									<input type="search" class="form-control">
+									<input type="search" class="form-control" placeholder="search">
 								</li>
 							</ul>
 							
-							<ul class="nav nav-pills pull-right" collapse="qaListFiltersIsCollapsed">
+							<ul class="nav nav-pills pull-right" collapse="listFiltersIsCollapsed">
 								<li class="active">
 									<a href="#">
-										<span class="badge">2</span> Interesting
+										<span class="badge">2</span> Top
 									</a>
 								</li>
 								<li>
 									<a href="#">
-										<span class="badge">8</span> Featured
+										<span class="badge">8</span> Newest
 									</a>	
 								</li>
 								<li>
-									<a href="#">Hot</a>
-								</li>
-								<li>
-									<a href="#">Week</a>
-								</li>
-								<li>
-									<a href="#">Month</a>
+									<a href="#">Unanswered</a>
 								</li>
 							</ul>
-
+						</div>
+					</div>
+				</div>					
+				
+<!-- 				<div class="row clearfix thread">
+					<div class="col-md-3 column">
+						<div class="thread-type-icon icon-answered">
+						</div>
+						<div class="thread-statistic center-block">
+							<p class="thread-statistic lead" bind-once>{{getRandomNumber(50)}} votes</p>
+							<p class="thread-statistic text-muted" bind-once>{{getRandomNumber(20)}} answers</p>
+							<p class="thread-statistic text-muted" bind-once>{{getRandomNumber(2000)}} views</p>
+						</div>
+					</div>
+					<div class="col-md-9 column">
+						<p class="lead thread-title">
+							Lorem ipsum dolor sit amet, consetetur sadipscing elitr
+						</p>
+						<div class="row">
+							<div class="col-md-3 column">
+									<div class="thread-icon icon-user">
+									</div>
+									<div class="thread-author">
+										<p class="thread-author">lukas</p>
+										<p class="thread-author text-muted" bind-once>{{getRandomNumber(1000)}}</p>
+									</div>
+									<div class="thread-author">
+										<p class="thread-author text-muted">27.5.2014</p>
+										<p class="thread-author text-muted">08:05:00</p>
+									</div>
+							</div>
+							<div class="col-md-3 column">
+									<div class="thread-icon icon-entity">
+									</div>
+									<div class="thread-author">
+										<p class="thread-author">collection</p>
+										<p class="thread-author text-muted">my folder</p>
+									</div>
+							</div>
+							<div class="col-md-6 column">
+								place for tag control
+							</div>
+						</div>
+					</div>
+				</div> -->
+								
+				<div class="row clearfix thread" ng-repeat="thread in threadList">
+					<div class="col-md-3 col-xs-12 column" bind-once>
+						<div class="thread-type-icon" ng-class="(thread.type == 'qa') ? 'icon-question' : ((thread.type == 'disc') ? 'icon-discussion' : ((thread.type == 'chat') ? 'icon-chat' : ((thread.type == 'answered') ? 'icon-answered' : '')))">
+						</div>
+						<div class="thread-statistic center-block">
+							<p class="thread-statistic lead">{{getRandomNumber(50)}} {{thread.type == 'qa' ? 'votes' : (thread.type == 'disc' ? 'likes' : (thread.type == 'chat' ? 'members' : ''))}}</p>
+							<p class="thread-statistic text-muted">{{getRandomNumber(20)}} {{thread.type == 'qa' ? 'answers' : (thread.type == 'disc' ? 'opinions' : (thread.type == 'chat' ? 'messages' : ''))}}</p>
+							<p class="thread-statistic text-muted">{{getRandomNumber(2000)}} views</p>
+						</div>
+					</div>
+					<div class="col-md-9 col-xs-12 column">
+						<p class="lead thread-title" bind-once>
+							{{thread.title}}
+						</p>
+						<div class="row">
+							<div class="col-md-3 col-xs-6 column">
+									<div class="thread-icon icon-user">
+									</div>
+									<div class="thread-author">
+										<p class="thread-author">{{thread.author.name}}</p>
+										<p class="thread-author text-muted" bind-once>{{getRandomNumber(1000)}}</p>
+									</div>
+									<div class="thread-author">
+										<p class="thread-author text-muted" bind-once>{{thread.creationTime.toLocaleDateString()}}</p>
+										<p class="thread-author text-muted" bind-once>{{thread.creationTime.toLocaleTimeString()}}</p>
+									</div>
+							</div>
+							<div class="col-md-3 col-xs-6 column">
+									<div class="thread-icon icon-entity">
+									</div>
+									<div class="thread-author">
+										<p class="thread-author">collection</p>
+										<p class="thread-author text-muted">my folder</p>
+									</div>
+							</div>
+							<div class="col-md-6 col-xs-12 column">
+								place for tag control
+							</div>
 						</div>
 					</div>
 				</div>
 				
-				
+				<div class="row clearfix">
+					<div class="col-md-4">
+					</div>
+					<div class="col-md-4 column container">
+						<ul class="pagination">
+							<li class="disabled"><a href="#">&laquo;</a></li>
+							<li class="active"><a href="#">1 <span class="sr-only">(current)</span></a></li>
+							  <li><a href="#">2</a></li>
+								<li><a href="#">3</a></li>
+								<li><a href="#">4</a></li>
+								<li><a href="#">5</a></li>
+								<li class="disabled"><a href="#">&raquo;</a></li>
+						</ul>
+					</div>
+					<div class="col-md-4">
+					</div>
+				</div>
+							
 
 			</div> <!-- /container -->

@@ -23,16 +23,121 @@
 
 /* QA MODULE CSS DEFINITONS */
 
-.input-group-qa {
+/* Thread input area */
+
+.thread-input-group {
 	margin-bottom: 10px;
 }
 
-#question-list {
-	margin: 0;
-	padding-top: 3em;
+.help{
+	height: 260px;
+	padding: 22px;
 }
 
-#qaListHeader {
+.glyphicon-question{
+	width: 14px;
+	height: 14px;
+	background-image: url('../../../../images/qa/question_14x14.png');
+}
+
+.glyphicon-discussion{
+	width: 14px;
+	height: 14px;
+	background-image: url('../../../../images/qa/discussion_14x14.png');
+}
+
+.glyphicon-chat{
+	width: 14px;
+	height: 14px;
+	background-image: url('../../../../images/qa/chat_14x14.png');
+}
+
+/* Thread list area */
+
+.thread-type-icon {
+	width:80px;
+	height:80px;
+	float:left;
+	border-top-left-radius:4px;
+	border-bottom-left-radius:4px;
+}
+
+.thread-icon{
+	width:32px;
+	height:32px;
+	float:left;
+	margin-top:4px;
+}
+
+.icon-user{
+	background-image: url('../../../../images/qa/user-default_32x32.png');
+}
+
+.icon-entity{
+	background-image: url('../../../../images/qa/entity_32x32.png');
+}
+
+.icon-question {
+	background-image: url('../../../../images/qa/question_80x80.png');
+}
+
+.icon-discussion {
+	background-image: url('../../../../images/qa/discussion_80x80.png');
+}
+
+.icon-chat {
+	background-image: url('../../../../images/qa/chat_80x80.png');
+}
+
+.icon-answered {
+	background-image: url('../../../../images/qa/answered_80x80.png');
+}
+
+div.thread-statistic {
+	width:150px;
+	height:80px;
+	float:left;
+	border-top:solid 1px #ddd;
+	border-bottom:solid 1px #ddd;
+	border-right:solid 1px #ddd;
+	border-top-right-radius:4px;
+	border-bottom-right-radius:4px;
+	padding-left:20px;
+	padding-top:3px;
+}
+
+p.thread-statistic {
+	margin: 0;
+	padding: 0;
+}
+
+p.thread-author {
+	margin: 0px 15px 0px 5px;
+	padding: 0;
+}
+
+div.thread-author{
+	float:left;
+}
+
+div.thread {
+	margin-bottom: 40px;
+}
+
+p.thread-title{
+	margin: 0px 0px 11px 0px;
+}
+
+#thread-list-nav {
+	margin-bottom: 2em;
+	margin-top: 5em;
+	background: #f5f5f5;
+	padding: 20px 20px 20px 20px;
+	border: 1px solid #e3e3e3; 
+	border-radius: 4px;
+}
+
+#thread-list-header {
 	margin-top: 5px;
 	margin-bottom: 0;
 	margin-right: 20px;
