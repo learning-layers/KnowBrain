@@ -1,9 +1,14 @@
 'use strict';
 
-var groupModule = angular.module('module.group',[]);
+var entityModule = angular.module('module.entity',[]);
 
-groupModule.directive('ngEntity', function() {
+entityModule.controller('EntityController', ['$scope', function($scope) {
+}]);
+
+entityModule.directive('ngEntity', function() {
     return {
-        templateUrl: "entity.tpl.html"
+        restrict:"E",
+        transclude:true,
+        templateUrl: MODULES_PREFIX + "/entity/entity.tpl.html"
       };
 });
