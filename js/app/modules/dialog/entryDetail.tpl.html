@@ -23,7 +23,7 @@
     <button type="button" class="entry-detail-close-button close" ng-click="close()" style="margin-top:5px;" aria-hidden="true">&times;</button>
     <h4 class="modal-title"></h4>
     
-    <span class="entry-detail-type-icon glyphicon" ng-class="{'glyphicon-file': (entry.entityType == ENTITY_TYPES.file), 'glyphicon-link' : (entry.entityType == ENTITY_TYPES.link)}"></span>
+    <span class="entry-detail-type-icon glyphicon" ng-class="{'glyphicon-file': (entry.type == ENTITY_TYPES.file), 'glyphicon-link' : (entry.type == ENTITY_TYPES.link)}"></span>
     <div class="entry-detail-inline-edit"><edit-in-place model="entry.label" save-method="entry.saveLabel(newLabel)"></edit-in-place><div class="clearfix"></div></div>
     <div class="clearfix"></div>
     
@@ -32,19 +32,19 @@
 
    <div class="entry-detail-preview col-xs-7">
 
-    <div class="entry-detail-preview-icon glyphicon" class="glyphicon" ng-class="{'glyphicon-file': (entry.entityType == ENTITY_TYPES.file), 'glyphicon-link' : (entry.entityType == ENTITY_TYPES.link)}"></div>
+    <div class="entry-detail-preview-icon glyphicon" class="glyphicon" ng-class="{'glyphicon-file': (entry.type == ENTITY_TYPES.file), 'glyphicon-link' : (entry.type == ENTITY_TYPES.link)}"></div>
 
     <div class="entry-detail-preview-actions btn-group">
 
-      <button type="button" class="btn btn-default" ng-show="(entry.entityType == ENTITY_TYPES.file) && !entry.downloading" ng-click="downloadEntity()">
+      <button type="button" class="btn btn-default" ng-show="(entry.type == ENTITY_TYPES.file) && !entry.downloading" ng-click="downloadEntity()">
        <span class="glyphicon glyphicon-cloud-download" tooltip-placement="top" tooltip="{{t('download')}}"></span>
       </button>
 
-      <button type="button" class="btn btn-default entry-detail-download-indicator" ng-show="(entry.entityType == ENTITY_TYPES.file) && entry.downloading" >
+      <button type="button" class="btn btn-default entry-detail-download-indicator" ng-show="(entry.type == ENTITY_TYPES.file) && entry.downloading" >
        <span class="glyphicon ajax-loader-light-grey-xs"  tooltip-placement="top" tooltip="{{t('downloading')}}"></span>
       </button>
 
-      <button type="button" class="btn btn-default" ng-show="entry.entityType == ENTITY_TYPES.link" ng-click="openLink()">
+      <button type="button" class="btn btn-default" ng-show="entry.type == ENTITY_TYPES.link" ng-click="openLink()">
        <span class="glyphicon glyphicon-globe" tooltip-placement="top" tooltip="{{t('follow_link')}}"></span>
       </button>
 
@@ -71,7 +71,7 @@
 
    <div class="entry-detail-info-actions btn-group">
 
-      <button type="button" class="btn btn-default" ng-show="entry.entityType == ENTITY_TYPES.file" ng-click="downloadEntity()">
+      <button type="button" class="btn btn-default" ng-show="entry.type == ENTITY_TYPES.file" ng-click="downloadEntity()">
        <span class="glyphicon glyphicon-cloud-download" tooltip-placement="top" tooltip="{{t('download')}}"></span>
       </button>
 
@@ -94,7 +94,7 @@
     <h5>Rating:</h5> 
     <div class="entry-detail-info-rating">
       <rating ui-if="ifVal" value="entry.overallRating.score" readOnly="ratingReadOnly" max="5" ng-click="rateEntry(entry.overallRating.score);" state-on="'star-rating-cursor glyphicon glyphicon-star'" state-off="'star-rating-cursor glyphicon glyphicon-star-empty'"></rating>
-      ({{entry.overallRating.frequency}})
+      ({{entry.overallRating.frequ}})
     </div>
 
     <h5>Tags:</h5> 

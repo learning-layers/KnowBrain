@@ -72,12 +72,12 @@ angular.module('module.authorisation').controller("AuthController", [
   */
   $scope.login = function(auth){
     // login user
-    if(angular.isString(auth.username) && angular.isString(auth.password))
+    if(angular.isString(auth.label) && angular.isString(auth.password))
     {
       $rootScope.activateLoadingIndicator();
       UserSrv.login(auth).then(
         function(){
-          $state.transitionTo('app.collection.content', { collUri: 'root'});
+          $state.transitionTo('app.collection.content', { coll: 'root'});
           $rootScope.deactivateLoadingIndicator();
         },
         function(){
@@ -108,16 +108,16 @@ angular.module('module.authorisation').service('UserService', ['$q', '$rootScope
     return JSON.parse(cookiesSrv.getCookie(AUTH_CONSTANTS.authCookieName));
   };
 
+//  this.getUser = function(){
+//    return self.getUserCookie();
+//  };
+
+  this.getLabel = function(){
+    return self.getUserCookie().label;
+  };
+
   this.getUser = function(){
-    return self.getUserCookie();
-  };
-
-  this.getUsername = function(){
-    return self.getUserCookie().username;
-  };
-
-  this.getUserUri = function(){
-    return self.getUserCookie().uri;  
+    return self.getUserCookie().user;  
   };
 
   this.getUserSpace = function(){
@@ -136,13 +136,13 @@ angular.module('module.authorisation').service('UserService', ['$q', '$rootScope
        
        function(result){
          var userKey = result.key;
-         var userUri = result.uri;
+         var user    = result.user;
        
          var authData = {
-           username: auth.username,
+           label: auth.label,
            key: userKey,
-           uri: userUri,
-           space: UriToolbox.extractUriHostPart(userUri)
+           user: user,
+           space: UriToolbox.extractUriHostPart(user)
          };
 
          if(auth.remember){
@@ -158,7 +158,7 @@ angular.module('module.authorisation').service('UserService', ['$q', '$rootScope
          defer.reject();
          $rootScope.$apply();
        },
-       auth.username,
+       auth.label,
        auth.password);
        
      return defer.promise;
