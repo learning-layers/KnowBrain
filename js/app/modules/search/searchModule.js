@@ -173,7 +173,7 @@ angular.module('module.search').controller("SearchController", [
   };
 
   $scope.transitionToHome = function(){
-    $state.go('app.collection.content',{collUri: "root"});
+    $state.go('app.collection.content',{coll: "root"});
   }
 
   var searchByTags = function(tagsArray){
@@ -194,7 +194,7 @@ angular.module('module.search').controller("SearchController", [
       $rootScope.$apply();
     }, 
     function(error){ console.log(error); }, 
-    UserSrv.getUserUri(),
+    UserSrv.getUser(),
     UserSrv.getKey(),
     jSGlobals.or, 
     tagsArray, 
@@ -222,7 +222,7 @@ angular.module('module.search').controller("SearchController", [
       $rootScope.$apply();
     }, 
     function(error){ console.log(error); }, 
-    UserSrv.getUserUri(),
+    UserSrv.getUser(),
     UserSrv.getKey(),
     jSGlobals.or, 
     keywordsArray
@@ -238,8 +238,8 @@ var initEntitiesBySearchResult = function(searchResult){
   angular.forEach(searchResult, function(value, key){
     var entity = new EntityModel();
     entity.init(value);
-    entity.init({entityType: value.type});
-    entity.init({uriPathnameHash: UriToolbox.extractUriHostPartWithoutProtocol(value.uri)});
+    entity.init({type: value.type});
+    entity.init({uriPathnameHash: UriToolbox.extractUriHostPartWithoutProtocol(value.id)});
     entities.push(entity);
   });
 
@@ -248,7 +248,7 @@ var initEntitiesBySearchResult = function(searchResult){
 
   $scope.entityClickAction = function(entity){
 
-    var promise = EntityFetchService.getEntityByUri(entity.uri, true, true, true);
+    var promise = EntityFetchService.getEntityByUri(entity.entity, true, true, true);
 
     promise.then(
       function(entity){

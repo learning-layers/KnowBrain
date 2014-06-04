@@ -40,21 +40,21 @@ angular.module('module.collection').config(function ($stateProvider) {
         });
 
   $stateProvider.state('app.collection.content', {
-    url:'/collection/:collUri',
+    url:'/collection/:coll',
     views: {
       "context": {
         templateUrl: MODULES_PREFIX + '/collection/context.tpl.html',
         controller: function($stateParams, $scope, CurrentCollectionService, $state) {
 
-            var collUri = null;
-            if($stateParams.collUri == "")
+            var coll = null;
+            if($stateParams.coll == "")
             {
-              collUri = "root";
+              coll = "root";
             }else{
-              collUri = $stateParams.collUri;
+              coll = $stateParams.coll;
             }
 
-            $scope.loadCurrentCollection(collUri);
+            $scope.loadCurrentCollection(coll);
         }
       },
       "context-info":{
@@ -66,7 +66,7 @@ angular.module('module.collection').config(function ($stateProvider) {
     } 
   })
   .state('app.collection.entry',{
-    url:'/collection/:collUri/entry/:entry',
+    url:'/collection/:coll/entry/:entry',
     views: {
       "context": {
         templateUrl: MODULES_PREFIX + '/collection/context.tpl.html',
@@ -77,16 +77,16 @@ angular.module('module.collection').config(function ($stateProvider) {
           // this won't work if you share a url with other users (only if currentCollection is public)
           var promise;
 
-          if(CurrentCollectionService.getCurrentCollection() === null || CurrentCollectionService.getCurrentCollection().uriPathnameHash != $stateParams.collUri)
+          if(CurrentCollectionService.getCurrentCollection() === null || CurrentCollectionService.getCurrentCollection().uriPathnameHash != $stateParams.coll)
           {
-            promise = $scope.loadCurrentCollection($stateParams.collUri);
+            promise = $scope.loadCurrentCollection($stateParams.coll);
           }else{
             var defer = $q.defer();
             promise = defer.promise;
             defer.resolve();
           }
 
-          $scope.loadCurrentEntity(promise, $stateParams.entry, $stateParams.collUri);
+          $scope.loadCurrentEntity(promise, $stateParams.entry, $stateParams.coll);
         },
       },
       "context-info":{
@@ -167,17 +167,17 @@ angular.module('module.collection').controller("CollectionController", [
     $scope.cumulatedTagsLoading = false;
   };
 
-  $scope.loadCurrentCollection = function(collUri){
+  $scope.loadCurrentCollection = function(coll){
 
     $rootScope.activateLoadingIndicator();
     $scope.activateCumulatedTagsLoadingIndicator();
     
     var defer = $q.defer();
 
-    if(collUri === 'root'){
+    if(coll === 'root'){
       $scope.loadRootCollection(defer);
     }else{
-      self.loadCollectionByUri(collUri, defer);
+      self.loadCollectionByUri(coll, defer);
     }
 
     return defer.promise;
@@ -190,16 +190,16 @@ angular.module('module.collection').controller("CollectionController", [
     promise.then(function(model){
       $rootScope.deactivateLoadingIndicator();
       self.renderCollectionContent(model);
-      $state.transitionTo('app.collection.content', { collUri: model.uriPathnameHash});
+      $state.transitionTo('app.collection.content', { coll: model.uriPathnameHash});
       defer.resolve();
     },function(error){
       console.log(error);
     });
   };
 
-  this.loadCollectionByUri = function(collUri, defer){
+  this.loadCollectionByUri = function(coll, defer){
 
-    var promise = CollectionFetchService.getCollectionByUri(collUri);
+    var promise = CollectionFetchService.getCollectionByUri(coll);
 
     promise.then(function(model){
       $rootScope.deactivateLoadingIndicator()
@@ -246,7 +246,7 @@ angular.module('module.collection').controller("CollectionController", [
     if(entry.isCollection()){
       $scope.openCollection(entry.uriPathnameHash);
     }else{
-      $state.transitionTo('app.collection.entry', { collUri: CurrentCollectionService.getCurrentCollection().uriPathnameHash, entry:entry.uriPathnameHash});
+      $state.transitionTo('app.collection.entry', { coll: CurrentCollectionService.getCurrentCollection().uriPathnameHash, entry:entry.uriPathnameHash});
     }
     
   };
@@ -258,7 +258,7 @@ angular.module('module.collection').controller("CollectionController", [
   }
 
   $scope.openCollection = function(uriPathnameHash){
-    $state.transitionTo('app.collection.content', { collUri: uriPathnameHash});
+    $state.transitionTo('app.collection.content', { coll: uriPathnameHash});
   };
 
   $scope.loadCurrentEntity = function(event, entryUri, parentCollectionUri){
@@ -269,12 +269,12 @@ angular.module('module.collection').controller("CollectionController", [
 
       if(entry != null){
 
-        var promise = EntityFetchService.getEntityByUri(entry.uri, true, true, true);
+        var promise = EntityFetchService.getEntityByUri(entry.id, true, true, true);
 
         promise.then(
           function(entity){
             entity.init({parentColl:CurrentCollectionService.getCurrentCollection()});
-            self.openEntryDetailView(entity,$scope);
+            self.openEntryDetailView(entity, $scope);
           },
           function(error){
             console.log(error);
@@ -293,13 +293,13 @@ angular.module('module.collection').controller("CollectionController", [
     var dialog = $dialogs.entryDetail(entry);
 
     dialog.result.finally(function(btn){      
-      $state.transitionTo('app.collection.content', { collUri: CurrentCollectionService.getCurrentCollection().uriPathnameHash});
+      $state.transitionTo('app.collection.content', { coll: CurrentCollectionService.getCurrentCollection().uriPathnameHash});
     });
   };
 
   $scope.closeModal = function(){
     $scope.modal.close(true);
-    $state.transitionTo('app.collection.content', { collUri: CurrentCollectionService.getCurrentCollection().uriPathnameHash});
+    $state.transitionTo('app.collection.content', { coll: CurrentCollectionService.getCurrentCollection().uriPathnameHash});
   };
 
   $scope.leaveCurrentCollectionRating = function(rating){
@@ -324,7 +324,7 @@ angular.module('module.collection').controller("CollectionController", [
 
   angular.forEach(entries, function(entry, key){
     if(entry.isSelected){
-      toDelete.push(entry.uri);
+      toDelete.push(entry.id);
       toDeleteKeys.push(key);
     }
   });
@@ -478,7 +478,7 @@ angular.module('module.collection').controller("UploadController", ['$q', '$scop
     var currColl = CurrentCollectionService.getCurrentCollection();
 
     var entries = [];
-    var entryLabels = [];
+    var labels = [];
     var uploadCounter = 0;
     var fileCount = $scope.filesArray.length;
 
@@ -495,9 +495,9 @@ angular.module('module.collection').controller("UploadController", ['$q', '$scop
           function(entry){
             file.uploading = false;
             file.uploaded = true;
-            file.uriPathnameHash = UriToolbox.extractUriPathnameHash(entry.uri);
-            entries.push(entry.uri);
-            entryLabels.push(entry.label);
+            file.uriPathnameHash = UriToolbox.extractUriPathnameHash(entry.id);
+            entries.push(entry.id);
+            labels.push(entry.label);
             uploadCounter++;
             newEntrieObjects.push(entry);
 
@@ -514,7 +514,7 @@ angular.module('module.collection').controller("UploadController", ['$q', '$scop
 
     defer.promise.then(
       function(){
-        currColl.addEntries(entries, entryLabels).then(
+        currColl.addEntries(entries, labels).then(
           function(result){
             angular.forEach(newEntrieObjects, function(newEntry, key){
               currColl.entries.push(newEntry);
@@ -529,7 +529,7 @@ angular.module('module.collection').controller("UploadController", ['$q', '$scop
   $scope.openEntry = function(indexOfFileArray){
     if($scope.filesArray[indexOfFileArray].uploaded){
      var hash = $scope.filesArray[indexOfFileArray].uriPathnameHash;
-     $state.transitionTo('app.collection.entry', { collUri: CurrentCollectionService.getCurrentCollection().uriPathnameHash, entry:hash});
+     $state.transitionTo('app.collection.entry', { coll: CurrentCollectionService.getCurrentCollection().uriPathnameHash, entry:hash});
    }      
  };
 
