@@ -12,3 +12,11 @@ entityModule.directive('ngEntity', function() {
         templateUrl: MODULES_PREFIX + "/entity/entity.tpl.html"
       };
 });
+
+entityModule.directive('ngEntitySmall', function() {
+    return {
+        restrict:"E",
+        transclude:true,
+        templateUrl: MODULES_PREFIX + "/entity/entitySmall.tpl.html"
+      };
+});
