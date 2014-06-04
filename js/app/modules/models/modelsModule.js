@@ -190,8 +190,10 @@ angular.module('module.models').factory('BaseModel', ['$q', '$rootScope', 'UserS
       entity,
       self.id,
       entry,
-        addNewDisc,
-		"some explanation"        );
+      addNewDisc,
+      type,
+      label,
+      "some explanation");
 
       return defer.promise;
     },
