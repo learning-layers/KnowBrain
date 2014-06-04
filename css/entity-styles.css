@@ -1,0 +1,250 @@
+.collection-entry {
+  width: 124px;
+  height: 112px;
+  margin-right: 4px;
+  color: #5e5e5e;
+  text-align: center;
+  padding-top: 2px;
+  margin-top: 18px;
+}
+
+.collection-entry:hover{
+  cursor: pointer;
+  color: #2a6496;
+  border: 2px solid #DBDBDB;
+  padding-top: 0px;
+}
+
+.collection-entry:hover .collection-entry-checkbox-wrapper{
+  cursor: pointer;
+  color: #2a6496;
+  visibility: visible;
+}
+
+.collection-entry-selected{
+  cursor: pointer;
+  color: #2a6496;
+  border: 2px solid #DBDBDB;
+  padding-top: 0px;
+}
+
+.collection-entry-preview-box {
+  position: relative; 
+  height: 70px;
+}
+
+.collection-entry-preview-box div {
+  font-size: 60px;
+  padding-top: 0px;
+  margin: auto;
+}
+
+#collection-entry-preview-box-glyphicon {
+  padding-top: 8px;
+}
+
+.collection-entry-description-box {
+  position: relative;
+  height: 40px;
+  overflow: hidden;
+  font-size: 12px;
+  margin-top: 3px;
+  text-align: center;
+}
+
+.collection-entry-checkbox-wrapper {
+  position:absolute;
+  height:21px;
+  width: 21px;
+  visibility: hidden;
+  background-color: #DBDBDB;
+  padding-right: 1px;
+}
+
+.collection-entry-checkbox-wrapper-selected {
+  visibility: visible;
+}
+
+.collection-entry-checkbox {
+  position: relative;
+  width: 15px;
+  height: 15px;
+  vertical-align: top;
+  margin: 0px;
+  padding: 0px;
+  top: -1px;
+  cursor: pointer;
+}
+
+.collection-entry-small {
+  width: 80px;
+  height: 75px;
+  margin-right: 2px;
+  color: #5e5e5e;
+  text-align: center;
+  padding-top: 1px;
+  margin-top: 9px;
+}
+
+.collection-entry-small:hover{
+  cursor: pointer;
+  color: #2a6496;
+  border: 2px solid #DBDBDB;
+  padding-top: 0px;
+}
+
+.collection-entry-small:hover .collection-entry-small-checkbox-wrapper{
+  cursor: pointer;
+  color: #2a6496;
+  visibility: visible;
+}
+
+.collection-entry-small-selected {
+  cursor: pointer;
+  color: #2a6496;
+  border: 2px solid #DBDBDB;
+  padding-top: 0px;
+}
+
+.collection-entry-small-preview-box {
+  position: relative; 
+  height: 50px;
+}
+
+.collection-entry-small-preview-box div {
+  font-size: 40px;
+  padding-top: 0px;
+  margin: auto;
+}
+
+#collection-entry-small-preview-box-glyphicon {
+  padding-top: 4px;
+}
+
+.collection-entry-small-description-box {
+  position: relative;
+  height: 25px;
+  overflow: hidden;
+  font-size: 12px;
+  margin-top: 2px;
+  text-align: center;
+}
+
+.collection-entry-small-checkbox-wrapper {
+  position:absolute;
+  height:15px;
+  width: 15px;
+  visibility: hidden;
+  background-color: #DBDBDB;
+  padding-right: 0px;
+}
+
+.collection-entry-small-checkbox-wrapper-selected {
+  visibility: visible;
+}
+
+.collection-entry-small-checkbox {
+  position: relative;
+  width: 13px;
+  height: 12px;
+  vertical-align: top;
+  margin: 0px;
+  padding: 0px;
+  top: -3px;
+  cursor: pointer;
+}
+
+/* UPLOAD */
+
+#upload-box {
+  border: 2px dashed #DBDBDB;
+  color: #DBDBDB;
+  cursor: pointer;
+  text-align: center;
+  padding-top: 12px;
+  font-weight: bold;
+  width: 120px;
+  height: 110px;
+  margin-right: 5px;
+  margin-top: 20px;
+  z-index: 100;
+}
+
+#upload-box:hover {
+  border:  2px dashed #2a6496;
+  color:  #2a6496;
+}
+
+#upload-box div {
+  width: 100%;
+  margin-top: 8px; 
+}
+
+#upload-link {
+  font-size: 45px;
+  text-decoration: none;
+}
+
+#upload-box-loading{
+  border: 2px dashed #DBDBDB;
+  color: #DBDBDB;
+  text-align: center;
+  padding-top: 12px;
+  font-weight: bold;
+  width: 120px;
+  height: 110px;
+  margin-right: 5px;
+  margin-top: 20px;
+}
+
+#upload-box-loading div{
+  margin: auto;
+  margin-top: 25px;
+}
+
+#upload-box-small {
+  border: 2px dashed #DBDBDB;
+  color: #DBDBDB;
+  cursor: pointer;
+  text-align: center;
+  padding-top: 5px;
+  font-weight: bold;
+  width: 80px;
+  height: 75px;
+  margin-right: 9px;
+  margin-top: 9px;
+  z-index: 100;
+  font-size: 12px;
+}
+
+#upload-box-small:hover {
+  border:  2px dashed #2a6496;
+  color:  #2a6496;
+}
+
+#upload-box-small div {
+  width: 100%;
+  margin-top: 2px; 
+}
+
+#upload-link-small {
+  font-size: 30px;
+  text-decoration: none;
+}
+
+/*#upload-box-loading{
+  border: 2px dashed #DBDBDB;
+  color: #DBDBDB;
+  text-align: center;
+  padding-top: 12px;
+  font-weight: bold;
+  width: 120px;
+  height: 110px;
+  margin-right: 5px;
+  margin-top: 20px;
+}
+
+#upload-box-loading div{
+  margin: auto;
+  margin-top: 25px;
+}*/
