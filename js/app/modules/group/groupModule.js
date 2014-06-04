@@ -104,9 +104,8 @@ angular.module('module.group').controller("newGroupController", ['$scope', '$dia
         for(var i=0; i < $scope.groupMembers.length; i++) {
             userUrls.push($scope.groupMembers[i].uri);
         }
-        console.log($scope.groupName);
         
-        var promise = GroupFetchService.createGroup($scope.groupName, [], userUrls);
+        var promise = GroupFetchService.createGroup($scope.group.name, [], userUrls);
         promise.then(function(result) {
             console.log("Group created!");
             console.log(result);
