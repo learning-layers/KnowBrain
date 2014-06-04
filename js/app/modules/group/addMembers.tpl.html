@@ -38,17 +38,7 @@
 					ng-model='userFilter.label' />
 			</div>
 			<div style="height: 150px; padding: 20px" id="membersContainer">
-
-				<div class="checkbox-inline"
-					ng-repeat="user in allUsers | filter:userFilter"
-					style="padding-left: 2%; margin-left: 0; width: 18%;">
-					<label> <input type="checkbox"
-						ng-click="checkboxChanged(user, $event)"
-						ng-checked="isUserChecked(user)"
-						class="sharedUsers"><img class="profile-pic-small"
-						src="images/small_profile_pic_dummy.png"><span>{{user.label}}</span>
-					</label>
-				</div>
+				<ng-entity-small ng-repeat="entry in allUsers | filter:userFilter"></ng-entity-small>
 			</div>
 		</div>
 	</div>

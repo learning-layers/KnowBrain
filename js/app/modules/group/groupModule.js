@@ -25,7 +25,7 @@
 /**
 * AUTHORISATION MODULE 
 */
-angular.module('module.group',[]);
+angular.module('module.group',['module.entity']);
 
 /**
 * CONFIG
@@ -63,6 +63,101 @@ angular.module('module.group').config(function($stateProvider) {
 /**
 * CONTROLLER
 */
+angular.module('module.group').controller("newGroupController", ['$scope', '$dialogs', '$modalInstance', 'UserModel', 'GroupFetchService', function($scope, $dialogs, $modalInstance, UserModel, GroupFetchService){
+    $scope.group = {name: ""};
+    $scope.groupMembers = [];
+    
+    var promise = UserModel.getAllUsers();
+    promise.then(function(result) {
+        $scope.groupMembers = result.users;
+    });
+    
+    
+    $scope.uploadPic = function() {
+        console.log("TODO: Upload profile picture");
+        console.log($scope.group);
+    };
+    
+    $scope.addMembers = function() {
+
+        if($scope.groupMembers.length > 0) {
+            var addMembersDialog = $dialogs.addMembers($scope.groupMembers);
+            addMembersDialog.result.then(function() {
+                console.log($scope.groupMembers);
+            });
+        }
+    };
+    
+    $scope.selectResource = function(user, $event) {
+        if(user.isSelected){
+            user.isSelected = false;
+          } else {
+            user.isSelected = true;
+          }
+    };
+    
+    $scope.createGroup = function() {
+        console.log("Creating Group");
+        
+        var userUrls = [];
+        
+        for(var i=0; i < $scope.groupMembers.length; i++) {
+            userUrls.push($scope.groupMembers[i].uri);
+        }
+        console.log($scope.groupName);
+        
+        var promise = GroupFetchService.createGroup($scope.groupName, [], userUrls);
+        promise.then(function(result) {
+            console.log("Group created!");
+            console.log(result);
+            $modalInstance.close(result.circleUri);
+        });
+    };
+    
+
+    
+    $scope.close = function() {
+        $modalInstance.dismiss('cancel');
+    };
+}]);
+
+angular.module('module.group').controller("addMembersController", ['$scope', '$rootScope', '$modalInstance', 'users', function($scope, $rootScope, $modalInstance, users){
+    
+    $scope.allUsers = users;
+    
+    $scope.handleEntryClick = function(entry) {
+        console.log("TODO: Go to user's profile");
+    };
+    
+    $scope.selectResource = function(user, $event) {
+        if(user.isSelected){
+            user.isSelected = false;
+          } else {
+            user.isSelected = true;
+          }
+    };
+    
+    $scope.close = function() {
+        $modalInstance.dismiss('cancel');
+    };
+    
+    $scope.confirm = function() {
+        $modalInstance.close();
+    };
+    
+    var findUserInArray = function(user, array) {
+
+        for(var i = 0; i < array.length; i++) {
+            if(array[i].label == user.label) {
+                return i;
+            }
+        }
+
+        return -1;
+    };
+
+}]);
+
 angular.module('module.group').controller("GroupController", ['$scope', function($scope){
 
 }]);

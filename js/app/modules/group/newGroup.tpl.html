@@ -10,12 +10,12 @@
 
 
 <div class="container" style="width: 100%">
-	<div class="row clearfix" style="padding: 20px; height: 200px">
+	<div class="row clearfix" style="padding: 10px;">
 		<div class="col-md-4 column" style="height: 100%;">
 			<div id="upload_pic"
 				style="position: relative; width: 100%; height: 100%;">
 				<div
-					style="border-style: solid; border-width: 2px; border-color: #e7e7e7; position: relative; line-height: 120px;">
+					style="border-style: solid; border-width: 2px; border-color: #e7e7e7; position: relative; line-height: 120px; width:200px; margin-left:auto; margin-right:auto">
 					<img style="max-width: 100%; opacity: 0.5; position: relative;"
 						src="images/group_pic_dummy.jpg" />
 				</div>
@@ -42,24 +42,24 @@
 		</div>
 	</div>
 	<div class="row clearfix"
-		style="padding: 20px; height: 200px; border-style: solid; border-width: 2px; border-color: #e7e7e7;">
-		<div class="col-md-2 column" style="padding: 10px;">
+		style="padding: 10px; height: 200px; border-style: solid; border-width: 2px; border-color: #e7e7e7;">
+		<div class="col-md-12 column">
 
-			<div style="margin-top: 0px;" ng-show="!ajaxLoading"
+			<div style="" ng-show="!ajaxLoading"
 				id="upload-box-small" class="kb-fluid-container pull-left"
 				ng-click="addMembers()" tooltip-placement="right">
 				add
 				<div id="upload-link-small" class="glyphicon glyphicon-plus-sign"></div>
 			</div>
-		</div>
-		<div class="col-md-10 column" style="padding: 10px;">
+
 			<div id="group-member-container">
-				<div class="checkbox-inline" ng-repeat="user in groupMembers"
+			<ng-entity-small ng-repeat="entry in groupMembers | filter:userFilter" ng-show="entry.isSelected"></ng-entity-small>
+				<!--  <div class="checkbox-inline" ng-repeat="user in groupMembers" ng-show="user.isSelected"
 					style="padding-left: 2%; margin-left: 0; margin-bottom: 5px; width: 20%;">
 					<label> <img class="profile-pic-small"
 						src="images/small_profile_pic_dummy.png"><span>{{user.label}}</span>
 					</label>
-				</div>
+				</div>-->
 			</div>
 		</div>
 	</div>

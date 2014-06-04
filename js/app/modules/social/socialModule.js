@@ -25,7 +25,7 @@
 /**
 * AUTHORISATION MODULE 
 */
-angular.module('module.social',[]);
+angular.module('module.social',['module.entity']);
 
 /**
 * CONFIG

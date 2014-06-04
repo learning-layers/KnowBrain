@@ -412,7 +412,7 @@ angular.module('dialogs.services',['ui.bootstrap.modal','dialogs.controllers'])
 
             createNewGroup: function() {
                 return $modal.open({
-                    templateUrl: MODULES_PREFIX + '/social/newGroup.tpl.html',
+                    templateUrl: MODULES_PREFIX + '/group/newGroup.tpl.html',
                     controller: 'newGroupController',
                     keyboard : true,
                     backdrop : true,
@@ -420,20 +420,17 @@ angular.module('dialogs.services',['ui.bootstrap.modal','dialogs.controllers'])
                 });
             },
 			
-            addMembers: function(allUsers, members) {
+            addMembers: function(users) {
                 return $modal.open({
-                    templateUrl: MODULES_PREFIX + '/social/addMembers.tpl.html',
+                    templateUrl: MODULES_PREFIX + '/group/addMembers.tpl.html',
                     controller: 'addMembersController',
                     keyboard : true,
                     backdrop : true,
                     windowClass: 'modal-huge',
                     resolve: {
-                    	allUsers: function() {
-                    		return allUsers;
+                    	users: function() {
+                    		return users;
                     	},
-                    	members: function() {
-                    		return members;
-                    	}
                     }
                     
                 });
