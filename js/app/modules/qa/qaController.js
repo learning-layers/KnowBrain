@@ -23,7 +23,7 @@
 'use strict';
 
 /**
-* AUTHORISATION MODULE 
+* QA MODULE 
 */
 angular.module('module.qa',[]);
 
@@ -37,6 +37,24 @@ angular.module('module.qa').config(function($stateProvider) {
             url:'/qa',
             controller: 'QAController',
             templateUrl: MODULES_PREFIX + '/qa/qa.tpl.html'
+        })
+				
+				.state('app.qa.qa', {
+            url:'/qa/:uri',
+            controller: 'QAQuestionController',
+            templateUrl: MODULES_PREFIX + '/qa/question.tpl.html'
+        })
+				
+				.state('app.qa.disc', {
+            url:'/disc/:uri',
+            controller: 'QADiscussionController',
+            templateUrl: MODULES_PREFIX + '/qa/discussion.tpl.html'
+        })
+				
+				.state('app.qa.chat', {
+            url:'/chat/:uri',
+            controller: 'QAChatController',
+            templateUrl: MODULES_PREFIX + '/qa/chat.tpl.html'
         });
 
 });
@@ -44,7 +62,7 @@ angular.module('module.qa').config(function($stateProvider) {
 /**
 * CONTROLLER
 */
-angular.module('module.qa').controller("QAController", ['$scope', '$q', 'UserService', 'qaService', 'Thread','THREAD_TYPE', function($scope, $q, UserSrv, qaService, Thread, THREAD_TYPE){
+angular.module('module.qa').controller("QAController", ['$scope', '$state', '$q', 'UserService', 'qaService', 'Thread','THREAD_TYPE', function($scope, $state, $q, UserSrv, qaService, Thread, THREAD_TYPE){
 			
 		$scope.threadType = THREAD_TYPE.question;
 		$scope.threadTypeLabel = "question";
@@ -53,6 +71,8 @@ angular.module('module.qa').controller("QAController", ['$scope', '$q', 'UserSer
 		
 		$scope.threadTitle = '';
 		$scope.threadExplanation = '';
+		
+		$scope.selectedThread = null;
 				
 		$scope.titlePlaceholder = '';		
 		$scope.explanationPlaceholder = '';
@@ -63,7 +83,7 @@ angular.module('module.qa').controller("QAController", ['$scope', '$q', 'UserSer
 		
 		$scope.listType = "top";
 				
-		$scope.$watch('threadType', function(newValue, oldValue) {
+		/* $scope.$watch('threadType', function(newValue, oldValue) {
 			
 			switch($scope.threadType) {
 				case THREAD_TYPE.question:
@@ -79,7 +99,31 @@ angular.module('module.qa').controller("QAController", ['$scope', '$q', 'UserSer
 
 				$scope.titlePlaceholder = "Enter title of your " + $scope.threadTypeLabel;	
 				$scope.explanationPlaceholder = "Add an explanation to your " + $scope.threadTypeLabel;			
-		});
+		}); */
+		
+		$scope.threadTypeChangedHandler = function(new_value)
+		{
+			switch(new_value) {
+				case THREAD_TYPE.question:
+					$scope.threadTypeLabel = "question";
+					break;
+				case THREAD_TYPE.discussion:
+					$scope.threadTypeLabel = "discussion";
+					break;
+				case THREAD_TYPE.chat:
+					$scope.threadTypeLabel = "chat";
+					break;
+				}
+
+				$scope.titlePlaceholder = "Enter title of your " + $scope.threadTypeLabel;	
+				$scope.explanationPlaceholder = "Add an explanation to your " + $scope.threadTypeLabel;
+		};
+		
+		$scope.loadDetailPage = function(thread)
+		{
+			$scope.selectedThread = thread;
+			$state.transitionTo('app.qa.' + thread.type, { uri: thread.uriPathnameHash});
+		};
 		
 		$scope.addNewThread = function(type, title, explanation)
 		{
@@ -116,7 +160,7 @@ angular.module('module.qa').controller("QAController", ['$scope', '$q', 'UserSer
 							});
 		};
 				
-		var loadThreadEntries = function(thread) 
+/* 		var loadThreadEntries = function(thread) 
 		{
 			return qaService
 							.getThreadEntries(thread)
@@ -124,7 +168,7 @@ angular.module('module.qa').controller("QAController", ['$scope', '$q', 'UserSer
 								$scope.threadEntries = result;
 								return result;
 							});
-		};
+		}; */
 		
 		var loadAuthorDetails = function(threadList) 
 		{
@@ -157,6 +201,23 @@ angular.module('module.qa').controller("QAController", ['$scope', '$q', 'UserSer
 		loadThreadList()
 			.then(loadAuthorDetails);		
 			
+}]);
+
+angular.module('module.qa').controller("QAQuestionController", ['$scope', '$state', '$stateParams', '$q', 'UserService', 'qaService', 'Thread','THREAD_TYPE', function($scope, $state, $stateParams, $q, UserSrv, qaService, Thread, THREAD_TYPE){
+
+	$scope.question = $scope.$parent.selectedThread;
+	
+	var loadThreadEntries = function(thread) 
+	{
+		return qaService
+						.getThreadEntries(thread)
+						.then(function(result) {
+							$scope.question.entries = result;
+						});
+	};
+	
+	// TODO load thread first if thread is null (happens by refreshing page F5)
+	loadThreadEntries($scope.question);
 }]);
 
 /**

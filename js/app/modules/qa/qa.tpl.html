@@ -1,20 +1,19 @@
-<div class="container" role="main">
+<div class="container" role="main" ui-view>
 			
-				<div class="row clearfix">
+				<div class="row clearfix" id="thread-input">
 					<div class="col-md-8 column">
-					
 						<div class="btn-group thread-input-group">
-							<label class="btn btn-default" ng-model="threadType" btn-radio="'qa'">
+							<label class="btn btn-default" ng-model="threadType" btn-radio="'qa'" ng-click="threadTypeChangedHandler('qa')">
 								<span class="glyphicon glyphicon-question"></span>
 									Question
 							</label>
 							
-							<label class="btn btn-default" ng-model="threadType" btn-radio="'disc'">
+							<label class="btn btn-default" ng-model="threadType" btn-radio="'disc'" ng-click="threadTypeChangedHandler('disc')">
 								<span class="glyphicon glyphicon-discussion"></span>
 									Discussion
 							</label>
 							
-							<label class="btn btn-default" ng-model="threadType" btn-radio="'chat'">
+							<label class="btn btn-default" ng-model="threadType" btn-radio="'chat'" ng-click="threadTypeChangedHandler('chat')">
 								<span class="glyphicon glyphicon-chat"></span>
 									Chat
 							</label>
@@ -39,7 +38,7 @@
 					
 				</div>
 
-				<div class="row clearfix" id="thread-list-nav">
+				<div class="row clearfix box rounded">
 				
 					<div class="row clearfix">
 						<div class="col-md-12 column">
@@ -118,18 +117,18 @@
 								
 				<div class="row clearfix thread" ng-repeat="thread in threadList">
 					<div class="col-md-3 col-xs-12 column" bind-once>
-						<div class="thread-type-icon" ng-class="(thread.type == 'qa') ? 'icon-question' : ((thread.type == 'disc') ? 'icon-discussion' : ((thread.type == 'chat') ? 'icon-chat' : ((thread.type == 'answered') ? 'icon-answered' : '')))">
+						<div class="thread-type-icon rounded-left" ng-class="(thread.type == 'qa') ? 'icon-question' : ((thread.type == 'disc') ? 'icon-discussion' : ((thread.type == 'chat') ? 'icon-chat' : ((thread.type == 'answered') ? 'icon-answered' : '')))">
 						</div>
-						<div class="thread-statistic center-block">
+						<div class="thread-statistic rounded-right center-block">
 							<p class="thread-statistic lead">{{getRandomNumber(50)}} {{thread.type == 'qa' ? 'votes' : (thread.type == 'disc' ? 'likes' : (thread.type == 'chat' ? 'members' : ''))}}</p>
 							<p class="thread-statistic text-muted">{{getRandomNumber(20)}} {{thread.type == 'qa' ? 'answers' : (thread.type == 'disc' ? 'opinions' : (thread.type == 'chat' ? 'messages' : ''))}}</p>
 							<p class="thread-statistic text-muted">{{getRandomNumber(2000)}} views</p>
 						</div>
 					</div>
 					<div class="col-md-9 col-xs-12 column">
-						<p class="lead thread-title" bind-once>
+						<a class="lead thread-title" ng-click="loadDetailPage(thread)" bind-once>
 							{{thread.title}}
-						</p>
+						</a>
 						<div class="row">
 							<div class="col-md-3 col-xs-6 column">
 									<div class="thread-icon icon-user">

@@ -1,0 +1,39 @@
+<div class="row clearfix">
+	<div class="col-md-12 column box rounded">
+		<div class="thread-type-icon icon-question rounded"></div>
+		<h3 class="thread-list-header">{{question.title}}</h3>
+	</div>
+</div>
+<div class="row clearfix">
+	<div class="col-md-1 column">
+		<div class="icon-up"></div>
+		<p>123</p>
+		<div class="icon-down"></div>
+	</div>
+	<div class="col-md-11 column">
+		<p>{{question.explanation}}</p>
+		<p> tag control </p>
+		<div class="row">
+			<div class="col-md-3 col-xs-6 column">
+					<div class="thread-icon icon-user">
+					</div>
+					<div class="thread-author">
+						<p class="thread-author">{{question.author.name}}</p>
+						<p class="thread-author text-muted" bind-once>{{getRandomNumber(1000)}}</p>
+					</div>
+					<div class="thread-author">
+						<p class="thread-author text-muted" bind-once>{{question.creationTime.toLocaleDateString()}}</p>
+						<p class="thread-author text-muted" bind-once>{{question.creationTime.toLocaleTimeString()}}</p>
+					</div>
+			</div>
+			<div class="col-md-3 col-xs-6 column">
+					<div class="thread-icon icon-entity">
+					</div>
+					<div class="thread-author">
+						<p class="thread-author">collection</p>
+						<p class="thread-author text-muted">my folder</p>
+					</div>
+			</div>
+		</div>
+	</div>
+</div>

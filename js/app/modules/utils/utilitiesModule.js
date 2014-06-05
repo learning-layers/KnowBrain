@@ -36,7 +36,7 @@ angular.module('module.utilities').service("UriToolbox", [function(){
    var a = document.createElement("a");
    a.href = uri;
    var split = a.pathname.split("/");
-   return split[2];
+   return split[split.length - 1];
  };
 
  this.extractUriPathnameHashEntities = function(uri){

@@ -24,7 +24,6 @@
 
 /************************************************************************************
 * Q&A - Model and Services
-* TODO: Probably this part should be outsourced to a separate file  
 *************************************************************************************/
 
 /**
@@ -34,7 +33,7 @@
 // type of the thread; either disc, qa or chat
 angular.module('module.models').constant('THREAD_TYPE', {discussion:'disc', question:'qa', chat:'chat'});
 
-angular.module('module.models').factory('Thread', function () {
+angular.module('module.models').factory('Thread', ['UriToolbox', function (UriToolbox) {
  		
   // Constructor
   function Thread(author_uri, type, title, explanation, target_entry_uri, uri, creationTimeTicks) {
@@ -47,6 +46,7 @@ angular.module('module.models').factory('Thread', function () {
 		// target uri of the entity to start a thread for
 		this.targetUri = target_entry_uri;
 		this.uri = uri;
+		this.uriPathnameHash = UriToolbox.extractUriPathnameHash(uri);
 		this.entries = new Array();
 		this.author = null;
 		this.creationTime = new Date(creationTimeTicks);
@@ -87,7 +87,7 @@ angular.module('module.models').factory('Thread', function () {
  */
   // Return the constructor function
   return Thread;
-})
+}])
 
 angular.module('module.models').factory('ThreadEntry', function () {
  		
@@ -183,8 +183,7 @@ angular.module('module.models').service("qaService", ['$q', '$rootScope','UserSe
 					entries.push(entry);
 				});
 
-        thread.entries = entries;
-        defer.resolve(thread);
+        defer.resolve(entries);
       },
       function(error){
 			  console.log(error);
