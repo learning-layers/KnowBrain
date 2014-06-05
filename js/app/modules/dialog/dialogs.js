@@ -98,7 +98,7 @@ angular.module('dialogs.controllers',['ui.bootstrap.modal', 'module.i18n', 'modu
 	 .controller('entryDetailController',['$scope', '$modalInstance','entry', '$q', 'i18nService', 'CurrentCollectionService', 'RATING_MAX', 'ENTITY_TYPES', 'TagFetchService', 'isSearchResult', 'UserService', 'UriToolbox', '$state', '$window', function($scope, $modalInstance, entry, $q, i18nService, CurrentCollectionService, RATING_MAX, ENTITY_TYPES, TagFetchService, isSearchResult, UserSrv, UriToolbox, $state, $window){
 
 	 	$scope.entry = entry;
-	 	$scope.entryTags = new Array();
+	 	$scope.tags = new Array();
 	 	$scope.ratingReadOnly = false;
 	 	$scope.ENTITY_TYPES = ENTITY_TYPES;
 	 	$scope.isSearchResult = isSearchResult;
@@ -148,7 +148,7 @@ angular.module('dialogs.controllers',['ui.bootstrap.modal', 'module.i18n', 'modu
 		{
 			//set tags
 			angular.forEach(entry.tags, function(tag, key){
-				$scope.entryTags.push(tag.label);
+				$scope.tags.push(tag);
 			});
 			$scope.entryRating = entry.overallRating.score;
 
