@@ -105,7 +105,7 @@ sharingModule.controller("SharingController", ['$scope','$modalInstance', '$dial
                     allUsers = results[0].users;
                     sharedUsers = results[1].users;
 
-                    var shareWithDialog = $dialogs.shareWith(allUsers, sharedUsers, space);
+                    var shareWithDialog = $dialogs.shareWith(allUsers, sharedUsers);
 
                     shareWithDialog.result.then(function (sharedUsers) {
                         self.sharedUsers = getUserUris(sharedUsers);
