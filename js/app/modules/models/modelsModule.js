@@ -156,11 +156,12 @@ angular.module('module.models').factory('BaseModel', ['$q', '$rootScope', 'UserS
       var self = this;
       var addNewDisc = true;
       var target = null;
-
+      var discType   = "disc";
+      var discLabel  = "newDisc";
 
       if(this.disc != null){
         addNewDisc = false;
-        target = this.disc.uri;
+        target     = this.disc.uri;
       }else{
         self.disc = {uri:null,entries: new Array()};
       }     
@@ -190,7 +191,10 @@ angular.module('module.models').factory('BaseModel', ['$q', '$rootScope', 'UserS
         target,
         self.uri,
         commentText,
-        addNewDisc
+        addNewDisc,
+        discType,
+        discLabel,
+        "some explanation"
         );
 
       return defer.promise;
