@@ -96,13 +96,21 @@ angular.module('module.group').controller("newGroupController", ['$scope', '$dia
           }
     };
     
+    $scope.handleEntryClick = function(entry) {
+        console.log("TODO: Go to user's profile");
+    };
+    
     $scope.createGroup = function() {
         console.log("Creating Group");
         
         var userUrls = [];
         
         for(var i=0; i < $scope.groupMembers.length; i++) {
-            userUrls.push($scope.groupMembers[i].uri);
+            
+            if($scope.groupMembers[i].isSelected) {
+                userUrls.push($scope.groupMembers[i].uri);
+            }
+            
         }
         
         var promise = GroupFetchService.createGroup($scope.group.name, [], userUrls);
