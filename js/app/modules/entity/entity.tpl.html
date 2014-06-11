@@ -1,20 +1,25 @@
 <div ng-show="!ajaxLoading"
+	ng-class="{'collection-entry-selected': entry.isSelected}"
 	class="collection-entry kb-fluid-container pull-left"
 	ng-click="handleEntryClick(entry)">
 	<div class="collection-entry-preview-box">
-		<div class="collection-entry-checkbox-wrapper">
-			<input class="collection-entry-checkbox" type="checkbox"
+		<div
+			ng-class="{'collection-entry-checkbox-wrapper-selected': entry.isSelected}"
+			class="collection-entry-checkbox-wrapper">
+			<input ng-checked="entry.isSelected"
+				class="collection-entry-checkbox" type="checkbox"
 				ng-click="selectResource(entry);$event.stopPropagation()" />
 		</div>
 		<div ng-switch="!entry.entityType">
-			<img ng-switch-when="true" src="images/profile_pic_dummy.png" height="50px"/>
+			<img ng-switch-when="true" src="images/profile_pic_dummy.png"
+				height="50px" />
 			<div ng-switch-when="false" style="position: relative; z-index: 9;"
-			id="collection-entry-preview-box-glyphicon" class="glyphicon "
-			ng-class="{'glyphicon-folder-close': (entry.entityType == entityTypes.collection), 'glyphicon-file': (entry.entityType == entityTypes.file), 'glyphicon-link' : (entry.entityType == entityTypes.link)}">
+				id="collection-entry-preview-box-glyphicon" class="glyphicon "
+				Ng-class="{'glyphicon-folder-close': (entry.entityType == entityTypes.collection), 'glyphicon-file': (entry.entityType == entityTypes.file), 'glyphicon-link' : (entry.entityType == entityTypes.link)}">
+			</div>
 		</div>
-		</div>		
 		<div class="collection-entry-shared"
-			ng-show="(entry.entityType == entityTypes.collection) && entry.space == spaceEnum.shared ">{{t('shared')}}</div>
+			ng-show="(entry.entityType == entityTypes.collection) && entry.space == spaceEnum.shared">{{t('shared')}}</div>
 	</div>
 	<div class="collection-entry-description-box">
 		<div shortenentryname model="entry.label">{{entry.label}}</div>
