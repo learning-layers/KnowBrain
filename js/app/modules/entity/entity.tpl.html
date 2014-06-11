@@ -12,7 +12,7 @@
 		</div>
 		<div ng-switch="!entry.entityType">
 			<img ng-switch-when="true" src="images/profile_pic_dummy.png"
-				height="50px" />
+				class="collection-entry-profile-pic" />
 			<div ng-switch-when="false" style="position: relative; z-index: 9;"
 				id="collection-entry-preview-box-glyphicon" class="glyphicon "
 				Ng-class="{'glyphicon-folder-close': (entry.entityType == entityTypes.collection), 'glyphicon-file': (entry.entityType == entityTypes.file), 'glyphicon-link' : (entry.entityType == entityTypes.link)}">

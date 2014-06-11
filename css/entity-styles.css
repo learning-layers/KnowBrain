@@ -81,6 +81,10 @@
 	z-index: 99;
 }
 
+.collection-entry-profile-pic {
+	height:60px;
+}
+
 .collection-entry-small {
   width: 95px;
   height: 85px;
@@ -161,6 +165,11 @@
 	font-size: 9px; 
 	color: #ffffff; 
 	z-index: 99;
+}
+
+.collection-entry-profile-pic-small {
+	height:40px;
+	margin-top: 10px;
 }
 
 
