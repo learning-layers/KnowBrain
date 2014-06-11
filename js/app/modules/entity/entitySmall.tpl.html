@@ -8,7 +8,7 @@
 		</div>
 		
 		<div ng-switch="!entry.entityType">
-			<img ng-switch-when="true" src="images/small_profile_pic_dummy.png" height="40px" styles="height:30px"/>
+			<img ng-switch-when="true" src="images/small_profile_pic_dummy.png" class="collection-entry-profile-pic-small"/>
 			<div ng-switch-when="false" style="position: relative; z-index: 9;"
 			id="collection-entry-small-preview-box-glyphicon" class="glyphicon "
 			ng-class="{'glyphicon-folder-close': (entry.entityType == entityTypes.collection), 'glyphicon-file': (entry.entityType == entityTypes.file), 'glyphicon-link' : (entry.entityType == entityTypes.link)}">
