@@ -232,7 +232,7 @@
   text-decoration: none;
 }
 
-/*#upload-box-loading{
+#upload-box-loading{
   border: 2px dashed #DBDBDB;
   color: #DBDBDB;
   text-align: center;
@@ -247,4 +247,4 @@
 #upload-box-loading div{
   margin: auto;
   margin-top: 25px;
-}*/
+}

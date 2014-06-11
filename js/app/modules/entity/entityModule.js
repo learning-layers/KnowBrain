@@ -20,3 +20,19 @@ entityModule.directive('ngEntitySmall', function() {
         templateUrl: MODULES_PREFIX + "/entity/entitySmall.tpl.html"
       };
 });
+
+entityModule.directive('ngAddEntity', function() {
+    return {
+        restrict:"E",
+        transclude:true,
+        templateUrl: MODULES_PREFIX + "/entity/addEntity.tpl.html"
+      };
+});
+
+entityModule.directive('ngAddEntitySmall', function() {
+    return {
+        restrict:"E",
+        transclude:true,
+        templateUrl: MODULES_PREFIX + "/entity/addEntitySmall.tpl.html"
+      };
+});
