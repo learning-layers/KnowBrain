@@ -25,7 +25,7 @@
 /**
 * COLLECTION MODULE 
 */
-angular.module('module.collection',['module.i18n', 'module.cookies', 'module.models', 'ui.bootstrap', 'module.utilities', 'ui.bootstrap.rating', 'dialogs']);
+angular.module('module.collection',['module.i18n', 'module.cookies', 'module.models', 'ui.bootstrap', 'module.utilities', 'ui.bootstrap.rating', 'dialogs', 'adapter']);
 
 /**
 * CONFIG 
@@ -54,7 +54,7 @@ angular.module('module.collection').config(function ($stateProvider) {
             }else{
               collUri = $stateParams.collUri;
             }
-
+            // TODO on change of url, this is executed. create an entity with type collection and new uri and add to the vie.entities. CollectionData module will load everything needed. There should also be a way of handling error, eg. users doesn't have access to collection or collection does not exist
             $scope.loadCurrentCollection(collUri);
         },
       },
@@ -120,12 +120,14 @@ angular.module('module.collection').service('CurrentCollectionService', [functio
 
 }]);
 
+angular.module('module.collection').constant('nsPrefix', "sssColl");
+
 /**
 * CONTROLLER
 */
 angular.module('module.collection').controller("CollectionController", [
-  '$scope', '$q','$location', '$rootScope', '$state', 'i18nService', 'CollectionFetchService', 'CurrentCollectionService', 'EntityFetchService', '$modal','EntityModel', 'ENTITY_TYPES', 'SPACE_ENUM', 'RATING_MAX', '$dialogs',
-  function($scope, $q,  $location, $rootScope, $state, i18nService, CollectionFetchService, CurrentCollectionService, EntityFetchService, $modal, EntityModel, ENTITY_TYPES, SPACE_ENUM, RATING_MAX, $dialogs) {
+  '$scope', '$q','$location', '$rootScope', '$state', 'i18nService', 'CollectionFetchService', 'CurrentCollectionService', 'EntityFetchService', '$modal','EntityModel', 'ENTITY_TYPES', 'SPACE_ENUM', 'RATING_MAX', '$dialogs', 'DataStore', 'nsPrefix', 
+  function($scope, $q,  $location, $rootScope, $state, i18nService, CollectionFetchService, CurrentCollectionService, EntityFetchService, $modal, EntityModel, ENTITY_TYPES, SPACE_ENUM, RATING_MAX, $dialogs, DataStore, nsPrefix) {
 
     var self = this;
     var selectedCounter = 0;
@@ -200,8 +202,24 @@ angular.module('module.collection').controller("CollectionController", [
 
   this.loadCollectionByUri = function(collUri, defer){
 
-    var promise = CollectionFetchService.getCollectionByUri(collUri);
+    Logger.get('collectionModule').debug('collUri', collUri);
+    var coll = DataStore.entities.get(nsPrefix + ":" + collUri);
+    var vals = {};
+    vals[DataStore.Entity.prototype.idAttribute] = nsPrefix + ":" + collUri;
+    vals['@type'] = 'sss:coll';
 
+    Logger.get('collectionModule').debug('vie', DataStore);
+
+    if( !coll ) {
+        coll = new DataStore.Entity(vals);
+        DataStore.entities.addOrUpdate(coll);
+    }
+    Logger.get('collectionModule').debug('coll', coll);
+    coll.fetch();
+    $scope.currentCollection = coll;
+
+    return;
+    // TODO this needs to be done in a $scope thing? bind bb and angular
     promise.then(function(model){
       $rootScope.deactivateLoadingIndicator()
       self.renderCollectionContent(model);  
@@ -355,7 +373,7 @@ angular.module('module.collection').controller("CollectionController", [
     $state.go('search.tag', { tag: tag});
   };
 
-}]);  
+}]);
 
 angular.module('module.collection').controller("AddResourceController", [ '$scope', '$http', '$location','i18nService', 'CurrentCollectionService', 'SPACE_ENUM', function($scope, $http, $location, i18nService, CurrentCollectionService, SPACE_ENUM){
 
@@ -578,3 +596,61 @@ angular.module('module.collection').controller("UploadController", ['$q', '$scop
     });
   });
 }]);
+
+angular.module('module.collection').directive("collContent", function() {
+    return {
+        templateUrl : MODULES_PREFIX + '/collection/collectionEntity.tpl.html',
+        link : function(scope, element, attrs ) {
+            Logger.get('collEntityDirective').setLevel(Logger.DEBUG);
+            Logger.get('collEntityDirective').debug('scope', scope);
+            Logger.get('collEntityDirective').debug('element', element);
+            Logger.get('collEntityDirective').debug('attrs', attrs);
+            // XXX: how to get the two-way binding with the semantic data?
+        }
+    }
+});  
+
+angular.module('module.collection').directive("vieMap", function() {
+    var attr = "vieMap";
+    var sep = " as ";
+    var LOG = Logger.get('relDirective');
+    return {
+        restrict: 'A',
+        priority: 1001,
+        link: function(scope, element, attrs ){
+            LOG.setLevel(Logger.DEBUG);
+            LOG.debug('scope', scope);
+            LOG.debug('element', element);
+            LOG.debug('attrs', attrs);
+
+            var map = attrs[attr].split(sep);
+            LOG.debug('map', map);
+            var key_parts = map[0].split("[");
+            LOG.debug('key_parts', key_parts);
+            var key = key_parts[0];
+            var keykey = key_parts[1].substring(0, key_parts[1].length-1);
+            LOG.debug('key', key, 'keykey', keykey);
+            scope[map[1]] = scope[key].get(keykey) || [];
+            if( !_.isArray(scope[map[1]])) scope[map[1]] = [scope[map[1]]];
+
+            var changeEventName = 'change:' + scope[key].vie.namespaces.uri(keykey);
+
+            var eventMapper = function(model, value, options) {
+                LOG.debug("changing", map[1], scope[map[1]], scope[map[1]].length);
+                var current = scope[key].get(keykey) || [];
+                if( !_.isArray(current)) current = [current];
+                scope[map[1]] = current;
+                LOG.debug("changed", scope[map[1]], scope[map[1]].length);
+                scope.$digest();
+            };
+
+            LOG.debug('uri', scope[key].vie.namespaces.uri(keykey));
+            scope[key].on(changeEventName, eventMapper);
+            scope.$on('$destroy',function(e) {
+                LOG.debug('scope destroy e=',e);
+                if( e.targetScope !== scope ) return; 
+                scope[key].off(changeEventName, eventMapper);
+            });
+        }
+    };
+});
