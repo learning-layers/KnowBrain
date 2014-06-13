@@ -33,29 +33,11 @@
     </button>
   </div>
 
-  <div ng-show="!ajaxLoading" id="upload-box" class="kb-fluid-container pull-left" ng-click="openAddResourceWizzard()" tooltip-placement="right"
-  tooltip="{{t('upload_tooltip')}}">  {{t('add')}}
-   <div id="upload-link" class="glyphicon glyphicon-plus-sign" ></div>
-  </div>
-
-  <div ng-show="ajaxLoading" id="upload-box-loading" class="kb-fluid-container pull-left">
-   <div class="ajax-loader-light-grey" ></div>
-  </div>
+	<ng-add-entity></ng-add-entity>
 
 
   <div id="collectionContent">
   	<ng-entity ng-repeat="entry in currentCollection.entries" ></ng-entity>
-  	
-    <!--  <div ng-show="!ajaxLoading" ng-repeat="entry in currentCollection.entries" ng-class="{'collection-entry-selected': entry.isSelected}" class="collection-entry kb-fluid-container pull-left" ng-click="handleEntryClick(entry)"> 
-      <div class="collection-entry-preview-box">
-        <div ng-class="{'collection-entry-checkbox-wrapper-selected': entry.isSelected}" class="collection-entry-checkbox-wrapper"><input ng-checked="entry.isSelected" class="collection-entry-checkbox" type="checkbox" ng-click="selectResource(entry);$event.stopPropagation()"/></div>
-        <div style=" position:relative; z-index: 9;" id="collection-entry-preview-box-glyphicon" class="glyphicon " ng-class="{'glyphicon-folder-close': (entry.entityType == entityTypes.collection), 'glyphicon-file': (entry.entityType == entityTypes.file), 'glyphicon-link' : (entry.entityType == entityTypes.link)}"></div>  
-        <div ng-show="(entry.entityType == entityTypes.collection) && entry.space == spaceEnum.shared " style="position:relative; top:-20px; right:-8px; font-size:11px; color:#ffffff; z-index: 99;">{{t('shared')}}</div>
-      </div>
-      <div class="collection-entry-description-box">
-        <div shortenentryname  model="entry.label">{{entry.label}}</div>
-      </div>
-    </div>-->
   </div>
   <div class="clearfix"></div>
 </div>

@@ -8,18 +8,17 @@
 		</div>
 		
 		<div ng-switch="!entry.entityType">
-			<img ng-switch-when="true" src="images/small_profile_pic_dummy.png" height="40px" styles="height:30px"/>
+			<img ng-switch-when="true" src="images/small_profile_pic_dummy.png" class="collection-entry-profile-pic-small"/>
 			<div ng-switch-when="false" style="position: relative; z-index: 9;"
 			id="collection-entry-small-preview-box-glyphicon" class="glyphicon "
 			ng-class="{'glyphicon-folder-close': (entry.entityType == entityTypes.collection), 'glyphicon-file': (entry.entityType == entityTypes.file), 'glyphicon-link' : (entry.entityType == entityTypes.link)}">
 			</div>
 		</div>
 		
-		<div
-			ng-show="(entry.entityType == entityTypes.collection) && entry.space == spaceEnum.shared "
-			style="position: relative; top: -10px; right: -4px; font-size: 11px; color: #ffffff; z-index: 99;">{{t('shared')}}</div>
+		<div class="collection-entry-small-shared"
+			ng-show="(entry.entityType == entityTypes.collection) && entry.space == spaceEnum.shared" >{{t('shared')}}</div>
 	</div>
 	<div class="collection-entry-small-description-box">
-		<div  model="entry.label">{{entry.label}}</div>
+		<div shortenentryname model="entry.label">{{entry.label}}</div>
 	</div>
 </div>

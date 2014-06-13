@@ -1,6 +1,8 @@
-<div style="margin-top: 0px;" ng-show="!ajaxLoading"
-	id="upload-box-small" class="kb-fluid-container pull-left"
-	ng-click="addMembers()" tooltip-placement="right">
-	add
-	<div id="upload-link-small" class="glyphicon glyphicon-plus-sign"></div>
+<div ng-show="!ajaxLoading" id="upload-box-small" class="kb-fluid-container pull-left" ng-click="openAddResourceWizzard()" tooltip-placement="right"
+tooltip="{{t('upload_tooltip')}}">  {{t('add')}}
+	<div id="upload-link-small" class="glyphicon glyphicon-plus-sign" ></div>
+</div>
+
+<div ng-show="ajaxLoading" id="upload-box-loading-small" class="kb-fluid-container pull-left">
+	<div class="ajax-loader-light-grey" ></div>
 </div>
