@@ -416,7 +416,7 @@ angular.module('dialogs.services',['ui.bootstrap.modal','dialogs.controllers'])
 			shareEntity : function(entity){
 				return $modal.open({
 					templateUrl: MODULES_PREFIX + '/sharing/shareEntity.tpl.html',
-					controller: 'SharingController as shareCtrl',
+					controller: 'SharingController',
 					keyboard : true,
 					backdrop : true,
 					windowClass: 'modal-small',

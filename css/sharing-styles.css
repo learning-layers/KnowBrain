@@ -1,0 +1,47 @@
+.input-append .btn.dropdown-toggle {
+    float: none;
+}
+
+#shareDropdownList li {
+	width:356px
+}
+
+#shareWrapper {
+	line-height: 27px;
+}
+
+.tag {
+ background: #428bca;
+  border: 1px solid #357ebd;
+  border-radius: 4px;
+  color: #fff;
+  height: 21px;
+  line-height:1.3;
+  padding-left:4px;
+  padding-right:2px;
+  padding-top:2px;
+  padding-bottom:3px;
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-size:14px;
+  margin-right:5px;
+  margin-bottom:100px;
+}
+
+.removeTag {
+	background:transparent;
+	color: #000;
+	opacity: .4;
+	margin:0;
+	border:0;
+	cursor: pointer;
+	font: 700 15px Arial,sans-serif;
+	vertical-align: middle;
+}
+
+#shareInput
+{
+  outline: none;
+  border:none !important;
+  box-shadow:none !important;
+}
+

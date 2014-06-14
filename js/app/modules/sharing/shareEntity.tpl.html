@@ -30,40 +30,64 @@
 </div>
 
 <div class="share-entity-modal-body modal-body">
-    <div class="col-md-12 column" style="padding: 20px;">
+	<div class="row clearfix" style="padding:20px">
+	    <div class="col-md-12 column" >
+	
+	        <textarea class="post form-control" maxlength="100"
+	                  placeholder="comment" rows="3"></textarea>
+	
+	        <div class="row clearfix share-entity-preview-box">
+	            <div class="col-md-12 column">
+	
+	                <div class="share-entity-preview-box-icon">
+	                    <div style="position: relative; z-index: 9; float:left" class="glyphicon share-entity-preview-box-glyphicon"
+	                         ng-class="{'glyphicon-folder-close': (entity.entityType == entityTypes.collection), 'glyphicon-file': (entity.entityType == entityTypes.file), 'glyphicon-link' : (entity.entityType == entityTypes.link)}">
+	                    </div>
+	                    <div style="float:left" class="share-entity-preview-box-label">{{entity.label}}
+	                    </div>
+	                </div>
+	
+	            </div>
+	        </div>
+	
+	        <div class="row clearfix">
+	            <div class="col-md-12 column">
 
-        <textarea class="post form-control" maxlength="100"
-                  placeholder="comment" rows="3"></textarea>
+					<div class="input-group">
+		               <div id="shareWrapper" class="form-control" style="overflow-y: auto;width:300px">
+		               	<span ng-repeat="entity in shareEntities" class="tag">{{entity.label}}<button class="removeTag">x</button></span></span>
+		               	<input id="shareInput" ng-model="userFilter.label" ng-click="activateDropdown($event)" style="border-style:none" type=text placeholder="+ Add name">
+		               </div>
+		               <div class="input-group-btn" id="shareDropdown">
+		                  <button type="button" id="dropDownToggle" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
+		                     <span class="caret"></span>
+		                  </button>
+		                  <button type="button" style="border-style:none" class="btn btn-default" 
+		                     tabindex="-1"><a href="#" class="glyphicon glyphicon-user"></a>
+		                  </button>
+		                  <ul class="dropdown-menu pull-right" id="shareDropdownList">
+		                     <li><a href="" ng-click="addShareTag({label: 'public'})"><span class="glyphicon glyphicon-globe"></span> Public</a></li>
+		                      <li><a href="" ng-click="addShareTag({label: 'friends'})"href="#"><span class="glyphicon glyphicon-user"></span> Friends</a></li>
+		                      <li role="presentation" class="divider" ng-show="userFilter.label"></li>
+		                      <li ng-repeat="user in allUsers | filter: userFilter" ng-show="userFilter.label" ><a href="" ng-click="addShareTag(user)"href="#"><span class="glyphicon glyphicon-user"></span> {{user.label}}</a></li>
+		                  </ul>
+		               </div>
+		            </div>
+		            
 
-        <div class="row clearfix share-entity-preview-box">
-            <div class="col-md-3 column">
 
-                <div class="share-entity-preview-box-icon">
-                    <div style="position: relative; z-index: 9;" class="glyphicon share-entity-preview-box-glyphicon"
-                         ng-class="{'glyphicon-folder-close': (shareCtrl.entity.entityType == shareCtrl.entityTypes.collection), 'glyphicon-file': (shareCtrl.entity.entityType == shareCtrl.entityTypes.file), 'glyphicon-link' : (shareCtrl.entity.entityType == shareCtrl.entityTypes.link)}">
-                    </div>
-                </div>
-
-            </div>
-            <div class="col-md-9">
-                <span class="share-entity-preview-box-label">{{shareCtrl.entity.label}}</span>
-            </div>
-        </div>
-
-        <div class="row clearfix">
-            <div class="col-md-6 column">
-                <select id="sharingOptionsSelect" class="form-control" ng-model="shareCtrl.shareWith" ng-options="k as v for (k, v) in shareCtrl.sharingOptions"
-                        ng-change="shareCtrl.shareWithHandler()"></select>
-            </div>
-            <div class="col-md-6 column">
-                <div class="btn-group">
-                    <button class="btn btn-default" type="button" ng-click="shareCtrl.share()">
-                        <em class="glyphicon glyphicon-share"></em> Share
-                    </button>
-                    <button class="btn btn-default" type="button" ng-click="shareCtrl.close()">Cancel
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
+	        </div>
+	        <div class="row clearfix" style="margin-top: 20px">
+	            <div class="col-md-12 column" style="text-align:right">
+	                <div class="btn-group" style="text-align:right">
+	                    <button class="btn btn-default" type="button" ng-click="share()">
+	                        <em class="glyphicon glyphicon-share"></em> Share
+	                    </button>
+	                    <button class="btn btn-default" type="button" ng-click="close()">Cancel
+	                    </button>
+	                </div>
+	            </div>
+	        </div>
+	    </div>
+	</div>
 </div>
