@@ -30,7 +30,7 @@ angular.module('module.i18n',[]);
 
 angular.module('module.i18n').constant('I18N_MESSAGES', {
   // general
-  username: 'username',
+  user: 'user',
   password: 'password',
 
   upload: 'upload',

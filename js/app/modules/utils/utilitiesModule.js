@@ -317,7 +317,8 @@ angular.module('module.utilities').directive('commentsUtil', ['$rootScope', 'i18
           return;
         }
 
-        $scope.model.addComment($scope.newCommentText);
+        $scope.model.addComment        ($scope.newCommentText);
+        
 
         $scope.newCommentText = "";
       };
