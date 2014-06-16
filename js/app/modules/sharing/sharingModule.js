@@ -50,7 +50,7 @@ sharingModule.controller("SharingController", ['$scope','$modalInstance', '$dial
         $scope.sharingOptions = SHARING_OPTIONS;
 
         $scope.shareWith = SHARING_OPTIONS.private;
-        $scope.sharedUsers = [];
+        $scope.shareEntities = [];
         
         $scope.allUsers = [];
         $scope.allCircles = [{label: "public"}, {label:"friends"}];
@@ -83,15 +83,28 @@ sharingModule.controller("SharingController", ['$scope','$modalInstance', '$dial
 
         $scope.share = function () {
 
-            switch($scope.shareWith) {
-                case SHARING_OPTIONS.public:
-                    SharingModel.shareEntityPublic($scope.entity);
-                    break;
-
-                case SHARING_OPTIONS.custom:
-                    SharingModel.shareEntityCustom($scope.entity, $scope.sharedUsers, "");
-                    break;
+            if(arrayContains($scope.shareEntities, {label:"public"})) {
+                //SharingModel.shareEntityPublic($scope.entity);
+                console.log("Share public")
             }
+            else {
+                removeFromArray($scope.shareEntities, {label:"friends"});
+                
+                //SharingModel.shareEntityCustom($scope.entity, $scope.shareEntities, "");
+                console.log("Share custom");
+                console.log($scope.shareEntities);
+            }
+
+            
+//            switch($scope.shareWith) {
+//                case SHARING_OPTIONS.public:
+//                    SharingModel.shareEntityPublic($scope.entity);
+//                    break;
+//
+//                case SHARING_OPTIONS.custom:
+//                    SharingModel.shareEntityCustom($scope.entity, $scope.sharedUsers, "");
+//                    break;
+//            }
             $modalInstance.close();
         }
 
@@ -140,8 +153,6 @@ sharingModule.controller("SharingController", ['$scope','$modalInstance', '$dial
             }
             e.stopPropagation();
         };
-        
-        $scope.shareEntities = [];
         
         $scope.addShareTag = function(tag) {
             removeFromArray($scope.allUsers, tag);

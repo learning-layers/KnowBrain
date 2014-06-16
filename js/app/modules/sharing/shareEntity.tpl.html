@@ -55,41 +55,48 @@
 				<div class="col-md-12 column">
 					<p>Share With</>
 					<div class="dropdown form-control" id="shareDropdown">
-						<div id="dropDownToggle" class="dropdown-toggle" data-toggle="dropdown"></div>
-						<div style="line-height:30px">
-							<span ng-repeat="entity in shareEntities" class="tag" ng-switch="entity.label">
-								<span ng-switch-when="public" class="glyphicon glyphicon-globe" style="margin-right:3px; vertical-align:middle;"></span>
-								<span ng-switch-when="friends" class="glyphicon glyphicon-user" style="margin-right:3px; vertical-align:middle;"></span>
-								<img ng-switch-default src="images/small_profile_pic_dummy.png" style="height:15px; margin-right:3px;">
-								{{entity.label}}
+						<div id="dropDownToggle" class="dropdown-toggle"
+							data-toggle="dropdown"></div>
+						<div style="line-height: 30px">
+							<span ng-repeat="entity in shareEntities" class="tag"
+								ng-switch="entity.label"> <span ng-switch-when="public"
+								class="glyphicon glyphicon-globe"
+								style="margin-right: 3px; vertical-align: middle;"></span> <span
+								ng-switch-when="friends" class="glyphicon glyphicon-user"
+								style="margin-right: 3px; vertical-align: middle;"></span> <img
+								ng-switch-default src="images/small_profile_pic_dummy.png"
+								style="height: 15px; margin-right: 3px;"> {{entity.label}}
 								<button class="removeTag" ng-click="removeShareTag(entity)">x</button>
-							</span> 
-							<input id="shareInput" ng-click="activateDropdown($event)" ng-model="userFilter.label"
-								placeholder="+ Add name" />
+							</span> <input id="shareInput" ng-click="activateDropdown($event)"
+								ng-model="userFilter.label" placeholder="+ Add name or circle" />
 						</div>
 						<ul id="shareDropdownContent" class="dropdown-menu">
-							<li ng-repeat="circle in allCircles | orderBy: 'label'"><a href="" ng-click="addShareTag(circle)"><span style="margin-right:3px"
-									class="glyphicon" ng-class="{'glyphicon-globe':(circle.label == 'public'), 'glyphicon-user':(circle.label == 'friends')}"></span>{{circle.label}}</a></li>
+							<li ng-repeat="circle in allCircles | orderBy: 'label'"><a
+								href="" ng-click="addShareTag(circle)"><span
+									style="margin-right: 3px" class="glyphicon"
+									ng-class="{'glyphicon-globe':(circle.label == 'public'), 'glyphicon-user':(circle.label == 'friends')}"></span>{{circle.label}}</a></li>
 							<li role="presentation" class="divider"
 								ng-show="userFilter.label && (allCircles.length > 0)"></li>
-							<li ng-repeat="user in allUsers | filter: userFilter | orderBy: 'label'"
+							<li
+								ng-repeat="user in allUsers | filter: userFilter | orderBy: 'label'"
 								ng-show="userFilter.label"><a href=""
-								ng-click="addShareTag(user)" href="#"><span
-									class="glyphicon glyphicon-user"></span> {{user.label}}</a></li>
+								ng-click="addShareTag(user)" href="#"><img
+									src="images/small_profile_pic_dummy.png"
+									style="height: 15px; margin-right: 3px; vertical-align: middle">{{user.label}}</a></li>
 						</ul>
 					</div>
 				</div>
-				<!-- 	        <div class="row clearfix" style="margin-top: 20px"> -->
-				<!-- 	            <div class="col-md-12 column" style="text-align:right"> -->
-				<!-- 	                <div class="btn-group" style="text-align:right"> -->
-				<!-- 	                    <button class="btn btn-default" type="button" ng-click="share()"> -->
-				<!-- 	                        <em class="glyphicon glyphicon-share"></em> Share -->
-				<!-- 	                    </button> -->
-				<!-- 	                    <button class="btn btn-default" type="button" ng-click="close()">Cancel -->
-				<!-- 	                    </button> -->
-				<!-- 	                </div> -->
-				<!-- 	            </div> -->
-				<!-- 	        </div> -->
+			</div>
+			<div class="row clearfix" style="margin-top:10px">
+				<div class="col-md-12 column" style="text-align: right">
+					<div class="btn-group" style="text-align: right">
+						<button class="btn btn-default" type="button" ng-click="share()">
+							<em class="glyphicon glyphicon-share"></em> Share
+						</button>
+						<button class="btn btn-default" type="button" ng-click="close()">Cancel
+						</button>
+					</div>
+				</div>
 			</div>
 		</div>
 	</div>

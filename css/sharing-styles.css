@@ -47,3 +47,7 @@
 	width:100%;
 }
 
+#shareDropdownContent li a {
+	line-height:25px;
+}
+
