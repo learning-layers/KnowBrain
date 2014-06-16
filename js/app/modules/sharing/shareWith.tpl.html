@@ -30,30 +30,33 @@
 </div>
 
 <div class="share-entity-modal-body modal-body">
-    <div class="col-md-12 column" style="padding: 20px;">
-        <div class="row clearfix">
-        	<div class="col-md-12 column"">
-	            <p>Friends</p>
-	            <span>Filter: </span><input type='text' ng-model='shareWithCtrl.userFilter.label' />
-	        </div>
-        </div>
-        
-        <div class="row clearfix" style="height: 150px; padding:20px" id="friendsContainer">
-
-			<ng-entity-small ng-repeat="entry in shareWithCtrl.allUsers | filter:shareWithCtrl.userFilter"></ng-entity-small>
-        </div>
-
-        <div class="row clearfix">
-            <div class="col-md-6 column">
-            </div>
-            <div class="col-md-6 column">
-                <div class="btn-group" style="float: right">
-                    <button class="btn btn-default" type="button" ng-click="shareWithCtrl.updateSharedUsers()">OK
-                    </button>
-                    <button class="btn btn-default" type="button" ng-click="shareWithCtrl.close()">Cancel
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
+	<div class="row clearfix" style="padding:20px">
+		<div class="col-md-12 column">
+			<div class="row clearfix">
+		    	<div class="col-md-12 column"">
+			        <p>Friends</p>
+			        <span>Filter: </span><input type='text' ng-model='userFilter.label' />
+		        </div>
+		    </div>
+		    <div class="row clearfix" style="height: 150px;" id="friendsContainer">
+				<div class="col-md-12 column" style="padding: 20px;">
+					<ng-entity-small ng-repeat="entry in allUsers | filter: userFilter"></ng-entity-small>
+		        </div>
+		    </div>
+		    
+		    
+		    <div class="row clearfix">
+		        <div class="col-md-12 column" style="text-align: right">
+		            <div class="btn-group">
+		                <button class="btn btn-default" type="button" ng-click="ok()">OK
+		                </button>
+		                <button class="btn btn-default" type="button" ng-click="close()">Cancel
+		                </button>
+		            </div>
+		        </div>
+		    </div>
+	   </div>
+	</div>
 </div>
+
+ 

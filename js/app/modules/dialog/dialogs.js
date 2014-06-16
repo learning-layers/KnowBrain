@@ -425,16 +425,16 @@ angular.module('dialogs.services',['ui.bootstrap.modal','dialogs.controllers'])
 					}
 				});
 			},
-            shareWith : function(allUsers, sharedUsers){
+            shareWith : function(allUsers, shareEntities){
                 return $modal.open({
                     templateUrl: MODULES_PREFIX + '/sharing/shareWith.tpl.html',
-                    controller: 'ShareWithController as shareWithCtrl',
+                    controller: 'ShareWithController',
                     keyboard : true,
                     backdrop : true,
                     windowClass: 'modal-huge',
                     resolve : {
                         allUsers : function() { return allUsers; },
-                        sharedUsers : function() { return sharedUsers; }
+                        shareEntities : function() { return shareEntities; },
                     }
                 });
             }

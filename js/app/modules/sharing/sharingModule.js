@@ -43,7 +43,7 @@ sharingModule.config(function ($stateProvider) {
 /**
  * CONTROLLER
  */
-sharingModule.controller("SharingController", ['$scope','$modalInstance', '$dialogs', '$q', 'i18nService', 'UserService', 'UserModel', 'SharingModel', 'ENTITY_TYPES', 'SHARING_OPTIONS', 'entity', function ($scope, $modalInstance, $dialogs, $q, i18nService, UserService, UserModel, SharingModel, ENTITY_TYPES, SHARING_OPTIONS, entity) {
+sharingModule.controller("SharingController", ['$scope','$modalInstance', '$dialogs', '$q', 'i18nService', 'UserService', 'UserModel', 'SharingModel', 'ENTITY_TYPES', 'SHARING_OPTIONS', 'entity',function ($scope, $modalInstance, $dialogs, $q, i18nService, UserService, UserModel, SharingModel, ENTITY_TYPES, SHARING_OPTIONS, entity) {
     
         $scope.entity = entity;
         $scope.entityTypes = ENTITY_TYPES;
@@ -56,6 +56,8 @@ sharingModule.controller("SharingController", ['$scope','$modalInstance', '$dial
         $scope.allCircles = [{label: "public"}, {label:"friends"}];
         
         $scope.shareInput;
+        
+        $scope.userFilter = {label: ""};
 
         /**
          * TRANSLATION INJECTION
@@ -84,65 +86,37 @@ sharingModule.controller("SharingController", ['$scope','$modalInstance', '$dial
         $scope.share = function () {
 
             if(arrayContains($scope.shareEntities, {label:"public"})) {
-                //SharingModel.shareEntityPublic($scope.entity);
-                console.log("Share public")
+                SharingModel.shareEntityPublic($scope.entity);
             }
             else {
                 removeFromArray($scope.shareEntities, {label:"friends"});
                 
-                //SharingModel.shareEntityCustom($scope.entity, $scope.shareEntities, "");
+                var shareTemp = [];
+                
+                for(var i=0; i < $scope.shareEntities.length; i++) {
+
+                    shareTemp.push($scope.shareEntities[i].uri);
+
+                }
                 console.log("Share custom");
-                console.log($scope.shareEntities);
+                console.log(shareTemp);
+                SharingModel.shareEntityCustom($scope.entity, shareTemp, "");
+
             }
 
             
-//            switch($scope.shareWith) {
-//                case SHARING_OPTIONS.public:
-//                    SharingModel.shareEntityPublic($scope.entity);
-//                    break;
-//
-//                case SHARING_OPTIONS.custom:
-//                    SharingModel.shareEntityCustom($scope.entity, $scope.sharedUsers, "");
-//                    break;
-//            }
             $modalInstance.close();
         }
 
         $scope.shareWithHandler = function () {
+               $dialogs.shareWith($scope.allUsers, $scope.shareEntities);
+        };
+        
 
-            var self = $scope;
-
-            if ($scope.shareWith == SHARING_OPTIONS.custom) {
-
-
-                var promises = [];
-                var allUsersPromise = UserModel.getAllUsers();
-                promises.push(allUsersPromise);
-
-                var entityUsersPromise = SharingModel.getEntityUsers($scope.entity);
-                promises.push(entityUsersPromise);
-
-                $q.all(promises).then(function (results) {
-
-                    var allUsers = [];
-                    var sharedUsers = [];
-
-                    allUsers = results[0].users;
-                    sharedUsers = results[1].users;
-
-                    var shareWithDialog = $dialogs.shareWith(allUsers, sharedUsers);
-
-                    shareWithDialog.result.then(function (sharedUsers) {
-                        self.sharedUsers = getUserUris(sharedUsers);
-
-                    }, function (error) {
-
-                       //TODO: Reset sharedWith
-                       self.shareWith = SHARING_OPTIONS.private;
-                       console.log(error);
-                    });
-                });
-            }
+        
+        $scope.blurInput = function() {
+            
+            $("#shareInput").val("");
         };
         
         $scope.activateDropdown = function(e) {
@@ -155,21 +129,23 @@ sharingModule.controller("SharingController", ['$scope','$modalInstance', '$dial
         };
         
         $scope.addShareTag = function(tag) {
-            removeFromArray($scope.allUsers, tag);
-            removeFromArray($scope.allCircles, tag);
+            tag.isSelected = true;
             $scope.shareEntities.push(tag);
-            $("#shareInput").val("");
+            $scope.userFilter.label = "";
         };
         
         $scope.removeShareTag = function(tag) {
-            if(tag.label == "public" || tag.label == "friends") {
-                $scope.allCircles.push(tag);
-            }
-            else {
-                $scope.allUsers.push(tag);
-            }
-            
+            tag.isSelected = false;
             removeFromArray($scope.shareEntities, tag);
+        };
+        
+        $scope.entityUnselected = function(entity) {
+            if(!entity.isSelected) {
+                return true;
+            } 
+            else {
+                return false;
+            } 
         };
 
         var getUserUris = function(users) {
@@ -203,58 +179,72 @@ sharingModule.controller("SharingController", ['$scope','$modalInstance', '$dial
 
     }]);
 
-sharingModule.controller("ShareWithController", ['$modalInstance', 'i18nService', 'allUsers', 'sharedUsers', function ($modalInstance, $i18nService, allUsers, sharedUsersBefore) {
+sharingModule.controller("ShareWithController", ['$scope','$modalInstance', 'i18nService', 'allUsers', 'shareEntities',  function ($scope, $modalInstance, $i18nService, allUsers, shareEntities) {
 
     var sharedUsers = [];
 
     $scope.allUsers = allUsers;
 
-    $scope.isUserChecked = function (user) {
-        if(findUserInArray(user, sharedUsersBefore) > 0) {
-            return true;
+    $scope.selectResource = function(entry) {
+        if(entry.isSelected) {
+            entry.isSelected = false;
         }
         else {
-            return false;
+            entry.isSelected = true;
         }
-    }
-
-    $scope.checkboxChanged = function (user, $event) {
-
-        if ($event.currentTarget.checked) {
-
-            sharedUsers.push(user);
+        if(!arrayContains(sharedUsers, entry)) {
+            sharedUsers.push(entry);
         }
-        else {
-            var i = findUserInArray(user, sharedUsers);
-            if(i > 0) {
-                sharedUsers.splice(i,1);
-            }
-        }
+
     };
 
-    $scope.updateSharedUsers = function () {
-
-        if(angular.equals(sharedUsers, sharedUsersBefore)) {
-            $modalInstance.dismiss('No change');
+    $scope.ok = function () {
+        for(var i=0; i < sharedUsers.length; i++) {
+            if(sharedUsers[i].isSelected) {
+                if(!arrayContains(shareEntities, sharedUsers[i])) {
+                    shareEntities.push(sharedUsers[i]);
+                }
+            } 
+            else {
+                removeFromArray(shareEntities, sharedUsers[i]);
+            }
         }
-        else {
-            $modalInstance.close(sharedUsers);
-        }
-    }
+        
+        $modalInstance.close();
+    };
 
     $scope.close = function () {
+        for(var i=0; i < sharedUsers.length; i++) {
+            sharedUsers[i].isSelected = false;
+        }
+        
         $modalInstance.dismiss('cancel');
     };
-
-    var findUserInArray = function(user, array) {
+    
+    $scope.entityUnselected = function(entity) {
+        if(!entity.isSelected) {
+            return true;
+        } 
+        else {
+            return false;
+        } 
+    };
+    var arrayContains = function(array, entity) {
+        for(var i=0; i < array.length; i++) {
+            if(array[i].label == entity.label) {
+                return true;
+            }
+            return false;
+        }
+    };
+    
+    var removeFromArray = function(array, entity) {
 
         for(var i = 0; i < array.length; i++) {
-            if(array[i].label == user.label) {
-                return i;
+            if(array[i].label == entity.label) {
+                array.splice(i,1);
             }
         }
-
-        return -1;
-    }
+    };
 
 }]);
