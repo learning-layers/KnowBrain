@@ -144,7 +144,7 @@ angular.module('module.qa').service("qaService", ['$q', '$rootScope','UserServic
 				console.log(error);
 				defer.reject(error);
 			},
-			UserSrv.getUserUri(),
+			UserSrv.getUser(),
 			UserSrv.getKey(),
 			thread.uri,
 			thread.targetUri,
@@ -169,7 +169,7 @@ angular.module('module.qa').service("qaService", ['$q', '$rootScope','UserServic
 				console.log(error);
 				defer.reject(error);
 			},
-			UserSrv.getUserUri(),
+			UserSrv.getUser(),
 			UserSrv.getKey(),
 			thread.uri,
 			thread.targetUri,
@@ -182,26 +182,48 @@ angular.module('module.qa').service("qaService", ['$q', '$rootScope','UserServic
 		return defer.promise;     
 	};
 
-	this.getThreadEntries = function(thread){
+	this.getThreadWithEntries = function(uri){
 		var defer = $q.defer();
+		
+		var thread = new Thread(null, null, '', '', null, uri, null);
 		var entries = new Array();
 		
 		new SSDiscWithEntriesGet(
 			function(result){
+				
+				var getThreadTypeByEnum = function(enum_value) {
+					var type = null;
+					angular.forEach(THREAD_TYPE, function(value, key){
+						if(value.enum == enum_value) {
+							type = value;
+						}
+					});
+					return type;
+				};
+				
+				thread.authorUri = result.disc.author;
+				thread.type = getThreadTypeByEnum(result.disc.discType);
+				thread.title = result.disc.label;
+				thread.explanation = result.disc.explanation;
+				thread.targetUri = result.disc.target;
+				thread.creationTime = result.disc.creationTime;
+				
 				angular.forEach(result.disc.entries, function(value, key){
 					var entry = new ThreadEntry(value.author, value.content, value.discEntryType, value.pos, value.timestamp, value.uri, value.creationTime);
 					entries.push(entry);
 				});
+				
+				thread.entries = entries;
 
-        defer.resolve(entries);
+        defer.resolve(thread);
       },
       function(error){
 			  console.log(error);
 				defer.reject(error);
       },
-      UserSrv.getUserUri(),
+      UserSrv.getUser(),
       UserSrv.getKey(),
-			thread.uri
+			uri
       );
 
     return defer.promise;     
@@ -236,7 +258,7 @@ angular.module('module.qa').service("qaService", ['$q', '$rootScope','UserServic
 			  console.log(error);
 				defer.reject(error);
       },
-      UserSrv.getUserUri(),
+      UserSrv.getUser(),
       UserSrv.getKey()
       );
 
@@ -255,7 +277,7 @@ angular.module('module.qa').service("qaService", ['$q', '$rootScope','UserServic
 				console.log(error);
 				defer.reject(error);
 			},
-			UserSrv.getUserUri(),
+			UserSrv.getUser(),
 			UserSrv.getKey(),
 			thread.authorUri
 			);
