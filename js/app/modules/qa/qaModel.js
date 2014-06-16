@@ -31,9 +31,9 @@
 */
 
 // type of the thread; either disc, qa or chat
-angular.module('module.models').constant('THREAD_TYPE', {discussion:'disc', question:'qa', chat:'chat'});
+angular.module('module.qa').constant('THREAD_TYPE', {discussion:{enum:'disc', label:'discussion'}, question:{enum:'qa', label:'question'}, chat:{enum:'chat', label:'chat'}});
 
-angular.module('module.models').factory('Thread', ['UriToolbox', function (UriToolbox) {
+angular.module('module.qa').factory('Thread', ['UriToolbox', function (UriToolbox) {
  		
   // Constructor
   function Thread(author_uri, type, title, explanation, target_entry_uri, uri, creationTimeTicks) {
@@ -89,7 +89,7 @@ angular.module('module.models').factory('Thread', ['UriToolbox', function (UriTo
   return Thread;
 }])
 
-angular.module('module.models').factory('ThreadEntry', function () {
+angular.module('module.qa').factory('ThreadEntry', function () {
  		
   // Constructor
   function ThreadEntry(author_uri, content, disc_entry_type, position, timestamp, uri) {
@@ -106,7 +106,7 @@ angular.module('module.models').factory('ThreadEntry', function () {
 	return ThreadEntry;
 })
 
-angular.module('module.models').factory('Author', function () {
+angular.module('module.qa').factory('Author', function () {
  		
   // Constructor
   function Author(name) {
@@ -121,7 +121,17 @@ angular.module('module.models').factory('Author', function () {
 * Services
 */
 
-angular.module('module.models').service("qaService", ['$q', '$rootScope','UserService','Thread','ThreadEntry','Author', function($q, $rootScope, UserSrv, Thread, ThreadEntry, Author){
+angular.module('module.qa').service("qaService", ['$q', '$rootScope','UserService','THREAD_TYPE','Thread','ThreadEntry','Author', function($q, $rootScope, UserSrv, THREAD_TYPE, Thread, ThreadEntry, Author){
+	
+	this.getThreadTypeByEnum = function(enum_value) {
+		angular.forEach(THREAD_TYPE, function(value, key){
+			if(value.enum == enum_value) {
+				return value;
+			}
+		});
+		
+		return null;
+	}
 
 	this.addNewThread = function(thread){
 		var defer = $q.defer();
@@ -140,7 +150,7 @@ angular.module('module.models').service("qaService", ['$q', '$rootScope','UserSe
 			thread.targetUri,
 			'',
 			true,
-			thread.type,
+			thread.type.enum,
 			thread.title,
 			thread.explanation
 			);
@@ -203,8 +213,20 @@ angular.module('module.models').service("qaService", ['$q', '$rootScope','UserSe
 		
     new SSDiscsAllGet(
       function(result){
+			
+				var getThreadTypeByEnum = function(enum_value) {
+					var type = null;
+					angular.forEach(THREAD_TYPE, function(value, key){
+						if(value.enum == enum_value) {
+							type = value;
+						}
+					});
+					return type;
+				};
+				
         angular.forEach(result.discs, function(value, key){
-					var thread = new Thread(value.author, value.discType, value.label, value.explanation, value.target, value.uri, value.creationTime);
+					var type = getThreadTypeByEnum(value.discType);
+					var thread = new Thread(value.author, type, value.label, value.explanation, value.target, value.uri, value.creationTime);
           threadList.push(thread);
         });
 

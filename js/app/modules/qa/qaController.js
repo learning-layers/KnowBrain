@@ -35,104 +35,60 @@ angular.module('module.qa').config(function($stateProvider) {
     $stateProvider
         .state('app.qa', {
             url:'/qa',
-            controller: 'QAController',
+            controller: 'Controller',
             templateUrl: MODULES_PREFIX + '/qa/qa.tpl.html'
         })
 				
 				.state('app.qa.qa', {
             url:'/qa/:uri',
-            controller: 'QAQuestionController',
+            controller: 'QuestionController',
             templateUrl: MODULES_PREFIX + '/qa/question.tpl.html'
         })
 				
 				.state('app.qa.disc', {
             url:'/disc/:uri',
-            controller: 'QADiscussionController',
+            controller: 'DiscussionController',
             templateUrl: MODULES_PREFIX + '/qa/discussion.tpl.html'
         })
 				
 				.state('app.qa.chat', {
             url:'/chat/:uri',
-            controller: 'QAChatController',
+            controller: 'ChatController',
             templateUrl: MODULES_PREFIX + '/qa/chat.tpl.html'
         });
 
 });
 
 /**
+* Constants
+*/
+angular.module('module.qa').constant('THREAD_LIST_TYPE', {top:'Top', newest:'Newest', unanswered:'Unanswered'});
+
+/**
 * CONTROLLER
 */
-angular.module('module.qa').controller("QAController", ['$scope', '$state', '$q', 'UserService', 'qaService', 'Thread','THREAD_TYPE', function($scope, $state, $q, UserSrv, qaService, Thread, THREAD_TYPE){
-			
-		$scope.threadType = THREAD_TYPE.question;
-		$scope.threadTypeLabel = "question";
+angular.module('module.qa').controller("Controller", ['$scope', '$state', '$q', '$modal', '$dialogs', '$filter', 'UserService', 'qaService', 'Thread','THREAD_TYPE', 'THREAD_LIST_TYPE', function($scope, $state, $q, $modal, $dialogs, $filter, UserSrv, qaService, Thread, THREAD_TYPE, THREAD_LIST_TYPE){
 		
+		$scope.THREAD_TYPE = THREAD_TYPE;
+		$scope.newThread = new Thread(UserSrv.getUserUri(), THREAD_TYPE.question, '', '', null, null, null);
+		$scope.help = 'To post a question enter a title and an explanation.';
+		
+		$scope.threadList = null;
+		$scope.selectedThread = null;
 		$scope.threadResponseLabel = "answer";
 		
-		$scope.threadTitle = '';
-		$scope.threadExplanation = '';
-		
-		$scope.selectedThread = null;
-				
-		$scope.titlePlaceholder = '';		
-		$scope.explanationPlaceholder = '';
-		$scope.help = '';
-		
-		$scope.listHeader = "Top Threads";
-		$scope.listFiltersIsCollapsed = false;
-		
-		$scope.listType = "top";
-				
-		/* $scope.$watch('threadType', function(newValue, oldValue) {
-			
-			switch($scope.threadType) {
-				case THREAD_TYPE.question:
-					$scope.threadTypeLabel = "question";
-					break;
-				case THREAD_TYPE.discussion:
-					$scope.threadTypeLabel = "discussion";
-					break;
-				case THREAD_TYPE.chat:
-					$scope.threadTypeLabel = "chat";
-					break;
-				}
-
-				$scope.titlePlaceholder = "Enter title of your " + $scope.threadTypeLabel;	
-				$scope.explanationPlaceholder = "Add an explanation to your " + $scope.threadTypeLabel;			
-		}); */
-		
-		$scope.threadTypeChangedHandler = function(new_value)
-		{
-			switch(new_value) {
-				case THREAD_TYPE.question:
-					$scope.threadTypeLabel = "question";
-					break;
-				case THREAD_TYPE.discussion:
-					$scope.threadTypeLabel = "discussion";
-					break;
-				case THREAD_TYPE.chat:
-					$scope.threadTypeLabel = "chat";
-					break;
-				}
-
-				$scope.titlePlaceholder = "Enter title of your " + $scope.threadTypeLabel;	
-				$scope.explanationPlaceholder = "Add an explanation to your " + $scope.threadTypeLabel;
-		};
-		
+		$scope.THREAD_LIST_TYPE = THREAD_LIST_TYPE;
+		$scope.selectedThreadListType = THREAD_LIST_TYPE.top;	
+		$scope.threadListHeader = "Top Threads";
+		$scope.searchString = '';
+						
+						
 		$scope.loadDetailPage = function(thread)
 		{
 			$scope.selectedThread = thread;
-			$state.transitionTo('app.qa.' + thread.type, { uri: thread.uriPathnameHash});
+			$state.transitionTo('app.qa.' + thread.type.enum, { uri: thread.uriPathnameHash});
 		};
-		
-		$scope.addNewThread = function(type, title, explanation)
-		{
-			var thread = new Thread(UserSrv.getUserUri(), type, title, explanation, '', '', new Date().getTime());
-			
-			addNewThread(thread)
-				.then(loadAuthorDetails);
-		};
-		
+				
 		$scope.getRandomNumber = function(max)
 		{
 			return Math.floor((Math.random() * max) + 1);
@@ -142,14 +98,31 @@ angular.module('module.qa').controller("QAController", ['$scope', '$state', '$q'
 		{
 			switch(focusedControl) {
 					case 'title':
-						$scope.help = "Your " + $scope.threadTypeLabel + " title is the first thing another user sees. It should be clear, concise, and contain enough information so that others can see what it’s about at first glance";
+						$scope.help = "Your " + $scope.newThread.type.label + " title is the first thing another user sees. It should be clear, concise, and contain enough information so that others can see what it’s about at first glance";
 						break;
 					case 'explanation':
-						$scope.help = "Provide any details that other researchers might need to discuss your topic.";
+						$scope.help = "Provide any details that other users might need to discuss your topic.";
+						break;
+					case 'tag':
+						$scope.help = "Enter tags, so other user can find your "+ $scope.newThread.type.label + " easier.";
+						break;
+					case 'btnQuestion':
+						$scope.help = "To post a " + $scope.newThread.type.label + " enter a title and an explanation.";
+						break;
+					case 'btnDiscussion':
+						$scope.help = "To start a " + $scope.newThread.type.label + " enter a title and an explanation.";
+						break;
+					case 'btnChat':
+						$scope.help = "To start a " + $scope.newThread.type.label + " enter a title.";;
 						break;
 			}
 		};
 		
+		$scope.changeSelectedThreadListType = function(threadListType)
+		{
+			$scope.selectedThreadListType = threadListType;
+		};
+				
 		var loadThreadList = function() 
 		{
 			return qaService
@@ -159,17 +132,7 @@ angular.module('module.qa').controller("QAController", ['$scope', '$state', '$q'
 								return result;
 							});
 		};
-				
-/* 		var loadThreadEntries = function(thread) 
-		{
-			return qaService
-							.getThreadEntries(thread)
-							.then(function(result) {
-								$scope.threadEntries = result;
-								return result;
-							});
-		}; */
-		
+						
 		var loadAuthorDetails = function(threadList) 
 		{
 			angular.forEach(threadList, function(value, key){
@@ -180,22 +143,82 @@ angular.module('module.qa').controller("QAController", ['$scope', '$state', '$q'
 								return value.author;
 							});
 			});
-			
-			return 
 		};
 		
-		var addNewThread = function(thread)
+		$scope.postNewThread = function()
+		{
+			loadSimilarThreadList()
+				.then(openSimilarThreads);
+		};
+		
+		var loadSimilarThreadList = function() 
 		{
 			return qaService
-							.addNewThread(thread)
+							.getAllThreads()
 							.then(function(result) {
-								thread.uri = result;
-								$scope.threadList.push(thread);
-								var tmpList = new Array();
-								tmpList.push(thread);
-								return tmpList;
+								return $filter('threadTypeFilter')(result, $scope.newThread.type);
 							});
-		};	
+		};
+		
+		var addNewThread = function()
+		{
+			return qaService
+							.addNewThread($scope.newThread)
+							.then(function(result) {
+								$scope.newThread.uri = result;
+								$scope.threadList.push($scope.newThread);
+	
+								var tmpList = new Array();
+								tmpList.push($scope.newThread);
+								loadAuthorDetails(tmpList);
+								
+								$scope.newThread = new Thread(UserSrv.getUserUri(), THREAD_TYPE.question, '', '', null, null, null);
+								
+								return result;
+							});
+		};
+						
+		var openSimilarThreads = function (similarThreadList) {	
+			if(similarThreadList.length > 0)
+			{
+				var modalInstance = $modal.open({
+					templateUrl: MODULES_PREFIX + '/qa/modalSimilarThreads.tpl.html',
+					controller: 'ModalSimilarThreadsController',
+					size: 'lg',
+					resolve: {
+						thread: function () { return $scope.newThread; },
+						similarThreadList: function () { return similarThreadList; }
+					}
+				});
+
+				modalInstance.result.then(function () {
+					addNewThread();
+				}, function () {
+					//$log.info('Modal dismissed at: ' + new Date());
+				});
+			}
+			else
+			{
+				addNewThread();
+			}
+		};
+		
+		$scope.openAddAttachments = function () {	
+			var modalInstance = $modal.open({
+				templateUrl: MODULES_PREFIX + '/qa/modalAddAttachments.tpl.html',
+				controller: 'ModalAddAttachmentsController',
+				size: 'lg',
+				resolve: {
+					thread: function () { return $scope.newThread; }
+				}
+			});
+
+			modalInstance.result.then(function () {
+
+			}, function () {
+				//$log.info('Modal dismissed at: ' + new Date());
+			});
+		};
 
 		// load data
 		loadThreadList()
@@ -203,7 +226,63 @@ angular.module('module.qa').controller("QAController", ['$scope', '$state', '$q'
 			
 }]);
 
-angular.module('module.qa').controller("QAQuestionController", ['$scope', '$state', '$stateParams', '$q', 'UserService', 'qaService', 'Thread','THREAD_TYPE', function($scope, $state, $stateParams, $q, UserSrv, qaService, Thread, THREAD_TYPE){
+angular.module('module.qa').controller('ModalSimilarThreadsController', ['$scope', '$modalInstance', '$state', 'qaService', 'thread', 'similarThreadList', function($scope, $modalInstance, $state, qaService, thread, similarThreadList){
+
+	$scope.thread = thread;	
+	$scope.similarThreadList = similarThreadList;
+	
+	$scope.loadDetailPage = function(thread)
+	{
+		$scope.selectedThread = thread;
+		$state.transitionTo('app.qa.' + thread.type.enum, { uri: thread.uriPathnameHash});
+		$modalInstance.close(null);
+	};
+
+  $scope.cancel = function () {
+    $modalInstance.dismiss('cancel');
+  };
+		
+	$scope.ok = function()
+	{
+		$modalInstance.close(null);
+	};	
+	
+	var loadAuthorDetails = function() 
+	{
+		angular.forEach($scope.similarThreadList, function(value, key){
+			qaService
+						.getAuthorDetails(value)
+						.then(function(result) {
+							value.author = result;
+							return value.author;
+						});
+		});
+	};
+	
+	$scope.getRandomNumber = function(max)
+	{
+		return Math.floor((Math.random() * max) + 1);
+	};	
+	
+	loadAuthorDetails();
+	
+}]);
+
+angular.module('module.qa').controller('ModalAddAttachmentsController', ['$scope', '$modalInstance', '$state', 'qaService', 'thread', function($scope, $modalInstance, $state, qaService, thread){
+
+	$scope.thread = thread;
+		
+	$scope.ok = function () {
+    $modalInstance.close(null);
+  };
+
+  $scope.cancel = function () {
+    $modalInstance.dismiss('cancel');
+  };
+	
+}]);
+
+angular.module('module.qa').controller("QuestionController", ['$scope', '$state', '$stateParams', '$q', 'UserService', 'qaService', 'Thread','THREAD_TYPE', function($scope, $state, $stateParams, $q, UserSrv, qaService, Thread, THREAD_TYPE){
 
 	$scope.question = $scope.$parent.selectedThread;
 	
@@ -219,6 +298,28 @@ angular.module('module.qa').controller("QAQuestionController", ['$scope', '$stat
 	// TODO load thread first if thread is null (happens by refreshing page F5)
 	loadThreadEntries($scope.question);
 }]);
+
+/**
+* Filters
+*/
+angular.module('module.qa').filter('threadTypeFilter', function() {
+  
+    return function(threadList, type) {
+		  if(type == null || type == ''){
+				return threadList;
+			}
+		
+			var out = new Array();
+						
+			angular.forEach(threadList, function(value, key){
+				if(value.type.enum == type.enum) {
+					out.push(value);
+				}
+			});
+			
+      return out;
+    };
+});
 
 /**
 * Directives

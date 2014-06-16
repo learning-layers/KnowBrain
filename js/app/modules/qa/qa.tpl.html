@@ -1,36 +1,54 @@
 <div class="container" role="main" ui-view>
 			
-				<div class="row clearfix" id="thread-input">
+				<div class="row clearfix new-thread">
 					<div class="col-md-8 column">
 						<div class="btn-group thread-input-group">
-							<label class="btn btn-default" ng-model="threadType" btn-radio="'qa'" ng-click="threadTypeChangedHandler('qa')">
+							<button class="btn btn-default" ng-model="newThread.type" btn-radio="THREAD_TYPE.question" ng-click="showHelp('btnQuestion')">
 								<span class="glyphicon glyphicon-question"></span>
 									Question
-							</label>
+							</button>
 							
-							<label class="btn btn-default" ng-model="threadType" btn-radio="'disc'" ng-click="threadTypeChangedHandler('disc')">
+							<button class="btn btn-default" ng-model="newThread.type" btn-radio="THREAD_TYPE.discussion" ng-click="showHelp('btnDiscussion')">
 								<span class="glyphicon glyphicon-discussion"></span>
 									Discussion
-							</label>
+							</button>
 							
-							<label class="btn btn-default" ng-model="threadType" btn-radio="'chat'" ng-click="threadTypeChangedHandler('chat')">
+							<button class="btn btn-default" ng-model="newThread.type" btn-radio="THREAD_TYPE.chat" ng-click="showHelp('btnChat')">
 								<span class="glyphicon glyphicon-chat"></span>
 									Chat
-							</label>
+							</button>
 					
 						</div>
 						
-						<input type="text" class="form-control thread-input-group" ng-model="threadTitle" placeholder="{{titlePlaceholder}}" ng-focus="showHelp('title')"></input>
-	
-						<textarea class="form-control thread-input-group" ng-model="threadExplanation" ng-class="(threadType == 'chat') ? 'hidden' : ''" rows="5" placeholder="{{explanationPlaceholder}}" ng-focus="showHelp('explanation')"></textarea>
+						<form name="form" novalidate>
+							<input type="text" class="form-control thread-input-group" placeholder="Enter title of your {{newThread.type.label}}" ng-model="newThread.title" ng-focus="showHelp('title')" required></input>
+		
+							<div class="row">
+								<div class="col-md-9 column">
+									<textarea class="form-control thread-input-group" rows="5" placeholder="Enter explanation of your {{newThread.type.label}}" ng-model="newThread.explanation" ng-class="(newThread.type == THREAD_TYPE.chat) ? 'hidden' : ''" ng-focus="showHelp('explanation')" ng-required="newThread.type != THREAD_TYPE.chat"></textarea>
+								</div>
+								
+								<div class="col-md-3 column" ng-class="(newThread.type == THREAD_TYPE.chat) ? 'hidden' : ''">
+									  <div ng-show="!ajaxLoading" class="kb-fluid-container pull-left add-attachment-box" ng-click="openAddAttachments()">Add attachments
+											 <div id="upload-link" class="glyphicon glyphicon-plus-sign" ></div>
+										</div>
 
-						<button type="button" class="btn btn-success btn-lg pull-right" ng-click="addNewThread(threadType, threadTitle, threadExplanation).then(loadAuthorDetails)">Show me similar {{threadTypeLabel}}s</button>
+										<div ng-show="ajaxLoading" id="upload-box-loading" class="kb-fluid-container pull-left">
+											<div class="ajax-loader-light-grey" ></div>
+										</div>
+								</div>
+							</div>
+							
+							
+							<tags-input ng-model="tag1" custom-class="bootstrap" placeholder="Add tags" ng-click="showHelp('tag')"></tags-input>
+
+							<!-- <button type="button" class="btn btn-success btn-lg pull-right" id="post-btn" ng-click="addNewThread().then(loadAuthorDetails)">Post your {{newThread.type.label}} now</button> -->
+							<button type="button" class="btn btn-success btn-lg pull-right btn-post" ng-click="postNewThread()" ng-disabled="form.$invalid">Post your {{newThread.type.label}} now</button>
+						</form>
+						
 					</div>
 					
 					<div class="col-md-4 column well help">
-						<p class="lead">
-							Help
-						</p>
 						<p>
 							{{help}}
 						</p>
@@ -41,87 +59,53 @@
 				<div class="row clearfix box rounded">
 				
 					<div class="row clearfix">
-						<div class="col-md-12 column">
+						<div class="col-md-3 column">
 							<ul class="nav nav-pills pull-left">
 								<li>
-									<h3 id="thread-list-header">{{listHeader}}</h3>
+									<h3 class="thread-list-header">{{selectedThreadListType}} Threads</h3>
 								</li>
 							</ul>
-							
-							<ul class="nav nav-pills pull-left">
-								<li>
-									<input type="search" class="form-control" placeholder="search">
+						</div>
+						
+						<div class="col-md-5 column">						
+							<ul class="nav nav-pills pull-left stretch">
+								<li class="stretch">
+									<input type="search" class="form-control" placeholder="search" ng-model="searchString">
 								</li>
 							</ul>
+						</div>
 							
-							<ul class="nav nav-pills pull-right" collapse="listFiltersIsCollapsed">
-								<li class="active">
-									<a href="#">
-										<span class="badge">2</span> Top
+						<div class="col-md-4 column">	
+							<ul class="nav nav-pills pull-right thread-list-type">
+								<li ng-class="(selectedThreadListType == THREAD_LIST_TYPE.top) ? 'active' : ''">
+									<a ng-click="changeSelectedThreadListType(THREAD_LIST_TYPE.top)">
+										<span class="badge" bind-once>{{getRandomNumber(10)}}</span> Top
 									</a>
 								</li>
-								<li>
-									<a href="#">
-										<span class="badge">8</span> Newest
+								<li ng-class="(selectedThreadListType == THREAD_LIST_TYPE.newest) ? 'active' : ''">
+									<a ng-click="changeSelectedThreadListType(THREAD_LIST_TYPE.newest)">
+										<span class="badge" bind-once>{{getRandomNumber(5)}}</span> Newest
 									</a>	
 								</li>
-								<li>
-									<a href="#">Unanswered</a>
+								<li ng-class="(selectedThreadListType == THREAD_LIST_TYPE.unanswered) ? 'active' : ''">
+									<a ng-click="changeSelectedThreadListType(THREAD_LIST_TYPE.unanswered)">
+										<span	class="badge" bind-once>{{getRandomNumber(10)}}</span> Unanswered
+									</a>
 								</li>
 							</ul>
-						</div>
+						</div>	
+							
+
 					</div>
-				</div>					
-				
-<!-- 				<div class="row clearfix thread">
-					<div class="col-md-3 column">
-						<div class="thread-type-icon icon-answered">
-						</div>
-						<div class="thread-statistic center-block">
-							<p class="thread-statistic lead" bind-once>{{getRandomNumber(50)}} votes</p>
-							<p class="thread-statistic text-muted" bind-once>{{getRandomNumber(20)}} answers</p>
-							<p class="thread-statistic text-muted" bind-once>{{getRandomNumber(2000)}} views</p>
-						</div>
-					</div>
-					<div class="col-md-9 column">
-						<p class="lead thread-title">
-							Lorem ipsum dolor sit amet, consetetur sadipscing elitr
-						</p>
-						<div class="row">
-							<div class="col-md-3 column">
-									<div class="thread-icon icon-user">
-									</div>
-									<div class="thread-author">
-										<p class="thread-author">lukas</p>
-										<p class="thread-author text-muted" bind-once>{{getRandomNumber(1000)}}</p>
-									</div>
-									<div class="thread-author">
-										<p class="thread-author text-muted">27.5.2014</p>
-										<p class="thread-author text-muted">08:05:00</p>
-									</div>
-							</div>
-							<div class="col-md-3 column">
-									<div class="thread-icon icon-entity">
-									</div>
-									<div class="thread-author">
-										<p class="thread-author">collection</p>
-										<p class="thread-author text-muted">my folder</p>
-									</div>
-							</div>
-							<div class="col-md-6 column">
-								place for tag control
-							</div>
-						</div>
-					</div>
-				</div> -->
-								
-				<div class="row clearfix thread" ng-repeat="thread in threadList">
+				</div>		
+						
+				<div class="row clearfix thread" ng-repeat="thread in threadList | filter:{ title:searchString }">
 					<div class="col-md-3 col-xs-12 column" bind-once>
-						<div class="thread-type-icon rounded-left" ng-class="(thread.type == 'qa') ? 'icon-question' : ((thread.type == 'disc') ? 'icon-discussion' : ((thread.type == 'chat') ? 'icon-chat' : ((thread.type == 'answered') ? 'icon-answered' : '')))">
+						<div class="thread-type-icon rounded-left" ng-class="(thread.type == THREAD_TYPE.question) ? 'icon-question' : ((thread.type == THREAD_TYPE.discussion) ? 'icon-discussion' : ((thread.type == THREAD_TYPE.chat) ? 'icon-chat' : ((thread.type == 'answered') ? 'icon-answered' : '')))">
 						</div>
 						<div class="thread-statistic rounded-right center-block">
-							<p class="thread-statistic lead">{{getRandomNumber(50)}} {{thread.type == 'qa' ? 'votes' : (thread.type == 'disc' ? 'likes' : (thread.type == 'chat' ? 'members' : ''))}}</p>
-							<p class="thread-statistic text-muted">{{getRandomNumber(20)}} {{thread.type == 'qa' ? 'answers' : (thread.type == 'disc' ? 'opinions' : (thread.type == 'chat' ? 'messages' : ''))}}</p>
+							<p class="thread-statistic lead">{{getRandomNumber(50)}} {{thread.type == THREAD_TYPE.question ? 'votes' : (thread.type == THREAD_TYPE.discussion ? 'likes' : (thread.type == THREAD_TYPE.chat ? 'members' : ''))}}</p>
+							<p class="thread-statistic text-muted">{{getRandomNumber(20)}} {{thread.type == THREAD_TYPE.question ? 'answers' : (thread.type == THREAD_TYPE.discussion ? 'opinions' : (thread.type == THREAD_TYPE.chat ? 'messages' : ''))}}</p>
 							<p class="thread-statistic text-muted">{{getRandomNumber(2000)}} views</p>
 						</div>
 					</div>
@@ -151,7 +135,7 @@
 									</div>
 							</div>
 							<div class="col-md-6 col-xs-12 column">
-								place for tag control
+								<!-- <tags-input ng-model="tags" custom-class="bootstrap" placeholder="."></tags-input> -->
 							</div>
 						</div>
 					</div>
@@ -162,18 +146,18 @@
 					</div>
 					<div class="col-md-4 column container">
 						<ul class="pagination">
-							<li class="disabled"><a href="#">&laquo;</a></li>
-							<li class="active"><a href="#">1 <span class="sr-only">(current)</span></a></li>
-							  <li><a href="#">2</a></li>
-								<li><a href="#">3</a></li>
-								<li><a href="#">4</a></li>
-								<li><a href="#">5</a></li>
-								<li class="disabled"><a href="#">&raquo;</a></li>
+							<li class="disabled"><a href="">&laquo;</a></li>
+							<li class="active"><a href="">1 <span class="sr-only">(current)</span></a></li>
+							  <li><a href="">2</a></li>
+								<li><a href="">3</a></li>
+								<li><a href="">4</a></li>
+								<li><a href="">5</a></li>
+								<li class="disabled"><a href="">&raquo;</a></li>
 						</ul>
 					</div>
 					<div class="col-md-4">
 					</div>
-				</div>
-							
+				</div>							
 
 			</div> <!-- /container -->
+						
