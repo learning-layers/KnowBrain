@@ -2,14 +2,6 @@
     float: none;
 }
 
-#shareDropdownList li {
-	width:356px
-}
-
-#shareWrapper {
-	line-height: 27px;
-}
-
 .tag {
  background: #428bca;
   border: 1px solid #357ebd;
@@ -36,6 +28,11 @@
 	cursor: pointer;
 	font: 700 15px Arial,sans-serif;
 	vertical-align: middle;
+}
+
+#shareDropdown {
+	height: auto !important; 
+	overflow: visible !important;
 }
 
 #shareInput

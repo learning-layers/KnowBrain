@@ -132,8 +132,10 @@ sharingModule.controller("SharingController", ['$scope','$modalInstance', '$dial
         };
         
         $scope.activateDropdown = function(e) {
+            console.log("Toggle");
             if(!$("#shareDropdown").hasClass("open")) {
                 $("#dropDownToggle").dropdown('toggle');
+                $("dropdown-toggle").dropdown('toggle');
             }
             e.stopPropagation();
         };
