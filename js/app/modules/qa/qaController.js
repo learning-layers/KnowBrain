@@ -67,14 +67,13 @@ angular.module('module.qa').constant('THREAD_LIST_TYPE', {top:'Top', newest:'New
 /**
 * CONTROLLER
 */
-angular.module('module.qa').controller("Controller", ['$scope', '$state', '$q', '$modal', '$dialogs', '$filter', 'UserService', 'qaService', 'Thread','THREAD_TYPE', 'THREAD_LIST_TYPE', function($scope, $state, $q, $modal, $dialogs, $filter, UserSrv, qaService, Thread, THREAD_TYPE, THREAD_LIST_TYPE){
+angular.module('module.qa').controller("Controller", ['$scope', '$state', '$q', '$modal', '$dialogs', '$filter', 'UserService', 'UriToolbox', 'qaService', 'Thread','THREAD_TYPE', 'THREAD_LIST_TYPE', function($scope, $state, $q, $modal, $dialogs, $filter, UserSrv, UriToolbox, qaService, Thread, THREAD_TYPE, THREAD_LIST_TYPE){
 		
 		$scope.THREAD_TYPE = THREAD_TYPE;
-		$scope.newThread = new Thread(UserSrv.getUserUri(), THREAD_TYPE.question, '', '', null, null, null);
+		$scope.newThread = new Thread(UserSrv.getUser(), THREAD_TYPE.question, '', '', null, null, null);
 		$scope.help = 'To post a question enter a title and an explanation.';
 		
 		$scope.threadList = null;
-		$scope.selectedThread = null;
 		$scope.threadResponseLabel = "answer";
 		
 		$scope.THREAD_LIST_TYPE = THREAD_LIST_TYPE;
@@ -85,7 +84,6 @@ angular.module('module.qa').controller("Controller", ['$scope', '$state', '$q', 
 						
 		$scope.loadDetailPage = function(thread)
 		{
-			$scope.selectedThread = thread;
 			$state.transitionTo('app.qa.' + thread.type.enum, { uri: thread.uriPathnameHash});
 		};
 				
@@ -166,13 +164,14 @@ angular.module('module.qa').controller("Controller", ['$scope', '$state', '$q', 
 							.addNewThread($scope.newThread)
 							.then(function(result) {
 								$scope.newThread.uri = result;
+								$scope.newThread.uriPathnameHash = UriToolbox.extractUriPathnameHash(result);
 								$scope.threadList.push($scope.newThread);
 	
 								var tmpList = new Array();
 								tmpList.push($scope.newThread);
 								loadAuthorDetails(tmpList);
 								
-								$scope.newThread = new Thread(UserSrv.getUserUri(), THREAD_TYPE.question, '', '', null, null, null);
+								$scope.newThread = new Thread(UserSrv.getUser(), THREAD_TYPE.question, '', '', null, null, null);
 								
 								return result;
 							});
@@ -233,7 +232,6 @@ angular.module('module.qa').controller('ModalSimilarThreadsController', ['$scope
 	
 	$scope.loadDetailPage = function(thread)
 	{
-		$scope.selectedThread = thread;
 		$state.transitionTo('app.qa.' + thread.type.enum, { uri: thread.uriPathnameHash});
 		$modalInstance.close(null);
 	};
@@ -284,19 +282,18 @@ angular.module('module.qa').controller('ModalAddAttachmentsController', ['$scope
 
 angular.module('module.qa').controller("QuestionController", ['$scope', '$state', '$stateParams', '$q', 'UserService', 'qaService', 'Thread','THREAD_TYPE', function($scope, $state, $stateParams, $q, UserSrv, qaService, Thread, THREAD_TYPE){
 
-	$scope.question = $scope.$parent.selectedThread;
+	$scope.question = null;
 	
-	var loadThreadEntries = function(thread) 
+	var loadThreadWithEntries = function(uri) 
 	{
 		return qaService
-						.getThreadEntries(thread)
+						.getThreadWithEntries(uri)
 						.then(function(result) {
-							$scope.question.entries = result;
+							$scope.question = result;
 						});
 	};
 	
-	// TODO load thread first if thread is null (happens by refreshing page F5)
-	loadThreadEntries($scope.question);
+	loadThreadWithEntries(UserSrv.getUserSpace() + "/" + $stateParams.uri);
 }]);
 
 /**
