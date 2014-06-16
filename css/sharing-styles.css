@@ -7,16 +7,16 @@
   border: 1px solid #357ebd;
   border-radius: 4px;
   color: #fff;
-  height: 21px;
-  line-height:1.3;
+  line-height: 20px;
+  height: 28px;
   padding-left:4px;
   padding-right:2px;
   padding-top:2px;
   padding-bottom:3px;
   font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-  font-size:14px;
+  font-size:15px;
   margin-right:5px;
-  margin-bottom:100px;
+  display:inline-block;
 }
 
 .removeTag {
@@ -40,5 +40,10 @@
   outline: none;
   border:none !important;
   box-shadow:none !important;
+  line-height: 20px;
+}
+
+#shareDropdownContent {
+	width:100%;
 }
 

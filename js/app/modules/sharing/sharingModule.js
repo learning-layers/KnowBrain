@@ -53,6 +53,7 @@ sharingModule.controller("SharingController", ['$scope','$modalInstance', '$dial
         $scope.sharedUsers = [];
         
         $scope.allUsers = [];
+        $scope.allCircles = [{label: "public"}, {label:"friends"}];
         
         $scope.shareInput;
 
@@ -140,12 +141,24 @@ sharingModule.controller("SharingController", ['$scope','$modalInstance', '$dial
             e.stopPropagation();
         };
         
-        $scope.shareEntities = []
+        $scope.shareEntities = [];
         
         $scope.addShareTag = function(tag) {
-            console.log("Add Tag:");
-            console.log(tag);
+            removeFromArray($scope.allUsers, tag);
+            removeFromArray($scope.allCircles, tag);
             $scope.shareEntities.push(tag);
+            $("#shareInput").val("");
+        };
+        
+        $scope.removeShareTag = function(tag) {
+            if(tag.label == "public" || tag.label == "friends") {
+                $scope.allCircles.push(tag);
+            }
+            else {
+                $scope.allUsers.push(tag);
+            }
+            
+            removeFromArray($scope.shareEntities, tag);
         };
 
         var getUserUris = function(users) {
@@ -157,7 +170,25 @@ sharingModule.controller("SharingController", ['$scope','$modalInstance', '$dial
             }
 
             return userUris;
-        }
+        };
+        
+        var arrayContains = function(array, entity) {
+            for(var i=0; i < array.length; i++) {
+                if(array[i].label == entity.label) {
+                    return true;
+                }
+                return false;
+            }
+        };
+        
+        var removeFromArray = function(array, entity) {
+
+            for(var i = 0; i < array.length; i++) {
+                if(array[i].label == entity.label) {
+                    array.splice(i,1);
+                }
+            }
+        };
 
     }]);
 
