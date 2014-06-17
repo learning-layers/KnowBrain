@@ -80,10 +80,7 @@ angular.module('module.group').controller("newGroupController", ['$scope', '$dia
     $scope.addMembers = function() {
 
         if($scope.groupMembers.length > 0) {
-            var addMembersDialog = $dialogs.addMembers($scope.groupMembers);
-            addMembersDialog.result.then(function() {
-                console.log($scope.groupMembers);
-            });
+            $dialogs.addMembers($scope.groupMembers);
         }
     };
     
@@ -100,8 +97,6 @@ angular.module('module.group').controller("newGroupController", ['$scope', '$dia
     };
     
     $scope.createGroup = function() {
-        console.log("Creating Group");
-        
         var userUrls = [];
         
         for(var i=0; i < $scope.groupMembers.length; i++) {
@@ -114,8 +109,6 @@ angular.module('module.group').controller("newGroupController", ['$scope', '$dia
         
         var promise = GroupFetchService.createGroup($scope.group.name, [], userUrls);
         promise.then(function(result) {
-            console.log("Group created!");
-            console.log(result);
             $modalInstance.close(result.circleUri);
         });
     };

@@ -828,10 +828,7 @@ angular.module('module.models').service("TagFetchService", ['$q', '$rootScope','
 }]);
 
 angular.module('module.models').service('UserModel', ['$q', '$rootScope','UserService', function($q, $rootScope, UserSrv) {
-
-    console.log(UserSrv.getUser());
-    console.log(UserSrv.getKey());
-
+    
     this.getAllUsers = function() {
 
         var defer = $q.defer();
@@ -839,9 +836,6 @@ angular.module('module.models').service('UserModel', ['$q', '$rootScope','UserSe
 
         new SSUserAll(
             function(result){
-                console.log("All users:");
-                console.log(result);
-
                 defer.resolve(result);
             },
             function(error){
@@ -886,7 +880,6 @@ angular.module('module.models').service("GroupFetchService", ['$q','UserService'
         var self = this;
 
         new SSEntityCircleCreate(function(result){
-        	console.log("Group created");
                 defer.resolve(result);
             },
             function(error){

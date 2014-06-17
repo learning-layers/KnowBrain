@@ -68,7 +68,6 @@ angular.module('module.social').controller("GroupsController", ['$scope', '$dial
     var promise = GroupFetchService.getUserGroups();
     
     promise.then(function(result){
-        console.log(result.circles);
         $scope.groups = result.circles;
     });
 
@@ -76,10 +75,8 @@ angular.module('module.social').controller("GroupsController", ['$scope', '$dial
         var newGroupDialog = $dialogs.createNewGroup($scope.groups);
         
         newGroupDialog.result.then(function(result) {
-            console.log(result);
             var promise = GroupFetchService.getUserGroups();
             promise.then(function(result){
-                console.log(result.circles);
                 $scope.groups = result.circles;
             });
         });
