@@ -454,6 +454,32 @@ angular.module('dialogs.services',['ui.bootstrap.modal','dialogs.controllers'])
                         shareEntities : function() { return shareEntities; },
                     }
                 });
+            },
+
+            createNewGroup: function() {
+                return $modal.open({
+                    templateUrl: MODULES_PREFIX + '/group/newGroup.tpl.html',
+                    controller: 'newGroupController',
+                    keyboard : true,
+                    backdrop : true,
+                    windowClass: 'modal-huge'
+                });
+            },
+			
+            addMembers: function(users) {
+                return $modal.open({
+                    templateUrl: MODULES_PREFIX + '/group/addMembers.tpl.html',
+                    controller: 'addMembersController',
+                    keyboard : true,
+                    backdrop : true,
+                    windowClass: 'modal-huge',
+                    resolve: {
+                    	users: function() {
+                    		return users;
+                    	},
+                    }
+                    
+                });
             }
 		};
 	}]); // end $dialogs / dialogs.services

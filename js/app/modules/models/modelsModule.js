@@ -829,7 +829,7 @@ angular.module('module.models').service("TagFetchService", ['$q', '$rootScope','
 }]);
 
 angular.module('module.models').service('UserModel', ['$q', '$rootScope','UserService', function($q, $rootScope, UserSrv) {
-
+    
     this.getAllUsers = function() {
 
         var defer = $q.defer();
@@ -847,6 +847,53 @@ angular.module('module.models').service('UserModel', ['$q', '$rootScope','UserSe
         );
 
        return defer.promise;
+    };
+
+    this.getUserLabel = function(uri) {
+        var defer = $q.defer();
+        var self = this;
+
+        return new getUserLabelFromUri(uri);
+    };
+
+}]);
+
+angular.module('module.models').service("GroupFetchService", ['$q','UserService', function($q, UserSrv){
+    this.getUserGroups = function() {
+        var defer = $q.defer();
+        var self = this;
+
+        new SSEntityUserCirclesGet(function(result){
+                defer.resolve(result);
+            },
+            function(error){
+                console.log(error);
+            },
+            UserSrv.getUser(),
+            UserSrv.getKey()
+        );
+       return defer.promise;
+    };
+    
+    this.createGroup = function(groupName, entities, users) {
+        var defer = $q.defer();
+        var self = this;
+
+        new SSEntityCircleCreate(
+            function(result){
+                defer.resolve(result);
+            },
+            function(error){
+                console.log(error);
+            },
+            UserSrv.getUser(),
+            UserSrv.getKey(),
+            groupName,
+            entities,
+            users
+        );
+
+        return defer.promise;        
     };
 
     this.getUserLabel = function(uri) {
@@ -913,6 +960,4 @@ angular.module('module.models').service('SharingModel', ['$q', 'UserService', fu
         );
 
     };
-
-
 }]);
