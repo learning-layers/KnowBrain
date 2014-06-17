@@ -132,17 +132,17 @@ angular.module('module.collection').controller("CollectionController", [
     $scope.entityTypes = ENTITY_TYPES;
     $scope.spaceEnum = SPACE_ENUM;
     $scope.cumulatedTagsLoading;
-
+		
   /**
   * This events are used to adjust body padding-top, required cause of a growing navbar (breadcrumbs)
   */
   $scope.$on('ngRepeatFinished', function(ngRepeatFinishedEvent) {
-    $('body').css('padding-top', parseInt($('#kb-navbar').css("height")));
+    $('#path').css('padding-top', parseInt($('#path').css("margin-top")) + parseInt($('#kb-navbar').css("height")) - 9);
   });
 
   $(window).resize(function() { 
-    $('body').css('padding-top', parseInt($('#kb-navbar').css("height")));
-  });
+    $('#path').css('padding-top', parseInt($('#path').css("margin-top")) + parseInt($('#kb-navbar').css("height")) - 9);
+  }); 
 
   /**
   * TRANSLATION INJECTION
