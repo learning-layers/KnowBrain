@@ -84,7 +84,7 @@ angular.module('module.qa').controller("Controller", ['$scope', '$state', '$q', 
 						
 		$scope.loadDetailPage = function(thread)
 		{
-			$state.transitionTo('app.qa.' + thread.type.enum, { uri: thread.uriPathnameHash});
+			$state.transitionTo('app.qa.' + thread.type.enum, { uri: UriToolbox.extractUriPathnameHash(thread.uri)});
 		};
 				
 		$scope.getRandomNumber = function(max)
@@ -164,7 +164,6 @@ angular.module('module.qa').controller("Controller", ['$scope', '$state', '$q', 
 							.addNewThread($scope.newThread)
 							.then(function(result) {
 								$scope.newThread.uri = result;
-								$scope.newThread.uriPathnameHash = UriToolbox.extractUriPathnameHash(result);
 								$scope.threadList.push($scope.newThread);
 	
 								var tmpList = new Array();
@@ -190,8 +189,10 @@ angular.module('module.qa').controller("Controller", ['$scope', '$state', '$q', 
 					}
 				});
 
-				modalInstance.result.then(function () {
-					addNewThread();
+				modalInstance.result.then(function (post) {
+					if(post) {
+						addNewThread();
+					}
 				}, function () {
 					//$log.info('Modal dismissed at: ' + new Date());
 				});
@@ -225,15 +226,15 @@ angular.module('module.qa').controller("Controller", ['$scope', '$state', '$q', 
 			
 }]);
 
-angular.module('module.qa').controller('ModalSimilarThreadsController', ['$scope', '$modalInstance', '$state', 'qaService', 'thread', 'similarThreadList', function($scope, $modalInstance, $state, qaService, thread, similarThreadList){
+angular.module('module.qa').controller('ModalSimilarThreadsController', ['$scope', '$modalInstance', '$state', 'qaService', 'UriToolbox', 'thread', 'similarThreadList', function($scope, $modalInstance, $state, qaService, UriToolbox, thread, similarThreadList){
 
 	$scope.thread = thread;	
 	$scope.similarThreadList = similarThreadList;
 	
 	$scope.loadDetailPage = function(thread)
 	{
-		$state.transitionTo('app.qa.' + thread.type.enum, { uri: thread.uriPathnameHash});
-		$modalInstance.close(null);
+		$state.transitionTo('app.qa.' + thread.type.enum, { uri: UriToolbox.extractUriPathnameHash(thread.uri)});
+		$modalInstance.close(false);
 	};
 
   $scope.cancel = function () {
@@ -242,7 +243,7 @@ angular.module('module.qa').controller('ModalSimilarThreadsController', ['$scope
 		
 	$scope.ok = function()
 	{
-		$modalInstance.close(null);
+		$modalInstance.close(true);
 	};	
 	
 	var loadAuthorDetails = function() 
