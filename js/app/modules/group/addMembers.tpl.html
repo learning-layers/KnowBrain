@@ -19,37 +19,40 @@
 - limitations under the License.
 -->
 
-<div class="add-members-header modal-header">
-	<button type="button" class="add-members-close-button close"
-		ng-click="close()" style="margin-top: 5px;" aria-hidden="true">&times;</button>
+<div class="share-entity-header modal-header">
+    <button type="button" class="share-entity-close-button close"
+            ng-click="close()" style="margin-top: 5px;" aria-hidden="true">&times;</button>
 
-	<span class="add-members-type-icon glyphicon glyphicon-user"></span> <span
-		class="add-members-modal-title modal-title">Add member</span>
+    <span class="share-entity-type-icon glyphicon glyphicon-share"></span>
+    <span class="share-entity-modal-title modal-title">Add members</span>
 
-	<div class="clearfix"></div>
+    <div class="clearfix"></div>
 </div>
 
-<div class="add-members-modal-body modal-body">
-	<div class="row clearfix"  style="padding: 20px;>
-		<div class="col-md-12 column"">
-			<div>
-				<p>Friends</p>
-				<span>Filter: </span><input type='text'
-					ng-model='userFilter.label' />
-			</div>
-			<div style="height: 150px; padding: 20px" id="membersContainer">
-				<ng-entity-small ng-repeat="entry in allUsers | filter:userFilter"></ng-entity-small>
-			</div>
-		</div>
-	</div>
-
-	<div class="row clearfix"  style="padding: 20px;">
-		<div class="col-md-6 column"></div>
-		<div class="col-md-6 column">
-			<div class="btn-group" style="float: right">
-				<button class="btn btn-default" type="button"
-					ng-click="confirm()">OK</button>
-			</div>
-		</div>
+<div class="share-entity-modal-body modal-body">
+	<div class="row clearfix" style="padding:20px">
+		<div class="col-md-12 column">
+			<div class="row clearfix">
+		    	<div class="col-md-12 column"">
+			        <p>Friends</p>
+			        <span>Filter: </span><input type='text' ng-model='userFilter.label' />
+		        </div>
+		    </div>
+		    <div class="row clearfix" style="height: 150px;" id="friendsContainer">
+				<div class="col-md-12 column" style="padding: 20px;">
+					<ng-entity-small ng-repeat="entry in allUsers | filter: userFilter"></ng-entity-small>
+		        </div>
+		    </div>
+		    
+		    
+		    <div class="row clearfix">
+		        <div class="col-md-12 column" style="text-align: right">
+		            <div class="btn-group"">
+						<button class="btn btn-default" type="button"
+							ng-click="confirm()">OK</button>
+					</div>
+		        </div>
+		    </div>
+	   </div>
 	</div>
 </div>

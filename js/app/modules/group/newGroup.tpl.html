@@ -52,13 +52,8 @@
 			</div>
 
 			<div id="group-member-container">
-			<ng-entity-small ng-repeat="entry in groupMembers | filter:userFilter" ng-show="entry.isSelected"></ng-entity-small>
-				<!--  <div class="checkbox-inline" ng-repeat="user in groupMembers" ng-show="user.isSelected"
-					style="padding-left: 2%; margin-left: 0; margin-bottom: 5px; width: 20%;">
-					<label> <img class="profile-pic-small"
-						src="images/small_profile_pic_dummy.png"><span>{{user.label}}</span>
-					</label>
-				</div>-->
+				<ng-entity-small ng-repeat="entry in groupMembers | filter:userFilter" ng-show="entry.isSelected"></ng-entity-small>
+				
 			</div>
 		</div>
 	</div>
