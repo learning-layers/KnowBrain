@@ -36,17 +36,16 @@ angular.module('module.qa').constant('THREAD_TYPE', {discussion:{enum:'disc', la
 angular.module('module.qa').factory('Thread', ['UriToolbox', function (UriToolbox) {
  		
   // Constructor
-  function Thread(author_uri, type, title, explanation, target_entry_uri, uri, creationTimeTicks) {
+  function Thread(author_uri, type, title, explanation, entry_uri, uri, creationTimeTicks) {
     // Public properties
 		this.authorUri = author_uri;
 		// type of the thread; either disc, qa or chat
     this.type = type;
 		this.title = title;
 		this.explanation = explanation;
-		// target uri of the entity to start a thread for
-		this.targetUri = target_entry_uri;
+		// entry uri to start a thread for
+		this.entityUri = entry_uri;
 		this.uri = uri;
-		this.uriPathnameHash = UriToolbox.extractUriPathnameHash(uri);
 		this.entries = new Array();
 		this.author = null;
 		this.creationTime = new Date(creationTimeTicks);
@@ -135,7 +134,7 @@ angular.module('module.qa').service("qaService", ['$q', '$rootScope','UserServic
 
 	this.addNewThread = function(thread){
 		var defer = $q.defer();
-		
+
 		new SSDiscEntryAdd(
 			function(result){
 				defer.resolve(result.disc);
@@ -147,7 +146,7 @@ angular.module('module.qa').service("qaService", ['$q', '$rootScope','UserServic
 			UserSrv.getUser(),
 			UserSrv.getKey(),
 			thread.uri,
-			thread.targetUri,
+			thread.entityUri,
 			'',
 			true,
 			thread.type.enum,
@@ -172,7 +171,7 @@ angular.module('module.qa').service("qaService", ['$q', '$rootScope','UserServic
 			UserSrv.getUser(),
 			UserSrv.getKey(),
 			thread.uri,
-			thread.targetUri,
+			thread.entityUri,
 			comment,
 			false,
 			thread.type,
@@ -202,12 +201,12 @@ angular.module('module.qa').service("qaService", ['$q', '$rootScope','UserServic
 				};
 				
 				thread.authorUri = result.disc.author;
-				thread.type = getThreadTypeByEnum(result.disc.discType);
+				thread.type = getThreadTypeByEnum(result.disc.type);
 				thread.title = result.disc.label;
 				thread.explanation = result.disc.explanation;
-				thread.targetUri = result.disc.target;
+				thread.entityUri = result.disc.entity;
 				thread.creationTime = result.disc.creationTime;
-				
+
 				angular.forEach(result.disc.entries, function(value, key){
 					var entry = new ThreadEntry(value.author, value.content, value.discEntryType, value.pos, value.timestamp, value.uri, value.creationTime);
 					entries.push(entry);
@@ -247,8 +246,8 @@ angular.module('module.qa').service("qaService", ['$q', '$rootScope','UserServic
 				};
 				
         angular.forEach(result.discs, function(value, key){
-					var type = getThreadTypeByEnum(value.discType);
-					var thread = new Thread(value.author, type, value.label, value.explanation, value.target, value.uri, value.creationTime);
+					var type = getThreadTypeByEnum(value.type);
+					var thread = new Thread(value.author, type, value.label, value.explanation, value.entity, value.id, value.creationTime);
           threadList.push(thread);
         });
 
