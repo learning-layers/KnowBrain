@@ -95,7 +95,7 @@ sharingModule.controller("SharingController", ['$scope','$modalInstance', '$dial
                 
                 for(var i=0; i < $scope.shareEntities.length; i++) {
 
-                    shareTemp.push($scope.shareEntities[i].uri);
+                    shareTemp.push($scope.shareEntities[i].id);
 
                 }
                 console.log("Share custom");
@@ -153,7 +153,7 @@ sharingModule.controller("SharingController", ['$scope','$modalInstance', '$dial
             var userUris = [];
 
             for(var i = 0; i < users.length; i++) {
-                userUris.push(users[i].uri);
+                userUris.push(users[i].id);
             }
 
             return userUris;

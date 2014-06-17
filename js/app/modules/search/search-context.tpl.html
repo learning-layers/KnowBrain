@@ -32,7 +32,7 @@
 
     <div ng-show="!ajaxLoading" ng-repeat="entry in tagSearchResults" class="collection-entry kb-fluid-container pull-left" ng-click="entityClickAction(entry)"> 
       <div class="collection-entry-preview-box">
-        <div style=" position:relative; z-index: 9;" id="collection-entry-preview-box-glyphicon" class="glyphicon " ng-class="{'glyphicon-file': (entry.entityType == entityTypes.file), 'glyphicon-link' : (entry.entityType == entityTypes.link)}"></div>  
+        <div style=" position:relative; z-index: 9;" id="collection-entry-preview-box-glyphicon" class="glyphicon " ng-class="{'glyphicon-file': (entry.type == entityTypes.file), 'glyphicon-link' : (entry.type == entityTypes.link)}"></div>  
       </div>
       <div class="collection-entry-description-box">
         <div shortenentryname  title="{{entry.label}}">{{entry.label}}</div>
@@ -56,7 +56,7 @@
   
    <div ng-show="!ajaxLoading" ng-repeat="entry in contentSearchResults" class="collection-entry kb-fluid-container pull-left" ng-click="entityClickAction(entry)"> 
       <div class="collection-entry-preview-box">
-        <div style=" position:relative; z-index: 9;" id="collection-entry-preview-box-glyphicon" class="glyphicon " ng-class="{'glyphicon-file': (entry.entityType == entityTypes.file), 'glyphicon-link' : (entry.entityType == entityTypes.link)}"></div>  
+        <div style=" position:relative; z-index: 9;" id="collection-entry-preview-box-glyphicon" class="glyphicon " ng-class="{'glyphicon-file': (entry.type == entityTypes.file), 'glyphicon-link' : (entry.type == entityTypes.link)}"></div>  
       </div>
       <div class="collection-entry-description-box">
         <div shortenentryname  title="{{entry.label}}">{{entry.label}}</div>

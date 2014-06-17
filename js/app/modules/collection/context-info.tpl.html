@@ -40,7 +40,7 @@
 
   <span ng-show="!currentCollection.isRoot">
   <h5>Rating:</h5 > 
-  <div style="font-size:15px;"><rating ng-controller="CollectionController" readOnly="ratingReadOnly" value="collectionRating" max="5" on-leave="leaveCurrentCollectionRating(collectionRating); collectionRating = currentCollection.ratingOverall.score;" state-on="'star-rating-cursor glyphicon glyphicon-star'" state-off="'star-rating-cursor glyphicon glyphicon-star-empty'"></rating><span>({{currentCollection.overallRating.frequency}})</span></div>
+  <div style="font-size:15px;"><rating ng-controller="CollectionController" readOnly="ratingReadOnly" value="collectionRating" max="5" on-leave="leaveCurrentCollectionRating(collectionRating); collectionRating = currentCollection.ratingOverall.score;" state-on="'star-rating-cursor glyphicon glyphicon-star'" state-off="'star-rating-cursor glyphicon glyphicon-star-empty'"></rating><span>({{currentCollection.overallRating.frequ}})</span></div>
   </span>
 
   <h5>{{t('tagCloud')}}</h5> 

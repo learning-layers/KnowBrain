@@ -36,7 +36,7 @@ angular.module('module.utilities').service("UriToolbox", [function(){
    var a = document.createElement("a");
    a.href = uri;
    var split = a.pathname.split("/");
-   return split[2];
+   return split[split.length - 1];
  };
 
  this.extractUriPathnameHashEntities = function(uri){
@@ -317,7 +317,8 @@ angular.module('module.utilities').directive('commentsUtil', ['$rootScope', 'i18
           return;
         }
 
-        $scope.model.addComment($scope.newCommentText);
+        $scope.model.addComment        ($scope.newCommentText);
+        
 
         $scope.newCommentText = "";
       };

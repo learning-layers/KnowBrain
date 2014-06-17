@@ -7,16 +7,16 @@
 				ng-click="selectResource(entry);$event.stopPropagation()" />
 		</div>
 		
-		<div ng-switch="!entry.entityType">
+		<div ng-switch="!entry.type">
 			<img ng-switch-when="true" src="images/small_profile_pic_dummy.png" class="collection-entry-profile-pic-small"/>
 			<div ng-switch-when="false" style="position: relative; z-index: 9;"
 			id="collection-entry-small-preview-box-glyphicon" class="glyphicon "
-			ng-class="{'glyphicon-folder-close': (entry.entityType == entityTypes.collection), 'glyphicon-file': (entry.entityType == entityTypes.file), 'glyphicon-link' : (entry.entityType == entityTypes.link)}">
+			ng-class="{'glyphicon-folder-close': (entry.type == entityTypes.collection), 'glyphicon-file': (entry.type == entityTypes.file), 'glyphicon-link' : (entry.type == entityTypes.link)}">
 			</div>
 		</div>
 		
 		<div class="collection-entry-small-shared"
-			ng-show="(entry.entityType == entityTypes.collection) && entry.space == spaceEnum.shared" >{{t('shared')}}</div>
+			ng-show="(entry.type == entityTypes.collection) && entry.space == spaceEnum.shared" >{{t('shared')}}</div>
 	</div>
 	<div class="collection-entry-small-description-box">
 		<div shortenentryname model="entry.label">{{entry.label}}</div>
