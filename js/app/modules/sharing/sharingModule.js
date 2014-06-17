@@ -80,7 +80,6 @@ sharingModule.controller("SharingController", ['$scope','$modalInstance', '$dial
         promise.then(function(result) {
 
             $scope.allUsers = result.users;
-            console.log($scope.allUsers);
         });
 
         $scope.share = function () {
@@ -98,8 +97,6 @@ sharingModule.controller("SharingController", ['$scope','$modalInstance', '$dial
                     shareTemp.push($scope.shareEntities[i].id);
 
                 }
-                console.log("Share custom");
-                console.log(shareTemp);
                 SharingModel.shareEntityCustom($scope.entity, shareTemp, "");
 
             }
@@ -120,7 +117,6 @@ sharingModule.controller("SharingController", ['$scope','$modalInstance', '$dial
         };
         
         $scope.activateDropdown = function(e) {
-            console.log("Toggle");
             if(!$("#shareDropdown").hasClass("open")) {
                 $("#dropDownToggle").dropdown('toggle');
                 $("dropdown-toggle").dropdown('toggle');

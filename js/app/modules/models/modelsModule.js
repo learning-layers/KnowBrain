@@ -837,9 +837,6 @@ angular.module('module.models').service('UserModel', ['$q', '$rootScope','UserSe
 
         new SSUserAll(
             function(result){
-                console.log("All users:");
-                console.log(result);
-
                 defer.resolve(result);
             },
             function(error){
@@ -871,8 +868,6 @@ angular.module('module.models').service('SharingModel', ['$q', 'UserService', fu
 
         new SSEntityEntityUsersGet(
             function(result){
-                console.log("Entity is already shared with:");
-                console.log(result);
                 defer.resolve(result);
             },
             function(error){
@@ -905,7 +900,7 @@ angular.module('module.models').service('SharingModel', ['$q', 'UserService', fu
 
         new SSEntityShare(
             function(result) {
-                console.log(result)
+                console.log(result);
             },
             function(error) {
                 console.log(error);
