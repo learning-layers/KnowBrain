@@ -198,21 +198,29 @@ p.thread-title {
 	width: 100%;
 }
 
-/* Question detail page */
-.icon-up {
-	width: 48px;
-	height: 48px;
-	background-image: url('../../../../images/qa/up.png');
-}
-
-.icon-down {
-	width: 48px;
-	height: 48px;
-	background-image: url('../../../../images/qa/down.png');
-}
-
 /* Modals */
 .modal {
     overflow-y:auto;
     max-height:100%;
+}
+
+/* Question detail page */
+.detail-icon {
+	margin-right: 20px;
+	margin-bottom: 10px;
+}
+
+.detail-title {
+	margin-top: 0px;
+}
+
+.detail-explanation {
+	white-space: pre;
+	word-break: break-all;
+	word-wrap: break-word;
+}
+
+.detail-like-btn {
+	width: 80px;
+	height: 38px;
 }

@@ -280,7 +280,7 @@ angular.module('module.qa').controller('ModalAddAttachmentsController', ['$scope
 	
 }]);
 
-angular.module('module.qa').controller("QuestionController", ['$scope', '$state', '$stateParams', '$q', 'UserService', 'qaService', 'Thread','THREAD_TYPE', function($scope, $state, $stateParams, $q, UserSrv, qaService, Thread, THREAD_TYPE){
+angular.module('module.qa').controller("QuestionController", ['$scope', '$state', '$stateParams', '$q', '$filter', 'UserService', 'qaService', 'Thread','THREAD_TYPE', function($scope, $state, $stateParams, $q, $filter, UserSrv, qaService, Thread, THREAD_TYPE){
 
 	$scope.question = null;
 	
@@ -289,7 +289,42 @@ angular.module('module.qa').controller("QuestionController", ['$scope', '$state'
 		return qaService
 						.getThreadWithEntries(uri)
 						.then(function(result) {
+							result.explanation = $filter('newlines')(result.explanation);
 							$scope.question = result;
+						});
+	};
+	
+	loadThreadWithEntries(UserSrv.getUserSpace() + "/" + $stateParams.uri);
+}]);
+
+angular.module('module.qa').controller("DiscussionController", ['$scope', '$state', '$stateParams', '$q', '$filter', 'UserService', 'qaService', 'Thread','THREAD_TYPE', function($scope, $state, $stateParams, $q, $filter, UserSrv, qaService, Thread, THREAD_TYPE){
+
+	$scope.discussion = null;
+	
+	var loadThreadWithEntries = function(uri) 
+	{
+		return qaService
+						.getThreadWithEntries(uri)
+						.then(function(result) {
+							result.explanation = $filter('newlines')(result.explanation);
+							$scope.discussion = result;
+						});
+	};
+	
+	loadThreadWithEntries(UserSrv.getUserSpace() + "/" + $stateParams.uri);
+}]);
+
+angular.module('module.qa').controller("ChatController", ['$scope', '$state', '$stateParams', '$q', '$filter', 'UserService', 'qaService', 'Thread','THREAD_TYPE', function($scope, $state, $stateParams, $q, $filter, UserSrv, qaService, Thread, THREAD_TYPE){
+
+	$scope.chat = null;
+	
+	var loadThreadWithEntries = function(uri) 
+	{
+		return qaService
+						.getThreadWithEntries(uri)
+						.then(function(result) {
+							result.explanation = $filter('newlines')(result.explanation);
+							$scope.chat = result;
 						});
 	};
 	
@@ -316,6 +351,12 @@ angular.module('module.qa').filter('threadTypeFilter', function() {
 			
       return out;
     };
+});
+
+angular.module('module.qa').filter('newlines', function() {
+  return function(text) {
+    return text.replace('\\n','\n');
+  };
 });
 
 /**
