@@ -75,7 +75,6 @@ angular.module('module.group').controller("newGroupController", ['$scope', '$dia
     
     $scope.uploadPic = function() {
         console.log("TODO: Upload profile picture");
-        console.log($scope.group);
     };
     
     $scope.addMembers = function() {
@@ -108,7 +107,7 @@ angular.module('module.group').controller("newGroupController", ['$scope', '$dia
         for(var i=0; i < $scope.groupMembers.length; i++) {
             
             if($scope.groupMembers[i].isSelected) {
-                userUrls.push($scope.groupMembers[i].uri);
+                userUrls.push($scope.groupMembers[i].id);
             }
             
         }

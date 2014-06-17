@@ -98,7 +98,7 @@ angular.module('dialogs.controllers',['ui.bootstrap.modal', 'module.i18n', 'modu
 	 .controller('entryDetailController',['$scope', '$modalInstance','entry', '$q', 'i18nService', 'CurrentCollectionService', 'RATING_MAX', 'ENTITY_TYPES', 'TagFetchService', 'isSearchResult', 'UserService', 'UriToolbox', '$state', '$window', function($scope, $modalInstance, entry, $q, i18nService, CurrentCollectionService, RATING_MAX, ENTITY_TYPES, TagFetchService, isSearchResult, UserSrv, UriToolbox, $state, $window){
 
 	 	$scope.entry = entry;
-	 	$scope.entryTags = new Array();
+	 	$scope.tags = new Array();
 	 	$scope.ratingReadOnly = false;
 	 	$scope.ENTITY_TYPES = ENTITY_TYPES;
 	 	$scope.isSearchResult = isSearchResult;
@@ -116,13 +116,30 @@ angular.module('dialogs.controllers',['ui.bootstrap.modal', 'module.i18n', 'modu
 
 			new SSCollsEntityIsInGet(
 				function(result){
+          
+          //TODO dtheiler: replace this when differentiation between shared and public is possible in KnowBrain
+          angular.forEach(result.colls, function(coll, key){
+            
+            coll.space = sSColl.getCollSpace(coll.circleTypes);
+            
+            if(
+              coll.space === "followSpace" ||
+              coll.space === "sharedSpace"){
+              coll.space = "shared";
+            }
+            
+            if(coll.space === "privateSpace"){
+              coll.space = "private";
+            }
+          });
+          
 					$scope.locations = result.colls;
 					$scope.$apply();
 				}, 
 				function(error){ console.log(error); }, 
-				UserSrv.getUserUri(),
+				UserSrv.getUser(),
 				UserSrv.getKey(), 
-				entry.uri
+				entry.id
 				);
 
 		};
@@ -131,7 +148,7 @@ angular.module('dialogs.controllers',['ui.bootstrap.modal', 'module.i18n', 'modu
 		{
 			//set tags
 			angular.forEach(entry.tags, function(tag, key){
-				$scope.entryTags.push(tag.label);
+				$scope.tags.push(tag);
 			});
 			$scope.entryRating = entry.overallRating.score;
 
@@ -191,8 +208,8 @@ angular.module('dialogs.controllers',['ui.bootstrap.modal', 'module.i18n', 'modu
 		  var entries = CurrentCollectionService.getCurrentCollection().entries;
 
 		  angular.forEach(entries, function(collEntry, key){
-		    if(collEntry.uri == $scope.entry.uri){
-		      toDelete.push(collEntry.uri);
+		    if(collEntry.id == $scope.entry.id){
+		      toDelete.push(collEntry.id);
 		      toDeleteKeys.push(key);
 		    }
 		  });
@@ -209,7 +226,7 @@ angular.module('dialogs.controllers',['ui.bootstrap.modal', 'module.i18n', 'modu
 		};
 
 		$scope.downloadEntity = function(){
-			if($scope.entry.entityType != ENTITY_TYPES.file)
+			if($scope.entry.type != ENTITY_TYPES.file)
 				return;
 
 			$scope.entry.downloading = true;
@@ -223,10 +240,10 @@ angular.module('dialogs.controllers',['ui.bootstrap.modal', 'module.i18n', 'modu
 		};
 
 		$scope.openLink = function(){
-			if($scope.entry.entityType != ENTITY_TYPES.link)
+			if($scope.entry.type != ENTITY_TYPES.link)
 				return;
 
-			$window.open(entry.uri);
+			$window.open(entry.id);
 		};
 
 		$scope.queryTags = function($queryString){
@@ -254,13 +271,13 @@ angular.module('dialogs.controllers',['ui.bootstrap.modal', 'module.i18n', 'modu
 
 		$scope.goToCollection = function(location){
 
-			if(entry.entityType == ENTITY_TYPES.link){
-				entry.uriPathnameHash = UriToolbox.extractUriHostPartWithoutProtocol(entry.uri);
+			if(entry.type == ENTITY_TYPES.link){
+				entry.uriPathnameHash = UriToolbox.extractUriHostPartWithoutProtocol(entry.id);
 			}else{
-				entry.uriPathnameHash =  UriToolbox.extractUriPathnameHash(entry.uri);
+				entry.uriPathnameHash =  UriToolbox.extractUriPathnameHash(entry.id);
 			}
 			$scope.close();
-    	$state.transitionTo('app.collection.content', { collUri: UriToolbox.extractUriPathnameHash(location.uri)});
+    	$state.transitionTo('app.collection.content', { coll: UriToolbox.extractUriPathnameHash(location.id)});
   };
 
 }])
