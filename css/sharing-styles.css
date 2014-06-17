@@ -1,0 +1,55 @@
+.input-append .btn.dropdown-toggle {
+    float: none;
+}
+
+.tag {
+ background: #428bca;
+  border: 1px solid #357ebd;
+  border-radius: 4px;
+  color: #fff;
+  line-height: 20px;
+  height: 28px;
+  padding-left:4px;
+  padding-right:2px;
+  padding-top:2px;
+  padding-bottom:3px;
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-size:15px;
+  margin-right:5px;
+  display:inline-block;
+}
+
+.removeTag {
+	background:transparent;
+	color: #000;
+	opacity: .4;
+	margin:0;
+	border:0;
+	cursor: pointer;
+	font: 700 15px Arial,sans-serif;
+	vertical-align: middle;
+}
+
+#shareDropdown {
+	height: auto !important; 
+	overflow: visible !important;
+}
+
+#shareInput
+{
+  outline: none;
+  border:none !important;
+  box-shadow:none !important;
+  line-height: 20px;
+}
+
+#shareDropdownContent {
+	width:100%;
+	overflow-y: auto;
+	height: 150px;
+}
+
+#shareDropdownContent li a {
+	line-height:25px;
+}
+

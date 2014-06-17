@@ -41,11 +41,14 @@ angular.module('knowbrain', [
   'module.search',
   'module.models',
   'module.utilities',
+  'module.sharing',
   // dialog module
   'dialogs',
   'ngTagsInput',
   'module.social',
-  'module.qa'
+  'module.qa',
+  'module.entity'
+  
 
   ]).config(['$stateProvider', '$urlRouterProvider', '$locationProvider', '$tooltipProvider',function ($stateProvider, $urlRouterProvider, $locationProvider, $tooltipProvider) {
 
