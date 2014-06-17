@@ -4,7 +4,7 @@
 
 //== Controllers =============================================================//
 
-angular.module('dialogs.controllers',['ui.bootstrap.modal', 'module.i18n', 'module.collection'])
+angular.module('dialogs.controllers',['ui.bootstrap.modal', 'module.i18n', 'module.collection', 'module.sharing'])
 
 	/**
 	 * Error Dialog Controller 
@@ -95,7 +95,7 @@ angular.module('dialogs.controllers',['ui.bootstrap.modal', 'module.i18n', 'modu
 		}; // end yes
 	}])
 
-	 .controller('entryDetailController',['$scope', '$modalInstance','entry', '$q', 'i18nService', 'CurrentCollectionService', 'RATING_MAX', 'ENTITY_TYPES', 'TagFetchService', 'isSearchResult', 'UserService', 'UriToolbox', '$state', '$window', function($scope, $modalInstance, entry, $q, i18nService, CurrentCollectionService, RATING_MAX, ENTITY_TYPES, TagFetchService, isSearchResult, UserSrv, UriToolbox, $state, $window){
+	 .controller('entryDetailController',['$scope', '$modalInstance','entry', '$q', 'i18nService', 'CurrentCollectionService', 'RATING_MAX', 'ENTITY_TYPES', 'TagFetchService', 'isSearchResult', 'UserService', 'UriToolbox', '$state', '$window', '$dialogs', function($scope, $modalInstance, entry, $q, i18nService, CurrentCollectionService, RATING_MAX, ENTITY_TYPES, TagFetchService, isSearchResult, UserSrv, UriToolbox, $state, $window, $dialogs){
 
 	 	$scope.entry = entry;
 	 	$scope.tags = new Array();
@@ -279,6 +279,10 @@ angular.module('dialogs.controllers',['ui.bootstrap.modal', 'module.i18n', 'modu
 			$scope.close();
     	$state.transitionTo('app.collection.content', { coll: UriToolbox.extractUriPathnameHash(location.id)});
   };
+  
+  		$scope.shareEntity = function(){
+  			$dialogs.shareEntity($scope.entry);
+  		};
 
 }])
 
@@ -414,7 +418,7 @@ angular.module('dialogs.services',['ui.bootstrap.modal','dialogs.controllers'])
 								isSearchResult = false;
 
 							return isSearchResult; 
-						},
+						}
 					}
 				});
 			},
@@ -425,7 +429,58 @@ angular.module('dialogs.services',['ui.bootstrap.modal','dialogs.controllers'])
 					keyboard : true,
 					backdrop : true
 				});
-			}
+			},
+			shareEntity : function(entity){
+				return $modal.open({
+					templateUrl: MODULES_PREFIX + '/sharing/shareEntity.tpl.html',
+					controller: 'SharingController',
+					keyboard : true,
+					backdrop : true,
+					windowClass: 'modal-small',
+					resolve : {
+                        entity : function() { return entity; }
+					}
+				});
+			},
+            shareWith : function(allUsers, shareEntities){
+                return $modal.open({
+                    templateUrl: MODULES_PREFIX + '/sharing/shareWith.tpl.html',
+                    controller: 'ShareWithController',
+                    keyboard : true,
+                    backdrop : true,
+                    windowClass: 'modal-huge',
+                    resolve : {
+                        allUsers : function() { return allUsers; },
+                        shareEntities : function() { return shareEntities; },
+                    }
+                });
+            },
+
+            createNewGroup: function() {
+                return $modal.open({
+                    templateUrl: MODULES_PREFIX + '/group/newGroup.tpl.html',
+                    controller: 'newGroupController',
+                    keyboard : true,
+                    backdrop : true,
+                    windowClass: 'modal-huge'
+                });
+            },
+			
+            addMembers: function(users) {
+                return $modal.open({
+                    templateUrl: MODULES_PREFIX + '/group/addMembers.tpl.html',
+                    controller: 'addMembersController',
+                    keyboard : true,
+                    backdrop : true,
+                    windowClass: 'modal-huge',
+                    resolve: {
+                    	users: function() {
+                    		return users;
+                    	},
+                    }
+                    
+                });
+            }
 		};
 	}]); // end $dialogs / dialogs.services
 

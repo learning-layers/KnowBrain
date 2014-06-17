@@ -29,6 +29,7 @@ angular.module('module.models',[]);
 
 angular.module('module.models').constant('SPACE_ENUM', {private:'privateSpace', shared:'sharedSpace', follow:'followSpace'});
 angular.module('module.models').constant('ENTITY_TYPES', {collection:'coll', file:'file', link:'entity'});
+angular.module('module.models').constant('SHARING_OPTIONS', {private:'private', friends:'friends', public:'public', custom:'custom'});
 angular.module('module.models').constant('RATING_MAX', 5);
 
 angular.module('module.models').factory('BaseModel', ['$q', '$rootScope', 'UserService', 'FetchServiceHelper', "SPACE_ENUM", function($q, $rootScope, UserSrv, FetchServiceHelper, SPACE_ENUM){
@@ -453,7 +454,7 @@ angular.module('module.models').factory('CollectionModel', ['$q', '$rootScope','
 
 }]);
 
-angular.module('module.models').factory('EntityModel', ['$q', '$rootScope','UserService', 'BaseModel', 'SPACE_ENUM', 'ENTITY_TYPES', function($q, $rootScope, UserSrv, BaseModel, SPACE_ENUM, ENTITY_TYPES){
+angular.module('module.models').factory('EntityModel', ['$q', '$rootScope','UserService', 'BaseModel', 'SPACE_ENUM', 'ENTITY_TYPES', 'SHARING_OPTIONS', function($q, $rootScope, UserSrv, BaseModel, SPACE_ENUM, ENTITY_TYPES, SHARING_OPTIONS){
 
   function Entity(){
     this.parentColl = null;
@@ -827,4 +828,136 @@ angular.module('module.models').service("TagFetchService", ['$q', '$rootScope','
 
 }]);
 
+angular.module('module.models').service('UserModel', ['$q', '$rootScope','UserService', function($q, $rootScope, UserSrv) {
+    
+    this.getAllUsers = function() {
 
+        var defer = $q.defer();
+        var self = this;
+
+        new SSUserAll(
+            function(result){
+                defer.resolve(result);
+            },
+            function(error){
+                console.log(error);
+            },
+            UserSrv.getUser(),
+            UserSrv.getKey()
+        );
+
+       return defer.promise;
+    };
+
+    this.getUserLabel = function(uri) {
+        var defer = $q.defer();
+        var self = this;
+
+        return new getUserLabelFromUri(uri);
+    };
+
+}]);
+
+angular.module('module.models').service("GroupFetchService", ['$q','UserService', function($q, UserSrv){
+    this.getUserGroups = function() {
+        var defer = $q.defer();
+        var self = this;
+
+        new SSEntityUserCirclesGet(function(result){
+                defer.resolve(result);
+            },
+            function(error){
+                console.log(error);
+            },
+            UserSrv.getUser(),
+            UserSrv.getKey()
+        );
+       return defer.promise;
+    };
+    
+    this.createGroup = function(groupName, entities, users) {
+        var defer = $q.defer();
+        var self = this;
+
+        new SSEntityCircleCreate(
+            function(result){
+                defer.resolve(result);
+            },
+            function(error){
+                console.log(error);
+            },
+            UserSrv.getUser(),
+            UserSrv.getKey(),
+            groupName,
+            entities,
+            users
+        );
+
+        return defer.promise;        
+    };
+
+    this.getUserLabel = function(uri) {
+        var defer = $q.defer();
+        var self = this;
+
+        return new getUserLabelFromUri(uri);
+    };
+
+}]);
+
+
+angular.module('module.models').service('SharingModel', ['$q', 'UserService', function($q, UserSrv) {
+
+    this.getEntityUsers = function(entity) {
+
+        var defer = $q.defer();
+        var self = this;
+
+        new SSEntityEntityUsersGet(
+            function(result){
+                defer.resolve(result);
+            },
+            function(error){
+                console.log(error);
+            },
+            UserSrv.getUser(),
+            UserSrv.getKey(),
+            entity.id
+        );
+
+        return defer.promise;
+    };
+
+    this.shareEntityPublic = function(entity) {
+
+        new SSEntityPublicSet(
+            function(result){
+                console.log(result);
+            },
+            function(error){
+                console.log(error);
+            },
+            UserSrv.getUser(),
+            UserSrv.getKey(),
+            entity.id
+        );
+    };
+
+    this.shareEntityCustom = function(entity, shareWithArray, comment) {
+
+        new SSEntityShare(
+            function(result) {
+                console.log(result);
+            },
+            function(error) {
+                console.log(error);
+            },
+            UserSrv.getUser(),
+            UserSrv.getKey(),
+            entity.id,
+            shareWithArray,
+            "Test comment"
+        );
+
+    };
+}]);

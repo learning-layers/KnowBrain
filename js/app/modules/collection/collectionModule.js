@@ -25,7 +25,7 @@
 /**
 * COLLECTION MODULE 
 */
-angular.module('module.collection',['module.i18n', 'module.cookies', 'module.models', 'ui.bootstrap', 'module.utilities', 'ui.bootstrap.rating', 'dialogs']);
+angular.module('module.collection',['module.i18n', 'module.cookies', 'module.models', 'ui.bootstrap', 'module.utilities', 'ui.bootstrap.rating', 'dialogs', 'module.entity']);
 
 /**
 * CONFIG 
@@ -87,7 +87,7 @@ angular.module('module.collection').config(function ($stateProvider) {
           }
 
           $scope.loadCurrentEntity(promise, $stateParams.entry, $stateParams.coll);
-        },
+        }
       },
       "context-info":{
         templateUrl: MODULES_PREFIX + '/collection/context-info.tpl.html'
@@ -342,6 +342,10 @@ angular.module('module.collection').controller("CollectionController", [
   $scope.setCollPublic = function(){
     CurrentCollectionService.getCurrentCollection().setCollPublic();
   };
+
+  $scope.shareCollection = function() {
+      $dialogs.shareEntity(CurrentCollectionService.getCurrentCollection());
+  }
 
   this.getCumulatedTagsOfCurrentCollection = function(){
     var promise = CurrentCollectionService.getCurrentCollection().getCumulatedTags();
