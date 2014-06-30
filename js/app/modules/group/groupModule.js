@@ -87,6 +87,7 @@ angular.module('module.group').controller("newGroupController", ['$scope', '$dia
     
     
     $scope.uploadPic = function() {
+        console.log($scope.entities);
         console.log("TODO: Upload profile picture");
     };
     
@@ -153,9 +154,27 @@ angular.module('module.group').controller("addMembersController", ['$scope', '$r
 
 }]);
 
-angular.module('module.group').controller("EntityUploadController", ['$q', '$scope', '$http', '$location', '$state', 'i18nService', 'UriToolbox', function($q, $scope, $http, $location, $state, i18nService, UriToolbox){
+angular.module('module.group').controller("addLinkController", ['$scope', 'i18nService','EntityModel', function($scope, i18nService, Entity){
+    $scope.createLink = function(link){
+        if(link.label == undefined || link.url == undefined)
+        {
+          return;
+        }
+        var entity = new Entity();
+        entity.label = link.label;
+        entity.type = "entity";
+        entity.uploaded = false;
+        entity.isSelected = true;
+        $scope.entities.push(entity);
+        $scope.leaveState();
+    };
+}]);
+
+angular.module('module.group').controller("EntityUploadController", ['$q', '$scope', '$http', '$location', '$state', 'i18nService', 'UriToolbox', 'EntityFetchService', 'EntityModel', function($q, $scope, $http, $location, $state, i18nService, UriToolbox, EntityFetchService, Entity){
 
     var self = this;
+    
+    $scope.filesArray = [];
 
     /**
     * TRANSLATION INJECTION
@@ -167,10 +186,9 @@ angular.module('module.group').controller("EntityUploadController", ['$q', '$sco
     /**
     * METHODS
     */
-    $scope.filesArray = [];
 
     $scope.showUploadWidget = function(){
-      if($scope.filesArray.length > 0){
+      if($scope.entities.length > 0){
         return true;
       }else{
         return false;
@@ -178,7 +196,7 @@ angular.module('module.group').controller("EntityUploadController", ['$q', '$sco
     }
 
     $scope.resetUploader = function(){
-      $scope.filesArray = [];
+      $scope.entities = [];
     }
 
     $scope.appendFileListToUploadList = function(fileList){
@@ -189,9 +207,19 @@ angular.module('module.group').controller("EntityUploadController", ['$q', '$sco
       $scope.$apply();
     };
 
-    $scope.appendFileToUploadList = function(file){
+    $scope.appendFileToUploadList = function(file){ 
       file.uploaded = false;
       file.uploading = false; 
+      
+      var entity = new Entity();
+      entity.label = file.name;
+      entity.type = "file";
+      entity.uploaded = false;
+      entity.uploadObject = file;
+      entity.isSelected = true;
+      
+      $scope.entities.push(entity);
+      
       $scope.filesArray.unshift(file); 
       $scope.$apply();
     };
@@ -213,8 +241,6 @@ angular.module('module.group').controller("EntityUploadController", ['$q', '$sco
 
     $scope.uploadAllFiles = function(){
 
-      var currColl = CurrentCollectionService.getCurrentCollection();
-
       var entries = [];
       var labels = [];
       var uploadCounter = 0;
@@ -229,7 +255,7 @@ angular.module('module.group').controller("EntityUploadController", ['$q', '$sco
         if(file.isFile && !file.uploaded){
           file.uploading = true;
 
-          currColl.uploadFile(file).then(
+          EntityFetchService.uploadEntity(file).then(
             function(entry){
               file.uploading = false;
               file.uploaded = true;
@@ -249,18 +275,6 @@ angular.module('module.group').controller("EntityUploadController", ['$q', '$sco
 
         }
       });
-
-      defer.promise.then(
-        function(){
-          currColl.addEntries(entries, labels).then(
-            function(result){
-              angular.forEach(newEntrieObjects, function(newEntry, key){
-                currColl.entries.push(newEntry);
-              }); 
-            },
-            function(error){console.log(error);}
-            );
-        });
 
     };
 

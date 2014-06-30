@@ -464,6 +464,8 @@ angular.module('module.models').factory('EntityModel', ['$q', '$rootScope','User
     this.type       = null;
     this.pos = null;
     this.mimeType = null;
+    this.uploaded = false;
+    this.uploadObject = null;
 
     this.servHandleFileDownload = function(defer){
       var self = this;
@@ -712,6 +714,33 @@ angular.module('module.models').service("EntityFetchService", ['$q', '$rootScope
 
 return defer.promise;     
 };
+
+this.uploadEntity = function(file){
+    var defer = $q.defer();
+    var self = this;
+
+    new SSFileUpload(
+      function(parentUri,fileUri,fileName){
+        var entry = new EntityModel();
+
+        entry.init({id:fileUri, label:fileName, parentColl: parentUri, space: self.space, type: ENTITY_TYPES.file});
+        entry.init({uriPathnameHash: UriToolbox.extractUriPathnameHash(fileUri)});
+
+        defer.resolve(entry); 
+        $rootScope.$apply();
+      },
+      function(error){
+        defer.reject(error);
+        $rootScope.$apply();
+      },
+      UserSrv.getUser(),
+      UserSrv.getKey(),
+      file,
+      this.id
+      );
+
+    return defer.promise;
+  };
 
 }]);
 
