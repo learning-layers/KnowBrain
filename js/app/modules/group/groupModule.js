@@ -63,9 +63,22 @@ angular.module('module.group').config(function($stateProvider) {
 /**
 * CONTROLLER
 */
-angular.module('module.group').controller("newGroupController", ['$scope', '$dialogs', '$modalInstance', 'UserModel', 'GroupFetchService', function($scope, $dialogs, $modalInstance, UserModel, GroupFetchService){
+
+angular.module('module.group').controller("newGroupController", ['$scope', '$dialogs', 'UserModel', 'GroupFetchService', function($scope, $dialogs, UserModel, GroupFetchService){
+    
+    $scope.enterState("new");
+    
+    /* PATHS */
+    $scope.newGroupPath = MODULES_PREFIX+"/group/newGroup.tpl.html"; 
+    $scope.addMembersPath = MODULES_PREFIX+"/group/addMembers.tpl.html"; 
+    $scope.addEntitiesPath = MODULES_PREFIX+"/group/addEntities.tpl.html";
+    $scope.addFromCollectionPath = MODULES_PREFIX+"/group/addEntitiesCollection.tpl.html"; 
+    $scope.uploadResourcePath = MODULES_PREFIX+"/group/addEntitiesUpload.tpl.html";
+    $scope.addLinkPath = MODULES_PREFIX+"/group/addEntitiesLink.tpl.html";
+    
     $scope.group = {name: ""};
     $scope.groupMembers = [];
+    $scope.entities = [];
     
     var promise = UserModel.getAllUsers();
     promise.then(function(result) {
@@ -79,9 +92,11 @@ angular.module('module.group').controller("newGroupController", ['$scope', '$dia
     
     $scope.addMembers = function() {
 
-        if($scope.groupMembers.length > 0) {
-            $dialogs.addMembers($scope.groupMembers);
-        }
+        $scope.enterState("members");
+    };
+    
+    $scope.addEntities = function() {
+        $scope.enterState("choose");   
     };
     
     $scope.selectResource = function(user, $event) {
@@ -112,50 +127,194 @@ angular.module('module.group').controller("newGroupController", ['$scope', '$dia
             $modalInstance.close(result.circleUri);
         });
     };
-    
-
-    
-    $scope.close = function() {
-        $modalInstance.dismiss('cancel');
-    };
 }]);
 
-angular.module('module.group').controller("addMembersController", ['$scope', '$rootScope', '$modalInstance', 'users', function($scope, $rootScope, $modalInstance, users){
-    
-    $scope.allUsers = users;
+angular.module('module.group').controller("addMembersController", ['$scope', '$rootScope', function($scope, $rootScope){
     
     $scope.handleEntryClick = function(entry) {
         console.log("TODO: Go to user's profile");
     };
     
-    $scope.selectResource = function(user, $event) {
-        if(user.isSelected){
-            user.isSelected = false;
-          } else {
-            user.isSelected = true;
-          }
-    };
-    
-    $scope.close = function() {
-        $modalInstance.dismiss('cancel');
-    };
     
     $scope.confirm = function() {
-        $modalInstance.close();
+       $scope.leaveState();
     };
     
-    var findUserInArray = function(user, array) {
-
-        for(var i = 0; i < array.length; i++) {
-            if(array[i].label == user.label) {
-                return i;
-            }
-        }
-
-        return -1;
-    };
+//    var findUserInArray = function(user, array) {
+//
+//        for(var i = 0; i < array.length; i++) {
+//            if(array[i].label == user.label) {
+//                return i;
+//            }
+//        }
+//
+//        return -1;
+//    };
 
 }]);
+
+angular.module('module.group').controller("EntityUploadController", ['$q', '$scope', '$http', '$location', '$state', 'i18nService', 'UriToolbox', function($q, $scope, $http, $location, $state, i18nService, UriToolbox){
+
+    var self = this;
+
+    /**
+    * TRANSLATION INJECTION
+    */
+    $scope.t = function(identifier){
+      return i18nService.t(identifier);
+    }
+
+    /**
+    * METHODS
+    */
+    $scope.filesArray = [];
+
+    $scope.showUploadWidget = function(){
+      if($scope.filesArray.length > 0){
+        return true;
+      }else{
+        return false;
+      }
+    }
+
+    $scope.resetUploader = function(){
+      $scope.filesArray = [];
+    }
+
+    $scope.appendFileListToUploadList = function(fileList){
+      angular.forEach(fileList, function(file, key){
+        file.isFile = true;
+        $scope.appendFileToUploadList(file);
+      });
+      $scope.$apply();
+    };
+
+    $scope.appendFileToUploadList = function(file){
+      file.uploaded = false;
+      file.uploading = false; 
+      $scope.filesArray.unshift(file); 
+      $scope.$apply();
+    };
+
+    $scope.getFileSizeString = function(size){
+      var mb = ((size/1024)/1024);
+
+      if(mb < 0.01){
+        mb = (size/1024);
+        return mb.toFixed(2)+" KB";
+      }    
+
+      return mb.toFixed(2)+" MB";
+    };
+
+    $scope.removeFromUploadList = function(index){
+      $scope.filesArray.splice(index,1);   
+    };
+
+    $scope.uploadAllFiles = function(){
+
+      var currColl = CurrentCollectionService.getCurrentCollection();
+
+      var entries = [];
+      var labels = [];
+      var uploadCounter = 0;
+      var fileCount = $scope.filesArray.length;
+
+      var newEntrieObjects = [];
+
+      var defer = $q.defer();
+
+      angular.forEach($scope.filesArray, function(file, key){
+
+        if(file.isFile && !file.uploaded){
+          file.uploading = true;
+
+          currColl.uploadFile(file).then(
+            function(entry){
+              file.uploading = false;
+              file.uploaded = true;
+              file.uriPathnameHash = UriToolbox.extractUriPathnameHash(entry.id);
+              entries.push(entry.id);
+              labels.push(entry.label);
+              uploadCounter++;
+              newEntrieObjects.push(entry);
+
+              if(uploadCounter == fileCount){
+                defer.resolve();
+              }
+            },
+            function(error){
+              console.log(error);
+            });
+
+        }
+      });
+
+      defer.promise.then(
+        function(){
+          currColl.addEntries(entries, labels).then(
+            function(result){
+              angular.forEach(newEntrieObjects, function(newEntry, key){
+                currColl.entries.push(newEntry);
+              }); 
+            },
+            function(error){console.log(error);}
+            );
+        });
+
+    };
+
+    $scope.openEntry = function(indexOfFileArray){
+      if($scope.filesArray[indexOfFileArray].uploaded){
+       var hash = $scope.filesArray[indexOfFileArray].uriPathnameHash;
+       $state.transitionTo('app.collection.entry', { coll: CurrentCollectionService.getCurrentCollection().uriPathnameHash, entry:hash});
+     }      
+   };
+
+    /**
+    * FILE DROP-ZONE EVENTS
+    */
+    var dropZone = $('.upload-drop-container');
+
+    dropZone.bind('dragover', function(e) {
+     e.stopPropagation();
+     e.preventDefault();
+     e.originalEvent.dataTransfer.effectAllowed = 'copy';
+   });
+
+    dropZone.bind('dragenter', function(e) {
+      e.stopPropagation();
+      e.preventDefault();
+      e.originalEvent.dataTransfer.effectAllowed = 'copy';
+    });
+
+    dropZone.bind('drop', function(e){
+      e.stopPropagation();
+      e.preventDefault();
+
+      angular.forEach(e.originalEvent.dataTransfer.files, function(file, key){
+        try
+        {
+          var entry = e.originalEvent.dataTransfer.items[key].webkitGetAsEntry() || e.originalEvent.dataTransfer.items[key].getAsEntry();
+          if (entry.isFile) {
+            file.isFile = true;
+            file.uploading = false;
+            file.uploaded = false;
+            $scope.appendFileToUploadList(file);
+          } else if (entry.isDirectory) {
+            file.isFile = false;
+            $scope.appendFileToUploadList(file);
+          }
+
+        }
+        catch(error)
+        {
+          console.log("Problem while drag & drop. probably no file-api. ERROR: "+error);
+        }
+
+      });
+    });
+  }]);
 
 angular.module('module.group').controller("GroupController", ['$scope', function($scope){
 

@@ -286,7 +286,7 @@ angular.module('dialogs.controllers',['ui.bootstrap.modal', 'module.i18n', 'modu
 
 }])
 
-.controller("addResourceWizzardController", ['$scope', '$modalInstance', 'i18nService', function($scope, $modalInstance, i18nService){
+.controller("addResourceWizzardController", ['$scope', 'i18nService', function($scope, i18nService){
 
 	/* STEPS */
 	$scope.resourceTypes = ['choose','collection','upload', 'link'];
@@ -331,10 +331,35 @@ angular.module('dialogs.controllers',['ui.bootstrap.modal', 'module.i18n', 'modu
 	  	$scope.currentResourceType = 0;
 	  };
 
-	}]);
+	}])
 // end ConfirmDialogCtrl / dialogs.controllers
 
 
+.controller("baseModalController", ['$scope', '$modalInstance', 'i18nService', 'data', 'tplSrc', function($scope, $modalInstance, i18nService, data, tplSrc){
+    
+    var stateStack = [];
+    
+    $scope.tplSrc = tplSrc;
+    
+    $scope.close = function() {
+        $modalInstance.close();
+    };
+    
+    $scope.currentState = "";
+    
+    $scope.enterState = function(state) {
+        stateStack.push(state);
+        $scope.currentState = state;
+        console.log("New State: " + $scope.currentState);
+    };
+    
+    $scope.leaveState = function() {
+        stateStack.pop();
+        $scope.currentState = stateStack[stateStack.length-1];
+        console.log("New State: " + $scope.currentState);  
+    };
+    
+}]);
 //== Services ================================================================//
 
 angular.module('dialogs.services',['ui.bootstrap.modal','dialogs.controllers'])
@@ -404,6 +429,19 @@ angular.module('dialogs.services',['ui.bootstrap.modal','dialogs.controllers'])
 					}
 				}); // end modal.open
 			}, // end create
+			newModal : function(data, wClass, tplSrc){
+                return $modal.open({
+                    templateUrl : MODULES_PREFIX + '/dialog/baseModal.tpl.html',
+                    controller : 'baseModalController',
+                    keyboard : true,
+                    backdrop : true,
+                    windowClass: wClass,
+                    resolve : {
+                        data : function() { return data; },
+                        tplSrc: function() { return tplSrc;}   
+                    }
+                });
+            },
 			entryDetail : function(entry, isSearchResult){
 				return $modal.open({
 					templateUrl : MODULES_PREFIX + '/dialog/entryDetail.tpl.html',

@@ -72,14 +72,16 @@ angular.module('module.social').controller("GroupsController", ['$scope', '$dial
     });
 
     this.createGroup = function() {
-        var newGroupDialog = $dialogs.createNewGroup($scope.groups);
+        $dialogs.newModal([], "modal-huge", MODULES_PREFIX+"/group/newGroupWizzard.tpl.html");
         
-        newGroupDialog.result.then(function(result) {
-            var promise = GroupFetchService.getUserGroups();
-            promise.then(function(result){
-                $scope.groups = result.circles;
-            });
-        });
+//        var newGroupDialog = $dialogs.createNewGroup($scope.groups);
+//        
+//        newGroupDialog.result.then(function(result) {
+//            var promise = GroupFetchService.getUserGroups();
+//            promise.then(function(result){
+//                $scope.groups = result.circles;
+//            });
+//        });
 
     };
 
