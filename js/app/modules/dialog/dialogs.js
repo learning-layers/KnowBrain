@@ -335,7 +335,7 @@ angular.module('dialogs.controllers',['ui.bootstrap.modal', 'module.i18n', 'modu
 // end ConfirmDialogCtrl / dialogs.controllers
 
 
-.controller("baseModalController", ['$scope', '$modalInstance', 'i18nService', 'data', 'tplSrc', function($scope, $modalInstance, i18nService, data, tplSrc){
+.controller("baseModalController", ['$scope', '$rootScope', '$modalInstance', 'i18nService', 'data', 'tplSrc', function($scope, $rootScope, $modalInstance, i18nService, data, tplSrc){
     
     var stateStack = [];
     
@@ -343,6 +343,12 @@ angular.module('dialogs.controllers',['ui.bootstrap.modal', 'module.i18n', 'modu
     
     $scope.close = function() {
         $modalInstance.close();
+    };
+    
+    $scope.hide = function() {
+        console.log($rootScope);
+        $rootScope.$modal("hide");  
+
     };
     
     $scope.currentState = "";

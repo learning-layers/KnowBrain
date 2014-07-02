@@ -89,6 +89,7 @@ angular.module('module.group').controller("newGroupController", ['$scope', '$dia
     $scope.uploadPic = function() {
         console.log($scope.entities);
         console.log("TODO: Upload profile picture");
+        $scope.hide();
     };
     
     $scope.addMembers = function() {
