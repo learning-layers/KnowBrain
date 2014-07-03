@@ -1,4 +1,4 @@
-<div class="share-entity-header modal-header">
+<div class="share-entity-header modal-header" ng-="showDialog">
 	<button type="button" class="share-entity-close-button close"
 		ng-click="close()" style="margin-top: 5px;" aria-hidden="true">&times;</button>
 
@@ -10,7 +10,8 @@
 
 
 <div class="container" style="width: 100%">
-	<div class="row clearfix" style="padding: 10px;">
+Click me: <input type="checkbox" ng-model="show"><br/>
+	<div class="row clearfix animation" style="padding: 10px;" ng-show="show">
 		<div class="col-md-4 column" style="height: 100%;">
 			<div id="upload_pic"
 				style="position: relative; width: 100%; height: 100%;">

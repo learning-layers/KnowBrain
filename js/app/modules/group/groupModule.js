@@ -25,35 +25,70 @@
 /**
 * AUTHORISATION MODULE 
 */
-angular.module('module.group',['module.entity']);
+angular.module('module.group',['module.entity', 'dialogs.services']);
 
 /**
 * CONFIG
 */
 angular.module('module.group').config(function($stateProvider) {
-
-
+    
     $stateProvider
-        .state('app.group', {
+    .state('app.social.groups.new', {
+         url:'/new',
+         onEnter: function($dialogs, $state) {
+             var newGroupDialog = $dialogs.createNewGroup()
+             newGroupDialog.result.then(function(result) {
+                 if (result) {
+                     console.log("Success");
+                     return $state.transitionTo("app.social.groups");
+                 }
+             },function(error) {
+                     console.log("Error");
+                     return $state.transitionTo("app.social.groups");
+             });
+         }
+    });
+    
+    $stateProvider
+    .state('app.social.groups.new.members', {
+         url:'/members',
+         onEnter: function($dialogs, $state) {
+             var addMembersDialog = $dialogs.addMembers();
+             addMembersDialog.result.then(function(result) {
+                 if (result) {
+                     console.log("Success");
+                     return $state.transitionTo("app.social.groups.new");
+                 }
+             },function(error) {
+                     console.log("Error");
+                     console.log("Transition to app.social.groups.new");
+                     $state.transitionTo("app.social.groups.new");
+                     return; 
+             });
+         }
+    });
+    
+    $stateProvider
+        .state('app.groupProfile', {
              url:'/group',
             abstract:true,
             controller: 'GroupController',
             templateUrl: MODULES_PREFIX + '/group/groupProfile.tpl.html'
         });
 
-    $stateProvider.state('app.group.members', {
+    $stateProvider.state('app.groupProfile.members', {
         url: '/members',
         templateUrl: MODULES_PREFIX + '/group/members.tpl.html',
         controller: "MembersController"
     });
 
-    $stateProvider.state('app.group.entities', {
+    $stateProvider.state('app.groupProfile.entities', {
         url: '/entities',
         templateUrl: MODULES_PREFIX + '/group/entities.tpl.html',
         controller: "EntitiesController"
     });
     
-    $stateProvider.state('app.group.activities', {
+    $stateProvider.state('app.groupProfile.activities', {
         url: '/activities',
         templateUrl: MODULES_PREFIX + '/group/activities.tpl.html',
         controller: "ActivitiesController"
@@ -63,9 +98,11 @@ angular.module('module.group').config(function($stateProvider) {
 /**
 * CONTROLLER
 */
-angular.module('module.group').controller("newGroupController", ['$scope', '$dialogs', '$modalInstance', 'UserModel', 'GroupFetchService', function($scope, $dialogs, $modalInstance, UserModel, GroupFetchService){
+angular.module('module.group').controller("newGroupController", ['$scope', '$dialogs', '$state', '$modalInstance', 'UserModel', 'GroupFetchService', function($scope, $dialogs, $state, $modalInstance, UserModel, GroupFetchService){
     $scope.group = {name: ""};
     $scope.groupMembers = [];
+    $scope.showDialog = true;
+    $scope.show = true;
     
     var promise = UserModel.getAllUsers();
     promise.then(function(result) {
@@ -75,13 +112,16 @@ angular.module('module.group').controller("newGroupController", ['$scope', '$dia
     
     $scope.uploadPic = function() {
         console.log("TODO: Upload profile picture");
+        $scope.show = false;
+
     };
     
     $scope.addMembers = function() {
-
-        if($scope.groupMembers.length > 0) {
-            $dialogs.addMembers($scope.groupMembers);
-        }
+        $state.transitionTo("app.social.groups.new.members");
+        $modalInstance.close();
+//        if($scope.groupMembers.length > 0) {
+//            $dialogs.addMembers($scope.groupMembers);
+//        }
     };
     
     $scope.selectResource = function(user, $event) {
@@ -97,7 +137,9 @@ angular.module('module.group').controller("newGroupController", ['$scope', '$dia
     };
     
     $scope.createGroup = function() {
-        var userUrls = [];
+        
+        $state.transitionTo("app.group.new");
+       /* var userUrls = [];
         
         for(var i=0; i < $scope.groupMembers.length; i++) {
             
@@ -110,7 +152,7 @@ angular.module('module.group').controller("newGroupController", ['$scope', '$dia
         var promise = GroupFetchService.createGroup($scope.group.name, [], userUrls);
         promise.then(function(result) {
             $modalInstance.close(result.circleUri);
-        });
+        });*/
     };
     
 

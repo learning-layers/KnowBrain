@@ -61,7 +61,7 @@ angular.module('module.social').controller("SocialController", ['$scope', functi
 
 }]);
 
-angular.module('module.social').controller("GroupsController", ['$scope', '$dialogs', 'GroupFetchService', function($scope, $dialogs, GroupFetchService){
+angular.module('module.social').controller("GroupsController", ['$scope', '$dialogs', '$state', 'GroupFetchService', function($scope, $dialogs, $state, GroupFetchService){
     
     $scope.groups = [];
     
@@ -72,14 +72,17 @@ angular.module('module.social').controller("GroupsController", ['$scope', '$dial
     });
 
     this.createGroup = function() {
-        var newGroupDialog = $dialogs.createNewGroup($scope.groups);
+        $state.transitionTo("app.social.groups.new");
+
         
-        newGroupDialog.result.then(function(result) {
-            var promise = GroupFetchService.getUserGroups();
-            promise.then(function(result){
-                $scope.groups = result.circles;
-            });
-        });
+//        var newGroupDialog = $dialogs.createNewGroup($scope.groups);
+//        
+//        newGroupDialog.result.then(function(result) {
+//            var promise = GroupFetchService.getUserGroups();
+//            promise.then(function(result){
+//                $scope.groups = result.circles;
+//            });
+//        });
 
     };
 
