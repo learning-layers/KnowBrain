@@ -35,37 +35,40 @@ angular.module('module.group').config(function($stateProvider) {
     $stateProvider
     .state('app.social.groups.new', {
          url:'/new',
-         onEnter: function($dialogs, $state) {
-             var newGroupDialog = $dialogs.createNewGroup()
-             newGroupDialog.result.then(function(result) {
-                 if (result) {
-                     console.log("Success");
-                     return $state.transitionTo("app.social.groups");
-                 }
-             },function(error) {
-                     console.log("Error");
-                     return $state.transitionTo("app.social.groups");
-             });
-         }
+         controller: "newGroupController",
+           onEnter: function($dialogs, $state) {
+           var newGroupDialog = $dialogs.createNewGroup();
+           newGroupDialog.result.then(function(result) {
+               if (result) {
+                   console.log("Success");
+                   return $state.transitionTo("app.social.groups");
+               }
+           },function(error) {
+                   console.log("Error");
+                   $state.transitionTo("app.social.groups");
+                   return; 
+           });
+       }
     });
     
     $stateProvider
     .state('app.social.groups.new.members', {
          url:'/members',
-         onEnter: function($dialogs, $state) {
-             var addMembersDialog = $dialogs.addMembers();
-             addMembersDialog.result.then(function(result) {
-                 if (result) {
-                     console.log("Success");
-                     return $state.transitionTo("app.social.groups.new");
-                 }
-             },function(error) {
-                     console.log("Error");
-                     console.log("Transition to app.social.groups.new");
-                     $state.transitionTo("app.social.groups.new");
-                     return; 
-             });
-         }
+         templateUrl: MODULES_PREFIX + '/group/addMembers.tpl.html',
+         controller: "addMembersController"
+//         onEnter: function($dialogs, $state) {
+//             var addMembersDialog = $dialogs.addMembers();
+//             addMembersDialog.result.then(function(result) {
+//                 if (result) {
+//                     console.log("Success");
+//                     return $state.transitionTo("app.social.groups.new");
+//                 }
+//             },function(error) {
+//                     console.log("Error");
+//                     $state.transitionTo("app.social.groups.new");
+//                     return; 
+//             });
+//         }
     });
     
     $stateProvider
@@ -99,6 +102,24 @@ angular.module('module.group').config(function($stateProvider) {
 * CONTROLLER
 */
 angular.module('module.group').controller("newGroupController", ['$scope', '$dialogs', '$state', '$modalInstance', 'UserModel', 'GroupFetchService', function($scope, $dialogs, $state, $modalInstance, UserModel, GroupFetchService){
+    
+    
+    $scope.currentTemplate = MODULES_PREFIX + "/group/newGroupHome.tpl.html";
+    
+    $modalInstance.opened.then(function(){
+        $state.go('app.social.groups.new');
+    });
+    $modalInstance.result.then(null,function(){
+        $state.go('app.social.groups');
+    });
+    
+    $scope.$on('$stateChangeSuccess', function () {
+        console.log($state.current.name);
+        if($state.current.name != 'app.social.groups.new'){
+            $modalInstance.dismiss('cancel');
+        }
+    });
+    
     $scope.group = {name: ""};
     $scope.groupMembers = [];
     $scope.showDialog = true;
@@ -109,7 +130,6 @@ angular.module('module.group').controller("newGroupController", ['$scope', '$dia
         $scope.groupMembers = result.users;
     });
     
-    
     $scope.uploadPic = function() {
         console.log("TODO: Upload profile picture");
         $scope.show = false;
@@ -118,7 +138,6 @@ angular.module('module.group').controller("newGroupController", ['$scope', '$dia
     
     $scope.addMembers = function() {
         $state.transitionTo("app.social.groups.new.members");
-        $modalInstance.close();
 //        if($scope.groupMembers.length > 0) {
 //            $dialogs.addMembers($scope.groupMembers);
 //        }

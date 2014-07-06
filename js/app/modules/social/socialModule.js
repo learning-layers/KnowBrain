@@ -72,17 +72,15 @@ angular.module('module.social').controller("GroupsController", ['$scope', '$dial
     });
 
     this.createGroup = function() {
-        $state.transitionTo("app.social.groups.new");
 
+        var newGroupDialog = $dialogs.createNewGroup();
         
-//        var newGroupDialog = $dialogs.createNewGroup($scope.groups);
-//        
-//        newGroupDialog.result.then(function(result) {
-//            var promise = GroupFetchService.getUserGroups();
-//            promise.then(function(result){
-//                $scope.groups = result.circles;
-//            });
-//        });
+        newGroupDialog.result.then(function(result) {
+            var promise = GroupFetchService.getUserGroups();
+            promise.then(function(result){
+                $scope.groups = result.circles;
+            });
+        });
 
     };
 
