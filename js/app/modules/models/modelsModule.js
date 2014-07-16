@@ -454,7 +454,7 @@ angular.module('module.models').factory('CollectionModel', ['$q', '$rootScope','
 
 }]);
 
-angular.module('module.models').factory('EntityModel', ['$q', '$rootScope','UserService', 'BaseModel', 'SPACE_ENUM', 'ENTITY_TYPES', 'SHARING_OPTIONS', function($q, $rootScope, UserSrv, BaseModel, SPACE_ENUM, ENTITY_TYPES, SHARING_OPTIONS){
+angular.module('module.models').factory('EntityModel', ['$q', '$rootScope','UserService', 'BaseModel', 'UriToolbox', 'SPACE_ENUM', 'ENTITY_TYPES', 'SHARING_OPTIONS', function($q, $rootScope, UserSrv, BaseModel, UriToolbox, SPACE_ENUM, ENTITY_TYPES, SHARING_OPTIONS){
 
   function Entity(){
     this.parentColl = null;
@@ -465,7 +465,7 @@ angular.module('module.models').factory('EntityModel', ['$q', '$rootScope','User
     this.pos = null;
     this.mimeType = null;
     this.uploaded = false;
-    this.uploadObject = null;
+    this.fileHandle = null;
 
     this.servHandleFileDownload = function(defer){
       var self = this;
@@ -523,6 +523,36 @@ angular.module('module.models').factory('EntityModel', ['$q', '$rootScope','User
 
     return defer.promise;
   };
+  
+  Entity.prototype.uploadFile = function(){
+      var defer = $q.defer();
+      var self = this;
+      
+      if(this.type == ENTITY_TYPES.file, this.fileHandle) {
+          new SSFileUpload(
+                  function(parentUri,fileUri,fileName){
+                    console.log(fileUri);
+                    self.id = fileUri;
+                    self.type = ENTITY_TYPES.file;
+                    self.uriPathnameHash = UriToolbox.extractUriPathnameHash(fileUri);
+                    self.uploaded = true;
+  
+                    defer.resolve(self); 
+                    //$rootScope.$apply();
+                  },
+                  function(error){
+                    console.log("Error");
+                    defer.reject(error);
+                    //$rootScope.$apply();
+                  },
+                  UserSrv.getUser(),
+                  UserSrv.getKey(),
+                  this.fileHandle,
+                  null
+              );
+        return defer.promise;
+      }
+  }
 
   return (Entity);
 
@@ -721,7 +751,7 @@ this.uploadEntity = function(file){
 
     new SSFileUpload(
       function(parentUri,fileUri,fileName){
-        var entry = new EntityModel();
+        var entry = new Entity();
 
         entry.init({id:fileUri, label:fileName, parentColl: parentUri, space: self.space, type: ENTITY_TYPES.file});
         entry.init({uriPathnameHash: UriToolbox.extractUriPathnameHash(fileUri)});

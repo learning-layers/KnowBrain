@@ -56,18 +56,6 @@
 
 				<div id="resourceUploadWidget" class="col-lg-12"
 					ng-show="showUploadWidget()">
-					<div id="resourceUploadWidgetToolbar">
-						<div class="btn-group col-md-9">
-							<button class="btn btn-primary" ng-click="uploadAllFiles()">
-								<i class="glyphicon glyphicon-cloud-upload"></i>&nbsp;{{t('upload_all')}}
-							</button>
-							<button class="btn btn-danger" ng-click="resetUploader()">
-								<i class="glyphicon glyphicon-trash"></i>&nbsp;{{t('clear_file_list')}}
-							</button>
-						</div>
-						<div class="col-md-3 text-align-right" style="margin-top: 5px;">{{filesArray.length}}&nbsp;{{t('file_s')}}.</div>
-						<div class="clearfix"></div>
-					</div>
 					<div id="resourceUploadWidgetFilesWrapper">
 						<div ng-repeat="file in filesArray">
 
@@ -79,12 +67,7 @@
 
 										<div class="col-xs-2"
 											style="display: inline-block; padding: 0px;">
-											<div ng-show="!file.uploading && !file.uploaded"
-												class="glyphicon glyphicon-file"></div>
-											<div ng-show="file.uploading && !file.uploaded"
-												class="ajax-loader-light-grey-xs"></div>
-											<div ng-show="file.uploaded"
-												class="resourceUploadWidgetFileUploadedIcon glyphicon glyphicon-ok-circle"></div>
+											<div class="glyphicon glyphicon-file"></div>
 										</div>
 
 										<div class="col-xs-10" class="padding-zero"
@@ -106,11 +89,9 @@
 												ng-click="openEntry($index)" type="button">{{t('open')}}</button>
 										</div>
 
-										<div class="btn btn-group-xs" ng-show="!file.uploaded"
-											style="padding: 0px; float: right;">
+										<div class="btn btn-group-xs" style="padding: 0px; float: right;">
 											<button class="btn btn-danger"
-												ng-click="removeFromUploadList($index)"
-												ng-show="!file.uploading && !file.uploaded">
+												ng-click="removeFromUploadList($index)">
 												<i class="glyphicon glyphicon-trash"></i>
 											</button>
 											<div class="clearfix"></div>
@@ -158,7 +139,8 @@
 		<div class="modal-footer">
 			<button type="button" class="btn btn-default" ng-click="leaveState()">back</button>
 			<div>
-				<button class="btn btn-primary" ng-click="close()">Close</button>
+				<button class="btn btn-primary" ng-hide="filesArray.length == 0" ng-click="addFiles()">Close</button>
+				<button class="btn btn-default" ng-click="close()">Close</button>
 			</div>
 		</div>
 

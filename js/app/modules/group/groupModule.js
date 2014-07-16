@@ -64,7 +64,7 @@ angular.module('module.group').config(function($stateProvider) {
 * CONTROLLER
 */
 
-angular.module('module.group').controller("newGroupController", ['$scope', '$dialogs', 'UserModel', 'GroupFetchService', function($scope, $dialogs, UserModel, GroupFetchService){
+angular.module('module.group').controller("newGroupController", ['$scope', '$q', '$dialogs', 'UserModel', 'GroupFetchService', 'ENTITY_TYPES', 'EntityModel', function($scope, $q, $dialogs, UserModel, GroupFetchService, ENTITY_TYPES, Entity){
     
     $scope.enterState("new");
     
@@ -114,20 +114,43 @@ angular.module('module.group').controller("newGroupController", ['$scope', '$dia
     };
     
     $scope.createGroup = function() {
-        var userUrls = [];
+        var userUrls = []; 
+        var entityUrls = [];
         
-        for(var i=0; i < $scope.groupMembers.length; i++) {
+        var promises = [];
+        
+        for(var i=0; i < $scope.entities.length; i++) {
             
-            if($scope.groupMembers[i].isSelected) {
-                userUrls.push($scope.groupMembers[i].id);
+            if($scope.entities[i].uploaded == false && $scope.entities[i].type == ENTITY_TYPES.file) {
+                var file = $scope.entities[i];
+                promises.push(file.uploadFile());
             }
-            
         }
         
-        var promise = GroupFetchService.createGroup($scope.group.name, [], userUrls);
-        promise.then(function(result) {
-            $modalInstance.close(result.circleUri);
+        $q.all(promises).then(function(results) {
+            console.log(results);
+            
+            for(var i=0; i < results.length; i++) {
+                if(results[i].isSelected) {
+                    entityUrls.push(results[i].id);
+                }
+            }
+            
+            for(var i=0; i < $scope.groupMembers.length; i++) {
+                
+                if($scope.groupMembers[i].isSelected) {
+                    userUrls.push($scope.groupMembers[i].id);
+                }
+                
+            }
+            
+            var promise = GroupFetchService.createGroup($scope.group.name, entityUrls, userUrls);
+            promise.then(function(result) {
+                $scope.close();
+            });
         });
+        
+        
     };
 }]);
 
@@ -189,7 +212,7 @@ angular.module('module.group').controller("EntityUploadController", ['$q', '$sco
     */
 
     $scope.showUploadWidget = function(){
-      if($scope.entities.length > 0){
+      if($scope.filesArray.length > 0){
         return true;
       }else{
         return false;
@@ -212,16 +235,8 @@ angular.module('module.group').controller("EntityUploadController", ['$q', '$sco
       file.uploaded = false;
       file.uploading = false; 
       
-      var entity = new Entity();
-      entity.label = file.name;
-      entity.type = "file";
-      entity.uploaded = false;
-      entity.uploadObject = file;
-      entity.isSelected = true;
-      
-      $scope.entities.push(entity);
-      
       $scope.filesArray.unshift(file); 
+      console.log($scope.filesArray);
       $scope.$apply();
     };
 
@@ -238,6 +253,25 @@ angular.module('module.group').controller("EntityUploadController", ['$q', '$sco
 
     $scope.removeFromUploadList = function(index){
       $scope.filesArray.splice(index,1);   
+    };
+    
+    $scope.addFiles = function() {
+        
+        for(var i = 0; i < $scope.filesArray.length; i++) {
+            
+            var file = $scope.filesArray[i];
+            
+            var entity = new Entity();
+            entity.label = file.name;
+            entity.type = "file";
+            entity.uploaded = false;
+            entity.fileHandle = file;
+            entity.isSelected = true;
+            
+            $scope.entities.push(entity);
+        }
+        $scope.leaveState();
+        $scope.leaveState();
     };
 
     $scope.uploadAllFiles = function(){
