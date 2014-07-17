@@ -1,53 +1,337 @@
 <div class="row clearfix">
-	<div class="col-md-12 column box rounded">
+	<div class="col-md-12 column box">
 		<div class="row">
 			<div class="col-md-1">
-				<div class="thread-type-icon icon-question rounded detail-icon"></div>
+				<div class="icon-question-large icon-large">
+				</div>
 			</div>
-			<div class="col-md-9">
-				<h3 class="detail-title">{{question.title}}</h3>
-				<p class="detail-explanation">{{question.explanation}}</p>
+			<div class="col-md-6">
+				<h3 class="title">{{question.title}}</h3>
+				<p class="explanation">{{question.explanation}}</p>
 			</div>
-			<div class="col-md-2">
-				&nbsp;
+			<div class="col-md-5 column">		
+				<div class="row">
+					<div class="col-md-2 column">
+						<div class="icon-user-medium icon-medium">
+						</div>
+					</div>
+					<div class="col-md-10 column user-detail">
+						<p><a href="#">User1</a> has asked this question on 13/04/2013 12:30</p>
+						
+						<p>1234 reputation points</p>
+					</div>
+				</div>	
+				<div class="row">
+					<div class="col-md-12 column">	
+						<div class="vote-box-number">
+							<span>5</span>
+						</div>
+						<div class="vote-box">
+							<p>had the same question</p>
+							<p><a href="#">Me too</a></p>
+						</div>
+					</div>
+				</div>
 			</div>
 		</div>
-				
-		<div class="row">
-			<div class="col-md-1">
-				<button type="button" class="btn btn-default detail-like-btn">
-					<span class="glyphicon glyphicon-thumbs-up"></span> Like
-				</button>
-			</div>
-			<div class="col-md-2">
-					<div class="thread-icon icon-user">
-					</div>
-					<div class="thread-author">
-						<p class="thread-author">User1</p>
-						<p class="thread-author text-muted" bind-once>{{getRandomNumber(1000)}}</p>
-					</div>
-					<div class="thread-author">
-						<p class="thread-author text-muted" bind-once>{{question.creationTime.toLocaleDateString()}}</p>
-						<p class="thread-author text-muted" bind-once>{{question.creationTime.toLocaleTimeString()}}</p>
-					</div>
-			</div>
-			<div class="col-md-2">
-					<div class="thread-icon icon-entity">
-					</div>
-					<div class="thread-author">
-						<p class="thread-author">collection</p>
-						<p class="thread-author text-muted">my folder</p>
-					</div>
-			</div>
-			<div class="col-md-7">
+		
+		<div class="row clearfix qa-tag-box">
+			<div class="col-md-1 column">
 				&nbsp;
+			</div>
+			<div class="col-md-11 column">
+				<div class="qa-tag"><a href="#">tag1</a></div>
+				<div class="qa-tag"><a href="#">tag2</a></div>
+				<div class="qa-tag"><a href="#">tag3</a></div>
+			</div>
+		</div>
+		
+		<div class="row clearfix">
+			<div class="col-md-1 column">
+				&nbsp;
+			</div>
+			<div class="col-md-11 column">
+				<div class="icon-entity-small icon-small">
+				</div>
+				<div class="icon-small-entity-data">
+					<p><a href="#">my folder</a></p>
+				</div>
+				
+				<div class="icon-file-small icon-small">
+				</div>
+				<div class="icon-small-entity-data">
+					<p><a href="#">file1.pdf</a></p>
+				</div>
+				
+				<div class="icon-file-small icon-small">
+				</div>
+				<div class="icon-small-entity-data">
+					<p><a href="#">file2.pdf</a></p>
+				</div>
+			</div>
+		</div>
+		
+		<div class="row clearfix">
+			<div class="col-md-1 column">
+				&nbsp;
+			</div>
+			<div class="col-md-11 column question-footer">
+				<p><a href="#">share</a></p>
+			</div>
+		</div>
+		
+	</div>		
+</div>
+
+<div class="row clearfix">
+	<div class="col-md-10 column">
+		<h3>Answers (2)</h3>
+		
+		<!-- answer begin -->
+		<hr />
+		<div class="row clearfix">
+			<div class="col-md-1 column">
+				<div class="icon-user-medium icon-medium">
+				</div>
+			</div>
+			<div class="col-md-5 column user-detail">
+				<p><a href="#">User1</a> has answered on 13/04/2013 12:30</p>
+				<p>1234 reputation points</p>
+			</div>
+			
+			<div class="col-md-3 column">			
+				<div class="vote-box-number positiv">
+					<span>3</span>
+				</div>
+				<div class="vote-box">
+					<p>found this answer helpful</p>
+					<p><a href="#">Me too</a></p>
+				</div>
+			</div>
+			
+			<div class="col-md-3 column">						
+				<div class="vote-box-number negativ">
+					<span>1</span>
+				</div>
+				<div class="vote-box">
+					<p>found this answer not helpful</p>
+					<p><a href="#">Me too</a></p>
+				</div>
+			</div>
+		</div>
+		
+		<div class="row clearfix">
+			<div class="col-md-1 column">
+				<div class="icon-answered-medium icon-medium">
+				</div>
+			</div>
+			<div class="col-md-11 column answer">
+				Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua.
+			</div>
+		</div>
+		
+		<div class="row clearfix">
+			<div class="col-md-1 column">
+				&nbsp;
+			</div>
+			<div class="col-md-11 column">
+				<div class="icon-entity-small icon-small">
+				</div>
+				<div class="icon-small-entity-data">
+					<p><a href="#">my folder</a></p>
+				</div>
+				
+				<div class="icon-file-small icon-small">
+				</div>
+				<div class="icon-small-entity-data">
+					<p><a href="#">file1.pdf</a></p>
+				</div>
+				
+				<div class="icon-file-small icon-small">
+				</div>
+				<div class="icon-small-entity-data">
+					<p><a href="#">file2.pdf</a></p>
+				</div>
+			</div>
+		</div>
+		
+		<div class="row clearfix">
+			<div class="col-md-1 column">
+				&nbsp;
+			</div>
+			<div class="col-md-11 column answer-footer">
+				<p><a href="#">share</a> | <a href="#">mark as accepted answer</a></p>
+			</div>
+		</div>
+		<!-- comment begin -->
+		<div class="row clearfix">
+			<div class="col-md-2 column">
+				&nbsp;
+			</div>
+			<div class="col-md-10 column answer-comment">
+				<p>Lorem ipsum dolor sit amet, consetetur sadipscing elitr <span class="answer-comment-user">- <a href="#">User1</a> 13/04/2013 12:30</span></p>
+			</div>
+		</div>
+		<!-- comment end -->
+		<!-- comment begin -->
+		<div class="row clearfix">
+			<div class="col-md-2 column">
+				&nbsp;
+			</div>
+			<div class="col-md-10 column answer-comment">
+				<p>Lorem ipsum dolor sit amet, consetetur sadipscing elitr <span class="answer-comment-user">- <a href="#">User1</a> 13/04/2013 12:30</span></p>
+			</div>
+		</div>
+		<!-- comment end -->
+		<div class="row clearfix">
+			<div class="col-md-2 column">
+				&nbsp;
+			</div>
+			<div class="col-md-10 column answer-comment-footer">
+				<p><a href="#">add a comment</a></p>
+			</div>
+		</div>
+		<!-- answer end -->
+		
+		<!-- answer begin -->
+		<hr />
+		<div class="row clearfix">
+			<div class="col-md-1 column">
+				<div class="icon-user-medium icon-medium">
+				</div>
+			</div>
+			<div class="col-md-5 column user-detail">
+				<p><a href="#">User1</a> has answered on 13/04/2013 12:30</p>
+				<p>1234 reputation points</p>
+			</div>
+			
+			<div class="col-md-3 column">			
+				<div class="vote-box-number positiv">
+					<span>9</span>
+				</div>
+				<div class="vote-box">
+					<p>found this answer helpful</p>
+					<p><a href="#">Me too</a></p>
+				</div>
+			</div>
+			
+			<div class="col-md-3 column">						
+				<div class="vote-box-number negativ">
+					<span>0</span>
+				</div>
+				<div class="vote-box">
+					<p>found this answer not helpful</p>
+					<p><a href="#">Me too</a></p>
+				</div>
+			</div>
+		</div>
+		
+		<div class="row clearfix">
+			<div class="col-md-1 column">
+				&nbsp;
+			</div>
+			<div class="col-md-11 column answer">
+				Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua.
+			</div>
+		</div>
+		
+		<div class="row clearfix">
+			<div class="col-md-1 column">
+				&nbsp;
+			</div>
+			<div class="col-md-11 column">
+				<div class="icon-entity-small icon-small">
+				</div>
+				<div class="icon-small-entity-data">
+					<p><a href="#">my folder</a></p>
+				</div>
+				
+				<div class="icon-file-small icon-small">
+				</div>
+				<div class="icon-small-entity-data">
+					<p><a href="#">file1.pdf</a></p>
+				</div>
+				
+				<div class="icon-file-small icon-small">
+				</div>
+				<div class="icon-small-entity-data">
+					<p><a href="#">file2.pdf</a></p>
+				</div>
+			</div>
+		</div>
+		
+		<div class="row clearfix">
+			<div class="col-md-1 column">
+				&nbsp;
+			</div>
+			<div class="col-md-11 column answer-footer">
+				<p><a href="#">share</a> | <a href="#">mark as accepted answer</a></p>
+			</div>
+		</div>
+		<!-- comment begin -->
+		<div class="row clearfix">
+			<div class="col-md-2 column">
+				&nbsp;
+			</div>
+			<div class="col-md-10 column answer-comment">
+				<p>Lorem ipsum dolor sit amet, consetetur sadipscing elitr <span class="answer-comment-user">- <a href="#">User1</a> 13/04/2013 12:30</span></p>
+			</div>
+		</div>
+		<!-- comment end -->
+		<!-- comment begin -->
+		<div class="row clearfix">
+			<div class="col-md-2 column">
+				&nbsp;
+			</div>
+			<div class="col-md-10 column answer-comment">
+				<p>Lorem ipsum dolor sit amet, consetetur sadipscing elitr <span class="answer-comment-user">- <a href="#">User1</a> 13/04/2013 12:30</span></p>
+			</div>
+		</div>
+		<!-- comment end -->
+		<div class="row clearfix">
+			<div class="col-md-2 column">
+				&nbsp;
+			</div>
+			<div class="col-md-10 column answer-comment-footer">
+				<p><a href="#">add a comment</a></p>
+			</div>
+		</div>
+		<!-- answer end -->
+		
+	</div>
+	<div class="col-md-2 column">		
+		<h4>Related</h4>
+		<p>There is currently no related content available</p>
+	</div>
+</div>
+
+<div class="row clearfix">
+	<div class="col-md-10 column">
+		<h3>Reply</h3>
+		<div class="row">
+			<div class="col-md-9 column">
+				<textarea ng-model="newAnswer" class="form-control thread-input-group" rows="5" placeholder="Add your answer"></textarea>
+			</div>
+			<div class="col-md-3 column" ng-class="(newThread.type == THREAD_TYPE.chat) ? 'hidden' : ''">
+					<div ng-show="!ajaxLoading" class="kb-fluid-container pull-left add-attachment-box" ng-click="openAddAttachments()">Add attachments
+						 <div id="upload-link" class="glyphicon glyphicon-plus-sign" ></div>
+					</div>
+
+					<div ng-show="ajaxLoading" id="upload-box-loading" class="kb-fluid-container pull-left">
+						<div class="ajax-loader-light-grey" ></div>
+					</div>
+					<button ng-click="addAnswer()" type="button" style="width:100%;" class="btn btn-success btn-lg pull-right btn-post">Post your answer</button>
 			</div>
 		</div>
 	</div>
+	<div class="col-md-2 column">
+		&nbsp;
+	</div>
 </div>
+
 <div class="row clearfix">
 	<div class="col-md-12 column">
-		<h3>Answers</h3>
-		<hr />
+		&nbsp;
 	</div>
 </div>
+
