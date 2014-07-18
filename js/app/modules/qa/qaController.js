@@ -70,7 +70,7 @@ angular.module('module.qa').constant('THREAD_LIST_TYPE', {own:'My own', newest:'
 angular.module('module.qa').controller("Controller", ['$scope', '$state', '$q', '$modal', '$dialogs', '$filter', 'UserService', 'UriToolbox', 'qaService', 'Thread','THREAD_TYPE', 'THREAD_LIST_TYPE', function($scope, $state, $q, $modal, $dialogs, $filter, UserSrv, UriToolbox, qaService, Thread, THREAD_TYPE, THREAD_LIST_TYPE){
 		
 		$scope.THREAD_TYPE = THREAD_TYPE;
-		$scope.newThread = new Thread(UserSrv.getUser(), THREAD_TYPE.question, '', '', null, null, null);
+		$scope.newThread = new Thread(null, THREAD_TYPE.question, null, null, null, null);
 		$scope.help = 'To post a question enter a title and an explanation.';
 		
 		$scope.threadList = null;
@@ -130,18 +130,6 @@ angular.module('module.qa').controller("Controller", ['$scope', '$state', '$q', 
 								return result;
 							});
 		};
-						
-		var loadAuthorDetails = function(threadList) 
-		{
-			angular.forEach(threadList, function(value, key){
-				qaService
-							.getAuthorDetails(value)
-							.then(function(result) {
-								value.author = result;
-								return value.author;
-							});
-			});
-		};
 		
 		$scope.postNewThread = function()
 		{
@@ -152,7 +140,7 @@ angular.module('module.qa').controller("Controller", ['$scope', '$state', '$q', 
 		var loadSimilarThreadList = function() 
 		{
 			return qaService
-							.getAllThreads()
+							.getSimilarThreads($scope.newThread)
 							.then(function(result) {
 								return $filter('threadTypeFilter')(result, $scope.newThread.type);
 							});
@@ -170,7 +158,7 @@ angular.module('module.qa').controller("Controller", ['$scope', '$state', '$q', 
 								tmpList.push($scope.newThread);
 								loadAuthorDetails(tmpList);
 								
-								$scope.newThread = new Thread(UserSrv.getUser(), THREAD_TYPE.question, '', '', null, null, null);
+								$scope.newThread = new Thread(null, THREAD_TYPE.question, null, null, null, null);
 								
 								return result;
 							});
@@ -221,8 +209,7 @@ angular.module('module.qa').controller("Controller", ['$scope', '$state', '$q', 
 		};
 
 		// load data
-		loadThreadList()
-			.then(loadAuthorDetails);		
+		loadThreadList();	
 			
 }]);
 
@@ -245,26 +232,12 @@ angular.module('module.qa').controller('ModalSimilarThreadsController', ['$scope
 	{
 		$modalInstance.close(true);
 	};	
-	
-	var loadAuthorDetails = function() 
-	{
-		angular.forEach($scope.similarThreadList, function(value, key){
-			qaService
-						.getAuthorDetails(value)
-						.then(function(result) {
-							value.author = result;
-							return value.author;
-						});
-		});
-	};
-	
+		
 	$scope.getRandomNumber = function(max)
 	{
 		return Math.floor((Math.random() * max) + 1);
 	};	
-	
-	loadAuthorDetails();
-	
+		
 }]);
 
 angular.module('module.qa').controller('ModalAddAttachmentsController', ['$scope', '$modalInstance', '$state', 'qaService', 'thread', function($scope, $modalInstance, $state, qaService, thread){

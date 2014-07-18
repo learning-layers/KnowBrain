@@ -38,17 +38,16 @@ angular.module('module.qa').constant('THREAD_ENTRY_TYPE', {answer:{enum:'qaEntry
 angular.module('module.qa').factory('Thread', ['UriToolbox', function (UriToolbox) {
  		
   // Constructor
-  function Thread(author_id, type, title, explanation, entry_id, id, creationTime) {
+  function Thread(id, type, title, explanation, entry_id, creationTime) {
     // Public properties
-		this.authorId = author_id;
+		this.id = id;
     this.type = type;
 		this.title = title;
 		this.explanation = explanation;
 		this.entityId = entry_id;
-		this.id = id;
 		this.entries = new Array();
-		this.author = null;
 		this.creationTime = new Date(creationTime);
+		this.author = null;
   }
  
  /*
@@ -91,15 +90,14 @@ angular.module('module.qa').factory('Thread', ['UriToolbox', function (UriToolbo
 angular.module('module.qa').factory('ThreadEntry', function () {
  		
   // Constructor
-  function ThreadEntry(author_id, content, type, position, timestamp, id) {
+  function ThreadEntry(id, type, content, position, timestamp) {
     // Public properties
-		this.authorId = author_id;
+		this.id = id;
+		this.type = type;
 		this.content = content;
-		// type of the thread; either discEntry, qaEntry or chatEntry
-    this.type = type;
 		this.position = position;
 		this.timestamp = new Date(timestamp);
-		this.id = id;
+		this.author = null;
   }
 	
 	return ThreadEntry;
@@ -122,15 +120,46 @@ angular.module('module.qa').factory('Author', function () {
 
 angular.module('module.qa').service("qaService", ['$q', '$rootScope','UserService','THREAD_TYPE','THREAD_ENTRY_TYPE','Thread','ThreadEntry','Author', function($q, $rootScope, UserSrv, THREAD_TYPE, THREAD_ENTRY_TYPE, Thread, ThreadEntry, Author){
 	
-	this.getThreadTypeByEnum = function(enum_value) {
+	var getThreadTypeByEnum = function(enum_value) {
+		var type = null;
 		angular.forEach(THREAD_TYPE, function(value, key){
 			if(value.enum == enum_value) {
-				return value;
+				type = value;
 			}
 		});
-		
-		return null;
-	}
+		return type;
+	};
+	
+	var getThreadEntryTypeByEnum = function(enum_value) {
+		var type = null;
+		angular.forEach(THREAD_ENTRY_TYPE, function(value, key){
+			if(value.enum == enum_value) {
+				type = value;
+			}
+		});
+		return type;
+	};
+	
+	var addAuthorDetails = function(thread, author_id){
+		var defer = $q.defer();
+
+		new SSEntityGet(
+			function(result){
+				var author = new Author(result.entity.label);
+				thread.author = author;
+				defer.resolve(thread);
+			},
+			function(error){
+				console.log(error);
+				defer.reject(error);
+			},
+			UserSrv.getUser(),
+			UserSrv.getKey(),
+			author_id
+			);
+
+		return defer.promise;     
+	};
 
 	this.addNewThread = function(thread){
 		var defer = $q.defer();
@@ -182,117 +211,146 @@ angular.module('module.qa').service("qaService", ['$q', '$rootScope','UserServic
 		return defer.promise;     
 	};
 
-	this.getThreadWithEntries = function(id){
-		var defer = $q.defer();
-		
-		var thread = new Thread(null, null, '', '', null, id, null);
-		var entries = new Array();
-		
+	var getThreadWithEntries = function(id){
+		var deferThreadList = $q.defer();
+				
 		new SSDiscWithEntriesGet(
 			function(result){
 				
-				var getThreadTypeByEnum = function(enum_value) {
-					var type = null;
-					angular.forEach(THREAD_TYPE, function(value, key){
-						if(value.enum == enum_value) {
-							type = value;
-						}
+				var thread = new Thread(result.disc.id, getThreadTypeByEnum(result.disc.type), result.disc.label, result.disc.explanation, result.disc.entity, result.disc.creationTime);				
+				var entries = result.disc.entries;
+									
+				var deferThreadAuthor = $q.defer();
+					
+				addAuthorDetails(thread, result.disc.author)
+					.then(function(result) {
+						deferThreadAuthor.resolve(result);
 					});
-					return type;
-				};
 				
-				var getThreadEntryTypeByEnum = function(enum_value) {
-					var type = null;
-					angular.forEach(THREAD_ENTRY_TYPE, function(value, key){
-						if(value.enum == enum_value) {
-							type = value;
-						}
-					});
-					return type;
-				};
-				
-				thread.authorId = result.disc.author;
-				thread.type = getThreadTypeByEnum(result.disc.type);
-				thread.title = result.disc.label;
-				thread.explanation = result.disc.explanation;
-				thread.entityId = result.disc.entity;
-				thread.creationTime = result.disc.creationTime;
-
-				angular.forEach(result.disc.entries, function(value, key){
-					var entry = new ThreadEntry(value.author, value.content, getThreadEntryTypeByEnum(value.type), value.pos, value.timestamp, value.id, value.timestamp);
-					entries.push(entry);
+				deferThreadAuthor.promise.then(function(result) {
+					addEntries();
 				});
 				
-				thread.entries = entries;
-
-        defer.resolve(thread);
+				
+				var addEntries = function() {
+	
+					var promiseListEntryAuthor = [];
+					
+					angular.forEach(entries, function(value, key){
+						var entry = new ThreadEntry(value.id, getThreadEntryTypeByEnum(value.type), value.content, value.pos, value.timestamp);
+						thread.entries.push(entry);
+						
+						var deferEntryAuthor = $q.defer();
+						
+						addAuthorDetails(entry, value.author)
+							.then(function(result) {
+								deferEntryAuthor.resolve(result);
+							});
+						
+						promiseListEntryAuthor.push(deferEntryAuthor.promise);
+					});
+				
+					$q.all(promiseListEntryAuthor)
+						.then(function(result) {
+							deferThreadList.resolve(thread);
+						});
+					};				
       },
       function(error){
 			  console.log(error);
-				defer.reject(error);
+				deferThreadList.reject(error);
       },
       UserSrv.getUser(),
       UserSrv.getKey(),
 			id
       );
 
-    return defer.promise;     
+    return deferThreadList.promise;     
 	};
+	
+	// to make the function accessible from the controller
+	this.getThreadWithEntries = getThreadWithEntries;
 
   this.getAllThreads = function(){
-    var defer = $q.defer();
-		var threadList = new Array();
-		
+    var deferThreadList = $q.defer();
+				
     new SSDiscsAllGet(
       function(result){
-			
-				var getThreadTypeByEnum = function(enum_value) {
-					var type = null;
-					angular.forEach(THREAD_TYPE, function(value, key){
-						if(value.enum == enum_value) {
-							type = value;
-						}
-					});
-					return type;
-				};
+				
+				var promiseListAuthor = [];	
 				
         angular.forEach(result.discs, function(value, key){
 					var type = getThreadTypeByEnum(value.type);
-					var thread = new Thread(value.author, type, value.label, value.explanation, value.entity, value.id, value.creationTime);
-          threadList.push(thread);
+					var thread = new Thread(value.id, type, value.label, value.explanation, value.entity, value.creationTime);
+					
+					var deferAuthor = $q.defer();
+					
+					addAuthorDetails(thread, value.author)
+						.then(function(result) {
+							deferAuthor.resolve(result);
+						});
+					
+					promiseListAuthor.push(deferAuthor.promise);
         });
-
-        defer.resolve(threadList);
+				
+				$q.all(promiseListAuthor)
+					.then(function(result) {
+						deferThreadList.resolve(result);
+					});
       },	
       function(error){
 			  console.log(error);
-				defer.reject(error);
+				deferThreadList.reject(error);
       },
       UserSrv.getUser(),
       UserSrv.getKey()
       );
 
-    return defer.promise;  
+    return deferThreadList.promise;  
   };
 	
-	this.getAuthorDetails = function(thread){
-		var defer = $q.defer();
-
-		new SSEntityGet(
+	this.getSimilarThreads = function(thread){
+		var deferThreadList = $q.defer();
+		
+		new SSSearchCombined(
 			function(result){
-				var author = new Author(result.entity.label);
-				defer.resolve(author);
-			},
+				
+				var promiseList = [];			
+				
+				angular.forEach(result.searchResults, function(value, key){
+					var deferThreadWithEntities = $q.defer();
+									
+					getThreadWithEntries(value.entity)
+						.then(function(result) {
+							deferThreadWithEntities.resolve(result);
+						});
+					
+					promiseList.push(deferThreadWithEntities.promise);
+				});
+				
+				$q.all(promiseList)
+					.then(function(result) {
+						deferThreadList.resolve(result);
+					});
+			},	
 			function(error){
 				console.log(error);
-				defer.reject(error);
+				deferThreadList.reject(error);
 			},
 			UserSrv.getUser(),
 			UserSrv.getKey(),
-			thread.authorId
+			[thread.title], // keywords strings to search for
+			null, //entities to search within
+			false, // whether to search only in, e.g. collection entries, discussion entries
+			[thread.type.enum], // entity types to consider when searching
+			false, // whether to use tags for search (should be true as soon tags exists)
+			false, // whether to search in the content of, e.g. a file
+			true, // whether to include the name/title of entities in search
+			true, // whether to include the description of entities in search
+			false // whether to search with automatically calculated usage-based indicators
 			);
 
-		return defer.promise;     
+		return deferThreadList.promise;  
 	};
-		
+			
 }]);
