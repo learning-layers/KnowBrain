@@ -312,15 +312,18 @@ angular.module('module.qa').service("qaService", ['$q', '$rootScope','UserServic
 	this.getSimilarThreads = function(thread){
 		var deferThreadList = $q.defer();
 		
-		new SSSearchCombined(
+		var keywordList = thread.title.split(' ');
+		keywordList = keywordList.concat(thread.explanation.split(' '));
+		
+		new SSSearch(
 			function(result){
 				
 				var promiseList = [];			
 				
-				angular.forEach(result.searchResults, function(value, key){
+				angular.forEach(result.entities, function(value, key){
 					var deferThreadWithEntities = $q.defer();
 									
-					getThreadWithEntries(value.entity)
+					getThreadWithEntries(value.id)
 						.then(function(result) {
 							deferThreadWithEntities.resolve(result);
 						});
@@ -339,15 +342,22 @@ angular.module('module.qa').service("qaService", ['$q', '$rootScope','UserServic
 			},
 			UserSrv.getUser(),
 			UserSrv.getKey(),
-			[thread.title], // keywords strings to search for
-			null, //entities to search within
-			false, // whether to search only in, e.g. collection entries, discussion entries
-			[thread.type.enum], // entity types to consider when searching
-			false, // whether to use tags for search (should be true as soon tags exists)
-			false, // whether to search in the content of, e.g. a file
-			true, // whether to include the name/title of entities in search
-			true, // whether to include the description of entities in search
-			false // whether to search with automatically calculated usage-based indicators
+			keywordList,						 			// keywordsToSearchFor
+			false, 												// includeTextualContent
+			null,													// wordsToSearchFor
+			true, 												// includeTags
+			null, 												// tagsToSearchFor
+			false, 												// includeMIs
+			null, 												// misToSearchFor
+			true, 												// includeLabel
+			null,  												// labelsToSearchFor
+			true,													// includeDescription
+			null,													// descriptionsToSearchFor
+			[thread.type.enum],						// typesToSearchOnlyFor
+			false,												// includeOnlySubEntities
+			null, 												// entitiesToSearchWithin
+			true,													// includeRecommendedResults
+			false													// provideEntries
 			);
 
 		return deferThreadList.promise;  
