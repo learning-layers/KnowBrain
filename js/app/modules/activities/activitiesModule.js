@@ -27,7 +27,7 @@
 */
 angular.module('module.activities',[]);
 
-angular.module('module.activities').constant(ACTIVITY_TYPES, {disc:'discussEntity', newDisc:"newDiscussionByDiscussEntity", addDiscComm: "addDiscussionComment", share:'share', link:'entity'});
+angular.module('module.activities').constant("ACTIVITY_TYPES", {disc:'discussEntity', newDisc:"newDiscussionByDiscussEntity", addDiscComm: "addDiscussionComment", share:'share', link:'entity'});
 
 /**
 * CONFIG
@@ -42,10 +42,18 @@ angular.module('module.activities').config(function($stateProvider) {
         });
 });
 
+angular.module('module.activities').directive('ngActivity', function() {
+    return {
+        restrict:"E",
+        transclude:true,
+        templateUrl: MODULES_PREFIX + "/activities/activity.tpl.html"
+      };
+});
+
 /**
 * CONTROLLER
 */
-angular.module('module.activities').controller("ActivitiesController", ['$scope', '$q','UserService', 'UserModel', 'Activity', function($scope, $q, UserSrv, UserModel, Activity){
+angular.module('module.activities').controller("ActivitiesController", ['$scope', '$q','UserService', 'UserModel', 'Activity', 'ACTIVITY_TYPES', function($scope, $q, UserSrv, UserModel, Activity, ACTIVITY_TYPES){
     
     $scope.activities = [];
     
@@ -105,10 +113,32 @@ angular.module('module.activities').factory('Activity', [function() {
         this.user = user;
         this.type = type;
         this.time = parseTime(time);
+        this.date = parseDate(time);
       }
     
     var parseTime = function(time) {
-        return time;
+        var myDate = new Date(1000*time);
+        var hours = myDate.getHours(); //returns 0-23
+        var minutes = myDate.getMinutes(); //returns 0-59
+        var seconds = myDate.getSeconds(); //returns 0-59
+        
+        if (hours < 10) hours = '0' + hours;
+        if (minutes < 10) minutes = '0' + minutes;
+        if (seconds < 10) seconds = '0' + seconds;
+        
+        return hours + ":" + minutes + ":" + seconds;
+    }
+    
+    var months = [ "January", "February", "March", "April", "May", "June", 
+                   "July", "August", "September", "October", "November", "December" ];
+    
+    var parseDate = function(time) {
+        var myDate = new Date(1000*time);
+        
+        var day = myDate.getDate();
+        var month = myDate.getMonth();
+
+        return day + ". " + months[month];
     }
     return (Activity);
 }]);
