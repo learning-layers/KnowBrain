@@ -48,7 +48,8 @@ angular.module('knowbrain', [
   'module.social',
   'module.qa',
   'module.group',
-  'module.entity'
+  'module.entity',
+  'module.activities'
 
   ]).config(['$stateProvider', '$urlRouterProvider', '$locationProvider', '$tooltipProvider',function ($stateProvider, $urlRouterProvider, $locationProvider, $tooltipProvider) {
 
