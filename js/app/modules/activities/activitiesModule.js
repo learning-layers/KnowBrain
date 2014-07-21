@@ -117,7 +117,11 @@ angular.module('module.activities').factory('Activity', [function() {
       }
     
     var parseTime = function(time) {
-        var myDate = new Date(1000*time);
+        var myDate = new Date(time);
+       // var myDate = new Date(0); // The 0 there is the key, which sets the date to the epoch
+        //myDate.setUTCSeconds(time);
+        console.log(myDate);
+        console.log(time);
         var hours = myDate.getHours(); //returns 0-23
         var minutes = myDate.getMinutes(); //returns 0-59
         var seconds = myDate.getSeconds(); //returns 0-59
