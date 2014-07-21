@@ -813,7 +813,8 @@ angular.module('module.models').service("TagFetchService", ['$q', '$rootScope','
       UserSrv.getKey(), 
       null, 
       null, 
-      SPACE_ENUM.private
+      SPACE_ENUM.private,
+      null
       );
 
     return defer.promise;  
