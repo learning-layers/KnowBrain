@@ -295,7 +295,6 @@ p.thread-title {
 }
 
 .answer {
-	margin-top: 15px;
 	margin-bottom: 15px;
 }
 
@@ -344,4 +343,8 @@ p.thread-title {
 
 .qa-tag a {
 	color: white;
+}
+
+.related a{
+	cursor: pointer;
 }

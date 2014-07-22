@@ -153,11 +153,7 @@ angular.module('module.qa').controller("Controller", ['$scope', '$state', '$q', 
 							.then(function(result) {
 								$scope.newThread.id = result;
 								$scope.threadList.push($scope.newThread);
-	
-								var tmpList = new Array();
-								tmpList.push($scope.newThread);
-								loadAuthorDetails(tmpList);
-								
+									
 								$scope.newThread = new Thread(null, THREAD_TYPE.question, null, null, null, null);
 								
 								return result;
@@ -254,31 +250,58 @@ angular.module('module.qa').controller('ModalAddAttachmentsController', ['$scope
 	
 }]);
 
-angular.module('module.qa').controller("QuestionController", ['$scope', '$state', '$stateParams', '$q', '$filter', 'UserService', 'qaService', 'Thread','THREAD_TYPE', function($scope, $state, $stateParams, $q, $filter, UserSrv, qaService, Thread, THREAD_TYPE){
+angular.module('module.qa').controller("QuestionController", ['$scope', '$state', '$stateParams', '$q', '$filter', 'UserService', 'qaService', 'ThreadEntry', 'THREAD_ENTRY_TYPE', 'UriToolbox', function($scope, $state, $stateParams, $q, $filter, UserSrv, qaService, ThreadEntry, THREAD_ENTRY_TYPE, UriToolbox){
 
 	$scope.question = null;
-	$scope.newAnswer = '';
+	$scope.similarThreadList = null;
+	
+	$scope.newAnswer = new ThreadEntry(null, THREAD_ENTRY_TYPE.qaEntry, null, null, null);
+	// used for sorting
+	$scope.predicate = '+position';
 	
 	var loadThreadWithEntries = function(id) 
 	{
 		return qaService
 						.getThreadWithEntries(id)
 						.then(function(result) {
-							result.explanation = $filter('newlines')(result.explanation);
 							$scope.question = result;
+							return result;
+						});
+	};
+
+	var loadSimilarThreadList = function() 
+	{
+		return qaService
+						.getSimilarThreads($scope.question)
+						.then(function(result) {
+							$scope.similarThreadList = result;
+							return result;
 						});
 	};
 	
-	$scope.addAnswer = function()
+	$scope.addNewAnswer = function()
 		{
 			return qaService
-							.addAnswer($scope.question, $scope.newAnswer)
-							.then(function(result) {								
+							.addNewAnswer($scope.question, $scope.newAnswer)
+							.then(function(result) {	
+								$scope.newAnswer.id = result;
+								$scope.newAnswer.creationTime = new Date();
+								$scope.question.entries.push($scope.newAnswer);
+								
+								$scope.newAnswer = new ThreadEntry(null, THREAD_ENTRY_TYPE.qaEntry, null, null, null);
+								
 								return result;
 							});
 		};
 	
-	loadThreadWithEntries(UserSrv.getUserSpace() + "/" + $stateParams.id);
+	$scope.loadDetailPage = function(thread)
+	{
+		$state.transitionTo('app.qa.' + thread.type.enum, { id: UriToolbox.extractUriPathnameHash(thread.id)});
+	};
+	
+	loadThreadWithEntries(UserSrv.getUserSpace() + "/" + $stateParams.id)
+									.then(loadSimilarThreadList);
+	
 }]);
 
 angular.module('module.qa').controller("DiscussionController", ['$scope', '$state', '$stateParams', '$q', '$filter', 'UserService', 'qaService', 'Thread','THREAD_TYPE', function($scope, $state, $stateParams, $q, $filter, UserSrv, qaService, Thread, THREAD_TYPE){
@@ -290,7 +313,6 @@ angular.module('module.qa').controller("DiscussionController", ['$scope', '$stat
 		return qaService
 						.getThreadWithEntries(id)
 						.then(function(result) {
-							result.explanation = $filter('newlines')(result.explanation);
 							$scope.discussion = result;
 						});
 	};
@@ -307,7 +329,6 @@ angular.module('module.qa').controller("ChatController", ['$scope', '$state', '$
 		return qaService
 						.getThreadWithEntries(id)
 						.then(function(result) {
-							result.explanation = $filter('newlines')(result.explanation);
 							$scope.chat = result;
 						});
 	};
@@ -337,9 +358,12 @@ angular.module('module.qa').filter('threadTypeFilter', function() {
     };
 });
 
-angular.module('module.qa').filter('newlines', function() {
-  return function(text) {
-    return text.replace('\\n','\n');
+angular.module('module.qa').filter('checkNewlines', function() {
+	return function(text) {
+		if(text != null) {
+			text = text.replace(/\\n/g, '<br />');
+			return text;
+		}
   };
 });
 
