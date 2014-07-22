@@ -49,6 +49,11 @@ angular.module('module.qa').factory('Thread', ['UriToolbox', function (UriToolbo
 		this.creationTime = new Date(creationTime);
 		this.author = null;
   }
+	
+	// Public method
+  Thread.prototype.getFormattedCreationTime = function () {
+    return this.creationTime.toLocaleDateString() + ' ' + this.creationTime.toLocaleTimeString();
+  };
  
  /*
   // Public method, assigned to prototype
@@ -90,15 +95,20 @@ angular.module('module.qa').factory('Thread', ['UriToolbox', function (UriToolbo
 angular.module('module.qa').factory('ThreadEntry', function () {
  		
   // Constructor
-  function ThreadEntry(id, type, content, position, timestamp) {
+  function ThreadEntry(id, type, content, position, creationTime) {
     // Public properties
 		this.id = id;
 		this.type = type;
 		this.content = content;
 		this.position = position;
-		this.timestamp = new Date(timestamp);
+		this.creationTime = new Date(creationTime);
 		this.author = null;
   }
+	
+	// Public method
+  ThreadEntry.prototype.getFormattedCreationTime = function () {
+    return this.creationTime.toLocaleDateString() + ' ' + this.creationTime.toLocaleTimeString();
+  };
 	
 	return ThreadEntry;
 })
@@ -186,7 +196,7 @@ angular.module('module.qa').service("qaService", ['$q', '$rootScope','UserServic
 		return defer.promise;     
 	};
 	
-	this.addAnswer = function(thread, answer){
+	this.addNewAnswer = function(thread, answer){
 		var defer = $q.defer();
 
 		new SSDiscEntryAdd(
@@ -201,7 +211,7 @@ angular.module('module.qa').service("qaService", ['$q', '$rootScope','UserServic
 			UserSrv.getKey(),
 			thread.id,
 			null,
-			answer,
+			answer.content,
 			false,
 			null,
 			null,
@@ -320,16 +330,40 @@ angular.module('module.qa').service("qaService", ['$q', '$rootScope','UserServic
 				
 				var promiseList = [];			
 				
+				// *** this section is only necessary if parameter provideEntries is false ***
+				// angular.forEach(result.entities, function(value, key){
+					// if(thread.id != value.id)
+					// {
+						// var deferThreadWithEntities = $q.defer();
+										
+						// getThreadWithEntries(value.id)
+							// .then(function(result) {
+								// deferThreadWithEntities.resolve(result);
+							// });
+						
+						// promiseList.push(deferThreadWithEntities.promise);
+					// }
+				// });
+				// *** end section ***
+				
+				// *** this section is only necessary if parameter provideEntries is true ***
 				angular.forEach(result.entities, function(value, key){
-					var deferThreadWithEntities = $q.defer();
-									
-					getThreadWithEntries(value.id)
-						.then(function(result) {
-							deferThreadWithEntities.resolve(result);
-						});
-					
-					promiseList.push(deferThreadWithEntities.promise);
-				});
+					if(thread.id != value.id)
+					{
+						var type = getThreadTypeByEnum(value.type);
+						var similar_thread = new Thread(value.id, type, value.label, value.description, null, value.creationTime);
+						
+						var deferAuthor = $q.defer();
+						
+						addAuthorDetails(similar_thread, value.author)
+							.then(function(result) {
+								deferAuthor.resolve(result);
+							});
+						
+						promiseList.push(deferAuthor.promise);
+					}
+        });
+				// *** end section ***
 				
 				$q.all(promiseList)
 					.then(function(result) {
@@ -354,10 +388,11 @@ angular.module('module.qa').service("qaService", ['$q', '$rootScope','UserServic
 			true,													// includeDescription
 			null,													// descriptionsToSearchFor
 			[thread.type.enum],						// typesToSearchOnlyFor
-			false,												// includeOnlySubEntities
-			null, 												// entitiesToSearchWithin
+			true,													// includeOnlySubEntities
+			'qaEntry', 												// entitiesToSearchWithin
+			true,													// extendToParents
 			true,													// includeRecommendedResults
-			false													// provideEntries
+			true													// provideEntries
 			);
 
 		return deferThreadList.promise;  
