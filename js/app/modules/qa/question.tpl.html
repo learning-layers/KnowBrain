@@ -40,9 +40,7 @@
 				&nbsp;
 			</div>
 			<div class="col-md-11 column">
-				<div class="qa-tag"><a href="#">tag1</a></div>
-				<div class="qa-tag"><a href="#">tag2</a></div>
-				<div class="qa-tag"><a href="#">tag3</a></div>
+				<div class="qa-tag" ng-repeat="tag in question.tags"><a href="#">{{tag.label}}</a></div>
 			</div>
 		</div>
 		

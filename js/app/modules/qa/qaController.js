@@ -67,10 +67,10 @@ angular.module('module.qa').constant('THREAD_LIST_TYPE', {own:'My own', newest:'
 /**
 * CONTROLLER
 */
-angular.module('module.qa').controller("Controller", ['$scope', '$state', '$q', '$modal', '$dialogs', '$filter', 'UserService', 'UriToolbox', 'qaService', 'Thread','THREAD_TYPE', 'THREAD_LIST_TYPE', function($scope, $state, $q, $modal, $dialogs, $filter, UserSrv, UriToolbox, qaService, Thread, THREAD_TYPE, THREAD_LIST_TYPE){
+angular.module('module.qa').controller("Controller", ['$scope', '$state', '$q', '$modal', '$dialogs', '$filter', 'UserService', 'UriToolbox', 'qaService', 'Thread','THREAD_TYPE', 'THREAD_LIST_TYPE', 'Tag', function($scope, $state, $q, $modal, $dialogs, $filter, UserSrv, UriToolbox, qaService, Thread, THREAD_TYPE, THREAD_LIST_TYPE, Tag){
 		
 		$scope.THREAD_TYPE = THREAD_TYPE;
-		$scope.newThread = new Thread(null, THREAD_TYPE.question, null, null, null, null);
+		$scope.newThread = new Thread(null, null, THREAD_TYPE.question, null, null, null, null);
 		$scope.help = 'To post a question enter a title and an explanation.';
 		
 		$scope.threadList = null;
@@ -80,7 +80,13 @@ angular.module('module.qa').controller("Controller", ['$scope', '$state', '$q', 
 		$scope.selectedThreadListType = THREAD_LIST_TYPE.own;	
 		$scope.threadListHeader = "My own";
 		$scope.searchString = '';
-						
+		
+		$scope.newThreadTags = null;
+		
+		$scope.onTagAdded = function($tag)
+		{
+			$scope.newThread.tags.push(new Tag($tag.label));
+		};		
 						
 		$scope.loadDetailPage = function(thread)
 		{
@@ -151,10 +157,9 @@ angular.module('module.qa').controller("Controller", ['$scope', '$state', '$q', 
 			return qaService
 							.addNewThread($scope.newThread)
 							.then(function(result) {
-								$scope.newThread.id = result;
 								$scope.threadList.push($scope.newThread);
 									
-								$scope.newThread = new Thread(null, THREAD_TYPE.question, null, null, null, null);
+								$scope.newThread = new Thread(null, null, THREAD_TYPE.question, null, null, null, null);
 								
 								return result;
 							});
@@ -255,7 +260,7 @@ angular.module('module.qa').controller("QuestionController", ['$scope', '$state'
 	$scope.question = null;
 	$scope.similarThreadList = null;
 	
-	$scope.newAnswer = new ThreadEntry(null, THREAD_ENTRY_TYPE.qaEntry, null, null, null);
+	$scope.newAnswer = new ThreadEntry(null, null, THREAD_ENTRY_TYPE.qaEntry, null, null, null);
 	// used for sorting
 	$scope.predicate = '+position';
 	
@@ -288,7 +293,7 @@ angular.module('module.qa').controller("QuestionController", ['$scope', '$state'
 								$scope.newAnswer.creationTime = new Date();
 								$scope.question.entries.push($scope.newAnswer);
 								
-								$scope.newAnswer = new ThreadEntry(null, THREAD_ENTRY_TYPE.qaEntry, null, null, null);
+								$scope.newAnswer = new ThreadEntry(null, null, THREAD_ENTRY_TYPE.qaEntry, null, null, null);
 								
 								return result;
 							});

@@ -39,8 +39,7 @@
 								</div>
 							</div>
 							
-							
-							<tags-input ng-model="tag1" custom-class="bootstrap" placeholder="Add tags" ng-click="showHelp('tag')"></tags-input>
+							<tags-input ng-model="newThreadTags" on-tag-added="onTagAdded($tag)" class="bootstrap" display-property="label" placeholder="Add tags" ng-click="showHelp('tag')"></tags-input>
 
 							<button type="button" class="btn btn-success btn-lg pull-right btn-post" ng-click="postNewThread()" ng-disabled="form.$invalid">Post your {{newThread.type.label}} now</button>
 						</form>
