@@ -27,7 +27,7 @@
 */
 angular.module('module.activities',[]);
 
-angular.module('module.activities').constant("ACTIVITY_TYPES", {disc:'discussEntity', newDisc:"newDiscussionByDiscussEntity", addDiscComm: "addDiscussionComment", share:'share', link:'entity'});
+angular.module('module.activities').constant("ACTIVITY_TYPES", {disc:'discussEntity', addDisc:"addDiscEntry", removeDisc: "removeDisc",});
 
 /**
 * CONFIG
@@ -53,57 +53,37 @@ angular.module('module.activities').directive('ngActivity', function() {
 /**
 * CONTROLLER
 */
-angular.module('module.activities').controller("ActivitiesController", ['$scope', '$q','UserService', 'UserModel', 'Activity', 'ACTIVITY_TYPES', function($scope, $q, UserSrv, UserModel, Activity, ACTIVITY_TYPES){
+angular.module('module.activities').controller("ActivitiesController", ['$scope', 'Activity', 'ACTIVITY_TYPES', 'ActivityFetchService', function($scope, Activity, ACTIVITY_TYPES, ActivityFetchService){
     
+    $scope.ACTIVITY_TYPES = ACTIVITY_TYPES;
     $scope.activities = [];
     
-    var defer = $q.defer();
-    var self = this;
-    
-    var promises = [];
+    var activities = [];
+    var users = [];
 
-    new SSActivitiesGet(function(result){
-            defer.resolve(result);
-        },
-        function(error){
-            console.log(error);
-        },
-        UserSrv.getUser(),
-        UserSrv.getKey(),
-        null, //types
-        null, //users
-        null, //entities 
-        null, //startTime
-        null //endTime
-    );
+    var promise = ActivityFetchService.getActivities();
     
-    promises.push(defer.promise);
-    
-    var promise = UserModel.getAllUsers();
-    promises.push(promise);
-    
-    $q.all(promises).then(function(results) {
+    promise.then(function(result) {
+        console.log(result.activities);
         
-        console.log(results[0].activities);
-        for(var i = 0; i < results[0].activities.length; i++) {
-            var act = results[0].activities[i];
+        for(var i = 0; i < result.activities.length; i++) {
+            var act = result.activities[i];
             
-            var user = "";
-            
-            for(var j = 0; j < results[1].users.length; j++) {
-                var curUser = results[1].users[j];
-                
-                if(curUser.id == act.author+'/') {
-                    user = curUser.label;
-                }
-            }
-            
-            var activity = new Activity(user, act.type, act.creationTime);
-            $scope.activities.push(activity);
-            
+            var activity = new Activity("", act.type, act.creationTime);
+            activities.push(activity);
         }
         
-        console.log($scope.activities);
+        var promise = ActivityFetchService.getUsers(result.activities);
+        
+        
+        promise.then(function(results) {
+            
+            for(var i = 0; i < results.length; i++) {
+                activities[i].user = results[i].desc.label;
+                console.log(results[i].desc.label);
+            }
+            $scope.activities = activities;
+        });
     });
     
 }]);
@@ -145,4 +125,76 @@ angular.module('module.activities').factory('Activity', [function() {
         return day + ". " + months[month];
     }
     return (Activity);
+}]);
+
+angular.module('module.activities').service('ActivityFetchService', ['$q','UserService', function($q, UserSrv) {
+    
+    this.getActivities = function() {
+        
+        var defer = $q.defer();
+        var self = this;
+        
+        new SSActivitiesGet(function(result){
+                defer.resolve(result);
+            },
+            function(error){
+                console.log(error);
+            },
+            UserSrv.getUser(),
+            UserSrv.getKey(),
+            null, //types
+            null, //users
+            null, //entities 
+            null, //startTime
+            null //endTime
+        );
+        
+        return defer.promise;
+    };
+    
+    this.getUsers = function(activities) {
+        
+        var defer = $q.defer();
+        var self = this;
+        
+        var promises = [];
+        
+        for(var i = 0; i < activities.length; i++) {
+            
+            
+            var promise = getEntity(activities[i].author);
+            promises.push(promise);
+        }
+        
+        return $q.all(promises);
+    };
+    
+    var getEntity = function(entity) {
+        console.log("Get: " + entity);
+        
+        var defer = $q.defer();
+        var self = this;
+        
+        new SSEntityDescGet(
+                function(result) {
+                    console.log(result);
+                    return defer.resolve(result);
+                },
+                function(error) {
+                    
+                },
+                UserSrv.getUser(),
+                UserSrv.getKey(),
+                entity,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false
+        );
+        
+        return defer.promise;
+    }
+    
 }]);

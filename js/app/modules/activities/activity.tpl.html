@@ -4,7 +4,13 @@
 			<img src="images/small_profile_pic_dummy.png">
 		</div>
 		<div style="float:left">
-		<div style="margin-bottom:5px">{{activity.user}}</div>
+		<div style="margin-bottom:5px">
+			<span><a href="">{{activity.user}}</a></span>
+			<span ng-switch="activity.type">
+				<span ng-switch-when="discussEntity"> commented on entity </span>
+				<span ng-switch-when="addDiscEntry"> started a discussion on entity</span>
+			</span>
+		</div>
 		<div style="font-size:9px">
 			<p style="margin:0">{{activity.date}}</p>
 			<p style="margin:0">{{activity.time}}</p>
@@ -13,3 +19,6 @@
 	</div>
 </div>
 
+<!--  discussEntity,
+ addDiscEntry,
+  removeDisc;-->
