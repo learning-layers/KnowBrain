@@ -295,10 +295,10 @@ angular.module('module.models').factory('CollectionModel', ['$q', '$rootScope','
     var self = this;
 
     new SSFileUpload(
-      function(parentUri,fileUri,fileName){
+      function(fileUri,fileName){
         var entry = new EntityModel();
 
-        entry.init({id:fileUri, label:fileName, parentColl: parentUri, space: self.space, type: ENTITY_TYPES.file});
+        entry.init({id:fileUri, label:fileName, parentColl: self.id, space: self.space, type: ENTITY_TYPES.file});
         entry.init({uriPathnameHash: UriToolbox.extractUriPathnameHash(fileUri)});
 
         defer.resolve(entry); 
@@ -310,8 +310,7 @@ angular.module('module.models').factory('CollectionModel', ['$q', '$rootScope','
       },
       UserSrv.getUser(),
       UserSrv.getKey(),
-      file,
-      this.id
+      file
       );
 
     return defer.promise;
