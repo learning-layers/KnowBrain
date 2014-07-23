@@ -36,7 +36,7 @@
 		</div>
 		
 		<div class="row clearfix qa-tag-box">
-			<div class="col-md-1 column">
+			<div class="col-md-1 column hidden-xs">
 				&nbsp;
 			</div>
 			<div class="col-md-11 column">
@@ -45,32 +45,21 @@
 		</div>
 		
 		<div class="row clearfix">
-			<div class="col-md-1 column">
+			<div class="col-md-1 column hidden-xs">
 				&nbsp;
 			</div>
 			<div class="col-md-11 column">
-				<div class="icon-entity-small icon-small">
+				<div class="icon-file-small icon-small" ng-repeat-start="attachment in question.attachments">
 				</div>
-				<div class="icon-small-entity-data">
-					<p><a href="#">my folder</a></p>
-				</div>
-				
-				<div class="icon-file-small icon-small">
-				</div>
-				<div class="icon-small-entity-data">
-					<p><a href="#">file1.pdf</a></p>
-				</div>
-				
-				<div class="icon-file-small icon-small">
-				</div>
-				<div class="icon-small-entity-data">
-					<p><a href="#">file2.pdf</a></p>
+				<div class="icon-small-2row-data" ng-repeat-end>
+					<p><a href="#">{{attachment.label}}</a></p>
+					<p class="text-muted">{{attachment.type}}</p>
 				</div>
 			</div>
 		</div>
 		
 		<div class="row clearfix">
-			<div class="col-md-1 column">
+			<div class="col-md-1 column hidden-xs">
 				&nbsp;
 			</div>
 			<div class="col-md-11 column question-footer">
@@ -129,32 +118,46 @@
 		</div>
 		
 		<div class="row clearfix">
-			<div class="col-md-1 column">
+			<div class="col-md-1 column hidden-xs">
 				&nbsp;
 			</div>
 			<div class="col-md-11 column">
-				<div class="icon-entity-small icon-small">
-				</div>
-				<div class="icon-small-entity-data">
-					<p><a href="#">my folder</a></p>
-				</div>
-				
-				<div class="icon-file-small icon-small">
-				</div>
-				<div class="icon-small-entity-data">
-					<p><a href="#">file1.pdf</a></p>
-				</div>
-				
-				<div class="icon-file-small icon-small">
-				</div>
-				<div class="icon-small-entity-data">
-					<p><a href="#">file2.pdf</a></p>
-				</div>
+				<div class="qa-tag" ng-repeat="tag in answer.tags"><a href="#">{{tag.label}}</a></div>
 			</div>
 		</div>
 		
 		<div class="row clearfix">
-			<div class="col-md-1 column">
+			<div class="col-md-1 column hidden-xs">
+				&nbsp;
+			</div>
+			<div class="col-md-11 column">
+			
+				<div class="icon-file-small icon-small" ng-repeat-start="attachment in answer.attachments">
+				</div>
+				<div class="icon-small-2row-data" ng-repeat-end>
+					<p><a href="#">{{attachment.label}}</a></p>
+					<p class="text-muted">{{attachment.type}}</p>
+				</div>
+				
+				<div class="icon-file-small icon-small">
+				</div>
+				<div class="icon-small-2row-data">
+					<p><a href="#">text.pdf</a></p>
+					<p class="text-muted">file</p>
+				</div>
+				
+				<div class="icon-file-small icon-small">
+				</div>
+				<div class="icon-small-2row-data">
+					<p><a href="#">text2.pdf</a></p>
+					<p class="text-muted">file</p>
+				</div>
+				
+			</div>
+		</div>
+		
+		<div class="row clearfix">
+			<div class="col-md-1 column hidden-xs">
 				&nbsp;
 			</div>
 			<div class="col-md-11 column answer-footer">
@@ -163,7 +166,7 @@
 		</div>
 		<!-- comment begin -->
 		<div class="row clearfix">
-			<div class="col-md-2 column">
+			<div class="col-md-2 column hidden-xs">
 				&nbsp;
 			</div>
 			<div class="col-md-10 column answer-comment">
@@ -173,7 +176,7 @@
 		<!-- comment end -->
 		<!-- comment begin -->
 		<div class="row clearfix">
-			<div class="col-md-2 column">
+			<div class="col-md-2 column hidden-xs">
 				&nbsp;
 			</div>
 			<div class="col-md-10 column answer-comment">
@@ -182,7 +185,7 @@
 		</div>
 		<!-- comment end -->
 		<div class="row clearfix" ng-repeat-end>
-			<div class="col-md-2 column">
+			<div class="col-md-2 column hidden-xs">
 				&nbsp;
 			</div>
 			<div class="col-md-10 column answer-comment-footer">
@@ -205,22 +208,38 @@
 	<div class="col-md-10 column">
 		<h3>Reply</h3>
 		<div class="row">
-			<div class="col-md-9 column">
-				<textarea ng-model="newAnswer.content" class="form-control thread-input-group" rows="5" placeholder="Add your answer"></textarea>
+			<div class="col-md-8 column">
+			
+				<div class="row input-row">
+					<div class="col-md-12 column">
+						<textarea ng-model="newAnswer.content" class="form-control thread-input-group" rows="5" placeholder="Add your answer"></textarea>
+					</div>
+				</div>
+				
+				<div class="row input-row">
+					<div class="col-md-12 column">
+						<tags-input ng-model="tags" on-tag-added="onTagAdded($tag, newAnswer)" on-tag-removed="onTagRemoved($tag, newAnswer)" class="bootstrap" display-property="label" placeholder="Add tags"></tags-input>
+					</div>
+				</div>
+			
 			</div>
-			<div class="col-md-3 column" ng-class="(newThread.type == THREAD_TYPE.chat) ? 'hidden' : ''">
-					<div ng-show="!ajaxLoading" class="kb-fluid-container pull-left add-attachment-box" ng-click="openAddAttachments()">Add attachments
+			
+			<div class="col-md-4 column" ng-class="(newThread.type == THREAD_TYPE.chat) ? 'hidden' : ''">
+					<div class="kb-fluid-container pull-left add-attachment-box" ng-click="openAddAttachments(newAnswer)">Add attachments
 						 <div id="upload-link" class="glyphicon glyphicon-plus-sign" ></div>
 					</div>
-
-					<div ng-show="ajaxLoading" id="upload-box-loading" class="kb-fluid-container pull-left">
-						<div class="ajax-loader-light-grey" ></div>
+					
+					<div class="icon-file-small icon-small" ng-repeat-start="attachment in newAnswer.attachments">
 					</div>
-					<button ng-click="addNewAnswer()" type="button" style="width:100%;" class="btn btn-success btn-lg pull-right btn-post">Post your answer</button>
+					<div class="icon-small-1row-data" ng-repeat-end>
+						<p><a href="#">{{attachment.name}}</a></p>
+					</div>
+
+					<button ng-click="postNewAnswer()" type="button" style="width:100%;" class="btn btn-success btn-lg pull-right btn-post">Post your answer</button>
 			</div>
 		</div>
 	</div>
-	<div class="col-md-2 column">
+	<div class="col-md-2 column hidden-xs">
 		&nbsp;
 	</div>
 </div>

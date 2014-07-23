@@ -50,6 +50,7 @@ angular.module('module.qa').factory('Thread', ['UriToolbox', function (UriToolbo
 		this.authorId = author_id;
 		this.author = null;
 		this.tags = new Array();
+		this.attachments = new Array();
   }
 	
 	// Public method
@@ -100,12 +101,15 @@ angular.module('module.qa').factory('ThreadEntry', function () {
   function ThreadEntry(id, author_id, type, content, position, creationTime) {
     // Public properties
 		this.id = id;
+		this.threadId = null;
 		this.type = type;
 		this.content = content;
 		this.position = position;
 		this.creationTime = new Date(creationTime);
 		this.authorId = author_id;
 		this.author = null;
+		this.tags = new Array();
+		this.attachments = new Array();
   }
 	
 	// Public method
@@ -140,11 +144,24 @@ angular.module('module.qa').factory('Author', function () {
 	return Author;
 })
 
+angular.module('module.qa').factory('Attachment', function () {
+ 		
+  // Constructor
+  function Attachment(id, label, type) {
+    // Public properties
+		this.id = id;
+		this.label = label;
+		this.type = type;
+  }
+	
+	return Attachment;
+})
+
 /**
 * Services
 */
 
-angular.module('module.qa').service("qaService", ['$q', '$rootScope','UserService','THREAD_TYPE','THREAD_ENTRY_TYPE','Thread','ThreadEntry','Author','Tag', function($q, $rootScope, UserSrv, THREAD_TYPE, THREAD_ENTRY_TYPE, Thread, ThreadEntry, Author, Tag){
+angular.module('module.qa').service("qaService", ['$q', '$rootScope','UserService','THREAD_TYPE','THREAD_ENTRY_TYPE','Thread','ThreadEntry','Author','Tag','Attachment', function($q, $rootScope, UserSrv, THREAD_TYPE, THREAD_ENTRY_TYPE, Thread, ThreadEntry, Author, Tag, Attachment){
 	
 	var getThreadTypeByEnum = function(enum_value) {
 		var type = null;
@@ -166,14 +183,14 @@ angular.module('module.qa').service("qaService", ['$q', '$rootScope','UserServic
 		return type;
 	};
 	
-	var getAuthorDetails = function(thread){
+	var getAuthorDetails = function(object){
 		var defer = $q.defer();
 
 		new SSEntityGet(
 			function(result){
 				var author = new Author(result.entity.label);
-				thread.author = author;
-				defer.resolve(thread);
+				object.author = author;
+				defer.resolve(object);
 			},
 			function(error){
 				console.log(error);
@@ -181,7 +198,7 @@ angular.module('module.qa').service("qaService", ['$q', '$rootScope','UserServic
 			},
 			UserSrv.getUser(),
 			UserSrv.getKey(),
-			thread.authorId
+			object.authorId
 			);
 
 		return defer.promise;     
@@ -189,13 +206,23 @@ angular.module('module.qa').service("qaService", ['$q', '$rootScope','UserServic
 
 	this.addNewThread = function(thread){
 		var defer = $q.defer();
+		
+		var attachmentIdList = new Array();
+		angular.forEach(thread.attachments, function(attachment, key){
+			attachmentIdList.push(attachment.id);
+		});
 
 		new SSDiscEntryAdd(
 			function(result){
 				thread.id = result.disc;
+				thread.authorId = UserSrv.getUser();
+				thread.creationTime = new Date();
 				
 				addTags(thread)
-					.then(defer.resolve(thread));
+					.then(getAuthorDetails)
+					.then(function() {
+						defer.resolve(thread)
+					});
 			},
 			function(error){
 				console.log(error);
@@ -205,22 +232,37 @@ angular.module('module.qa').service("qaService", ['$q', '$rootScope','UserServic
 			UserSrv.getKey(),
 			thread.id,
 			thread.entityId,
-			'',
+			null,
 			true,
 			thread.type.enum,
 			thread.title,
-			thread.explanation
+			thread.explanation,
+			null,
+			attachmentIdList
 			);
 
 		return defer.promise;     
 	};
 	
-	this.addNewAnswer = function(thread, answer){
+	this.addNewAnswer = function(answer){
 		var defer = $q.defer();
 
+		var attachmentIdList = new Array();
+		angular.forEach(answer.attachments, function(attachment, key){
+			attachmentIdList.push(attachment.id);
+		});
+		
 		new SSDiscEntryAdd(
 			function(result){
-				defer.resolve(result);
+				answer.id = result.entry;
+				answer.authorId = UserSrv.getUser();
+				answer.creationTime = new Date();
+				
+				addTags(answer)
+					.then(getAuthorDetails)
+					.then(function() {
+						defer.resolve(answer)
+					});
 			},
 			function(error){
 				console.log(error);
@@ -228,24 +270,58 @@ angular.module('module.qa').service("qaService", ['$q', '$rootScope','UserServic
 			},
 			UserSrv.getUser(),
 			UserSrv.getKey(),
-			thread.id,
+			answer.threadId,
 			null,
 			answer.content,
 			false,
 			null,
 			null,
-			null
+			null,
+			attachmentIdList
 			);
 
 		return defer.promise;     
 	};
 	
-	var addTags = function(thread){
+	this.uploadAttachments = function(object){
+    var defer = $q.defer();
+
+		var promiseList = [];
+		
+		angular.forEach(object.attachments, function(attachment, key){
+			var deferFile = $q.defer();
+				
+			new SSFileUpload(
+				function(file_id){
+					attachment.id = file_id;
+					deferFile.resolve(attachment); 
+				},
+				function(error){
+					console.log(error);
+					deferFile.reject(error);
+				},
+				UserSrv.getUser(),
+				UserSrv.getKey(),
+				attachment
+      );
+			
+			promiseList.push(deferFile.promise);
+		});
+		
+		$q.all(promiseList)
+			.then(function(result) {
+				defer.resolve(object);
+			});
+		
+    return defer.promise;
+  };
+	
+	var addTags = function(object){
 		var defer = $q.defer();
 		
 		var promiseListTag = [];
 
-		angular.forEach(thread.tags, function(value, key){
+		angular.forEach(object.tags, function(value, key){
 			
 			var deferTag = $q.defer();
 			
@@ -259,7 +335,7 @@ angular.module('module.qa').service("qaService", ['$q', '$rootScope','UserServic
 				}, 
 				UserSrv.getUser(),
 				UserSrv.getKey(),
-				thread.id, 
+				object.id, 
 				value.label, 
 				value.space
 				);
@@ -269,13 +345,13 @@ angular.module('module.qa').service("qaService", ['$q', '$rootScope','UserServic
 		
 		$q.all(promiseListTag)
 			.then(function(result) {
-				defer.resolve(thread);
+				defer.resolve(object);
 			});
 
 		return defer.promise;
   };
 	
-	var getTags = function(thread){
+	var getTags = function(object){
 		var defer = $q.defer();
 
 		new SSTagFrequsGet(
@@ -285,9 +361,9 @@ angular.module('module.qa').service("qaService", ['$q', '$rootScope','UserServic
 					tag.frequency = value.frequ;
 					tag.space = value.space;
 					
-					thread.tags.push(tag);
+					object.tags.push(tag);
 				});
-				defer.resolve(thread);
+				defer.resolve(object);
 			},
 			function(error){
 				console.log(error);
@@ -295,7 +371,7 @@ angular.module('module.qa').service("qaService", ['$q', '$rootScope','UserServic
 			},
 			UserSrv.getUser(),
 			UserSrv.getKey(),
-			[thread.id],
+			[object.id],
 			null,
 			'privateSpace',
 			null
@@ -313,14 +389,17 @@ angular.module('module.qa').service("qaService", ['$q', '$rootScope','UserServic
 			var entry = new ThreadEntry(value.id, value.author, getThreadEntryTypeByEnum(value.type), value.content, value.pos, value.timestamp);
 			thread.entries.push(entry);
 			
+			getAttachmentDetailsSync(entry, value.attachedEntities);
+						
 			var deferEntryAuthor = $q.defer();
 			
 			getAuthorDetails(entry)
+				.then(getTags)
 				.then(function(result) {
 					deferEntryAuthor.resolve(result);
 				});
 			
-			promiseListEntryAuthor.push(deferEntryAuthor.promise);
+			promiseListEntryAuthor.push(deferEntryAuthor.promise);			
 		});
 
 		$q.all(promiseListEntryAuthor)
@@ -330,6 +409,15 @@ angular.module('module.qa').service("qaService", ['$q', '$rootScope','UserServic
 			
 		return defer.promise;
 	};	
+	
+	var getAttachmentDetailsSync = function(object, attachments) {
+		angular.forEach(attachments, function(value, key){
+			var attachment = new Attachment(value.id, value.label, value.type);
+			object.attachments.push(attachment);
+		});
+		
+		return;
+	};
 
 	var getThreadWithEntries = function(id){
 		var deferThread = $q.defer();
@@ -337,16 +425,17 @@ angular.module('module.qa').service("qaService", ['$q', '$rootScope','UserServic
 		new SSDiscWithEntriesGet(
 			function(result){
 				
-				var thread = new Thread(result.disc.id, result.disc.author, getThreadTypeByEnum(result.disc.type), result.disc.label, result.disc.explanation, result.disc.entity, result.disc.creationTime);				
+				var thread = new Thread(result.disc.id, result.disc.author, getThreadTypeByEnum(result.disc.type), result.disc.label, result.disc.description, result.disc.entity, result.disc.creationTime);				
 				var entries = result.disc.entries;
 				
+				getAttachmentDetailsSync(thread, result.disc.attachedEntities);
+								
 				getThreadEntryDetails(thread, entries)
 						.then(getAuthorDetails)
 						.then(getTags)
 						.then(function() {
 							deferThread.resolve(thread);
-						});
-							
+						});							
       },
       function(error){
 			  console.log(error);
@@ -373,7 +462,9 @@ angular.module('module.qa').service("qaService", ['$q', '$rootScope','UserServic
 				
         angular.forEach(result.discs, function(value, key){
 					var type = getThreadTypeByEnum(value.type);
-					var thread = new Thread(value.id, value.author, type, value.label, value.explanation, value.entity, value.creationTime);
+					var thread = new Thread(value.id, value.author, type, value.label, value.description, value.entity, value.creationTime);
+					
+					getAttachmentDetailsSync(thread, value.attachedEntities);
 					
 					var deferThread = $q.defer();
 					
@@ -473,8 +564,8 @@ angular.module('module.qa').service("qaService", ['$q', '$rootScope','UserServic
 			true,													// includeDescription
 			null,													// descriptionsToSearchFor
 			[thread.type.enum],						// typesToSearchOnlyFor
-			true,													// includeOnlySubEntities
-			'qaEntry', 												// entitiesToSearchWithin
+			false,												// includeOnlySubEntities
+			null,			 										// entitiesToSearchWithin
 			true,													// extendToParents
 			true,													// includeRecommendedResults
 			true													// provideEntries

@@ -71,7 +71,6 @@ angular.module('module.qa').controller("Controller", ['$scope', '$state', '$q', 
 		
 		$scope.THREAD_TYPE = THREAD_TYPE;
 		$scope.newThread = new Thread(null, null, THREAD_TYPE.question, null, null, null, null);
-		$scope.help = 'To post a question enter a title and an explanation.';
 		
 		$scope.threadList = null;
 		$scope.threadResponseLabel = "answer";
@@ -79,14 +78,7 @@ angular.module('module.qa').controller("Controller", ['$scope', '$state', '$q', 
 		$scope.THREAD_LIST_TYPE = THREAD_LIST_TYPE;
 		$scope.selectedThreadListType = THREAD_LIST_TYPE.own;	
 		$scope.threadListHeader = "My own";
-		$scope.searchString = '';
-		
-		$scope.newThreadTags = null;
-		
-		$scope.onTagAdded = function($tag)
-		{
-			$scope.newThread.tags.push(new Tag($tag.label));
-		};		
+		$scope.searchString = '';	
 						
 		$scope.loadDetailPage = function(thread)
 		{
@@ -98,33 +90,29 @@ angular.module('module.qa').controller("Controller", ['$scope', '$state', '$q', 
 			return Math.floor((Math.random() * max) + 1);
 		};
 		
-		$scope.showHelp = function(focusedControl)
-		{
-			switch(focusedControl) {
-					case 'title':
-						$scope.help = "Your " + $scope.newThread.type.label + " title is the first thing another user sees. It should be clear, concise, and contain enough information so that others can see what it’s about at first glance";
-						break;
-					case 'explanation':
-						$scope.help = "Provide any details that other users might need to discuss your topic.";
-						break;
-					case 'tag':
-						$scope.help = "Enter tags, so other user can find your "+ $scope.newThread.type.label + " easier.";
-						break;
-					case 'btnQuestion':
-						$scope.help = "To post a " + $scope.newThread.type.label + " enter a title and an explanation.";
-						break;
-					case 'btnDiscussion':
-						$scope.help = "To start a " + $scope.newThread.type.label + " enter a title and an explanation.";
-						break;
-					case 'btnChat':
-						$scope.help = "To start a " + $scope.newThread.type.label + " enter a title.";;
-						break;
-			}
-		};
-		
 		$scope.changeSelectedThreadListType = function(threadListType)
 		{
 			$scope.selectedThreadListType = threadListType;
+		};
+		
+		$scope.tags = null;
+		
+		$scope.onTagAdded = function($tag, object)
+		{
+			object.tags.push(new Tag($tag.label));
+		};
+		
+		$scope.onTagRemoved = function($tag, object)
+		{
+			object.tags = null;
+			var index = 0;
+			angular.forEach(object.tags, function(value, key){
+				index++;
+				if(value.label === $tag.label){
+					object.tags.splice(index, 1);
+					return;
+				}
+			});
 		};
 				
 		var loadThreadList = function() 
@@ -137,7 +125,7 @@ angular.module('module.qa').controller("Controller", ['$scope', '$state', '$q', 
 							});
 		};
 		
-		$scope.postNewThread = function()
+		$scope.invokePostNewThread = function()
 		{
 			loadSimilarThreadList()
 				.then(openSimilarThreads);
@@ -152,15 +140,14 @@ angular.module('module.qa').controller("Controller", ['$scope', '$state', '$q', 
 							});
 		};
 		
-		var addNewThread = function()
+		var postNewThread = function()
 		{
 			return qaService
-							.addNewThread($scope.newThread)
+							.uploadAttachments($scope.newThread)
+							.then(qaService.addNewThread)
 							.then(function(result) {
-								$scope.threadList.push($scope.newThread);
-									
+								$scope.threadList.push(result);
 								$scope.newThread = new Thread(null, null, THREAD_TYPE.question, null, null, null, null);
-								
 								return result;
 							});
 		};
@@ -180,7 +167,7 @@ angular.module('module.qa').controller("Controller", ['$scope', '$state', '$q', 
 
 				modalInstance.result.then(function (post) {
 					if(post) {
-						addNewThread();
+						postNewThread();
 					}
 				}, function () {
 					//$log.info('Modal dismissed at: ' + new Date());
@@ -188,22 +175,22 @@ angular.module('module.qa').controller("Controller", ['$scope', '$state', '$q', 
 			}
 			else
 			{
-				addNewThread();
+				postNewThread();
 			}
 		};
 		
-		$scope.openAddAttachments = function () {	
+		$scope.openAddAttachments = function (object) {	
 			var modalInstance = $modal.open({
 				templateUrl: MODULES_PREFIX + '/qa/modalAddAttachments.tpl.html',
 				controller: 'ModalAddAttachmentsController',
 				size: 'lg',
 				resolve: {
-					thread: function () { return $scope.newThread; }
+					
 				}
 			});
 
-			modalInstance.result.then(function () {
-
+			modalInstance.result.then(function (fileList) {
+				object.attachments = object.attachments.concat(fileList);
 			}, function () {
 				//$log.info('Modal dismissed at: ' + new Date());
 			});
@@ -241,17 +228,92 @@ angular.module('module.qa').controller('ModalSimilarThreadsController', ['$scope
 		
 }]);
 
-angular.module('module.qa').controller('ModalAddAttachmentsController', ['$scope', '$modalInstance', '$state', 'qaService', 'thread', function($scope, $modalInstance, $state, qaService, thread){
-
-	$scope.thread = thread;
+angular.module('module.qa').controller('ModalAddAttachmentsController', ['$scope', '$modalInstance', '$state', 'qaService', function($scope, $modalInstance, $state, qaService){
+	
+	$scope.fileList = [];
 		
 	$scope.ok = function () {
-    $modalInstance.close(null);
+    $modalInstance.close($scope.fileList);
   };
 
   $scope.cancel = function () {
     $modalInstance.dismiss('cancel');
   };
+	
+	$scope.appendFile = function(files){
+    angular.forEach(files, function(file, key){
+      $scope.fileList.unshift(file); 
+    });
+    $scope.$apply();
+  };
+	
+	$scope.removeFile = function(index){
+    $scope.fileList.splice(index, 1);   
+  };
+	
+	$scope.getFileSizeString = function(size){
+    var mb = ((size / 1024) / 1024);
+
+    if(mb < 0.01){
+      mb = (size / 1024);
+      return mb.toFixed(2) + " KB";
+    }    
+
+    return mb.toFixed(2) + " MB";
+  };
+	
+	
+	$scope.$on('$viewContentLoaded', function() {
+		document.getElementById('upload-drop-container')
+	});
+	
+	/**
+  * FILE DROP-ZONE EVENTS
+  */
+	var initDropZone = function() {
+    console.log( "ready!" );
+		  var dropZone = document.getElementById('upload-drop-container');
+	};
+
+
+  // dropZone.bind('dragover', function(e) {
+		// e.stopPropagation();
+		// e.preventDefault();
+		// e.originalEvent.dataTransfer.effectAllowed = 'copy';
+	// });
+
+  // dropZone.bind('dragenter', function(e) {
+    // e.stopPropagation();
+    // e.preventDefault();
+    // e.originalEvent.dataTransfer.effectAllowed = 'copy';
+  // });
+
+  // dropZone.bind('drop', function(e){
+    // e.stopPropagation();
+    // e.preventDefault();
+
+    // angular.forEach(e.originalEvent.dataTransfer.files, function(file, key){
+      // try
+      // {
+        // var entry = e.originalEvent.dataTransfer.items[key].webkitGetAsEntry() || e.originalEvent.dataTransfer.items[key].getAsEntry();
+        // if (entry.isFile) {
+          // file.isFile = true;
+          // file.uploading = false;
+          // file.uploaded = false;
+          // $scope.appendFileToUploadList(file);
+        // } else if (entry.isDirectory) {
+          // file.isFile = false;
+          // $scope.appendFileToUploadList(file);
+        // }
+
+      // }
+      // catch(error)
+      // {
+        // console.log("Problem while drag & drop. probably no file-api. ERROR: " + error);
+      // }
+
+    // });
+  // });
 	
 }]);
 
@@ -284,17 +346,16 @@ angular.module('module.qa').controller("QuestionController", ['$scope', '$state'
 						});
 	};
 	
-	$scope.addNewAnswer = function()
+	$scope.postNewAnswer = function()
 		{
+			$scope.newAnswer.threadId = $scope.question.id;
+			
 			return qaService
-							.addNewAnswer($scope.question, $scope.newAnswer)
+							.uploadAttachments($scope.newAnswer)
+							.then(qaService.addNewAnswer)
 							.then(function(result) {	
-								$scope.newAnswer.id = result;
-								$scope.newAnswer.creationTime = new Date();
-								$scope.question.entries.push($scope.newAnswer);
-								
-								$scope.newAnswer = new ThreadEntry(null, null, THREAD_ENTRY_TYPE.qaEntry, null, null, null);
-								
+								$scope.question.entries.push(result);							
+								$scope.newAnswer = new ThreadEntry(null, null, THREAD_ENTRY_TYPE.qaEntry, null, null, null);	
 								return result;
 							});
 		};

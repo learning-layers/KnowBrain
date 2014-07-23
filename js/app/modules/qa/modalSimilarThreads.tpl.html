@@ -26,12 +26,21 @@
 			<p class="lead">{{getRandomNumber(100)}}%</p>
 		</div>
 		<div class="col-md-11 column">
-			<a class="lead thread-title" ng-click="loadDetailPage(thread)" bind-once>
-				{{thread.title}}
-			</a>
+			<div class="row">
+				<div class="col-md-12">
+					<a class="lead thread-title" ng-click="loadDetailPage(thread)" bind-once>
+						{{thread.title}}
+					</a>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-md-12">
+					<div class="qa-tag" ng-repeat="tag in thread.tags"><a href="#">{{tag.label}}</a></div>
+				</div>
+			</div>
 			<div class="row">
 				<div class="col-md-6">
-						<div class="thread-icon icon-user">
+						<!-- <div class="thread-icon icon-user">
 						</div>
 						<div class="thread-author">
 							<p class="thread-author">{{thread.author.name}}</p>
@@ -40,14 +49,30 @@
 						<div class="thread-author">
 							<p class="thread-author text-muted" bind-once>{{thread.creationTime.toLocaleDateString()}}</p>
 							<p class="thread-author text-muted" bind-once>{{thread.creationTime.toLocaleTimeString()}}</p>
+						</div> -->
+						<div class="icon-user-small icon-small">
+						</div>
+						<div class="icon-small-2row-data">
+							<p><a href="#">{{thread.author.name}}</a></p>
+							<p class="text-muted" bind-once>{{getRandomNumber(1000)}}</p>
+						</div>
+						<div class="icon-small-2row-data">
+							<p class="text-muted" bind-once>{{thread.creationTime.toLocaleDateString()}}</p>
+							<p class="text-muted" bind-once>{{thread.creationTime.toLocaleTimeString()}}</p>
 						</div>
 				</div>
 				<div class="col-md-6">
-						<div class="thread-icon icon-entity">
+						<!-- <div class="thread-icon icon-entity">
 						</div>
 						<div class="thread-author">
 							<p class="thread-author">collection</p>
 							<p class="thread-author text-muted">my folder</p>
+						</div> -->
+						<div class="icon-file-small icon-small" ng-repeat-start="attachment in thread.attachments">
+						</div>
+						<div class="icon-small-2row-data" ng-repeat-end>
+							<p><a href="#">{{attachment.label}}</a></p>
+							<p class="text-muted">{{attachment.type}}</p>
 						</div>
 				</div>
 			</div>
