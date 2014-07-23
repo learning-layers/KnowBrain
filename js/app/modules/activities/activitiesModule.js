@@ -69,7 +69,7 @@ angular.module('module.activities').controller("ActivitiesController", ['$scope'
         for(var i = 0; i < result.activities.length; i++) {
             var act = result.activities[i];
             
-            var activity = new Activity("", act.type, act.creationTime);
+            var activity = new Activity("", act.type, act.creationTime, act.entities, act.users);
             activities.push(activity);
         }
         
@@ -83,17 +83,20 @@ angular.module('module.activities').controller("ActivitiesController", ['$scope'
                 console.log(results[i].desc.label);
             }
             $scope.activities = activities;
+            console.log(activities);
         });
     });
     
 }]);
 
 angular.module('module.activities').factory('Activity', [function() {
-    function Activity(user, type, time){
+    function Activity(user, type, time, entities, users){
         this.user = user;
         this.type = type;
         this.time = parseTime(time);
         this.date = parseDate(time);
+        this.entities = entities;
+        this.users = users;
       }
     
     var parseTime = function(time) {
