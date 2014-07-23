@@ -23,8 +23,22 @@
 					</span>
 					
 					<span ng-switch-when="addCollEntry">
-						<span> added entity </span>
-						<span><a href="">{{activity.entities[0]}}</a></span>
+						<span ng-switch="activity.entities.length > 2">
+							<span ng-switch-when="true"> added entities </span>
+							<span ng-switch-when="false"> added entity </span>
+						</span>
+						<span ng-repeat="entity in activity.entities">
+							<span ng-if="!$first">
+								<a href="">{{entity}}</a>
+								<span ng-if="$index < activity.entities.length-2">, </span>
+								<span ng-if="$index == activity.entities.length-2"> and </span>
+							</span>
+						</span>
+						<span>
+							<span> to collection </span>
+							<a href="">{{activity.entities[0]}}</a>
+						</span>
+
 					</span>
 					
 					<span ng-switch-when="shareEntityWithUsers">  
