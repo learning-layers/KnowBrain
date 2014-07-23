@@ -194,7 +194,9 @@ angular.module('module.models').factory('BaseModel', ['$q', '$rootScope', 'UserS
       addNewDisc,
       type,
       label,
-      "some explanation");
+      "some explanation",
+      new Array(), //users
+      new Array()); //entities
 
       return defer.promise;
     },

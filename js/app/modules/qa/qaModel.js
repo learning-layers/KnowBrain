@@ -151,7 +151,9 @@ angular.module('module.qa').service("qaService", ['$q', '$rootScope','UserServic
 			true,
 			thread.type.enum,
 			thread.title,
-			thread.explanation
+			thread.explanation,
+      new Array(),  //users
+      new Array()   //entities
 			);
 
 		return defer.promise;     
@@ -175,7 +177,9 @@ angular.module('module.qa').service("qaService", ['$q', '$rootScope','UserServic
 			comment,
 			false,
 			thread.type,
-			thread.title
+			thread.title,
+      new Array(), //users
+      new Array() //entities
 			);
 
 		return defer.promise;     
