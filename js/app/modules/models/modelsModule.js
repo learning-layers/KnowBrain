@@ -812,6 +812,7 @@ angular.module('module.models').service("TagFetchService", ['$q', '$rootScope','
       },
       UserSrv.getUser(),
       UserSrv.getKey(), 
+      null,
       null, 
       null, 
       SPACE_ENUM.private,
