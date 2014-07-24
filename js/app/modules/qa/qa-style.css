@@ -180,11 +180,18 @@ p.thread-statistic {
 
 div.icon-small-2row-data {
 	float: left;
+	/* width: 400px; */
 }
 
 .icon-small-2row-data p {
 	margin: 0px 15px 0px 5px;
 	padding: 0px;
+}
+
+.icon-small-2row-data:after {
+    content:'';
+    display:block;
+    clear: both;
 }
 
 div.icon-small-1row-data {

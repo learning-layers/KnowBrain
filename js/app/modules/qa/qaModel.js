@@ -150,7 +150,7 @@ angular.module('module.qa').factory('Attachment', function () {
   function Attachment(id, label, type) {
     // Public properties
 		this.id = id;
-		this.label = label;
+		this.name = label;
 		this.type = type;
   }
 	
@@ -277,6 +277,7 @@ angular.module('module.qa').service("qaService", ['$q', '$rootScope','UserServic
 			null,
 			null,
 			null,
+			null,
 			attachmentIdList
 			);
 
@@ -371,9 +372,10 @@ angular.module('module.qa').service("qaService", ['$q', '$rootScope','UserServic
 			},
 			UserSrv.getUser(),
 			UserSrv.getKey(),
+			null,
 			[object.id],
 			null,
-			'privateSpace',
+			null,
 			null
 			);
 
