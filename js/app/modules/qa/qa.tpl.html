@@ -49,8 +49,9 @@
 					
 				<div class="icon-file-small icon-small" ng-repeat-start="attachment in newThread.attachments">
 				</div>
-				<div class="icon-small-1row-data" ng-repeat-end>
-					<p><a href="#">{{attachment.name}}</a></p>
+				<div class="icon-attached" ng-repeat-end>
+					<div><a href="#">{{attachment.name}}</a></div>
+                    <div>{{attachment.type}}</div>
 				</div>
 				
 				<button type="button" class="btn btn-success btn-lg  btn-post" ng-click="invokePostNewThread()" ng-disabled="form.$invalid">Post your {{newThread.type.label}} now</button>
@@ -104,46 +105,50 @@
 			
 	<div class="row clearfix thread" ng-repeat="thread in threadList | filter:{ title:searchString }">
 		<div class="col-md-3 column hidden-xs" bind-once>
-			<div ng-class="(thread.type == THREAD_TYPE.question) ? 'icon-question-large icon-large' : ((thread.type == THREAD_TYPE.discussion) ? 'icon-discussion-large icon-large' : ((thread.type == THREAD_TYPE.chat) ? 'icon-chat-large icon-large' : ((thread.type == 'answered') ? 'icon-answered-large icon-large' : '')))">
-			</div>
-			<div class="thread-statistic center-block">
-				<p class="thread-statistic lead">{{getRandomNumber(50)}} {{thread.type == THREAD_TYPE.question ? 'votes' : (thread.type == THREAD_TYPE.discussion ? 'likes' : (thread.type == THREAD_TYPE.chat ? 'members' : ''))}}</p>
-				<p class="thread-statistic text-muted">{{getRandomNumber(20)}} {{thread.type == THREAD_TYPE.question ? 'answers' : (thread.type == THREAD_TYPE.discussion ? 'opinions' : (thread.type == THREAD_TYPE.chat ? 'messages' : ''))}}</p>
-				<p class="thread-statistic text-muted">{{getRandomNumber(2000)}} views</p>
+
+			<div class="thread-statistic hidden-sm hidden-xs">
+                <div class="icon-large" ng-class="(thread.type == THREAD_TYPE.question) ? 'icon-question-large' : ((thread.type == THREAD_TYPE.discussion) ? 'icon-discussion-large' : ((thread.type == THREAD_TYPE.chat) ? 'icon-chat-large' : ((thread.type == 'answered') ? 'icon-answered-large' : '')))">
+                </div>
+                <div class="icon-attached">
+                    <div>{{getRandomNumber(50)}} {{thread.type == THREAD_TYPE.question ? 'votes' : (thread.type == THREAD_TYPE.discussion ? 'likes' : (thread.type == THREAD_TYPE.chat ? 'members' : ''))}}</div>
+                    <div class="text-muted">{{getRandomNumber(20)}} {{thread.type == THREAD_TYPE.question ? 'answers' : (thread.type == THREAD_TYPE.discussion ? 'opinions' : (thread.type == THREAD_TYPE.chat ? 'messages' : ''))}}</div>
+                    <div class="text-muted">{{getRandomNumber(2000)}} views</div>
+                </div>
+
 			</div>
 		</div>
-		<div class="col-md-9 col-xs-12 column">
+		<div class="col-md-9 column">
 			<div class="row">
 				<div class="col-md-12 column thread-title">
 					<a class="lead" ng-click="loadDetailPage(thread)" bind-once>
 						{{thread.title}}
 					</a>
 					<span>&nbsp;&nbsp;</span>
-					<div class="qa-tag" ng-repeat="tag in thread.tags"><a href="#">{{tag.label}}</a></div>
+					<div class="qa-tag hidden-xs" ng-repeat="tag in thread.tags"><a ng-click="onTagClicked(tag)">{{tag.label}}</a></div>
 				</div>
 			</div>
 			<div class="row">
 				<div class="col-md-4 column">
 						<div class="icon-user-small icon-small">
 						</div>
-						<div class="icon-small-2row-data">
-							<p><a href="#">{{thread.author.name}}</a></p>
-							<p class="text-muted" bind-once>{{getRandomNumber(1000)}}</p>
+						<div class="icon-attached">
+							<div><a href="#">{{thread.author.name}}</a></div>
+							<div class="text-muted" bind-once>{{getRandomNumber(1000)}}</div>
 						</div>
-						<div class="icon-small-2row-data">
-							<p class="text-muted" bind-once>{{thread.creationTime.toLocaleDateString()}}</p>
-							<p class="text-muted" bind-once>{{thread.creationTime.toLocaleTimeString()}}</p>
+						<div class="icon-attached">
+							<div class="text-muted" bind-once>{{thread.creationTime.toLocaleDateString()}}</div>
+							<div class="text-muted" bind-once>{{thread.creationTime.toLocaleTimeString()}}</div>
 						</div>
 				</div>
-				<div class="col-md-8 column hidden-xs">
+				<div class="col-md-8 column hidden-sm hidden-xs">
 						<div class="icon-file-small icon-small" ng-repeat-start="attachment in thread.attachments">
 						</div>
-						<div class="icon-small-2row-data" ng-repeat-end>
-							<p><a href="#">{{attachment.name}}</a></p>
-							<p class="text-muted">{{attachment.type}}</p>
+						<div class="icon-attached" ng-repeat-end>
+							<div><a href="#">{{attachment.name}}</a></div>
+							<div class="text-muted">{{attachment.type}}</div>
 						</div>
 				</div>
-				<div class="col-md-6 col-xs-12 column">
+				<div class="col-md-6 column">
 					<!-- <tags-input ng-model="tags" custom-class="bootstrap" placeholder="."></tags-input> -->
 				</div>
 			</div>

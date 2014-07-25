@@ -38,13 +38,13 @@ angular.module('module.qa').constant('THREAD_ENTRY_TYPE', {answer:{enum:'qaEntry
 angular.module('module.qa').factory('Thread', ['UriToolbox', function (UriToolbox) {
  		
   // Constructor
-  function Thread(id, author_id, type, title, explanation, entry_id, creationTime) {
+  function Thread(id, author_id, type, title, explanation, entity_id, creationTime) {
     // Public properties
 		this.id = id;
     this.type = type;
 		this.title = title;
 		this.explanation = explanation;
-		this.entityId = entry_id;
+		this.entityId = entity_id;
 		this.entries = new Array();
 		this.creationTime = new Date(creationTime);
 		this.authorId = author_id;
@@ -123,8 +123,10 @@ angular.module('module.qa').factory('ThreadEntry', function () {
 angular.module('module.qa').factory('Tag', function () {
  		
   // Constructor
-  function Tag(label) {
+  function Tag(id, entity_id, label) {
     // Public properties
+		this.id = id;
+		this.entityId = entity_id;
 		this.label = label;
 		this.frequency = 0;
 		this.space = 'privateSpace';
@@ -202,6 +204,25 @@ angular.module('module.qa').service("qaService", ['$q', '$rootScope','UserServic
 			);
 
 		return defer.promise;     
+	};
+
+	var getEntityDetails = function (id) {
+	    var defer = $q.defer();
+
+	    new SSEntityGet(
+			function (result) {
+			    defer.resolve(result);
+			},
+			function (error) {
+			    console.log(error);
+			    defer.reject(error);
+			},
+			UserSrv.getUser(),
+			UserSrv.getKey(),
+			id
+			);
+
+	    return defer.promise;
 	};
 
 	this.addNewThread = function(thread){
@@ -355,11 +376,10 @@ angular.module('module.qa').service("qaService", ['$q', '$rootScope','UserServic
 	var getTags = function(object){
 		var defer = $q.defer();
 
-		new SSTagFrequsGet(
+		new SSTagsGet(
 			function(result){
-				angular.forEach(result.tagFrequs, function(value, key){
-					var tag = new Tag(value.label);
-					tag.frequency = value.frequ;
+				angular.forEach(result.tags, function(value, key){
+					var tag = new Tag(value.id, value.entity, value.label);
 					tag.space = value.space;
 					
 					object.tags.push(tag);
@@ -375,6 +395,47 @@ angular.module('module.qa').service("qaService", ['$q', '$rootScope','UserServic
 			null,
 			[object.id],
 			null,
+			null,
+			null
+			);
+
+		return defer.promise;     
+	};
+	
+	this.getEntitiesForTag = function(tag){
+		var defer = $q.defer();
+
+		new SSTagEntitiesForTagsGet(
+			function (result) {
+                
+			    var promiseList = [];
+
+				angular.forEach(result.entities, function(entry, key){
+
+				    var deferEntityDetails = $q.defer();
+
+				    getEntityDetails(entry)
+                        .then(function (result) {
+                            deferEntityDetails.resolve(result);
+                        });
+
+				    promiseList.push(deferEntityDetails.promise);
+				});
+	
+				$q.all(promiseList)
+			        .then(function (result) {
+			            defer.resolve(result);
+			        });
+
+			},
+			function(error){
+				console.log(error);
+				defer.reject(error);
+			},
+			UserSrv.getUser(),
+			UserSrv.getKey(),
+			null,
+			[tag.label],
 			null,
 			null
 			);

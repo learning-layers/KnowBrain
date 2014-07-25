@@ -1,4 +1,4 @@
-/**
+﻿/**
 * Code contributed to the Learning Layers project
 * http://www.learning-layers.eu
 * Development is partly funded by the FP7 Programme of the European Commission under
@@ -100,28 +100,27 @@
 }
 
 .icon-small {
-	width:32px;
-	height:32px;
-	float:left;
-	margin-top:4px;
-	margin-right:4px;
-	margin-bottom:4px;
+    display:inline-block;
+    vertical-align:middle;
+	width: 32px;
+	height: 32px;
+	margin-right: 4px;
 }
 
 .icon-medium {
+    display:inline-block;
+    vertical-align:middle;
 	width:64px;
 	height:64px;
-	float:left;
 	margin-right:15px;
-	margin-bottom:15px;
 }
 
 .icon-large {
+    display:inline-block;
+    vertical-align:middle;
 	width:80px;
 	height:80px;
-	float:left;
 	margin-right:15px;
-	margin-bottom:15px;
 }
 
 .icon-user-small {
@@ -160,47 +159,25 @@
 	background-image: url(../../../../images/qa/answered_64x64.png);
 }
 
+.icon-up-small {
+    background-image: url(../../../../images/qa/up_32x32.png);
+}
+
+.icon-down-small {
+    background-image: url(../../../../images/qa/down_32x32.png);
+}
+
+.icon-attached {
+    display:inline-block;
+    margin-right:15px;
+    vertical-align:middle;
+}
+
 div.thread-statistic {
-	width:150px;
-	height:80px;
-	float:left;
 	border-top:solid 1px #ddd;
 	border-bottom:solid 1px #ddd;
 	border-right:solid 1px #ddd;
-	padding-left:20px;
-	padding-top:3px;
-	margin-left:-15px;
-}
-
-p.thread-statistic {
-	margin: 0;
-	padding: 0;
-	cursor: default;
-}
-
-div.icon-small-2row-data {
-	float: left;
-	/* width: 400px; */
-}
-
-.icon-small-2row-data p {
-	margin: 0px 15px 0px 5px;
-	padding: 0px;
-}
-
-.icon-small-2row-data:after {
-    content:'';
-    display:block;
-    clear: both;
-}
-
-div.icon-small-1row-data {
-	float: left;
-}
-
-.icon-small-1row-data p {
-	margin: 10px 15px 10px 5px;
-	padding: 0px;
+    height:82px;
 }
 
 div.thread {
@@ -259,17 +236,6 @@ div.thread {
 	word-break: break-all;
 	word-wrap: break-word;
 	padding-bottom: 5px;
-}
-
-.user-detail {
-	font-size: small;
-	padding-left: 20px;
-	padding-top: 8px;
-	padding-bottom: 30px;
-}
-
-.user-detail p {
-	margin-bottom: 4px;
 }
 
 .vote-box {

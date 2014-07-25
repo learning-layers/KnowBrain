@@ -114,6 +114,13 @@ angular.module('module.qa').controller("Controller", ['$scope', '$state', '$q', 
 				}
 			});
 		};
+
+		$scope.onTagClicked = function(tag) {
+		    return qaService.getEntitiesForTag(tag)
+                   .then(function (result) {
+                       var test = result;
+                   })
+		}
 				
 		var loadThreadList = function() 
 		{
