@@ -1,12 +1,12 @@
-<div class="row clearfix">
-	<div class="col-md-12 column box">
+<div class="row clearfix header">
+	<div class="col-md-12 column">
 		<div class="row">
             <div class="col-md-1 column hidden-sm hidden-xs">
-                <div class="icon-user-medium icon-medium">
+                <div class="icon-question-medium icon-medium">
                 </div>
             </div>
 			<div class="col-md-6 column">
-                <h3 class="title">{{question.title}}</h3>
+                <div class="lead">{{question.title}}</div>
                 <div class="explanation" ng-bind-html="question.explanation | checkNewlines"></div>
 			</div>
 			<div class="col-md-5 column">		
@@ -20,51 +20,46 @@
                         </div>
 					</div>
 				</div>	
-				<div class="row">
-                    <div class="col-md-3 column">
-                        &nbsp;
-                    </div>
-					<div class="col-md-9 column">	
-                        <div class="icon-small icon-up-small">
-                        </div>
-                        <div class="icon-attached">
-                            <div>123</div>
-                            <div>had the same question</div>
-                        </div>
-					</div>
-				</div>
 			</div>
 		</div>
 		
-		<div class="row clearfix qa-tag-box">
-			<div class="col-md-1 column hidden-sm hidden-xs">
-				&nbsp;
-			</div>
-			<div class="col-md-11 column">
-				<div class="qa-tag" ng-repeat="tag in question.tags"><a href="#">{{tag.label}}</a></div>
-			</div>
-		</div>
+        <div class="row clearfix">
+            <div class="col-md-1 column hidden-sm hidden-xs">
+                &nbsp;
+            </div>
+            <div class="col-md-8 column">
+                <div class="qa-tag" ng-repeat="tag in question.tags"><a href="#">{{tag.label}}</a></div>
+            </div>
+            <div class="col-md-3 column">
+                <div class="icon-small icon-up-small">
+                </div>
+                <div class="icon-attached">
+                    <div>123 users</div>
+                    <div>had the same question</div>
+                </div>
+            </div>
+        </div>
+		
+        <div class="row clearfix" ng-show="question.attachments.length">
+            <div class="col-md-1 column hidden-sm hidden-xs">
+                &nbsp;
+            </div>
+            <div class="col-md-11 column">
+                <div class="icon-file-small icon-small" ng-repeat-start="attachment in question.attachments">
+                </div>
+                <div class="icon-attached" ng-repeat-end>
+                    <div><a href="#">{{attachment.name}}</a></div>
+                    <div class="text-muted">{{attachment.type}}</div>
+                </div>
+            </div>
+        </div>
 		
 		<div class="row clearfix">
             <div class="col-md-1 column hidden-sm hidden-xs">
                 &nbsp;
             </div>
 			<div class="col-md-11 column">
-				<div class="icon-file-small icon-small" ng-repeat-start="attachment in question.attachments">
-				</div>
-				<div class="icon-attached" ng-repeat-end>
-					<div><a href="#">{{attachment.name}}</a></div>
-					<div class="text-muted">{{attachment.type}}</div>
-				</div>
-			</div>
-		</div>
-		
-		<div class="row clearfix">
-            <div class="col-md-1 column hidden-sm hidden-xs">
-                &nbsp;
-            </div>
-			<div class="col-md-11 column question-footer">
-				<p><a href="#">share</a></p>
+				<div><a href="#">share</a></div>
 			</div>
 		</div>
 		
@@ -73,154 +68,133 @@
 
 <div class="row clearfix">
 	<div class="col-md-10 column">
-		<h3>Answers ({{question.entries.length}})</h3>
+		<div class="lead underline">Answers ({{question.entries.length}})</div>
 		
 		<!-- answer begin -->
-		<hr ng-repeat-start="answer in question.entries | orderBy:predicate" />
-		<div class="row clearfix">
-			<div class="col-md-9 column">
-				<div class="icon-user-medium icon-medium">
-				</div>
-                <div class="icon-attached">
-                    <div><a href="#">{{answer.author.name}}</a> has answered on {{answer.getFormattedCreationTime()}}</div>
-                    <div>1234 reputation points</div>
-                </div>
-			</div>
-			
-			<div class="col-md-3 column">			
-				<!--<div class="vote-box-number positiv">
-					<span>3</span>
-				</div>
-				<div class="vote-box">
-					<p>found this answer helpful</p>
-					<p><a href="#">Me too</a></p>
-				</div>-->
-                <div class="icon-small icon-up-small">
-                </div>
-                <div class="icon-attached">
-                    <div>123</div>
-                    <div>likes</div>
+        <div class="answer underline" ng-repeat="answer in question.entries | orderBy:predicate">
+            <div class="row clearfix">
+                <div class="col-md-9 column">
+                    <div class="icon-user-medium icon-medium">
+                    </div>
+                    <div class="icon-attached">
+                        <div><a href="#">{{answer.author.name}}</a> has answered on {{answer.getFormattedCreationTime()}}</div>
+                        <div>1234 reputation points</div>
+                    </div>
                 </div>
 
-                <div class="icon-small icon-down-small">
+                <div class="col-md-3 column">
+                    <div class="icon-small icon-up-small">
+                    </div>
+                    <div class="icon-attached">
+                        <div>123</div>
+                        <div>likes</div>
+                    </div>
+
+                    <div class="icon-small icon-down-small">
+                    </div>
+                    <div class="icon-attached">
+                        <div>123</div>
+                        <div>dislikes</div>
+                    </div>
                 </div>
-                <div class="icon-attached">
-                    <div>123</div>
-                    <div>dislikes</div>
+            </div>
+
+            <div class="row clearfix">
+                <div class="col-md-1 column">
+                    <!-- 				<div class="icon-answered-medium icon-medium">
+                                </div> -->
                 </div>
-			</div>
-		</div>
-		
-		<div class="row clearfix">
-			<div class="col-md-1 column">
-<!-- 				<div class="icon-answered-medium icon-medium">
-				</div> -->
-			</div>
-			<div class="col-md-11 column answer">
-				<p ng-bind-html="answer.content | checkNewlines"></p>
-			</div>
-		</div>
-		
-		<div class="row clearfix">
-            <div class="col-md-1 column hidden-sm hidden-xs">
-                &nbsp;
+                <div class="col-md-11 column">
+                    <div ng-bind-html="answer.content | checkNewlines"></div>
+                </div>
             </div>
-			<div class="col-md-11 column">
-				<div class="qa-tag" ng-repeat="tag in answer.tags"><a href="#">{{tag.label}}</a></div>
-			</div>
-		</div>
-		
-		<div class="row clearfix">
-            <div class="col-md-1 column hidden-sm hidden-xs">
-                &nbsp;
+
+            <div class="row clearfix" ng-show="answer.tags.length">
+                <div class="col-md-1 column hidden-sm hidden-xs">
+                    &nbsp;
+                </div>
+                <div class="col-md-11 column">
+                    <div class="qa-tag" ng-repeat="tag in answer.tags"><a href="#">{{tag.label}}</a></div>
+                </div>
             </div>
-			<div class="col-md-11 column">
-			
-				<div class="icon-file-small icon-small" ng-repeat-start="attachment in answer.attachments">
-				</div>
-				<div class="icon-attached" ng-repeat-end>
-					<div><a href="#">{{attachment.name}}</a></div>
-					<div class="text-muted">{{attachment.type}}</div>
-				</div>
-				
-				<div class="icon-file-small icon-small">
-				</div>
-				<div class="icon-attached">
-					<div><a href="#">text.pdf</a></div>
-					<div class="text-muted">file</div>
-				</div>
-				
-				<div class="icon-file-small icon-small">
-				</div>
-				<div class="icon-attached">
-					<div><a href="#">text2.pdf</a></div>
-					<div class="text-muted">file</div>
-				</div>
-				
-			</div>
-		</div>
-		
-		<div class="row clearfix">
-            <div class="col-md-1 column hidden-sm hidden-xs">
-                &nbsp;
+
+            <div class="row clearfix" ng-show="answer.attachments.length">
+                <div class="col-md-1 column hidden-sm hidden-xs">
+                    &nbsp;
+                </div>
+                <div class="col-md-11 column">
+
+                    <div class="icon-file-small icon-small" ng-repeat-start="attachment in answer.attachments">
+                    </div>
+                    <div class="icon-attached" ng-repeat-end>
+                        <div><a href="#">{{attachment.name}}</a></div>
+                        <div class="text-muted">{{attachment.type}}</div>
+                    </div>
+                </div>
             </div>
-			<div class="col-md-11 column answer-footer">
-				<p><a href="#">share</a> | <a href="#">mark as accepted answer</a></p>
-			</div>
-		</div>
-		<!-- comment begin -->
-		<div class="row clearfix">
-            <div class="col-md-2 column hidden-sm hidden-xs">
-                &nbsp;
+
+            <div class="row clearfix">
+                <div class="col-md-1 column hidden-sm hidden-xs">
+                    &nbsp;
+                </div>
+                <div class="col-md-11 column">
+                    <div><a href="#">share</a> | <a href="#">mark as accepted answer</a></div>
+                </div>
             </div>
-			<div class="col-md-10 column answer-comment">
-				<p>Lorem ipsum dolor sit amet, consetetur sadipscing elitr <span class="answer-comment-user">- <a href="#">User1</a> 13/04/2013 12:30</span></p>
-			</div>
-		</div>
-		<!-- comment end -->
-		<!-- comment begin -->
-		<div class="row clearfix">
-            <div class="col-md-2 column hidden-sm hidden-xs">
-                &nbsp;
+            <!-- comment begin -->
+            <div class="row clearfix">
+                <div class="col-md-2 column hidden-sm hidden-xs">
+                    &nbsp;
+                </div>
+                <div class="col-md-8 column answer-comment">
+                    <div>Lorem ipsum dolor sit amet, consetetur sadipscing elitr <span>- <a href="#">User1</a> 13/04/2013 12:30</span></div>
+                </div>
             </div>
-			<div class="col-md-10 column answer-comment">
-				<p>Lorem ipsum dolor sit amet, consetetur sadipscing elitr <span class="answer-comment-user">- <a href="#">User1</a> 13/04/2013 12:30</span></p>
-			</div>
-		</div>
-		<!-- comment end -->
-		<div class="row clearfix" ng-repeat-end>
-            <div class="col-md-2 column hidden-sm hidden-xs">
-                &nbsp;
+            <!-- comment end -->
+            <!-- comment begin -->
+            <div class="row clearfix">
+                <div class="col-md-2 column hidden-sm hidden-xs">
+                    &nbsp;
+                </div>
+                <div class="col-md-8 column answer-comment">
+                    <div>Lorem ipsum dolor sit amet, consetetur sadipscing elitr <span>- <a href="#">User1</a> 13/04/2013 12:30</span></div>
+                </div>
             </div>
-			<div class="col-md-10 column answer-comment-footer">
-				<p><a href="#">add a comment</a></p>
-			</div>
-		</div>
+            <!-- comment end -->
+            <div class="row clearfix">
+                <div class="col-md-2 column hidden-sm hidden-xs">
+                    &nbsp;
+                </div>
+                <div class="col-md-10 column">
+                    <div><a href="#">add a comment</a></div>
+                </div>
+            </div>
+        </div>
 		<!-- answer end -->
 	</div>
 	
 	<div class="col-md-2 column related">		
 		<h4>Related Questions</h4>
-		<p ng-repeat="thread in similarThreadList">
+		<div ng-repeat="thread in similarThreadList">
 			<a ng-click="loadDetailPage(thread)">{{thread.title}}</a>
-		</p>
-		<p ng-show="!similarThreadList.length">No related content available</p>
+		</div>
+		<div ng-show="!similarThreadList.length">No related content available</div>
 	</div>
 </div>
 
 <div class="row clearfix">
 	<div class="col-md-10 column">
-		<h3>Reply</h3>
+		<div class="lead">Reply</div>
 		<div class="row">
 			<div class="col-md-8 column">
 			
-				<div class="row input-row">
+				<div class="row">
 					<div class="col-md-12 column">
 						<textarea ng-model="newAnswer.content" class="form-control thread-input-group" rows="5" placeholder="Add your answer"></textarea>
 					</div>
 				</div>
 				
-				<div class="row input-row">
+				<div class="row">
 					<div class="col-md-12 column">
 						<tags-input ng-model="tags" on-tag-added="onTagAdded($tag, newAnswer)" on-tag-removed="onTagRemoved($tag, newAnswer)" class="bootstrap" display-property="label" placeholder="Add tags"></tags-input>
 					</div>
@@ -228,9 +202,9 @@
 			
 			</div>
 			
-			<div class="col-md-4 column" ng-class="(newThread.type == THREAD_TYPE.chat) ? 'hidden' : ''">
+			<div class="col-md-4 column">
 					<div class="kb-fluid-container pull-left add-attachment-box" ng-click="openAddAttachments(newAnswer)">Add attachments
-						 <div id="upload-link" class="glyphicon glyphicon-plus-sign" ></div>
+						 <div class="glyphicon glyphicon-plus-sign add-attachment-icon" ></div>
 					</div>
 					
 					<div class="icon-file-small icon-small" ng-repeat-start="attachment in newAnswer.attachments">
@@ -247,11 +221,5 @@
     <div class="col-md-2 column hidden-sm hidden-xs">
         &nbsp;
     </div>
-</div>
-
-<div class="row clearfix">
-	<div class="col-md-12 column">
-		&nbsp;
-	</div>
 </div>
 

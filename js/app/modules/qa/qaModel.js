@@ -185,23 +185,29 @@ angular.module('module.qa').service("qaService", ['$q', '$rootScope','UserServic
 		return type;
 	};
 	
-	var getAuthorDetails = function(object){
-		var defer = $q.defer();
+	var getAuthorDetails = function (object) {
 
-		new SSEntityGet(
-			function(result){
-				var author = new Author(result.entity.label);
-				object.author = author;
-				defer.resolve(object);
-			},
-			function(error){
-				console.log(error);
-				defer.reject(error);
-			},
-			UserSrv.getUser(),
-			UserSrv.getKey(),
-			object.authorId
-			);
+        var defer = $q.defer();
+
+        setTimeout(function () {
+            object.author = new Author('test1');
+            defer.resolve(object);
+        }, 10);
+
+		//new SSEntityGet(
+		//	function(result){
+		//		var author = new Author(result.entity.label);
+		//		object.author = author;
+		//		defer.resolve(object);
+		//	},
+		//	function(error){
+		//		console.log(error);
+		//		defer.reject(error);
+		//	},
+		//	UserSrv.getUser(),
+		//	UserSrv.getKey(),
+		//	object.authorId
+		//	);
 
 		return defer.promise;     
 	};
@@ -374,30 +380,36 @@ angular.module('module.qa').service("qaService", ['$q', '$rootScope','UserServic
   };
 	
 	var getTags = function(object){
-		var defer = $q.defer();
+	    var defer = $q.defer();
 
-		new SSTagsGet(
-			function(result){
-				angular.forEach(result.tags, function(value, key){
-					var tag = new Tag(value.id, value.entity, value.label);
-					tag.space = value.space;
+	    setTimeout(function () {
+	        object.tags.push(new Tag('id','entityId','tag1'));
+	        object.tags.push(new Tag('id', 'entityId', 'tag2'));
+	        defer.resolve(object);
+	    }, 10);
+
+		//new SSTagsGet(
+		//	function(result){
+		//		angular.forEach(result.tags, function(value, key){
+		//			var tag = new Tag(value.id, value.entity, value.label);
+		//			tag.space = value.space;
 					
-					object.tags.push(tag);
-				});
-				defer.resolve(object);
-			},
-			function(error){
-				console.log(error);
-				defer.reject(error);
-			},
-			UserSrv.getUser(),
-			UserSrv.getKey(),
-			null,
-			[object.id],
-			null,
-			null,
-			null
-			);
+		//			object.tags.push(tag);
+		//		});
+		//		defer.resolve(object);
+		//	},
+		//	function(error){
+		//		console.log(error);
+		//		defer.reject(error);
+		//	},
+		//	UserSrv.getUser(),
+		//	UserSrv.getKey(),
+		//	null,
+		//	[object.id],
+		//	null,
+		//	null,
+		//	null
+		//	);
 
 		return defer.promise;     
 	};
@@ -535,6 +547,8 @@ angular.module('module.qa').service("qaService", ['$q', '$rootScope','UserServic
 						.then(getTags)
 						.then(function(result) {
 							deferThread.resolve(result);
+						}, function (error) {
+						    var test = error;
 						});
 					
 					promiseList.push(deferThread.promise);
@@ -543,6 +557,8 @@ angular.module('module.qa').service("qaService", ['$q', '$rootScope','UserServic
 				$q.all(promiseList)
 					.then(function(result) {
 						deferThreadList.resolve(result);
+					}, function (error) {
+					    var test = error;
 					});
       },	
       function(error){
