@@ -33,11 +33,12 @@ a:hover {
 }
 
 .header {
-    margin-bottom: 50px;
+    margin-bottom: 60px;
 }
 
 .lead {
     margin:0px 0px 10px 0px;
+    vertical-align: middle;
 }
 
 .btn {
@@ -215,10 +216,10 @@ div.thread-statistic-box {
 	font-size:smaller;
 	background: #428BCA;
 	border-radius: 0px;
-    height: 32px;
 	padding-left: 8px;
 	padding-right: 8px;
-	padding-top: 6px;
+	padding-top: 5px;
+    padding-bottom: 5px;
 	margin-right: 5px;
 }
 
