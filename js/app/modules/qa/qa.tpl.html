@@ -35,9 +35,12 @@
 					</div>
 					
 					<div class="row">
-						<div class="col-md-12 column">
+						<div class="col-md-7 column">
 							<tags-input ng-model="tags" on-tag-added="onTagAdded($tag, newThread)" on-tag-removed="onTagRemoved($tag, newThread)" class="bootstrap" display-property="label" placeholder="Add tags"></tags-input>
 						</div>
+                        <div class="col-md-5 column">
+                            <button type="button" class="btn btn-success btn-lg stretch" ng-click="invokePostNewThread()" ng-disabled="form.$invalid">Post your {{newThread.type.label}} now</button>
+                        </div>
 					</div>
 				
 			</div>
@@ -53,8 +56,6 @@
 					<div><a href="#">{{attachment.name}}</a></div>
                     <div>{{attachment.type}}</div>
 				</div>
-				
-				<button type="button" class="btn btn-success btn-lg  btn-post" ng-click="invokePostNewThread()" ng-disabled="form.$invalid">Post your {{newThread.type.label}} now</button>
 			</div>
 			
 		</div>
@@ -95,21 +96,18 @@
 	</div>		
 			
 	<div class="row clearfix" ng-repeat="thread in threadList | filter:{ title:searchString }">
-		<div class="col-md-3 column hidden-xs" bind-once>
+		<div class="col-md-2 column hidden-xs" bind-once>
 
 			<div class="thread-statistic-box hidden-sm hidden-xs">
-                <div class="icon-large" ng-class="(thread.type == THREAD_TYPE.question) ? 'icon-question-large' : ((thread.type == THREAD_TYPE.discussion) ? 'icon-discussion-large' : ((thread.type == THREAD_TYPE.chat) ? 'icon-chat-large' : ((thread.type == 'answered') ? 'icon-answered-large' : '')))">
-                </div>
-                <div class="icon-attached">
-                    <!--<div>{{getRandomNumber(50)}} {{thread.type == THREAD_TYPE.question ? 'votes' : (thread.type == THREAD_TYPE.discussion ? 'likes' : (thread.type == THREAD_TYPE.chat ? 'members' : ''))}}</div>-->
-                    <div>{{getRandomNumber(50)}} user</div>
-                    <div class="text-muted">{{getRandomNumber(20)}} {{thread.type == THREAD_TYPE.question ? 'answers' : (thread.type == THREAD_TYPE.discussion ? 'opinions' : (thread.type == THREAD_TYPE.chat ? 'messages' : ''))}}</div>
-                    <div class="text-muted">{{getRandomNumber(2000)}} views</div>
-                </div>
-
+                <!--<div class="icon-large" ng-class="(thread.type == THREAD_TYPE.question) ? 'icon-question-large' : ((thread.type == THREAD_TYPE.discussion) ? 'icon-discussion-large' : ((thread.type == THREAD_TYPE.chat) ? 'icon-chat-large' : ((thread.type == 'answered') ? 'icon-answered-large' : '')))">
+                </div>-->
+                <!--<div>{{getRandomNumber(50)}} {{thread.type == THREAD_TYPE.question ? 'votes' : (thread.type == THREAD_TYPE.discussion ? 'likes' : (thread.type == THREAD_TYPE.chat ? 'members' : ''))}}</div>-->
+                <div>{{getRandomNumber(50)}} have this question</div>
+                <div class="text-muted">{{getRandomNumber(20)}} {{thread.type == THREAD_TYPE.question ? 'answers' : (thread.type == THREAD_TYPE.discussion ? 'opinions' : (thread.type == THREAD_TYPE.chat ? 'messages' : ''))}}</div>
+                <div class="text-muted">{{getRandomNumber(2000)}} views</div>
 			</div>
 		</div>
-		<div class="col-md-9 column">
+		<div class="col-md-10 column">
 			<div class="row">
 				<div class="col-md-12 column">
 					<a class="lead" ng-click="loadDetailPage(thread)" bind-once>
@@ -132,7 +130,7 @@
 							<div class="text-muted" bind-once>{{thread.creationTime.toLocaleTimeString()}}</div>
 						</div>
 				</div>
-				<div class="col-md-8 column hidden-sm hidden-xs">
+				<div class="col-md-8 column">
 						<div class="icon-file-small icon-small" ng-repeat-start="attachment in thread.attachments">
 						</div>
 						<div class="icon-attached" ng-repeat-end>

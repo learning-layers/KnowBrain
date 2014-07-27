@@ -195,9 +195,12 @@
 				</div>
 				
 				<div class="row">
-					<div class="col-md-12 column">
+					<div class="col-md-7 column">
 						<tags-input ng-model="tags" on-tag-added="onTagAdded($tag, newAnswer)" on-tag-removed="onTagRemoved($tag, newAnswer)" class="bootstrap" display-property="label" placeholder="Add tags"></tags-input>
 					</div>
+                    <div class="col-md-5 column">
+                        <button ng-click="postNewAnswer()" type="button" style="width:100%;" class="btn btn-success btn-lg stretch">Post your answer</button>
+                    </div>
 				</div>
 			
 			</div>
@@ -213,8 +216,6 @@
 						<div><a href="#">{{attachment.name}}</a></div>
                         <div>{{attachment.type}}</div>
 					</div>
-
-					<button ng-click="postNewAnswer()" type="button" style="width:100%;" class="btn btn-success btn-lg pull-right btn-post">Post your answer</button>
 			</div>
 		</div>
 	</div>
