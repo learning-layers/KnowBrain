@@ -1,4 +1,4 @@
-/**
+﻿/**
 * Code contributed to the Learning Layers project
 * http://www.learning-layers.eu
 * Development is partly funded by the FP7 Programme of the European Commission under
@@ -29,7 +29,6 @@ html {
 
 body { 
   height: 100%;
-  padding-top: 86px;
 }
 
 .ajax-loader-white{
@@ -220,6 +219,7 @@ body {
 	padding-left: 15px;
 	padding-bottom: 5px;
 	color: #ffffff;
+    margin-top: -20px;
 	margin-bottom: 0px;
 }
 
