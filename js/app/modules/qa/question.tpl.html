@@ -67,7 +67,7 @@
 </div>
 
 <div class="row clearfix">
-	<div class="col-md-10 column">
+	<div class="col-md-9 column">
 		<div class="lead underline">Answers ({{question.entries.length}})</div>
 		
 		<!-- answer begin -->
@@ -173,8 +173,8 @@
 		<!-- answer end -->
 	</div>
 	
-	<div class="col-md-2 column related">		
-		<h4>Related Questions</h4>
+	<div class="col-md-3 column related">		
+		<div class="lead">Related Questions</div>
 		<div ng-repeat="thread in similarThreadList">
 			<a ng-click="loadDetailPage(thread)">{{thread.title}}</a>
 		</div>
