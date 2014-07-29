@@ -55,7 +55,7 @@ angular.module('module.qa').constant('THREAD_LIST_TYPE', {own:'My own', newest:'
 /**
 * CONTROLLER
 */
-angular.module('module.qa').controller("qaController", ['$scope', '$state', '$q', '$modal', '$dialogs', '$filter', 'UserService', 'UriToolbox', 'qaService', 'Thread','THREAD_TYPE', 'THREAD_LIST_TYPE', 'Tag', function($scope, $state, $q, $modal, $dialogs, $filter, UserSrv, UriToolbox, qaService, Thread, THREAD_TYPE, THREAD_LIST_TYPE, Tag){
+angular.module('module.qa').controller("qaController", ['$scope', '$state', '$q', '$modal', '$dialogs', '$filter', 'UserService', 'sharedService', 'UriToolbox', 'qaService', 'Thread','THREAD_TYPE', 'THREAD_LIST_TYPE', 'Tag', function($scope, $state, $q, $modal, $dialogs, $filter, UserSrv, sharedService, UriToolbox, qaService, Thread, THREAD_TYPE, THREAD_LIST_TYPE, Tag){
 		
 		$scope.THREAD_TYPE = THREAD_TYPE;
 		$scope.newThread = new Thread(null, null, THREAD_TYPE.question, null, null, null, null);
@@ -68,7 +68,7 @@ angular.module('module.qa').controller("qaController", ['$scope', '$state', '$q'
 		$scope.threadListHeader = "My own";
 		$scope.searchString = '';	
 						
-		$scope.loadDetailPage = function(thread)
+		var loadDetailPage = function(thread)
 		{
 			$state.transitionTo('app.qa.' + thread.type.enum, { id: UriToolbox.extractUriPathnameHash(thread.id)});
 		};
@@ -185,6 +185,28 @@ angular.module('module.qa').controller("qaController", ['$scope', '$state', '$q'
 				//$log.info('Modal dismissed at: ' + new Date());
 			});
 		};
+
+		$scope.addComment = function (answer) {
+		    answer.comments.push(answer.newComment);
+
+		    qaService.addNewComment(answer)
+                .then(function (result) {
+                    answer.newComment = null;
+                    var test = result;
+			    });
+		}
+
+		$scope.openThread = function(thread)
+		{
+		    switch (thread.type) {
+		        case THREAD_TYPE.question:
+		            loadDetailPage(thread);
+		            break;
+		        case THREAD_TYPE.chat:
+		            sharedService.prepareForBroadcast('openChatBox', thread);
+		            break;
+		    }
+		}
 
 		// load data
 		loadThreadList();	
@@ -343,7 +365,7 @@ angular.module('module.qa').controller("questionController", ['$scope', '$state'
 								$scope.newAnswer = new ThreadEntry(null, null, THREAD_ENTRY_TYPE.qaEntry, null, null, null);	
 								return result;
 							});
-		};
+	};
 	
 	$scope.loadDetailPage = function(thread)
 	{
@@ -387,15 +409,18 @@ angular.module('module.qa').filter('checkNewlines', function() {
 });
 
 /**
-* Directives
+* CUSTOM Directive
 */
-angular.module('module.qa').directive('bindOnce', function() {
-    return {
-        scope: true,
-        link: function( $scope ) {
-            setTimeout(function() {
-                $scope.$destroy();
-            }, 0);
-        }
-    }
-});
+//angular.module('module.qa').directive('ngEnter', function () {
+//    return function (scope, element, attrs) {
+//        element.bind("keydown keypress", function (event) {
+//            if (event.which === 13) {
+//                scope.$apply(function () {
+//                    scope.$eval(attrs.ngEnter);
+//                });
+
+//                event.preventDefault();
+//            }
+//        });
+//    };
+//});

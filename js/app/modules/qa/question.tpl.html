@@ -7,7 +7,7 @@
             </div>
 			<div class="col-md-6 column">
                 <div class="lead">{{question.title}}</div>
-                <div class="explanation" ng-bind-html="question.explanation | checkNewlines"></div>
+                <div class="description" ng-bind-html="question.description | checkNewlines"></div>
 			</div>
 			<div class="col-md-5 column">		
 				<div class="row">
@@ -142,22 +142,12 @@
                 </div>
             </div>
             <!-- comment begin -->
-            <div class="row clearfix">
+            <div class="row clearfix" ng-repeat="comment in answer.comments">
                 <div class="col-md-2 column hidden-sm hidden-xs">
                     &nbsp;
                 </div>
                 <div class="col-md-8 column answer-comment">
-                    <div>Lorem ipsum dolor sit amet, consetetur sadipscing elitr <span>- <a href="#">User1</a> 13/04/2013 12:30</span></div>
-                </div>
-            </div>
-            <!-- comment end -->
-            <!-- comment begin -->
-            <div class="row clearfix">
-                <div class="col-md-2 column hidden-sm hidden-xs">
-                    &nbsp;
-                </div>
-                <div class="col-md-8 column answer-comment">
-                    <div>Lorem ipsum dolor sit amet, consetetur sadipscing elitr <span>- <a href="#">User1</a> 13/04/2013 12:30</span></div>
+                    <div>{{comment}}</div>
                 </div>
             </div>
             <!-- comment end -->
@@ -165,8 +155,8 @@
                 <div class="col-md-2 column hidden-sm hidden-xs">
                     &nbsp;
                 </div>
-                <div class="col-md-10 column">
-                    <div><a href="#">add a comment</a></div>
+                <div class="col-md-8 column">
+                    <textarea ng-model="answer.newComment" class="form-control" rows="1" placeholder="Add a comment" ng-enter="addComment(answer)"></textarea>
                 </div>
             </div>
         </div>
@@ -190,7 +180,7 @@
 			
 				<div class="row">
 					<div class="col-md-12 column">
-						<textarea ng-model="newAnswer.content" class="form-control thread-input-group" rows="5" placeholder="Add your answer"></textarea>
+						<textarea ng-model="newAnswer.content" class="form-control" rows="5" placeholder="Add your answer"></textarea>
 					</div>
 				</div>
 				

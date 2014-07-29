@@ -30,7 +30,7 @@
 					
 					<div class="row">
 						<div class="col-md-12 column">
-							<textarea class="form-control" rows="5" placeholder="Enter explanation of your {{newThread.type.label}}" ng-model="newThread.explanation"></textarea>
+                            <textarea class="form-control" rows="5" placeholder="Enter explanation of your {{newThread.type.label}}" ng-model="newThread.description"></textarea>
 						</div>
 					</div>
 					
@@ -96,21 +96,24 @@
 	</div>		
 			
 	<div class="row clearfix" ng-repeat="thread in threadList | filter:{ title:searchString }">
-		<div class="col-md-2 column hidden-xs">
+        <div class="col-md-1 column hidden-sm hidden-xs">
+            <div class="icon-large" ng-class="(thread.type == THREAD_TYPE.question) ? 'icon-question-large' : ((thread.type == THREAD_TYPE.discussion) ? 'icon-discussion-large' : ((thread.type == THREAD_TYPE.chat) ? 'icon-chat-large' : ((thread.type == 'answered') ? 'icon-answered-large' : '')))">
+             </div>
+        </div>
+		
+        <div class="col-md-2 column hidden-sm hidden-xs">
 
-			<div class="thread-statistic-box hidden-sm hidden-xs">
-                <!--<div class="icon-large" ng-class="(thread.type == THREAD_TYPE.question) ? 'icon-question-large' : ((thread.type == THREAD_TYPE.discussion) ? 'icon-discussion-large' : ((thread.type == THREAD_TYPE.chat) ? 'icon-chat-large' : ((thread.type == 'answered') ? 'icon-answered-large' : '')))">
-                </div>-->
+            <div class="thread-statistic-box">
                 <!--<div>{{35}} {{thread.type == THREAD_TYPE.question ? 'votes' : (thread.type == THREAD_TYPE.discussion ? 'likes' : (thread.type == THREAD_TYPE.chat ? 'members' : ''))}}</div>-->
                 <div>{{40}} have this question</div>
                 <div class="text-muted">{{11}} {{thread.type == THREAD_TYPE.question ? 'answers' : (thread.type == THREAD_TYPE.discussion ? 'opinions' : (thread.type == THREAD_TYPE.chat ? 'messages' : ''))}}</div>
                 <div class="text-muted">{{120}} views</div>
-			</div>
-		</div>
-		<div class="col-md-10 column">
+            </div>
+        </div>
+		<div class="col-md-9 column">
 			<div class="row">
 				<div class="col-md-12 column">
-					<a class="lead" ng-click="loadDetailPage(thread)">
+					<a class="lead" ng-click="openThread(thread)">
 						{{thread.title}}
 					</a>
 					<span>&nbsp;&nbsp;</span>

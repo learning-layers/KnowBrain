@@ -1,0 +1,34 @@
+<!-- chat-box -->
+<div class="chat-box" ng-show="state !== CHAT_STATE.closed">
+    <div class="header">
+        {{headerTitle}}
+        <div class="close-btn" ng-click="state = CHAT_STATE.closed">&nbsp;</div>
+    </div>
+    <div>
+        <div>
+            <input ng-model="userFilter" ng-show="state === CHAT_STATE.init" ng-change="showUserChoice()" type="text" placeholder="To:" maxlength="100" />
+        </div>
+        <div class="user-choice" ng-show="userChoiceIsVisible">
+            <div class="user" ng-click="setSharedUser(user)" ng-repeat="user in users | filter:{ label:userFilter } | limitTo:4">
+                <div class="icon-user-small icon-small">
+                </div>
+                <div class="icon-attached">
+                    <div>{{user.label}}</div>
+                </div>
+            </div>
+        </div>
+        <div class="message-box">
+            <div ng-repeat="message in messages" class="message-row">
+                <div class="icon-user-small icon-small" ng-hide="message.author === myUser.id">
+                </div>
+                <div class="icon-attached message" ng-class="(message.author === myUser.id ? 'my-own' : '')">
+                    {{message.content}}
+                </div>
+            </div>
+        </div>
+        <div>
+            <textarea ng-model="newMessage.content" ng-enter="sendMessage()" ng-show="sharedUser !== null" type="text" placeholder="" maxlength="100" />
+        </div>
+    </div>
+</div>
+<!-- chat-box end -->

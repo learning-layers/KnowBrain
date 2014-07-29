@@ -38,12 +38,12 @@ angular.module('module.qa').constant('THREAD_ENTRY_TYPE', {answer:{enum:'qaEntry
 angular.module('module.qa').factory('Thread', ['UriToolbox', function (UriToolbox) {
  		
   // Constructor
-  function Thread(id, author_id, type, title, explanation, entity_id, creationTime) {
+    function Thread(id, author_id, type, title, description, entity_id, creationTime) {
     // Public properties
 		this.id = id;
     this.type = type;
 		this.title = title;
-		this.explanation = explanation;
+		this.description = description;
 		this.entityId = entity_id;
 		this.entries = new Array();
 		this.creationTime = new Date(creationTime);
@@ -76,6 +76,7 @@ angular.module('module.qa').factory('ThreadEntry', function () {
 		this.author = null;
 		this.tags = new Array();
 		this.attachments = new Array();
+		this.comments = new Array();
   }
 	
 	// Public method
@@ -229,7 +230,7 @@ angular.module('module.qa').service("qaService", ['$q', '$rootScope','UserServic
 			true,
 			thread.type.enum,
 			thread.title,
-			thread.explanation,
+			thread.description,
 			null,
 			attachmentIdList
 			);
@@ -275,6 +276,28 @@ angular.module('module.qa').service("qaService", ['$q', '$rootScope','UserServic
 			);
 
 		return defer.promise;     
+	};
+
+	this.addNewComment = function (answer) {
+	    var defer = $q.defer();
+
+	    new SSEntityUpdate(
+			function (result) {
+			    defer.resolve(answer)
+			},
+			function (error) {
+			    console.log(error);
+			    defer.reject(error);
+			},
+			UserSrv.getUser(),
+			UserSrv.getKey(),
+			answer.id,
+			null,
+			null,
+            answer.comments
+			);
+
+	    return defer.promise;
 	};
 	
 	this.uploadAttachments = function(object){
@@ -427,7 +450,12 @@ angular.module('module.qa').service("qaService", ['$q', '$rootScope','UserServic
 		var promiseListEntryAuthor = [];
 		
 		angular.forEach(entries, function(value, key){
-			var entry = new ThreadEntry(value.id, value.author, getThreadEntryTypeByEnum(value.type), value.content, value.pos, value.timestamp);
+		    var entry = new ThreadEntry(value.id, value.author, getThreadEntryTypeByEnum(value.type), value.content, value.pos, value.timestamp);
+
+		    if (value.comments != null) {
+		        entry.comments = value.comments;
+		    }
+		    
 			thread.entries.push(entry);
 			
 			getAttachmentDetailsSync(entry, value.attachedEntities);
@@ -542,7 +570,7 @@ angular.module('module.qa').service("qaService", ['$q', '$rootScope','UserServic
 		var deferThreadList = $q.defer();
 		
 		var keywordList = thread.title.split(' ');
-		keywordList = keywordList.concat(thread.explanation.split(' '));
+		keywordList = keywordList.concat(thread.description.split(' '));
 		
 		new SSSearch(
 			function(result){
