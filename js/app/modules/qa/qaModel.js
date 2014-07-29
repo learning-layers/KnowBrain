@@ -618,5 +618,9 @@ angular.module('module.qa').service("qaService", ['$q', '$rootScope','UserServic
 
 		return deferThreadList.promise;  
 	};
+
+	//this.getRandomNumber = function (max) {
+	//    return Math.floor((Math.random() * max) + 1);
+	//}
 			
 }]);

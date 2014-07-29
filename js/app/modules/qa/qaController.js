@@ -72,12 +72,7 @@ angular.module('module.qa').controller("qaController", ['$scope', '$state', '$q'
 		{
 			$state.transitionTo('app.qa.' + thread.type.enum, { id: UriToolbox.extractUriPathnameHash(thread.id)});
 		};
-				
-		$scope.getRandomNumber = function(max)
-		{
-			return Math.floor((Math.random() * max) + 1);
-		};
-		
+						
 		$scope.changeSelectedThreadListType = function(threadListType)
 		{
 			$scope.selectedThreadListType = threadListType;
@@ -215,12 +210,7 @@ angular.module('module.qa').controller('ModalSimilarThreadsController', ['$scope
 	{
 		$modalInstance.close(true);
 	};	
-		
-	$scope.getRandomNumber = function(max)
-	{
-		return Math.floor((Math.random() * max) + 1);
-	};	
-		
+				
 }]);
 
 angular.module('module.qa').controller('ModalAddAttachmentsController', ['$scope', '$modalInstance', '$state', 'qaService', function($scope, $modalInstance, $state, qaService){
