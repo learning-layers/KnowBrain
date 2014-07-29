@@ -194,7 +194,9 @@ angular.module('module.models').factory('BaseModel', ['$q', '$rootScope', 'UserS
       addNewDisc,
       type,
       label,
-      "some explanation");
+      "some explanation",
+      new Array(), //users
+      new Array()); //entities
 
       return defer.promise;
     },
@@ -295,10 +297,10 @@ angular.module('module.models').factory('CollectionModel', ['$q', '$rootScope','
     var self = this;
 
     new SSFileUpload(
-      function(parentUri,fileUri,fileName){
+      function(fileUri,fileName){
         var entry = new EntityModel();
 
-        entry.init({id:fileUri, label:fileName, parentColl: parentUri, space: self.space, type: ENTITY_TYPES.file});
+        entry.init({id:fileUri, label:fileName, parentColl: self.id, space: self.space, type: ENTITY_TYPES.file});
         entry.init({uriPathnameHash: UriToolbox.extractUriPathnameHash(fileUri)});
 
         defer.resolve(entry); 
@@ -310,8 +312,7 @@ angular.module('module.models').factory('CollectionModel', ['$q', '$rootScope','
       },
       UserSrv.getUser(),
       UserSrv.getKey(),
-      file,
-      this.id
+      file
       );
 
     return defer.promise;
@@ -811,9 +812,11 @@ angular.module('module.models').service("TagFetchService", ['$q', '$rootScope','
       },
       UserSrv.getUser(),
       UserSrv.getKey(), 
+      null,
       null, 
       null, 
-      SPACE_ENUM.private
+      SPACE_ENUM.private,
+      null
       );
 
     return defer.promise;  
