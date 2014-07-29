@@ -57,41 +57,7 @@ angular.module('module.qa').factory('Thread', ['UriToolbox', function (UriToolbo
   Thread.prototype.getFormattedCreationTime = function () {
     return this.creationTime.toLocaleDateString() + ' ' + this.creationTime.toLocaleTimeString();
   };
- 
- /*
-  // Public method, assigned to prototype
-  User.prototype.getFullName = function () {
-    return this.firstName + ' ' + this.lastName;
-  };
- 
-  // Private property
-  var possibleRoles = ['admin', 'editor', 'guest'];
- 
-  // Private function
-  function checkRole(role) {
-    return possibleRoles.indexOf(role) !== -1;
-  }
- 
-  
-  // Static property
-  // Using copy to prevent modifications to private property
-  User.possibleRoles = angular.copy(possibleRoles);
- 
-  // Static method, assigned to class
-  // Instance ('this') is not available in static context
-  User.build = function (data) {
-    if (!checkRole(data.role)) {
-      return;
-    }
-    return new Person(
-      data.first_name,
-      data.last_name,
-      data.role,
-      Organisation.build(data.organisation) // another model
-    );
-  };
- */
-  // Return the constructor function
+
   return Thread;
 }])
 
@@ -122,17 +88,17 @@ angular.module('module.qa').factory('ThreadEntry', function () {
 
 angular.module('module.qa').factory('Tag', function () {
  		
-  // Constructor
-  function Tag(id, entity_id, label) {
+    // Constructor
+    function Tag(id, entity_id, label) {
     // Public properties
-		this.id = id;
-		this.entityId = entity_id;
-		this.label = label;
-		this.frequency = 0;
-		this.space = 'privateSpace';
-  }
+	    this.id = id;
+	    this.entityId = entity_id;
+	    this.label = label;
+	    this.frequency = 0;
+	    this.space = 'privateSpace';
+    }
 	
-	return Tag;
+    return Tag;
 })
 
 angular.module('module.qa').factory('Author', function () {
@@ -189,25 +155,25 @@ angular.module('module.qa').service("qaService", ['$q', '$rootScope','UserServic
 
         var defer = $q.defer();
 
-        setTimeout(function () {
-            object.author = new Author('test1');
-            defer.resolve(object);
-        }, 10);
+        //setTimeout(function () {
+        //    object.author = new Author('test1');
+        //    defer.resolve(object);
+        //}, 10);
 
-		//new SSEntityGet(
-		//	function(result){
-		//		var author = new Author(result.entity.label);
-		//		object.author = author;
-		//		defer.resolve(object);
-		//	},
-		//	function(error){
-		//		console.log(error);
-		//		defer.reject(error);
-		//	},
-		//	UserSrv.getUser(),
-		//	UserSrv.getKey(),
-		//	object.authorId
-		//	);
+		new SSEntityGet(
+			function(result){
+				var author = new Author(result.entity.label);
+				object.author = author;
+				defer.resolve(object);
+			},
+			function(error){
+				console.log(error);
+				defer.reject(error);
+			},
+			UserSrv.getUser(),
+			UserSrv.getKey(),
+			object.authorId
+			);
 
 		return defer.promise;     
 	};
@@ -382,34 +348,34 @@ angular.module('module.qa').service("qaService", ['$q', '$rootScope','UserServic
 	var getTags = function(object){
 	    var defer = $q.defer();
 
-	    setTimeout(function () {
-	        object.tags.push(new Tag('id','entityId','tag1'));
-	        object.tags.push(new Tag('id', 'entityId', 'tag2'));
-	        defer.resolve(object);
-	    }, 10);
+	    //setTimeout(function () {
+	    //    object.tags.push(new Tag('id','entityId','tag1'));
+	    //    object.tags.push(new Tag('id', 'entityId', 'tag2'));
+	    //    defer.resolve(object);
+	    //}, 10);
 
-		//new SSTagsGet(
-		//	function(result){
-		//		angular.forEach(result.tags, function(value, key){
-		//			var tag = new Tag(value.id, value.entity, value.label);
-		//			tag.space = value.space;
+		new SSTagsGet(
+			function(result){
+				angular.forEach(result.tags, function(value, key){
+					var tag = new Tag(value.id, value.entity, value.label);
+					tag.space = value.space;
 					
-		//			object.tags.push(tag);
-		//		});
-		//		defer.resolve(object);
-		//	},
-		//	function(error){
-		//		console.log(error);
-		//		defer.reject(error);
-		//	},
-		//	UserSrv.getUser(),
-		//	UserSrv.getKey(),
-		//	null,
-		//	[object.id],
-		//	null,
-		//	null,
-		//	null
-		//	);
+					object.tags.push(tag);
+				});
+				defer.resolve(object);
+			},
+			function(error){
+				console.log(error);
+				defer.reject(error);
+			},
+			UserSrv.getUser(),
+			UserSrv.getKey(),
+			null,
+			[object.id],
+			null,
+			null,
+			null
+			);
 
 		return defer.promise;     
 	};

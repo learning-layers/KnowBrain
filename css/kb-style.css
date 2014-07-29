@@ -861,3 +861,34 @@ body {
 .img-rounded {
     border-radius:6px;
 }
+
+/* Main Navbar Custom */
+.nav .dropdown .menu-messages {
+    width: 250px;
+}
+
+.nav .dropdown .dropdown-row {
+    padding: 10px;
+    cursor: pointer;
+}
+
+.nav .dropdown .dropdown-row:hover {
+    background:#e7e7e7;
+}
+
+.nav .dropdown .dropdown-header {
+    font-size:smaller;
+    padding: 0px;
+    height: 15px;
+}
+
+.nav .dropdown-menu .dropdown-header a {
+    padding-left: 10px;
+    padding-right: 10px;
+    color: #428bca;
+}
+
+.nav .dropdown-menu .dropdown-header .right {
+    position:absolute;
+    right:0px;
+}

@@ -35,27 +35,15 @@ angular.module('module.qa').config(function($stateProvider) {
     $stateProvider
         .state('app.qa', {
             url:'/qa',
-            controller: 'Controller',
+            controller: 'qaController',
             templateUrl: MODULES_PREFIX + '/qa/qa.tpl.html'
         })
 				
-				.state('app.qa.qa', {
+		.state('app.qa.qa', {
             url:'/qa/:id',
-            controller: 'QuestionController',
+            controller: 'questionController',
             templateUrl: MODULES_PREFIX + '/qa/question.tpl.html'
         })
-				
-				.state('app.qa.disc', {
-            url:'/disc/:id',
-            controller: 'DiscussionController',
-            templateUrl: MODULES_PREFIX + '/qa/discussion.tpl.html'
-        })
-				
-				.state('app.qa.chat', {
-            url:'/chat/:id',
-            controller: 'ChatController',
-            templateUrl: MODULES_PREFIX + '/qa/chat.tpl.html'
-        });
 
 });
 
@@ -67,7 +55,7 @@ angular.module('module.qa').constant('THREAD_LIST_TYPE', {own:'My own', newest:'
 /**
 * CONTROLLER
 */
-angular.module('module.qa').controller("Controller", ['$scope', '$state', '$q', '$modal', '$dialogs', '$filter', 'UserService', 'UriToolbox', 'qaService', 'Thread','THREAD_TYPE', 'THREAD_LIST_TYPE', 'Tag', function($scope, $state, $q, $modal, $dialogs, $filter, UserSrv, UriToolbox, qaService, Thread, THREAD_TYPE, THREAD_LIST_TYPE, Tag){
+angular.module('module.qa').controller("qaController", ['$scope', '$state', '$q', '$modal', '$dialogs', '$filter', 'UserService', 'UriToolbox', 'qaService', 'Thread','THREAD_TYPE', 'THREAD_LIST_TYPE', 'Tag', function($scope, $state, $q, $modal, $dialogs, $filter, UserSrv, UriToolbox, qaService, Thread, THREAD_TYPE, THREAD_LIST_TYPE, Tag){
 		
 		$scope.THREAD_TYPE = THREAD_TYPE;
 		$scope.newThread = new Thread(null, null, THREAD_TYPE.question, null, null, null, null);
@@ -99,12 +87,12 @@ angular.module('module.qa').controller("Controller", ['$scope', '$state', '$q', 
 		
 		$scope.onTagAdded = function($tag, object)
 		{
-			object.tags.push(new Tag($tag.label));
+			object.tags.push(new Tag(null, null, $tag.label));
 		};
 		
 		$scope.onTagRemoved = function($tag, object)
 		{
-			object.tags = null;
+			object.tags = [];
 			var index = 0;
 			angular.forEach(object.tags, function(value, key){
 				index++;
@@ -210,7 +198,7 @@ angular.module('module.qa').controller("Controller", ['$scope', '$state', '$q', 
 
 angular.module('module.qa').controller('ModalSimilarThreadsController', ['$scope', '$modalInstance', '$state', 'qaService', 'UriToolbox', 'thread', 'similarThreadList', function($scope, $modalInstance, $state, qaService, UriToolbox, thread, similarThreadList){
 
-	$scope.thread = thread;	
+    $scope.thread = thread;
 	$scope.similarThreadList = similarThreadList;
 	
 	$scope.loadDetailPage = function(thread)
@@ -324,7 +312,7 @@ angular.module('module.qa').controller('ModalAddAttachmentsController', ['$scope
 	
 }]);
 
-angular.module('module.qa').controller("QuestionController", ['$scope', '$state', '$stateParams', '$q', '$filter', 'UserService', 'qaService', 'ThreadEntry', 'THREAD_ENTRY_TYPE', 'UriToolbox', function($scope, $state, $stateParams, $q, $filter, UserSrv, qaService, ThreadEntry, THREAD_ENTRY_TYPE, UriToolbox){
+angular.module('module.qa').controller("questionController", ['$scope', '$state', '$stateParams', '$q', '$filter', 'UserService', 'qaService', 'ThreadEntry', 'THREAD_ENTRY_TYPE', 'UriToolbox', function($scope, $state, $stateParams, $q, $filter, UserSrv, qaService, ThreadEntry, THREAD_ENTRY_TYPE, UriToolbox){
 
 	$scope.question = null;
 	$scope.similarThreadList = null;
@@ -375,38 +363,6 @@ angular.module('module.qa').controller("QuestionController", ['$scope', '$state'
 	loadThreadWithEntries(UserSrv.getUserSpace() + "/" + $stateParams.id)
 									.then(loadSimilarThreadList);
 	
-}]);
-
-angular.module('module.qa').controller("DiscussionController", ['$scope', '$state', '$stateParams', '$q', '$filter', 'UserService', 'qaService', 'Thread','THREAD_TYPE', function($scope, $state, $stateParams, $q, $filter, UserSrv, qaService, Thread, THREAD_TYPE){
-
-	$scope.discussion = null;
-	
-	var loadThreadWithEntries = function(id) 
-	{
-		return qaService
-						.getThreadWithEntries(id)
-						.then(function(result) {
-							$scope.discussion = result;
-						});
-	};
-	
-	loadThreadWithEntries(UserSrv.getUserSpace() + "/" + $stateParams.id);
-}]);
-
-angular.module('module.qa').controller("ChatController", ['$scope', '$state', '$stateParams', '$q', '$filter', 'UserService', 'qaService', 'Thread','THREAD_TYPE', function($scope, $state, $stateParams, $q, $filter, UserSrv, qaService, Thread, THREAD_TYPE){
-
-	$scope.chat = null;
-	
-	var loadThreadWithEntries = function(id) 
-	{
-		return qaService
-						.getThreadWithEntries(id)
-						.then(function(result) {
-							$scope.chat = result;
-						});
-	};
-	
-	loadThreadWithEntries(UserSrv.getUserSpace() + "/" + $stateParams.id);
 }]);
 
 /**

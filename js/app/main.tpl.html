@@ -77,14 +77,23 @@
                         <li><a href="#">see all your notifications</a></li>
                     </ul>
                 </li>
-                <li>
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" ng-click="getMyChats()">
                         <span class="glyphicon glyphicon-envelope"></span>
                     </a>
-                    <ul class="dropdown-menu">
-                        <li><a href="#">no new messages</a></li>
+                    <ul class="dropdown-menu menu-messages">
+                        <li ng-click="newChat()" class="dropdown-header"><a class="right">new message</a></li>
                         <li class="divider"></li>
-                        <li><a href="#">see all inbox items</a></li>
+                        <li ng-repeat="chat in chats" class="dropdown-row" ng-click="openChat(chat)">
+                            <div class="icon-user-small icon-small">
+                            </div>
+                            <div class="icon-attached">
+                                <div>chat</div>
+                                <div class="text-muted">{{chat.label}}</div>
+                            </div>
+                        </li>
+                        <!--<li class="divider"></li>
+        <li><a href="#">show all</a></li>-->
                     </ul>
                 </li>
                 <li class="divider"></li>
@@ -113,3 +122,4 @@
     <div id="context-info" data-ui-view="context-info"></div>
     <div class="clearfix"></div>-->
 </div>
+

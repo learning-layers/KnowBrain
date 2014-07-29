@@ -1,4 +1,4 @@
-<!--
+﻿<!--
 - Code contributed to the Learning Layers project
 - http://www.learning-layers.eu
 - Development is partly funded by the FP7 Programme of the European Commission under
@@ -45,6 +45,7 @@
 	<!-- angular -->
 	<script src="js/vendors/angular-1.2.13/angular.min.js"></script>
 	<script src="js/vendors/angular-1.2.13/angular-sanitize.min.js"></script>
+    <script src="js/vendors/angular-1.2.13/angular-animate.min.js"></script>
 
 	<!-- vendors -->
 	<script src="js/vendors/angular-ui-router/angular-ui-router.js" type="text/javascript"></script>
@@ -69,6 +70,8 @@
 	<script src="js/app/modules/dialog/dialogs.js" type="text/javascript"></script>
 	<script src="js/app/modules/qa/qaController.js" type="text/javascript"></script>
 	<script src="js/app/modules/qa/qaModel.js" type="text/javascript"></script>
+    <script src="js/app/modules/chat/chatController.js" type="text/javascript"></script>
+    <script src="js/app/modules/chat/chatModel.js" type="text/javascript"></script>
 	<script src="js/app/modules/social/socialModule.js" type="text/javascript"></script>
 	<script src="js/app/modules/entity/entityModule.js" type="text/javascript"></script>
     <script src="js/app/modules/group/groupModule.js" type="text/javascript"></script>
@@ -100,5 +103,6 @@
 </head>
 <body>
 	<div ui-view class="kb-fluid-container container" ></div>
+    <div ui-view="chat"></div>
 </body>
 </html>
