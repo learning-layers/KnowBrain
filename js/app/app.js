@@ -96,6 +96,6 @@ angular.module('knowbrain').controller('AppController', ['$scope', '$location', 
 
 }]);
 
-angular.module('knowbrain').controller('MainController', [function(){
-
+angular.module('knowbrain').controller('MainController', ['$scope', 'UserService', function($scope, UserSrv){
+    $scope.user = UserSrv.getUser();
 }]);

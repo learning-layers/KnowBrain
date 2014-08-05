@@ -859,7 +859,7 @@ angular.module('module.models').service('UserModel', ['$q', '$rootScope','UserSe
 }]);
 
 angular.module('module.models').service("GroupFetchService", ['$q','UserService', function($q, UserSrv){
-    this.getUserGroups = function() {
+    this.getUserGroups = function(user) {
         var defer = $q.defer();
         var self = this;
 
