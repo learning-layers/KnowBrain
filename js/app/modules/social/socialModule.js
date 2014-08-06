@@ -35,7 +35,7 @@ angular.module('module.social').config(function($stateProvider) {
 
     $stateProvider
         .state('app.social', {
-             url:'/social',
+             url:'/social/*profileId',
             abstract:true,
             controller: 'SocialController',
             templateUrl: MODULES_PREFIX + '/social/social.tpl.html'
@@ -57,15 +57,28 @@ angular.module('module.social').config(function($stateProvider) {
 /**
 * CONTROLLER
 */
-angular.module('module.social').controller("SocialController", ['$scope', function($scope){
+angular.module('module.social').controller("SocialController", ['$scope', '$stateParams', 'UserService', 'UserFetchService', function($scope, $stateParams, UserSrv, UserFetchService){
 
+    $scope.profileId = $stateParams.profileId;
+    
+    var promise = UserFetchService.getUser($scope.profileId);
+    promise.then(function(result) {
+        $scope.label = result.desc.label;
+    });
+    
+    var promise = UserFetchService.getAllUsers();
+    promise.then(function(result) {
+        console.log(result);
+    });
+    
+    $scope.userId = UserSrv.getUser();
 }]);
 
 angular.module('module.social').controller("GroupsController", ['$scope', '$dialogs', 'GroupFetchService', function($scope, $dialogs, GroupFetchService){
     
     $scope.groups = [];
     
-    var promise = GroupFetchService.getUserGroups();
+    var promise = GroupFetchService.getUserGroups($scope.profile);
     
     promise.then(function(result){
         $scope.groups = result.circles;
@@ -87,5 +100,46 @@ angular.module('module.social').controller("GroupsController", ['$scope', '$dial
 
 angular.module('module.social').controller("FriendsController", ['$scope',function($scope){
     this.groups = "To be implemented";
+}]);
+
+angular.module('module.social').service("UserFetchService", ['$q', 'UserService', function($q, UserSrv) {
+    this.getUser = function(userId){
+        var defer = $q.defer();
+        
+        new SSEntityDescGet(function(result) {
+            defer.resolve(result);
+        }, function(error) {
+            
+        },
+        UserSrv.getUser(),
+        UserSrv.getKey(),
+        userId,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null
+        );
+        
+        return defer.promise;
+    },
+    
+    this.getAllUsers = function(){
+        var defer = $q.defer();
+        
+        new SSUserAll(function(result) {
+            defer.resolve(result);
+        }, function(error) {
+            
+        },
+        UserSrv.getUser(),
+        UserSrv.getKey()
+        );
+        
+        return defer.promise;
+    }
+    
+
 }]);
 

@@ -1,4 +1,4 @@
-/**
+﻿/**
 * Code contributed to the Learning Layers project
 * http://www.learning-layers.eu
 * Development is partly funded by the FP7 Programme of the European Commission under
@@ -22,42 +22,32 @@
 @charset "UTF-8";
 
 /* QA MODULE CSS DEFINITONS */
-
-/* Thread input area */
-
-.new-thread {
-	margin-bottom: 4em;
+.row {
+    margin-bottom: 10px;
 }
 
-.thread-input-group {
-	margin-bottom: 10px;
+a:hover {
+    text-decoration:none;
+    cursor:pointer;
+    color: #152C40;
 }
 
-.help {
-	height: 310px;
-	padding: 22px;
+.qa-header {
+    margin-bottom: 60px;
 }
 
-.btn-post {
-	margin-top: 20px;
+.lead {
+    margin:0px 0px 10px 0px;
+    vertical-align: middle;
 }
 
-.glyphicon-question{
-	width: 14px;
-	height: 14px;
-	background-image: url('../../../../images/qa/question_14x14.png');
+.underline {
+    border-bottom:1px solid #eee;
+    margin-bottom:10px;
 }
 
-.glyphicon-discussion{
-	width: 14px;
-	height: 14px;
-	background-image: url('../../../../images/qa/discussion_14x14.png');
-}
-
-.glyphicon-chat{
-	width: 14px;
-	height: 14px;
-	background-image: url('../../../../images/qa/chat_14x14.png');
+.stretch {
+	width: 100%;
 }
 
 .add-attachment-box {
@@ -65,12 +55,12 @@
 	color: #DBDBDB;
 	cursor: pointer;
 	text-align: center;
-	padding-top: 12px;
+	padding-top: 20px;
 	font-weight: bold;
 	width: 100%;
 	height: 115px;
 	margin-right: 5px;
-	margin-top: 0px;
+    margin-bottom: 10px;
 	z-index: 100;
 }
 
@@ -81,15 +71,11 @@
 
 .add-attachment-box div {
   width: 100%;
-  margin-top: 8px; 
 }
 
-/* Thread list area */
-
-.thread-type-icon {
-	width:80px;
-	height:80px;
-	float:left;
+.add-attachment-icon {
+    width: 100%;
+    font-size: 45px;
 }
 
 .rounded {
@@ -106,96 +92,135 @@
 	border-bottom-right-radius:4px;
 }
 
-.thread-icon {
-	width:32px;
-	height:32px;
-	float:left;
-	margin-top:4px;
+.glyphicon-question{
+	width: 14px;
+	height: 14px;
+	background-image: url(../../../../images/qa/question_14x14.png);
 }
 
-.icon-user{
-	background-image: url('../../../../images/qa/user-default_32x32.png');
+.glyphicon-discussion{
+	width: 14px;
+	height: 14px;
+	background-image: url(../../../../images/qa/discussion_14x14.png);
 }
 
-.icon-entity{
-	background-image: url('../../../../images/qa/entity_32x32.png');
+.glyphicon-chat{
+	width: 14px;
+	height: 14px;
+	background-image: url(../../../../images/qa/chat_14x14.png);
 }
 
-.icon-question {
-	background-image: url('../../../../images/qa/question_80x80.png');
+.icon-small {
+    display:inline-block;
+    vertical-align:middle;
+	width: 32px;
+	height: 32px;
+	margin-right: 4px;
 }
 
-.icon-discussion {
-	background-image: url('../../../../images/qa/discussion_80x80.png');
+.icon-medium {
+    display:inline-block;
+    vertical-align:middle;
+	width:64px;
+	height:64px;
+	margin-right:15px;
 }
 
-.icon-chat {
-	background-image: url('../../../../images/qa/chat_80x80.png');
-}
-
-.icon-answered {
-	background-image: url('../../../../images/qa/answered_80x80.png');
-}
-
-div.thread-statistic {
-	width:150px;
+.icon-large {
+    display:inline-block;
+    vertical-align:middle;
+	width:80px;
 	height:80px;
-	float:left;
-	border-top:solid 1px #ddd;
-	border-bottom:solid 1px #ddd;
-	border-right:solid 1px #ddd;
-	padding-left:20px;
-	padding-top:3px;
+	margin-right:15px;
 }
 
-p.thread-statistic {
-	margin: 0;
-	padding: 0;
-	cursor: default;
+.icon-user-small {
+	background-image: url(../../../../images/qa/user-default_32x32.png);
 }
 
-p.thread-author {
-	margin: 0px 15px 0px 5px;
-	padding: 0;
+.icon-user-medium {
+	background-image: url(../../../../images/qa/user-default_64x64.png);
 }
 
-div.thread-author{
-	float:left;
+.icon-entity-small {
+	background-image: url(../../../../images/qa/entity_32x32.png);
 }
 
-div.thread {
-	margin-bottom: 40px;
+.icon-file-small {
+	background-image: url(../../../../images/qa/file_32x32.png);
 }
 
-.thread-title {
-	cursor: pointer;
+.icon-question-medium {
+	background-image: url(../../../../images/qa/question_64x64.png);
 }
 
-p.thread-title {
-	margin: 0px 0px 11px 0px;
+.icon-question-large {
+	background-image: url(../../../../images/qa/question_80x80.png);
 }
 
-.box {
-	margin-top: 10px;
-	margin-bottom: 30px;
+.icon-discussion-large {
+	background-image: url(../../../../images/qa/discussion_80x80.png);
+}
+
+.icon-chat-large {
+	background-image: url(../../../../images/qa/chat_80x80.png);
+}
+
+.icon-answered-large {
+	background-image: url(../../../../images/qa/answered_80x80.png);
+}
+
+.icon-answered-medium {
+	background-image: url(../../../../images/qa/answered_64x64.png);
+}
+
+.icon-up-small {
+    background-image: url(../../../../images/qa/up_32x32.png);
+}
+
+.icon-down-small {
+    background-image: url(../../../../images/qa/down_32x32.png);
+}
+
+div.icon-attached {
+    display:inline-block;
+    margin-right:15px;
+    vertical-align:middle;
+}
+
+div.thread-statistic-box {
+	border:solid 1px #ddd;
+    padding-left: 15px;
+    padding-top: 8px;
+    padding-bottom: 8px;
+}
+
+.list-header-box {
 	background: #f5f5f5;
-	padding: 20px 20px 20px 20px;
 	border: 1px solid #e3e3e3;
+    padding-top: 20px;
+    padding-left: 15px;
+    padding-bottom: 15px;
 }
 
-.thread-list-header {
-	margin-top: 5px;
-	margin-bottom: 0;
-	margin-right: 20px;
-	cursor: default;
+.list-header-box input {
+    margin-bottom: 6px;
 }
 
-.thread-list-type {
-	cursor: default;
+.qa-tag {
+    display: inline-block;
+	font-size:smaller;
+	background: #428BCA;
+	border-radius: 0px;
+	padding-left: 8px;
+	padding-right: 8px;
+	padding-top: 5px;
+    padding-bottom: 5px;
+	margin-right: 5px;
 }
 
-.stretch {
-	width: 100%;
+.qa-tag a {
+	color: white;
 }
 
 /* Modals */
@@ -205,22 +230,23 @@ p.thread-title {
 }
 
 /* Question detail page */
-.detail-icon {
-	margin-right: 20px;
-	margin-bottom: 10px;
+.description {
+    margin-bottom: 10px;
 }
 
-.detail-title {
-	margin-top: 0px;
+.answer {
+    padding-bottom: 40px;
 }
 
-.detail-explanation {
-	white-space: pre;
-	word-break: break-all;
-	word-wrap: break-word;
+.answer-comment {
+	color: #bbb;
+	border-top: 1px dotted #ddd;
+    padding-top: 8px;
 }
 
-.detail-like-btn {
-	width: 80px;
-	height: 38px;
+.related {
+    margin-bottom: 40px;
 }
+
+
+

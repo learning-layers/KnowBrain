@@ -134,14 +134,15 @@ angular.module('module.collection').controller("CollectionController", [
     $scope.cumulatedTagsLoading;
 		
   /**
-  * This events are used to adjust body padding-top, required cause of a growing navbar (breadcrumbs)
+  * This events are used to adjust body 
+, required cause of a growing navbar (breadcrumbs)
   */
   $scope.$on('ngRepeatFinished', function(ngRepeatFinishedEvent) {
-    $('#path').css('padding-top', parseInt($('#path').css("margin-top")) + parseInt($('#kb-navbar').css("height")) - 9);
+    //$('#path').css('padding-top', parseInt($('#path').css("margin-top")) + parseInt($('#kb-navbar').css("height")) - 9);
   });
 
   $(window).resize(function() { 
-    $('#path').css('padding-top', parseInt($('#path').css("margin-top")) + parseInt($('#kb-navbar').css("height")) - 9);
+    //$('#path').css('padding-top', parseInt($('#path').css("margin-top")) + parseInt($('#kb-navbar').css("height")) - 9);
   }); 
 
   /**

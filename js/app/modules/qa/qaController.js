@@ -35,91 +35,75 @@ angular.module('module.qa').config(function($stateProvider) {
     $stateProvider
         .state('app.qa', {
             url:'/qa',
-            controller: 'Controller',
+            controller: 'qaController',
             templateUrl: MODULES_PREFIX + '/qa/qa.tpl.html'
         })
 				
-				.state('app.qa.qa', {
-            url:'/qa/:uri',
-            controller: 'QuestionController',
+		.state('app.qa.qa', {
+            url:'/qa/:id',
+            controller: 'questionController',
             templateUrl: MODULES_PREFIX + '/qa/question.tpl.html'
         })
-				
-				.state('app.qa.disc', {
-            url:'/disc/:uri',
-            controller: 'DiscussionController',
-            templateUrl: MODULES_PREFIX + '/qa/discussion.tpl.html'
-        })
-				
-				.state('app.qa.chat', {
-            url:'/chat/:uri',
-            controller: 'ChatController',
-            templateUrl: MODULES_PREFIX + '/qa/chat.tpl.html'
-        });
 
 });
 
 /**
 * Constants
 */
-angular.module('module.qa').constant('THREAD_LIST_TYPE', {top:'Top', newest:'Newest', unanswered:'Unanswered'});
+angular.module('module.qa').constant('THREAD_LIST_TYPE', {own:'My own', newest:'Newest', unanswered:'Unanswered'});
 
 /**
 * CONTROLLER
 */
-angular.module('module.qa').controller("Controller", ['$scope', '$state', '$q', '$modal', '$dialogs', '$filter', 'UserService', 'UriToolbox', 'qaService', 'Thread','THREAD_TYPE', 'THREAD_LIST_TYPE', function($scope, $state, $q, $modal, $dialogs, $filter, UserSrv, UriToolbox, qaService, Thread, THREAD_TYPE, THREAD_LIST_TYPE){
+angular.module('module.qa').controller("qaController", ['$scope', '$state', '$q', '$modal', '$dialogs', '$filter', 'UserService', 'sharedService', 'UriToolbox', 'qaService', 'Thread','THREAD_TYPE', 'THREAD_LIST_TYPE', 'Tag', function($scope, $state, $q, $modal, $dialogs, $filter, UserSrv, sharedService, UriToolbox, qaService, Thread, THREAD_TYPE, THREAD_LIST_TYPE, Tag){
 		
 		$scope.THREAD_TYPE = THREAD_TYPE;
-		$scope.newThread = new Thread(UserSrv.getUser(), THREAD_TYPE.question, '', '', null, null, null);
-		$scope.help = 'To post a question enter a title and an explanation.';
+		$scope.newThread = new Thread(null, null, THREAD_TYPE.question, null, null, null, null);
 		
 		$scope.threadList = null;
 		$scope.threadResponseLabel = "answer";
 		
 		$scope.THREAD_LIST_TYPE = THREAD_LIST_TYPE;
-		$scope.selectedThreadListType = THREAD_LIST_TYPE.top;	
-		$scope.threadListHeader = "Top Threads";
-		$scope.searchString = '';
+		$scope.selectedThreadListType = THREAD_LIST_TYPE.own;	
+		$scope.threadListHeader = "My own";
+		$scope.searchString = '';	
 						
+		var loadDetailPage = function(thread)
+		{
+			$state.transitionTo('app.qa.' + thread.type.enum, { id: UriToolbox.extractUriPathnameHash(thread.id)});
+		};
 						
-		$scope.loadDetailPage = function(thread)
-		{
-			$state.transitionTo('app.qa.' + thread.type.enum, { uri: UriToolbox.extractUriPathnameHash(thread.uri)});
-		};
-				
-		$scope.getRandomNumber = function(max)
-		{
-			return Math.floor((Math.random() * max) + 1);
-		};
-		
-		$scope.showHelp = function(focusedControl)
-		{
-			switch(focusedControl) {
-					case 'title':
-						$scope.help = "Your " + $scope.newThread.type.label + " title is the first thing another user sees. It should be clear, concise, and contain enough information so that others can see what it’s about at first glance";
-						break;
-					case 'explanation':
-						$scope.help = "Provide any details that other users might need to discuss your topic.";
-						break;
-					case 'tag':
-						$scope.help = "Enter tags, so other user can find your "+ $scope.newThread.type.label + " easier.";
-						break;
-					case 'btnQuestion':
-						$scope.help = "To post a " + $scope.newThread.type.label + " enter a title and an explanation.";
-						break;
-					case 'btnDiscussion':
-						$scope.help = "To start a " + $scope.newThread.type.label + " enter a title and an explanation.";
-						break;
-					case 'btnChat':
-						$scope.help = "To start a " + $scope.newThread.type.label + " enter a title.";;
-						break;
-			}
-		};
-		
 		$scope.changeSelectedThreadListType = function(threadListType)
 		{
 			$scope.selectedThreadListType = threadListType;
 		};
+		
+		$scope.tags = null;
+		
+		$scope.onTagAdded = function($tag, object)
+		{
+			object.tags.push(new Tag(null, null, $tag.label));
+		};
+		
+		$scope.onTagRemoved = function($tag, object)
+		{
+			object.tags = [];
+			var index = 0;
+			angular.forEach(object.tags, function(value, key){
+				index++;
+				if(value.label === $tag.label){
+					object.tags.splice(index, 1);
+					return;
+				}
+			});
+		};
+
+		$scope.onTagClicked = function(tag) {
+		    return qaService.getEntitiesForTag(tag)
+                   .then(function (result) {
+                       var test = result;
+                   })
+		}
 				
 		var loadThreadList = function() 
 		{
@@ -130,20 +114,8 @@ angular.module('module.qa').controller("Controller", ['$scope', '$state', '$q', 
 								return result;
 							});
 		};
-						
-		var loadAuthorDetails = function(threadList) 
-		{
-			angular.forEach(threadList, function(value, key){
-				qaService
-							.getAuthorDetails(value)
-							.then(function(result) {
-								value.author = result;
-								return value.author;
-							});
-			});
-		};
 		
-		$scope.postNewThread = function()
+		$scope.invokePostNewThread = function()
 		{
 			loadSimilarThreadList()
 				.then(openSimilarThreads);
@@ -152,26 +124,20 @@ angular.module('module.qa').controller("Controller", ['$scope', '$state', '$q', 
 		var loadSimilarThreadList = function() 
 		{
 			return qaService
-							.getAllThreads()
+							.getSimilarThreads($scope.newThread)
 							.then(function(result) {
 								return $filter('threadTypeFilter')(result, $scope.newThread.type);
 							});
 		};
 		
-		var addNewThread = function()
+		var postNewThread = function()
 		{
 			return qaService
-							.addNewThread($scope.newThread)
+							.uploadAttachments($scope.newThread)
+							.then(qaService.addNewThread)
 							.then(function(result) {
-								$scope.newThread.uri = result;
-								$scope.threadList.push($scope.newThread);
-	
-								var tmpList = new Array();
-								tmpList.push($scope.newThread);
-								loadAuthorDetails(tmpList);
-								
-								$scope.newThread = new Thread(UserSrv.getUser(), THREAD_TYPE.question, '', '', null, null, null);
-								
+								$scope.threadList.push(result);
+								$scope.newThread = new Thread(null, null, THREAD_TYPE.question, null, null, null, null);
 								return result;
 							});
 		};
@@ -191,7 +157,7 @@ angular.module('module.qa').controller("Controller", ['$scope', '$state', '$q', 
 
 				modalInstance.result.then(function (post) {
 					if(post) {
-						addNewThread();
+						postNewThread();
 					}
 				}, function () {
 					//$log.info('Modal dismissed at: ' + new Date());
@@ -199,41 +165,62 @@ angular.module('module.qa').controller("Controller", ['$scope', '$state', '$q', 
 			}
 			else
 			{
-				addNewThread();
+				postNewThread();
 			}
 		};
 		
-		$scope.openAddAttachments = function () {	
+		$scope.openAddAttachments = function (object) {	
 			var modalInstance = $modal.open({
 				templateUrl: MODULES_PREFIX + '/qa/modalAddAttachments.tpl.html',
 				controller: 'ModalAddAttachmentsController',
 				size: 'lg',
 				resolve: {
-					thread: function () { return $scope.newThread; }
+					
 				}
 			});
 
-			modalInstance.result.then(function () {
-
+			modalInstance.result.then(function (fileList) {
+				object.attachments = object.attachments.concat(fileList);
 			}, function () {
 				//$log.info('Modal dismissed at: ' + new Date());
 			});
 		};
 
+		$scope.addComment = function (answer) {
+		    answer.comments.push(answer.newComment);
+
+		    qaService.addNewComment(answer)
+                .then(function (result) {
+                    answer.newComment = null;
+                    var test = result;
+			    });
+		}
+
+		$scope.openThread = function(thread)
+		{
+		    switch (thread.type) {
+		        case THREAD_TYPE.question:
+		            loadDetailPage(thread);
+		            break;
+		        case THREAD_TYPE.chat:
+		            sharedService.prepareForBroadcast('openChatBox', thread);
+		            break;
+		    }
+		}
+
 		// load data
-		loadThreadList()
-			.then(loadAuthorDetails);		
+		loadThreadList();	
 			
 }]);
 
 angular.module('module.qa').controller('ModalSimilarThreadsController', ['$scope', '$modalInstance', '$state', 'qaService', 'UriToolbox', 'thread', 'similarThreadList', function($scope, $modalInstance, $state, qaService, UriToolbox, thread, similarThreadList){
 
-	$scope.thread = thread;	
+    $scope.thread = thread;
 	$scope.similarThreadList = similarThreadList;
 	
 	$scope.loadDetailPage = function(thread)
 	{
-		$state.transitionTo('app.qa.' + thread.type.enum, { uri: UriToolbox.extractUriPathnameHash(thread.uri)});
+		$state.transitionTo('app.qa.' + thread.type.enum, { id: UriToolbox.extractUriPathnameHash(thread.id)});
 		$modalInstance.close(false);
 	};
 
@@ -245,91 +232,149 @@ angular.module('module.qa').controller('ModalSimilarThreadsController', ['$scope
 	{
 		$modalInstance.close(true);
 	};	
-	
-	var loadAuthorDetails = function() 
-	{
-		angular.forEach($scope.similarThreadList, function(value, key){
-			qaService
-						.getAuthorDetails(value)
-						.then(function(result) {
-							value.author = result;
-							return value.author;
-						});
-		});
-	};
-	
-	$scope.getRandomNumber = function(max)
-	{
-		return Math.floor((Math.random() * max) + 1);
-	};	
-	
-	loadAuthorDetails();
-	
+				
 }]);
 
-angular.module('module.qa').controller('ModalAddAttachmentsController', ['$scope', '$modalInstance', '$state', 'qaService', 'thread', function($scope, $modalInstance, $state, qaService, thread){
-
-	$scope.thread = thread;
+angular.module('module.qa').controller('ModalAddAttachmentsController', ['$scope', '$modalInstance', '$state', 'qaService', function($scope, $modalInstance, $state, qaService){
+	
+	$scope.fileList = [];
 		
 	$scope.ok = function () {
-    $modalInstance.close(null);
+    $modalInstance.close($scope.fileList);
   };
 
   $scope.cancel = function () {
     $modalInstance.dismiss('cancel');
   };
 	
+	$scope.appendFile = function(files){
+    angular.forEach(files, function(file, key){
+      $scope.fileList.unshift(file); 
+    });
+    $scope.$apply();
+  };
+	
+	$scope.removeFile = function(index){
+    $scope.fileList.splice(index, 1);   
+  };
+	
+	$scope.getFileSizeString = function(size){
+    var mb = ((size / 1024) / 1024);
+
+    if(mb < 0.01){
+      mb = (size / 1024);
+      return mb.toFixed(2) + " KB";
+    }    
+
+    return mb.toFixed(2) + " MB";
+  };
+	
+	
+	$scope.$on('$viewContentLoaded', function() {
+		document.getElementById('upload-drop-container')
+	});
+	
+	/**
+  * FILE DROP-ZONE EVENTS
+  */
+	var initDropZone = function() {
+    console.log( "ready!" );
+		  var dropZone = document.getElementById('upload-drop-container');
+	};
+
+
+  // dropZone.bind('dragover', function(e) {
+		// e.stopPropagation();
+		// e.preventDefault();
+		// e.originalEvent.dataTransfer.effectAllowed = 'copy';
+	// });
+
+  // dropZone.bind('dragenter', function(e) {
+    // e.stopPropagation();
+    // e.preventDefault();
+    // e.originalEvent.dataTransfer.effectAllowed = 'copy';
+  // });
+
+  // dropZone.bind('drop', function(e){
+    // e.stopPropagation();
+    // e.preventDefault();
+
+    // angular.forEach(e.originalEvent.dataTransfer.files, function(file, key){
+      // try
+      // {
+        // var entry = e.originalEvent.dataTransfer.items[key].webkitGetAsEntry() || e.originalEvent.dataTransfer.items[key].getAsEntry();
+        // if (entry.isFile) {
+          // file.isFile = true;
+          // file.uploading = false;
+          // file.uploaded = false;
+          // $scope.appendFileToUploadList(file);
+        // } else if (entry.isDirectory) {
+          // file.isFile = false;
+          // $scope.appendFileToUploadList(file);
+        // }
+
+      // }
+      // catch(error)
+      // {
+        // console.log("Problem while drag & drop. probably no file-api. ERROR: " + error);
+      // }
+
+    // });
+  // });
+	
 }]);
 
-angular.module('module.qa').controller("QuestionController", ['$scope', '$state', '$stateParams', '$q', '$filter', 'UserService', 'qaService', 'Thread','THREAD_TYPE', function($scope, $state, $stateParams, $q, $filter, UserSrv, qaService, Thread, THREAD_TYPE){
+angular.module('module.qa').controller("questionController", ['$scope', '$state', '$stateParams', '$q', '$filter', 'UserService', 'qaService', 'ThreadEntry', 'THREAD_ENTRY_TYPE', 'UriToolbox', function($scope, $state, $stateParams, $q, $filter, UserSrv, qaService, ThreadEntry, THREAD_ENTRY_TYPE, UriToolbox){
 
 	$scope.question = null;
+	$scope.similarThreadList = null;
 	
-	var loadThreadWithEntries = function(uri) 
+	$scope.newAnswer = new ThreadEntry(null, null, THREAD_ENTRY_TYPE.qaEntry, null, null, null);
+	// used for sorting
+	$scope.predicate = '+position';
+	
+	var loadThreadWithEntries = function(id) 
 	{
 		return qaService
-						.getThreadWithEntries(uri)
+						.getThreadWithEntries(id)
 						.then(function(result) {
-							result.explanation = $filter('newlines')(result.explanation);
 							$scope.question = result;
+							return result;
 						});
 	};
-	
-	loadThreadWithEntries(UserSrv.getUserSpace() + "/" + $stateParams.uri);
-}]);
 
-angular.module('module.qa').controller("DiscussionController", ['$scope', '$state', '$stateParams', '$q', '$filter', 'UserService', 'qaService', 'Thread','THREAD_TYPE', function($scope, $state, $stateParams, $q, $filter, UserSrv, qaService, Thread, THREAD_TYPE){
-
-	$scope.discussion = null;
-	
-	var loadThreadWithEntries = function(uri) 
+	var loadSimilarThreadList = function() 
 	{
 		return qaService
-						.getThreadWithEntries(uri)
+						.getSimilarThreads($scope.question)
 						.then(function(result) {
-							result.explanation = $filter('newlines')(result.explanation);
-							$scope.discussion = result;
+							$scope.similarThreadList = result;
+							return result;
 						});
 	};
 	
-	loadThreadWithEntries(UserSrv.getUserSpace() + "/" + $stateParams.uri);
-}]);
-
-angular.module('module.qa').controller("ChatController", ['$scope', '$state', '$stateParams', '$q', '$filter', 'UserService', 'qaService', 'Thread','THREAD_TYPE', function($scope, $state, $stateParams, $q, $filter, UserSrv, qaService, Thread, THREAD_TYPE){
-
-	$scope.chat = null;
+	$scope.postNewAnswer = function()
+		{
+			$scope.newAnswer.threadId = $scope.question.id;
+			
+			return qaService
+							.uploadAttachments($scope.newAnswer)
+							.then(qaService.addNewAnswer)
+							.then(function(result) {	
+								$scope.question.entries.push(result);							
+								$scope.newAnswer = new ThreadEntry(null, null, THREAD_ENTRY_TYPE.qaEntry, null, null, null);	
+								return result;
+							});
+	};
 	
-	var loadThreadWithEntries = function(uri) 
+	$scope.loadDetailPage = function(thread)
 	{
-		return qaService
-						.getThreadWithEntries(uri)
-						.then(function(result) {
-							result.explanation = $filter('newlines')(result.explanation);
-							$scope.chat = result;
-						});
+		$state.transitionTo('app.qa.' + thread.type.enum, { id: UriToolbox.extractUriPathnameHash(thread.id)});
 	};
 	
-	loadThreadWithEntries(UserSrv.getUserSpace() + "/" + $stateParams.uri);
+	loadThreadWithEntries(UserSrv.getUserSpace() + "/" + $stateParams.id)
+									.then(loadSimilarThreadList);
+	
 }]);
 
 /**
@@ -354,22 +399,28 @@ angular.module('module.qa').filter('threadTypeFilter', function() {
     };
 });
 
-angular.module('module.qa').filter('newlines', function() {
-  return function(text) {
-    return text.replace('\\n','\n');
+angular.module('module.qa').filter('checkNewlines', function() {
+	return function(text) {
+		if(text != null) {
+			text = text.replace(/\\n/g, '<br />');
+			return text;
+		}
   };
 });
 
 /**
-* Directives
+* CUSTOM Directive
 */
-angular.module('module.qa').directive('bindOnce', function() {
-    return {
-        scope: true,
-        link: function( $scope ) {
-            setTimeout(function() {
-                $scope.$destroy();
-            }, 0);
-        }
-    }
-});
+//angular.module('module.qa').directive('ngEnter', function () {
+//    return function (scope, element, attrs) {
+//        element.bind("keydown keypress", function (event) {
+//            if (event.which === 13) {
+//                scope.$apply(function () {
+//                    scope.$eval(attrs.ngEnter);
+//                });
+
+//                event.preventDefault();
+//            }
+//        });
+//    };
+//});
