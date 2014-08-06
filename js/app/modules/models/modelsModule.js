@@ -918,6 +918,24 @@ angular.module('module.models').service('UserModel', ['$q', '$rootScope','UserSe
 }]);
 
 angular.module('module.models').service("GroupFetchService", ['$q','UserService', function($q, UserSrv){
+    
+    this.getGroup = function(groupId) {
+        var defer = $q.defer();
+        var self = this;
+
+        new SSEntityCircleGet(function(result){
+                defer.resolve(result);
+            },
+            function(error){
+                console.log(error);
+            },
+            UserSrv.getUser(),
+            UserSrv.getKey(),
+            groupId
+        );
+       return defer.promise;
+    };
+    
     this.getUserGroups = function() {
         var defer = $q.defer();
         var self = this;
@@ -934,7 +952,7 @@ angular.module('module.models').service("GroupFetchService", ['$q','UserService'
        return defer.promise;
     };
     
-    this.createGroup = function(groupName, entities, users) {
+    this.createGroup = function(groupName, entities, users, description) {
         var defer = $q.defer();
         var self = this;
 
@@ -949,17 +967,11 @@ angular.module('module.models').service("GroupFetchService", ['$q','UserService'
             UserSrv.getKey(),
             groupName,
             entities,
-            users
+            users,
+            description
         );
 
         return defer.promise;        
-    };
-
-    this.getUserLabel = function(uri) {
-        var defer = $q.defer();
-        var self = this;
-
-        return new getUserLabelFromUri(uri);
     };
 
 }]);

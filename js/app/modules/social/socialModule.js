@@ -61,7 +61,7 @@ angular.module('module.social').controller("SocialController", ['$scope', functi
 
 }]);
 
-angular.module('module.social').controller("GroupsController", ['$scope', '$dialogs', 'GroupFetchService', function($scope, $dialogs, GroupFetchService){
+angular.module('module.social').controller("GroupsController", ['$scope', '$state', '$dialogs', 'GroupFetchService', function($scope, $state, $dialogs, GroupFetchService){
     
     $scope.groups = [];
     
@@ -73,16 +73,13 @@ angular.module('module.social').controller("GroupsController", ['$scope', '$dial
 
     this.createGroup = function() {
         $dialogs.newModal([], "modal-huge", MODULES_PREFIX+"/group/newGroupWizzard.tpl.html");
-        
-//        var newGroupDialog = $dialogs.createNewGroup($scope.groups);
-//        
-//        newGroupDialog.result.then(function(result) {
-//            var promise = GroupFetchService.getUserGroups();
-//            promise.then(function(result){
-//                $scope.groups = result.circles;
-//            });
-//        });
 
+    };
+    
+    $scope.handleEntryClick = function(entry) {
+        if(entry.type == "group") {
+            $state.go("app.group.members", {groupId: entry.id});
+        }
     };
 
 }]);

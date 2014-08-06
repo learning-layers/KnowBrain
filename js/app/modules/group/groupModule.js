@@ -35,7 +35,7 @@ angular.module('module.group').config(function($stateProvider) {
 
     $stateProvider
         .state('app.group', {
-             url:'/group',
+             url:'/group/*groupId',
             abstract:true,
             controller: 'GroupController',
             templateUrl: MODULES_PREFIX + '/group/groupProfile.tpl.html'
@@ -76,7 +76,7 @@ angular.module('module.group').controller("newGroupController", ['$scope', '$q',
     $scope.uploadResourcePath = MODULES_PREFIX+"/group/addEntitiesUpload.tpl.html";
     $scope.addLinkPath = MODULES_PREFIX+"/group/addEntitiesLink.tpl.html";
     
-    $scope.group = {name: ""};
+    $scope.group = {name: "", desc: ""};
     $scope.groupMembers = [];
     $scope.entities = [];
     
@@ -144,7 +144,7 @@ angular.module('module.group').controller("newGroupController", ['$scope', '$q',
                 
             }
             
-            var promise = GroupFetchService.createGroup($scope.group.name, entityUrls, userUrls);
+            var promise = GroupFetchService.createGroup($scope.group.name, entityUrls, userUrls, $scope.group.desc);
             promise.then(function(result) {
                 $scope.close();
             });
@@ -365,8 +365,18 @@ angular.module('module.group').controller("EntityUploadController", ['$q', '$sco
     });
   }]);
 
-angular.module('module.group').controller("GroupController", ['$scope', function($scope){
-
+angular.module('module.group').controller("GroupController", ['$scope', '$stateParams', 'GroupFetchService', function($scope, $stateParams, GroupFetchService){
+    
+    
+    $scope.groupName = "Test Group";
+    $scope.groupDesc = "Hallo, dies ist eine Testgruppe zu Testzwecken und keinem anderen Zweck außer zu testen!";
+    
+    console.log($stateParams.groupId);
+    var promise = GroupFetchService.getGroup($stateParams.groupId);
+    
+    promise.then(function(result) {
+        console.log(result);
+    });
 }]);
 
 angular.module('module.group').controller("MembersController", ['$scope',function($scope){
