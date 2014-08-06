@@ -194,7 +194,9 @@ angular.module('module.models').factory('BaseModel', ['$q', '$rootScope', 'UserS
       addNewDisc,
       type,
       label,
-      "some explanation");
+      "some explanation",
+      new Array(), //users
+      new Array()); //entities
 
       return defer.promise;
     },
@@ -810,6 +812,7 @@ angular.module('module.models').service("TagFetchService", ['$q', '$rootScope','
       },
       UserSrv.getUser(),
       UserSrv.getKey(), 
+      null,
       null, 
       null, 
       SPACE_ENUM.private,
