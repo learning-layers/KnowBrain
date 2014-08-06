@@ -9,12 +9,12 @@
 		</div>
 		<div class="col-md-9 column" style="float:left;">
 			<div style="margin-bottom:5px;">
-				<span><a href="">{{activity.user}}</a></span>
+				<span><a ng-href="#/social/{{activity.user.entity}}/groups">{{activity.user.label}}</a></span>
 				<span ng-switch="activity.type">
 					
 					<span ng-switch-when="discussEntity">
 						<span> commented on entity </span>
-						<span><a href="">{{activity.entities[1]}}</a></span>
+						<span><a ng-click="showEntity(activity.entities[1])">{{activity.entities[1]}}</a></span>
 					</span>
 					
 					<span ng-switch-when="addDiscEntry">
@@ -53,7 +53,7 @@
 						</span>
 						<span ng-if="activity.type == 'shareEntityWithUsers'">with</span>
 						<span ng-repeat="user in activity.users">
-							<a href="">{{user}}</a>
+							<a ng-href="#/social/{{user.id}}/groups">{{user.label}}</a>
 							<span ng-if="$index < activity.users.length-2">, </span>
 							<span ng-if="$index == activity.users.length-2"> and </span>
 						</span>

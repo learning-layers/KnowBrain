@@ -77,15 +77,26 @@ angular.module('module.activities').controller("ActivitiesController", ['$scope'
         
         
         promise.then(function(results) {
-            
+            console.log("Users:");
+            console.log(results);
             for(var i = 0; i < results.length; i++) {
-                activities[i].user = results[i].desc.label;
-                console.log(results[i].desc.label);
+                activities[i].user = results[i].desc;
+                console.log(activities[i].user);
             }
             $scope.activities = activities;
             console.log(activities);
         });
     });
+    
+    $scope.showEntity = function(entityId) {
+        var promise = ActivityFetchService.getEntity(entityId);
+        
+        promise.then(function(result) {
+            if(result.desc.type == "file") {
+                
+            }
+        });
+    };
     
 }]);
 
@@ -165,14 +176,14 @@ angular.module('module.activities').service('ActivityFetchService', ['$q','UserS
         for(var i = 0; i < activities.length; i++) {
             
             
-            var promise = getEntity(activities[i].author);
+            var promise = this.getEntity(activities[i].author);
             promises.push(promise);
         }
         
         return $q.all(promises);
     };
     
-    var getEntity = function(entity) {
+    this.getEntity = function(entity) {
         console.log("Get: " + entity);
         
         var defer = $q.defer();
