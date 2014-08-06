@@ -37,7 +37,7 @@ angular.module('module.activities').config(function($stateProvider) {
     $stateProvider
         .state('app.activities', {
              url:'/activities',
-            controller: 'ActivitiesController',
+            controller: 'activitiesController',
             templateUrl: MODULES_PREFIX + '/activities/activities.tpl.html'
         });
 });
@@ -53,7 +53,7 @@ angular.module('module.activities').directive('ngActivity', function() {
 /**
 * CONTROLLER
 */
-angular.module('module.activities').controller("ActivitiesController", ['$scope', 'Activity', 'ACTIVITY_TYPES', 'ActivityFetchService', function($scope, Activity, ACTIVITY_TYPES, ActivityFetchService){
+angular.module('module.activities').controller("activitiesController", ['$scope', 'Activity', 'ACTIVITY_TYPES', 'ActivityFetchService', function($scope, Activity, ACTIVITY_TYPES, ActivityFetchService){
     
     $scope.ACTIVITY_TYPES = ACTIVITY_TYPES;
     $scope.activities = [];
