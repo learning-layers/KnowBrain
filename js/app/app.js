@@ -47,6 +47,7 @@ angular.module('knowbrain', [
   'ngTagsInput',
   'module.social',
   'module.qa',
+  'module.chat',
   'module.group',
   'module.entity'
 
@@ -54,9 +55,17 @@ angular.module('knowbrain', [
 
     $stateProvider
         .state('app', {
-            abstract:true,
-            templateUrl: PATH_PREFIX + '/main.tpl.html',
-            controller: 'MainController'
+            views: {
+                "" : {
+                    abstract: true,
+                    templateUrl: PATH_PREFIX + '/main.tpl.html',
+                    controller: 'MainController'
+                },
+                "chat" : {
+                    templateUrl: MODULES_PREFIX + '/chat/chat.tpl.html',
+                    controller: 'chatController'
+                }
+            }
         });
 
     $urlRouterProvider.otherwise('/collection/root');
@@ -96,6 +105,73 @@ angular.module('knowbrain').controller('AppController', ['$scope', '$location', 
 
 }]);
 
-angular.module('knowbrain').controller('MainController', [function(){
 
+/* This service can be used to communicate between different controllers */
+angular.module('knowbrain').service('sharedService', function ($rootScope) {
+    this.message = ''
+    this.param = null;
+
+    this.prepareForBroadcast = function (message, param) {
+        this.message = message;
+        this.param = param;
+        broadcastMessage();
+    }
+
+    var broadcastMessage = function () {
+        $rootScope.$broadcast('handleBroadcast');
+    }
+})
+
+
+angular.module('knowbrain').service('messagingService', ['$q', '$rootScope','UserService', function($q, $rootScope, UserSrv) {
+    
+    this.getChats = function () {
+        var defer = $q.defer();
+				
+        new SSDiscsAllGet(
+            function (result) {
+                var chatList = [];
+
+                angular.forEach(result.discs, function (thread, key) {
+                    if (thread.type == 'chat') {
+                        chatList.push(thread);
+                    }
+                });
+
+                defer.resolve(chatList);
+            },	
+            function(error){
+		        console.log(error);
+		        defer.reject(error);
+            },
+            UserSrv.getUser(),
+            UserSrv.getKey()
+        );
+
+        return defer.promise;  
+    }
+}])
+
+angular.module('knowbrain').controller('MainController', ['$scope', 'sharedService', 'messagingService', 'UserService', function ($scope, sharedService, messagingService, UserSrv) {
+    
+    $scope.chats = [];
+    $scope.user = UserSrv.getUser();
+    $scope.label = UserSrv.getLabel();
+
+    $scope.newChat = function () {
+        sharedService.prepareForBroadcast('openChatBox', null);
+    }
+
+    $scope.openChat = function (chat) {
+        sharedService.prepareForBroadcast('openChatBox', chat);
+    }
+
+    $scope.getMyChats = function () {
+        messagingService.getChats()
+            .then(function (result) {
+                $scope.chats = result;
+            });
+    }
 }]);
+
+

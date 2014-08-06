@@ -16,7 +16,7 @@
 
 <div class="modal-content">
 	<div class="modal-header">
-		<button type="button" class="close" ng-click="close()"
+		<button type="button" class="close" ng-click="leaveState()"
 			aria-hidden="true">&times;</button>
 		<h4 class="modal-title">
 			<span class="glyphicon glyphicon-cloud-upload"
@@ -139,8 +139,7 @@
 		<div class="modal-footer">
 			<button type="button" class="btn btn-default" ng-click="leaveState()">back</button>
 			<div>
-				<button class="btn btn-primary" ng-hide="filesArray.length == 0" ng-click="addFiles()">Close</button>
-				<button class="btn btn-default" ng-click="close()">Close</button>
+				<button class="btn btn-primary" ng-hide="filesArray.length == 0" ng-click="addFiles()">Add</button>
 			</div>
 		</div>
 

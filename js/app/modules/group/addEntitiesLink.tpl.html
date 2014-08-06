@@ -16,7 +16,7 @@
 
   <div class="modal-content" ng-controller="addLinkController">
     <div class="modal-header">
-      <button type="button" class="close" ng-click="close()" aria-hidden="true">&times;</button>
+      <button type="button" class="close" ng-click="leaveState()" aria-hidden="true">&times;</button>
       <h4 class="modal-title"><span class="glyphicon glyphicon-link" style="margin-right:10px;"></span>Add a link</h4>
     </div>
     <div class="modal-body"> 
@@ -39,7 +39,6 @@
     <div class="modal-footer"> 
      <button type="button" class="btn btn-default" ng-click="leaveState()">Back</button>
      <div>
-       <button type="button" class="btn btn-default" ng-click="close()">Cancel</button>
        <button class="btn btn-primary" ng-click="createLink(link)">Add</button>
      </div>
    </div>

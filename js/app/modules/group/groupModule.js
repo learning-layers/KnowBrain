@@ -64,9 +64,11 @@ angular.module('module.group').config(function($stateProvider) {
 * CONTROLLER
 */
 
-angular.module('module.group').controller("newGroupController", ['$scope', '$q', '$dialogs', 'UserModel', 'GroupFetchService', 'ENTITY_TYPES', 'EntityModel', function($scope, $q, $dialogs, UserModel, GroupFetchService, ENTITY_TYPES, Entity){
+angular.module('module.group').controller("newGroupController", ['$scope', '$q', '$dialogs', 'UserModel', 'GroupFetchService', 'ENTITY_TYPES', 'EntityModel', 'UserService', function($scope, $q, $dialogs, UserModel, GroupFetchService, ENTITY_TYPES, Entity, UserSrv){
     
     $scope.enterState("new");
+    
+    $scope.user = UserSrv.getUser();
     
     /* PATHS */
     $scope.newGroupPath = MODULES_PREFIX+"/group/newGroup.tpl.html"; 
@@ -83,6 +85,7 @@ angular.module('module.group').controller("newGroupController", ['$scope', '$q',
     var promise = UserModel.getAllUsers();
     promise.then(function(result) {
         $scope.groupMembers = result.users;
+        console.log($scope.groupMembers);
     });
     
     

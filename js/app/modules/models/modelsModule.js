@@ -194,7 +194,9 @@ angular.module('module.models').factory('BaseModel', ['$q', '$rootScope', 'UserS
       addNewDisc,
       type,
       label,
-      "some explanation");
+      "some explanation",
+      new Array(), //users
+      new Array()); //entities
 
       return defer.promise;
     },
@@ -869,6 +871,7 @@ angular.module('module.models').service("TagFetchService", ['$q', '$rootScope','
       },
       UserSrv.getUser(),
       UserSrv.getKey(), 
+      null,
       null, 
       null, 
       SPACE_ENUM.private,
@@ -936,7 +939,8 @@ angular.module('module.models').service("GroupFetchService", ['$q','UserService'
        return defer.promise;
     };
     
-    this.getUserGroups = function() {
+
+    this.getUserGroups = function(user) {
         var defer = $q.defer();
         var self = this;
 

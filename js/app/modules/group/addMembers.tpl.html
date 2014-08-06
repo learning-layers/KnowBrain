@@ -43,7 +43,7 @@
 					id="friendsContainer">
 					<div class="col-md-12 column" style="padding: 20px;">
 						<ng-entity-small
-							ng-repeat="entry in groupMembers | filter: userFilter"></ng-entity-small>
+							ng-hide="entry.id == user+'/'" ng-repeat="entry in groupMembers | filter: userFilter"></ng-entity-small>
 					</div>
 				</div>
 
