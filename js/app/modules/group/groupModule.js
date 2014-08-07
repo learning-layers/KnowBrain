@@ -381,7 +381,7 @@ angular.module('module.group').controller("GroupController", ['$scope', '$stateP
         console.log(result);
         
         $scope.groupName = group.label;
-        $scope.groupDesc = group.describtion;
+        $scope.groupDesc = group.description;
         $scope.memberIds = group.users;
         $scope.entityIds = group.entities;
     });
@@ -401,11 +401,9 @@ angular.module('module.group').controller("MembersController", ['$scope', '$stat
         for(var i=0; i < memberIds.length; i++) {
             var promise = UserFetchService.getUser(memberIds[i]);
             promise.then(function(result){
-                console.log(result);
                 var user = new User();
                 user.id = result.desc.entity;
                 user.label = result.desc.label;
-                console.log(user);
                 $scope.members.push(user);
             });
         }
@@ -418,7 +416,7 @@ angular.module('module.group').controller("MembersController", ['$scope', '$stat
     };
 }]);
 
-angular.module('module.group').controller("EntitiesController", ['$scope', 'GroupFetchService', 'EntityModel',function($scope, GroupFetchService, Entity){
+angular.module('module.group').controller("EntitiesController", ['$scope', 'GroupFetchService', 'EntityFetchService',function($scope, GroupFetchService, EntityFetchService){
     
     $scope.entities = [];
     
@@ -427,17 +425,14 @@ angular.module('module.group').controller("EntitiesController", ['$scope', 'Grou
     promise.then(function(result) {
         
         var group = result.circle;
-        
-        var memberIds = group.users;
-        for(var i=0; i < memberIds.length; i++) {
-            var promise = UserFetchService.getUser(memberIds[i]);
+        console.log(group);
+        var entityIds = group.entities;
+        console.log(entityIds);
+        for(var i=0; i < entityIds.length; i++) {
+            var promise = EntityFetchService.getEntityByUri(entityIds[i], false, false, false);
             promise.then(function(result){
                 console.log(result);
-                var user = new Entity();
-                user.id = result.desc.entity;
-                user.label = result.desc.label;
-                console.log(user);
-                $scope.entities.push(user);
+                $scope.entities.push(result);
             });
         }
     });
