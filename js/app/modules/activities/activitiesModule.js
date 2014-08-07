@@ -69,23 +69,9 @@ angular.module('module.activities').controller("activitiesController", ['$scope'
         for(var i = 0; i < result.activities.length; i++) {
             var act = result.activities[i];
             
-            var activity = new Activity("", act.type, act.creationTime, act.entities, act.users);
-            activities.push(activity);
+            var activity = new Activity(act.author, act.type, act.creationTime, act.entities, act.users);
+            $scope.activities.push(activity);
         }
-        
-        var promise = ActivityFetchService.getUsers(result.activities);
-        
-        
-        promise.then(function(results) {
-            console.log("Users:");
-            console.log(results);
-            for(var i = 0; i < results.length; i++) {
-                activities[i].user = results[i].desc;
-                console.log(activities[i].user);
-            }
-            $scope.activities = activities;
-            console.log(activities);
-        });
     });
     
     $scope.showEntity = function(entityId) {
@@ -114,8 +100,6 @@ angular.module('module.activities').factory('Activity', [function() {
         var myDate = new Date(time);
        // var myDate = new Date(0); // The 0 there is the key, which sets the date to the epoch
         //myDate.setUTCSeconds(time);
-        console.log(myDate);
-        console.log(time);
         var hours = myDate.getHours(); //returns 0-23
         var minutes = myDate.getMinutes(); //returns 0-59
         var seconds = myDate.getSeconds(); //returns 0-59
@@ -184,14 +168,12 @@ angular.module('module.activities').service('ActivityFetchService', ['$q','UserS
     };
     
     this.getEntity = function(entity) {
-        console.log("Get: " + entity);
         
         var defer = $q.defer();
         var self = this;
         
         new SSEntityDescGet(
                 function(result) {
-                    console.log(result);
                     return defer.resolve(result);
                 },
                 function(error) {
