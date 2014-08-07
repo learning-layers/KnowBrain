@@ -873,7 +873,8 @@ angular.module('module.models').service("GroupFetchService", ['$q','UserService'
                 console.log(error);
             },
             UserSrv.getUser(),
-            UserSrv.getKey()
+            UserSrv.getKey(),
+            user
         );
        return defer.promise;
     };
