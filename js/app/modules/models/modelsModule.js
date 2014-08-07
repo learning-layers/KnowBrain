@@ -531,9 +531,10 @@ angular.module('module.models').factory('EntityModel', ['$q', '$rootScope','User
       
       if(this.type == ENTITY_TYPES.file, this.fileHandle) {
           new SSFileUpload(
-                  function(parentUri,fileUri,fileName){
+                  function(fileUri,fileName){
                     console.log(fileUri);
                     self.id = fileUri;
+                    self.label = fileName;
                     self.type = ENTITY_TYPES.file;
                     self.uriPathnameHash = UriToolbox.extractUriPathnameHash(fileUri);
                     self.uploaded = true;

@@ -371,14 +371,21 @@ angular.module('module.group').controller("EntityUploadController", ['$q', '$sco
 angular.module('module.group').controller("GroupController", ['$scope', '$stateParams', 'GroupFetchService', function($scope, $stateParams, GroupFetchService){
     
     
-    $scope.groupName = "Test Group";
+    $scope.groupName = " ";
     $scope.groupDesc = "Hallo, dies ist eine Testgruppe zu Testzwecken und keinem anderen Zweck außer zu testen!";
+    $scope.members = [];
+    $scope.entities = [];
     
-    console.log($stateParams.groupId);
     var promise = GroupFetchService.getGroup($stateParams.groupId);
     
     promise.then(function(result) {
+        
+        var group = result.circle;
         console.log(result);
+        
+        $scope.groupName = group.label;
+        $scope.members = group.users;
+        $scope.entities = group.entities;
     });
 }]);
 

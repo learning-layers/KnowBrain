@@ -1,2 +1,9 @@
-<div>Members</div>
+<div>
 
+    <div ng-show="!ajaxLoading && profileId == userId" id="upload-box" class="kb-fluid-container pull-left" ng-click="groupCtrl.createGroup()" tooltip-placement="right"
+         >  add
+        <div id="upload-link" class="glyphicon glyphicon-plus-sign" ></div>
+    </div>
+
+    <ng-entity ng-repeat="entry in groups"></ng-entity>
+</div>
