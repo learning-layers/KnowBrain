@@ -82,6 +82,7 @@ angular.module('module.social').controller("GroupsController", ['$scope', '$stat
     
     promise.then(function(result){
         $scope.groups = result.circles;
+        console.log(result);
     });
 
     this.createGroup = function() {

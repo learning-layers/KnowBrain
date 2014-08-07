@@ -400,3 +400,27 @@ angular.module('module.group').controller("EntitiesController", ['$scope',functi
 angular.module('module.group').controller("ActivitiesController", ['$scope',function($scope){
     this.groups = "To be implemented";
 }]);
+
+angular.module('module.group').service("GroupFetchService", ['$q', 'UserService', function($q, UserSrv) {
+    this.getUser = function(userId){
+        var defer = $q.defer();
+        
+        new SSEntityDescGet(function(result) {
+            defer.resolve(result);
+        }, function(error) {
+            
+        },
+        UserSrv.getUser(),
+        UserSrv.getKey(),
+        userId,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null
+        );
+        
+        return defer.promise;
+    }
+}]);

@@ -286,7 +286,7 @@ angular.module('dialogs.controllers',['ui.bootstrap.modal', 'module.i18n', 'modu
 
 }])
 
-.controller("addResourceWizzardController", ['$scope', 'i18nService', function($scope, i18nService){
+.controller("addResourceWizzardController", ['$scope', '$modalInstance', 'i18nService', function($scope, $modalInstance, i18nService){
 
 	/* STEPS */
 	$scope.resourceTypes = ['choose','collection','upload', 'link'];
