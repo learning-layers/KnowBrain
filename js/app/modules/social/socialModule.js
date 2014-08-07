@@ -78,9 +78,10 @@ angular.module('module.social').controller("GroupsController", ['$scope', '$dial
     
     $scope.groups = [];
     
-    var promise = GroupFetchService.getUserGroups($scope.profile);
+    var promise = GroupFetchService.getUserGroups($scope.profileId);
     
     promise.then(function(result){
+        console.log(result);
         $scope.groups = result.circles;
     });
 
