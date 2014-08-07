@@ -525,11 +525,11 @@ angular.module('module.models').factory('EntityModel', ['$q', '$rootScope','User
     return defer.promise;
   };
   
-  Entity.prototype.uploadFile = function(){
+  Entity.prototype.upload = function(){
       var defer = $q.defer();
       var self = this;
       
-      if(this.type == ENTITY_TYPES.file, this.fileHandle) {
+      if(this.type == ENTITY_TYPES.file || this.entity == ENTITY_TYPES.link) {
           new SSFileUpload(
                   function(fileUri,fileName){
                     console.log(fileUri);
@@ -558,6 +558,17 @@ angular.module('module.models').factory('EntityModel', ['$q', '$rootScope','User
 
   return (Entity);
 
+}]);
+
+angular.module('module.models').factory('UserModel', ['$q', '$rootScope','UserService', function($q, $rootScope, UserSrv){
+
+    function User(){
+        this.label = "";
+        this.id = "";
+        this.type = "user";
+    }
+    
+    return (User);
 }]);
 
 
@@ -891,7 +902,7 @@ angular.module('module.models').service("TagFetchService", ['$q', '$rootScope','
 
 }]);
 
-angular.module('module.models').service('UserModel', ['$q', '$rootScope','UserService', function($q, $rootScope, UserSrv) {
+angular.module('module.models').service('UserFetchService', ['$q', '$rootScope','UserService', function($q, $rootScope, UserSrv) {
     
     this.getAllUsers = function() {
 
@@ -911,73 +922,34 @@ angular.module('module.models').service('UserModel', ['$q', '$rootScope','UserSe
 
        return defer.promise;
     };
+    
+    this.getUser = function(userId){
+        var defer = $q.defer();
+        
+        new SSEntityDescGet(function(result) {
+            defer.resolve(result);
+        }, function(error) {
+            
+        },
+        UserSrv.getUser(),
+        UserSrv.getKey(),
+        userId,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null
+        );
+        
+        return defer.promise;
+    },
 
     this.getUserLabel = function(uri) {
         var defer = $q.defer();
         var self = this;
 
         return new getUserLabelFromUri(uri);
-    };
-
-}]);
-
-angular.module('module.models').service("GroupFetchService", ['$q','UserService', function($q, UserSrv){
-    
-    this.getGroup = function(groupId) {
-        var defer = $q.defer();
-        var self = this;
-
-        new SSEntityCircleGet(function(result){
-                defer.resolve(result);
-            },
-            function(error){
-                console.log(error);
-            },
-            UserSrv.getUser(),
-            UserSrv.getKey(),
-            groupId
-        );
-       return defer.promise;
-    };
-    
-
-    this.getUserGroups = function(user) {
-        var defer = $q.defer();
-        var self = this;
-
-        new SSEntityUserCirclesGet(function(result){
-                defer.resolve(result);
-            },
-            function(error){
-                console.log(error);
-            },
-            UserSrv.getUser(),
-            UserSrv.getKey(),
-            user
-        );
-       return defer.promise;
-    };
-    
-    this.createGroup = function(groupName, entities, users, description) {
-        var defer = $q.defer();
-        var self = this;
-
-        new SSEntityCircleCreate(
-            function(result){
-                defer.resolve(result);
-            },
-            function(error){
-                console.log(error);
-            },
-            UserSrv.getUser(),
-            UserSrv.getKey(),
-            groupName,
-            entities,
-            users,
-            description
-        );
-
-        return defer.promise;        
     };
 
 }]);

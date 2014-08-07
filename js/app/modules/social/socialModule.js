@@ -103,44 +103,44 @@ angular.module('module.social').controller("FriendsController", ['$scope',functi
     this.groups = "To be implemented";
 }]);
 
-angular.module('module.social').service("UserFetchService", ['$q', 'UserService', function($q, UserSrv) {
-    this.getUser = function(userId){
-        var defer = $q.defer();
-        
-        new SSEntityDescGet(function(result) {
-            defer.resolve(result);
-        }, function(error) {
-            
-        },
-        UserSrv.getUser(),
-        UserSrv.getKey(),
-        userId,
-        null,
-        null,
-        null,
-        null,
-        null,
-        null
-        );
-        
-        return defer.promise;
-    },
-    
-    this.getAllUsers = function(){
-        var defer = $q.defer();
-        
-        new SSUserAll(function(result) {
-            defer.resolve(result);
-        }, function(error) {
-            
-        },
-        UserSrv.getUser(),
-        UserSrv.getKey()
-        );
-        
-        return defer.promise;
-    }
-    
-
-}]);
+//angular.module('module.social').service("UserFetchService", ['$q', 'UserService', function($q, UserSrv) {
+//    this.getUser = function(userId){
+//        var defer = $q.defer();
+//        
+//        new SSEntityDescGet(function(result) {
+//            defer.resolve(result);
+//        }, function(error) {
+//            
+//        },
+//        UserSrv.getUser(),
+//        UserSrv.getKey(),
+//        userId,
+//        null,
+//        null,
+//        null,
+//        null,
+//        null,
+//        null
+//        );
+//        
+//        return defer.promise;
+//    },
+//    
+//    this.getAllUsers = function(){
+//        var defer = $q.defer();
+//        
+//        new SSUserAll(function(result) {
+//            defer.resolve(result);
+//        }, function(error) {
+//            
+//        },
+//        UserSrv.getUser(),
+//        UserSrv.getKey()
+//        );
+//        
+//        return defer.promise;
+//    }
+//    
+//
+//}]);
 
