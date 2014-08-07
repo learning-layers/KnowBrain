@@ -2,14 +2,14 @@
 	<div class="row clearfix" style="height:90px">
 		<div class="col-md-1 column" style="margin: 3px">
 			<img src="images/small_profile_pic_dummy.png" style="text-align:middle; margin:3px;">
-			<div style="font-size:9px">
+			<div style="font-size:9px; width:100px;">
 				<p style="margin:0">{{activity.date}}</p>
 				<p style="margin:0">{{activity.time}}</p>
 			</div>
 		</div>
 		<div class="col-md-9 column" style="float:left;">
 			<div style="margin-bottom:5px;">
-				<span><a ng-href="#/social/{{activity.user.entity}}/activities">{{activity.user}}</a></span>
+				<span><a ng-href="#/social/{{activity.user}}/activities">{{activity.user}}</a></span>
 				<span ng-switch="activity.type">
 					
 					
@@ -20,20 +20,38 @@
 					<!----------RATING---------->
 					<!-- rateEntity -->
 					
+					<span ng-switch-when="rateEntity">
+						<span> rated ressource </span>
+						<a href="">{{activity.entities[0]}}</a>
+					</span>
+					
 					<!----------LOCATION---------->
 					<!-- addLocation -->
   
   					<!----------FILE---------->
   					<!-- downloadFile -->
+  					
+  					<span ng-switch-when="downloadFile">
+						<span> downloaded ressource </span>
+						<a href="">{{activity.entities[0]}}</a>
+					</span>
 
 					<!----------COLL---------->
   					<!-- removeCollEntry -->
+  					
+  					<span ng-switch-when="removeCollEntry">
+						<span> removed ressource </span>
+						<a href="">{{activity.entities[1]}}</a>
+						<span> from collection </span>
+						<a href="">{{activity.entities[0]}}</a>
+					</span>
+					
 					<!-- addCollEntry -->
 					
 					<span ng-switch-when="addCollEntry">
 						<span ng-switch="activity.entities.length > 2">
-							<span ng-switch-when="true"> added entities </span>
-							<span ng-switch-when="false"> added entity </span>
+							<span ng-switch-when="true"> added ressources </span>
+							<span ng-switch-when="false"> added ressource </span>
 						</span>
 						<span ng-repeat="entity in activity.entities">
 							<span ng-if="!$first">
@@ -46,7 +64,6 @@
 							<span> to collection </span>
 							<a href="">{{activity.entities[0]}}</a>
 						</span>
-
 					</span>
 					
 
@@ -58,11 +75,14 @@
 						<a href="">{{activity.entities[0]}}</a>
 						<span> with </span>
 						<span ng-repeat="user in activity.users">
-							<a ng-href="#/social/{{user.id}}/groups">{{user}}</a>
+							<a ng-href="#/social/{{user}}/groups">{{user}}</a>
 							<span ng-if="$index < activity.users.length-2">, </span>
 							<span ng-if="$index == activity.users.length-2"> and </span>
 						</span>
-						<span> as members.</span>
+						<span ng-switch="activity.users.length > 1">
+							<span ng-switch-when="true"> as members. </span>
+							<span ng-switch-when="false"> as member. </span>
+						</span>
 					</span>
 					
 					<!-- addUsersToCircle -->
@@ -82,14 +102,23 @@
 
 					<!----------ENTITY---------->
 					<!-- setEntityPublic -->
+					
+					<span ng-switch-when="setEntityPublic">
+						<span> set ressource </span>
+						<a href="">{{activity.entities[0]}}</a>
+						<span> public.</span>
+					</span>
+					
 					<!-- updateEntity -->
+					
+					
 					<!-- copyEntityForUsers -->
 					<!-- shareEntityWithUsers -->
 					
 					<span ng-switch-when="shareEntityWithUsers">  
 						<span ng-switch="activity.entities.length > 1">
-							<span ng-switch-when="true"> shared entities </span>
-							<span ng-switch-when="false"> shared entity </span>
+							<span ng-switch-when="true"> shared ressources </span>
+							<span ng-switch-when="false"> shared ressource </span>
 						</span>
 						<span ng-repeat="entity in activity.entities">
 							<a href="">{{entity}}</a>
@@ -98,7 +127,7 @@
 						</span>
 						<span ng-if="activity.type == 'shareEntityWithUsers'">with</span>
 						<span ng-repeat="user in activity.users">
-							<a ng-href="#/social/{{user.id}}/groups">{{user}}</a>
+							<a ng-href="#/social/{{user}}/groups">{{user}}</a>
 							<span ng-if="$index < activity.users.length-2">, </span>
 							<span ng-if="$index == activity.users.length-2"> and </span>
 						</span>

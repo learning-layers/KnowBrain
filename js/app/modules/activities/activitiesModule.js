@@ -70,7 +70,7 @@ angular.module('module.activities').controller("activitiesController", ['$scope'
             var act = result.activities[i];
             
             var activity = new Activity(act.author, act.type, act.creationTime, act.entities, act.users);
-            $scope.activities.push(activity);
+            $scope.activities.unshift(activity);
         }
     });
     

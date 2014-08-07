@@ -44,7 +44,7 @@ angular.module('module.social').config(function($stateProvider) {
     $stateProvider.state('app.social.activities', {
         url: '/activities',
         templateUrl: MODULES_PREFIX + '/social/activities.tpl.html',
-        controller: "UserActivitiesController"
+        controller: "activitiesController"
     });
 
     $stateProvider.state('app.social.groups', {
