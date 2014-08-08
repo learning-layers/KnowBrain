@@ -50,6 +50,14 @@ angular.module('module.activities').directive('ngActivity', function() {
       };
 });
 
+angular.module('module.activities').directive('ngPost', function() {
+    return {
+        restrict:"E",
+        transclude:true,
+        templateUrl: MODULES_PREFIX + "/activities/activityStreamPost.tpl.html"
+      };
+});
+
 /**
 * CONTROLLER
 */
@@ -57,6 +65,8 @@ angular.module('module.activities').controller("activitiesController", ['$scope'
     
     $scope.ACTIVITY_TYPES = ACTIVITY_TYPES;
     $scope.activities = [];
+    
+    $scope.postTags = [{ text: 'Tag1' }, { text: 'Tag2' }, { text: 'Tag3' }];
     
     var activities = [];
     var users = [];
