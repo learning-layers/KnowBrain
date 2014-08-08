@@ -72,7 +72,7 @@
 				
 				<span ng-switch-when="createCircle">
 					<span> created group </span>
-					<a href="">{{activity.entities[0]}}</a>
+					<a href="#/group/{{activity.entities[0]}}/activities">{{activity.entities[0]}}</a>
 					<span> with </span>
 					<span ng-repeat="user in activity.users">
 						<a ng-href="#/social/{{user}}/groups">{{user}}</a>
