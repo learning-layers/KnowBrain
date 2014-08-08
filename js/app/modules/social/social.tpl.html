@@ -10,9 +10,9 @@
             	
             </p>
         </div>
-        <div class="col-md-9 column">
-
-            <tabset >
+        <div class="col-md-9 column" style="padding:20px">
+			<div class="row clearfix">
+				<tabset >
                	<tab style="cursor: pointer;" heading = "Activities" ui-sref="app.social.activities" ui-sref-active="active">
                 </tab>
                 <tab style="cursor: pointer;" heading = "Groups" ui-sref="app.social.groups">
@@ -22,10 +22,9 @@
 <!--                 </tab> -->
 
             </tabset>
-            <div id="content" ui-view autoscroll="false">
-
-            </div>
-         </div>
+			</div>
+            <div class="row clearfix" id="content" ui-view autoscroll="false">
+         	</div>
      </div>
  </div>
 
