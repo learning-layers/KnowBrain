@@ -137,9 +137,7 @@ angular.module('module.group').controller("newGroupController", ['$scope', '$q',
             console.log(results);
             
             for(var i=0; i < results.length; i++) {
-                if(results[i].isSelected) {
-                    entityUrls.push(entity.label);
-                }
+                entityUrls.push(results[i].id);
             }
             
             for(var i=0; i < $scope.groupMembers.length; i++) {

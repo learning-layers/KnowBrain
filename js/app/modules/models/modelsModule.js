@@ -525,11 +525,11 @@ angular.module('module.models').factory('EntityModel', ['$q', '$rootScope','User
     return defer.promise;
   };
   
-  Entity.prototype.upload = function(){
+  Entity.prototype.uploadFile = function(){
       var defer = $q.defer();
       var self = this;
       
-      if(this.type == ENTITY_TYPES.file || this.entity == ENTITY_TYPES.link) {
+      if(this.type == ENTITY_TYPES.file) {
           new SSFileUpload(
                   function(fileUri,fileName){
                     console.log(fileUri);
