@@ -44,7 +44,7 @@ angular.module('module.social').config(function($stateProvider) {
     $stateProvider.state('app.social.activities', {
         url: '/activities',
         templateUrl: MODULES_PREFIX + '/social/activities.tpl.html',
-        controller: "activitiesController"
+        controller: "UserActivitiesController"
     });
 
     $stateProvider.state('app.social.groups', {
@@ -81,12 +81,12 @@ angular.module('module.social').controller("SocialController", ['$scope', '$stat
 }]);
 
 
-angular.module('module.social').controller("UserActivitiesController", ['$scope', 'Activity', 'UserActivitiesFetchService', function($scope, Activity, ActivityFetchService){
+angular.module('module.social').controller("UserActivitiesController", ['$scope', 'Activity', 'ActivityFetchService', function($scope, Activity, ActivityFetchService){
     
     console.log($scope.profileId);
-    var promise = ActivityFetchService.getUserActivities($scope.profileId);
+    var promise = ActivityFetchService.getActivities(null, [$scope.profileId], null, null, null, null);
     
-    var activities = [];
+    $scope.activities = [];
     
     promise.then(function(result) {
         console.log(result.activities);
@@ -94,23 +94,9 @@ angular.module('module.social').controller("UserActivitiesController", ['$scope'
         for(var i = 0; i < result.activities.length; i++) {
             var act = result.activities[i];
             
-            var activity = new Activity("", act.type, act.creationTime, act.entities, act.users);
-            activities.push(activity);
+            var activity = new Activity(act.author, act.type, act.creationTime, act.entities, act.users);
+            $scope.activities.unshift(activity);
         }
-        
-        var promise = ActivityFetchService.getUsers(result.activities);
-        
-        
-        promise.then(function(results) {
-            console.log("Users:");
-            console.log(results);
-            for(var i = 0; i < results.length; i++) {
-                activities[i].user = results[i].desc;
-                console.log(activities[i].user);
-            }
-            $scope.activities = activities;
-            console.log(activities);
-        });
     });
 }]);
 
@@ -133,7 +119,7 @@ angular.module('module.social').controller("GroupsController", ['$scope', '$stat
     
     $scope.handleEntryClick = function(entry) {
         if(entry.type == "group") {
-            $state.go("app.group.members", {groupId: entry.id});
+            $state.go("app.group.activities", {groupId: entry.id});
         }
     };
 
@@ -142,117 +128,3 @@ angular.module('module.social').controller("GroupsController", ['$scope', '$stat
 angular.module('module.social').controller("FriendsController", ['$scope',function($scope){
     this.groups = "To be implemented";
 }]);
-
-//angular.module('module.social').service("UserFetchService", ['$q', 'UserService', function($q, UserSrv) {
-//    this.getUser = function(userId){
-//        var defer = $q.defer();
-//        
-//        new SSEntityDescGet(function(result) {
-//            defer.resolve(result);
-//        }, function(error) {
-//            
-//        },
-//        UserSrv.getUser(),
-//        UserSrv.getKey(),
-//        userId,
-//        null,
-//        null,
-//        null,
-//        null,
-//        null,
-//        null
-//        );
-//        
-//        return defer.promise;
-//    },
-//    
-//    this.getAllUsers = function(){
-//        var defer = $q.defer();
-//        
-//        new SSUserAll(function(result) {
-//            defer.resolve(result);
-//        }, function(error) {
-//            
-//        },
-//        UserSrv.getUser(),
-//        UserSrv.getKey()
-//        );
-//        
-//        return defer.promise;
-//    }
-//    
-//
-//}]);
-
-angular.module('module.social').service("UserActivitiesFetchService", ['$q', 'UserService', function($q, UserSrv) {
-
-
-this.getUserActivities = function(userId) {
-    
-    var defer = $q.defer();
-    var self = this;
-    
-    new SSActivitiesGet(function(result){
-            defer.resolve(result);
-        },
-        function(error){
-            console.log(error);
-        },
-        UserSrv.getUser(),
-        UserSrv.getKey(),
-        null, //types
-        [userId], //users
-        null, //entities 
-        null, //startTime
-        null //endTime
-    );
-    
-    return defer.promise;
-};
-
-this.getUsers = function(activities) {
-    
-    var defer = $q.defer();
-    var self = this;
-    
-    var promises = [];
-    
-    for(var i = 0; i < activities.length; i++) {
-        
-        
-        var promise = this.getEntity(activities[i].author);
-        promises.push(promise);
-    }
-    
-    return $q.all(promises);
-};
-
-this.getEntity = function(entity) {
-    console.log("Get: " + entity);
-    
-    var defer = $q.defer();
-    var self = this;
-    
-    new SSEntityDescGet(
-            function(result) {
-                console.log(result);
-                return defer.resolve(result);
-            },
-            function(error) {
-                
-            },
-            UserSrv.getUser(),
-            UserSrv.getKey(),
-            entity,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false
-    );
-    
-    return defer.promise;
-}
-}]);
-

@@ -37,7 +37,7 @@ angular.module('module.activities').config(function($stateProvider) {
     $stateProvider
         .state('app.activities', {
              url:'/activities',
-            controller: 'activitiesController',
+            controller: 'ActivitiesController',
             templateUrl: MODULES_PREFIX + '/activities/activities.tpl.html'
         });
 });
@@ -61,7 +61,7 @@ angular.module('module.activities').directive('ngPost', function() {
 /**
 * CONTROLLER
 */
-angular.module('module.activities').controller("activitiesController", ['$scope', 'Activity', 'ACTIVITY_TYPES', 'ActivityFetchService', function($scope, Activity, ACTIVITY_TYPES, ActivityFetchService){
+angular.module('module.activities').controller("ActivitiesController", ['$scope', 'Activity', 'ACTIVITY_TYPES', 'ActivityFetchService', function($scope, Activity, ACTIVITY_TYPES, ActivityFetchService){
     
     $scope.ACTIVITY_TYPES = ACTIVITY_TYPES;
     $scope.activities = [];
@@ -71,7 +71,7 @@ angular.module('module.activities').controller("activitiesController", ['$scope'
     var activities = [];
     var users = [];
 
-    var promise = ActivityFetchService.getActivities();
+    var promise = ActivityFetchService.getActivities(null, null, null, null, null, null);
     
     promise.then(function(result) {
         console.log(result.activities);
@@ -137,7 +137,7 @@ angular.module('module.activities').factory('Activity', [function() {
 
 angular.module('module.activities').service('ActivityFetchService', ['$q','UserService', function($q, UserSrv) {
     
-    this.getActivities = function() {
+    this.getActivities = function(types, users, entities, circles, startTime, endTime) {
         
         var defer = $q.defer();
         var self = this;
@@ -150,11 +150,12 @@ angular.module('module.activities').service('ActivityFetchService', ['$q','UserS
             },
             UserSrv.getUser(),
             UserSrv.getKey(),
-            null, //types
-            null, //users
-            null, //entities 
-            null, //startTime
-            null //endTime
+            types, //types
+            users, //users
+            entities, //entities 
+            circles, //circles
+            startTime, //startTime
+            endTime //endTime
         );
         
         return defer.promise;

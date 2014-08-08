@@ -56,7 +56,7 @@ angular.module('module.group').config(function($stateProvider) {
     $stateProvider.state('app.group.activities', {
         url: '/activities',
         templateUrl: MODULES_PREFIX + '/group/activities.tpl.html',
-        controller: "ActivitiesController"
+        controller: "GroupActivitiesController"
     });
 });
 
@@ -436,8 +436,22 @@ angular.module('module.group').controller("EntitiesController", ['$scope', 'Grou
     });
 }]);
 
-angular.module('module.group').controller("ActivitiesController", ['$scope',function($scope){
-    this.groups = "To be implemented";
+angular.module('module.group').controller("GroupActivitiesController", ['$scope', 'Activity', 'ActivityFetchService', function($scope, Activity, ActivityFetchService){
+
+    var promise = ActivityFetchService.getActivities(null, null, null, [$scope.groupId], null, null);
+    
+    $scope.activities = [];
+    
+    promise.then(function(result) {
+        console.log(result.activities);
+        
+        for(var i = 0; i < result.activities.length; i++) {
+            var act = result.activities[i];
+            
+            var activity = new Activity(act.author, act.type, act.creationTime, act.entities, act.users);
+            $scope.activities.unshift(activity);
+        }
+    });
 }]);
 
 angular.module('module.group').service("GroupFetchService", ['$q','UserService', function($q, UserSrv){
