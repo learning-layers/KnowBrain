@@ -37,7 +37,7 @@
         <!-- Collect the nav links, forms, and other content for toggling -->
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
             <ul class="nav navbar-nav">
-<!--                 <li><a ng-href="#/social/{{user}}/groups">Profile</a></li> -->
+                <li><a href="#/activities">Activities</a></li>
                 <li><a href="#/qa">Q&A</a></li>
                 <li><a href="#/collection">Dropbox</a></li>
             </ul>
@@ -98,12 +98,13 @@
                 </li>
                 <li class="divider"></li>
 
-                <li><a style="padding:0px" ng-href="#/social/{{user}}/groups"><img src="images/small_profile_pic_dummy.png" class="img-rounded" style="padding-top:4px; padding-bottom:4px;"/>{{label}}</a></li>
+                <li><a style="padding:0px" ng-href="#/social/{{user}}/activities"><img src="images/small_profile_pic_dummy.png" class="img-rounded" style="padding-top:4px; padding-bottom:4px;"/>{{label}}</a></li>
+
                 <li class="dropdown">
           			<a href="#" class="dropdown-toggle" data-toggle="dropdown"><span class="caret"></span></a>
 
                     <ul class="dropdown-menu">
-                        <li><a ng-href="#/social/{{user}}/groups">Show Profile</a></li>
+                        <li><a ng-href="#/social/{{user}}/activities">Show Profile</a></li>
                         <li class="divider"></li>
                         <li ng-controller="AuthController"><a ng-click="logout()" href="#">Logout</a></li>
                     </ul>

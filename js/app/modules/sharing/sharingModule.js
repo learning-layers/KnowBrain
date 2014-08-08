@@ -126,6 +126,14 @@ sharingModule.controller("SharingController", ['$scope','$modalInstance', '$dial
         
         $scope.addShareTag = function(tag) {
             tag.isSelected = true;
+            
+            for(var i=0; i < $scope.shareEntities.length; i++) {
+                if(tag == $scope.shareEntities[i]) {
+                    $scope.userFilter.label = "";
+                    return;
+                }
+            }
+            
             $scope.shareEntities.push(tag);
             $scope.userFilter.label = "";
         };
