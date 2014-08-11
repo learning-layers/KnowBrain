@@ -43,7 +43,7 @@ sharingModule.config(function ($stateProvider) {
 /**
  * CONTROLLER
  */
-sharingModule.controller("SharingController", ['$scope','$modalInstance', '$dialogs', '$q', 'i18nService', 'UserService', 'UserModel', 'SharingModel', 'ENTITY_TYPES', 'SHARING_OPTIONS', 'entity',function ($scope, $modalInstance, $dialogs, $q, i18nService, UserService, UserModel, SharingModel, ENTITY_TYPES, SHARING_OPTIONS, entity) {
+sharingModule.controller("SharingController", ['$scope','$modalInstance', '$dialogs', '$q', 'i18nService', 'UserService', 'UserFetchService', 'SharingModel', 'ENTITY_TYPES', 'SHARING_OPTIONS', 'entity',function ($scope, $modalInstance, $dialogs, $q, i18nService, UserService, UserFetchService, SharingModel, ENTITY_TYPES, SHARING_OPTIONS, entity) {
     
         $scope.entity = entity;
         $scope.entityTypes = ENTITY_TYPES;
@@ -76,7 +76,7 @@ sharingModule.controller("SharingController", ['$scope','$modalInstance', '$dial
             $modalInstance.dismiss('Cancel');
         };
         
-        var promise = UserModel.getAllUsers();
+        var promise = UserFetchService.getAllUsers();
         promise.then(function(result) {
 
             $scope.allUsers = result.users;

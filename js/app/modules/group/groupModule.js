@@ -172,7 +172,7 @@ angular.module('module.group').controller("addMembersController", ['$scope', '$r
 
 angular.module('module.group').controller("addEntitiesController", ['$scope', 'i18nService', function($scope, $modalInstance){
 
-    }]);
+}]);
 
 angular.module('module.group').controller("addLinkController", ['$scope', 'i18nService','EntityModel', 'ENTITY_TYPES', function($scope, i18nService, Entity, ENTITY_TYPES){
     $scope.createLink = function(link){
