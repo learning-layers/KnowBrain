@@ -1,7 +1,7 @@
-<div class="row" style="background-color:#F8F8F8; padding:15px;">
+<div class="row" style="background-color:#F8F8F8; padding:15px; border-radius: 20px;">
 <div class="col-md-12 column">
 <div class="row">
-	<div class="col-md-1 column" style="margin: 3px">
+	<div class="col-md-1 column">
 		<img src="images/small_profile_pic_dummy.png"
 			style="text-align: middle; margin: 3px;">
 		<div style="font-size: 9px; width: 100px;">
@@ -155,13 +155,22 @@
 	</div>
 </div>
 <div class="row">
-	<textarea style="resize: none; height: 70%;"
-				ng-model="groupDescription" placeholder="Comment on post"></textarea>
-		
-
+	<div class="col-md-12 column">
+		<a class="glyphicon glyphicon-thumbs-up"></a><span> 1 person likes this</span>
+		<a class="glyphicon glyphicon-share" style="margin-left:10px; margin-bottom:20px"></a><span> Share</span>
+	</div>
 </div>
 <div class="row">
+	<div class="col-md-12 column">
+	<textarea style="resize: none; height: 70%;"
+				ng-model="comment" placeholder="Comment on post"></textarea>
+		
+	</div>
+</div>
+<div class="row">
+<div class="col-md-12 column">
 	<div class="btn btn-primary pull-right">Post</div>	
+	</div>
 </div>
 </div>
 </div>
