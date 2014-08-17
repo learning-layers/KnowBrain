@@ -100,7 +100,7 @@ angular.module('module.social').controller("UserActivitiesController", ['$scope'
     });
 }]);
 
-angular.module('module.social').controller("GroupsController", ['$scope', '$state', '$dialogs', 'GroupFetchService', function($scope, $state, $dialogs, GroupFetchService){
+angular.module('module.social').controller("GroupsController", ['$scope', '$state', '$controller', '$dialogs', 'GroupFetchService', function($scope, $state, $controller, $dialogs, GroupFetchService){
     
     $scope.groups = [];
     
@@ -111,9 +111,27 @@ angular.module('module.social').controller("GroupsController", ['$scope', '$stat
         $scope.groups = result.circles;
         console.log(result);
     });
+    
 
     this.createGroup = function() {
-        $dialogs.newModal([], "modal-huge", MODULES_PREFIX+"/group/newGroupWizzard.tpl.html");
+        
+        var states = {
+                "new": MODULES_PREFIX+"/group/newGroup.tpl.html",
+                "members": MODULES_PREFIX+"/group/addMembers.tpl.html",
+                "choose": MODULES_PREFIX+"/group/addEntities.tpl.html",
+                "upload": MODULES_PREFIX+"/group/addEntitiesUpload.tpl.html",
+                "link": MODULES_PREFIX+"/group/addEntitiesLink.tpl.html"
+                //MODULES_PREFIX+"/group/addEntitiesCollection.tpl.html"; 
+                
+                
+        };
+        
+        var ctrlFunction = function($scope) {
+            $scope.groupMembers = [];
+            $scope.entities = [];
+        };
+        
+        $dialogs.newModal(states, ctrlFunction, "modal-huge");
 
     };
     
@@ -124,6 +142,12 @@ angular.module('module.social').controller("GroupsController", ['$scope', '$stat
     };
 
 }]);
+
+var newGroup = function($scope) {
+    console.log("BaseCtrl");
+    $scope.groupMembers = ["bla"];
+    $scope.entities = ["blub"];
+};
 
 angular.module('module.social').controller("FriendsController", ['$scope',function($scope){
     this.groups = "To be implemented";

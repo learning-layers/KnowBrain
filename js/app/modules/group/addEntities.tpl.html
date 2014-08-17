@@ -13,10 +13,9 @@
   -  See the License for the specific language governing permissions and
   -  limitations under the License.
 -->
-
 <div class="modal-content">
 	<div class="modal-header">
-		<button type="button" class="close" ng-click="leaveState()"
+		<button type="button" class="close" ng-click="close()"
 			aria-hidden="true">&times;</button>
 		<h4 class="modal-title">
 			<span class="glyphicon glyphicon-plus-sign"
@@ -50,9 +49,14 @@
 				<div>Add link</div>
 			</div>
 		</div>
-			<div class="modal-footer">
-		<button type="button" class="btn btn-default" ng-click="leaveState()">Back</button>
-	</div>
+		<div class="modal-footer" ng-show="stateStack.length > 1">
+			<button  type="button" class="btn btn-default" ng-click="leaveState()">Back</button>
+			
+<!-- 			<button  type="button" class="btn btn-default pull-right" ng-click="confirm()">OK</button> -->
+		</div>
+		<div class="modal-footer" ng-hide="stateStack.length > 1">
+			<button  type="button" class="btn btn-default pull-right" ng-click="confirm(entities)">OK</button>
+		</div>
 	</div>
 </div>
 

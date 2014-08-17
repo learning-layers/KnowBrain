@@ -1,3 +1,17 @@
-<div id="baseModal">
-<div ng-include="tplSrc"></div>
+<!-- <div id="baseModal"> -->
+<!-- 	<div ng-switch="currentState" ng-animate="'slide'" class="slide-frame" ng-controller="newGroupController"> -->
+<!-- 	<div ng-repeat="(label, tpl) in templates"> -->
+<!-- 		<div ng-switch-when="label"> -->
+<!-- 			<div ng-include="tpl"></div> -->
+<!-- 		</div> -->
+<!-- 	</div> -->
+<!-- </div> -->
+
+<!-- {{templates}}  -->
+<div ng-controller-controller="baseCtrl">
+	<div ng-repeat="(label, tpl) in states">
+	    <div ng-show="currentState == label">
+			<div ng-include="tpl"></div>
+	    </div>
+	</div>
 </div>

@@ -335,35 +335,50 @@ angular.module('dialogs.controllers',['ui.bootstrap.modal', 'module.i18n', 'modu
 // end ConfirmDialogCtrl / dialogs.controllers
 
 
-.controller("baseModalController", ['$scope', '$rootScope', '$modalInstance', 'i18nService', 'data', 'tplSrc', function($scope, $rootScope, $modalInstance, i18nService, data, tplSrc){
+.controller("baseModalController", ['$controller', '$scope', '$rootScope', '$modalInstance', 'i18nService', 'states', 'ctrlFunction', function($controller, $scope, $rootScope, $modalInstance, i18nService, states, ctrlFunction){
     
-    var stateStack = [];
+    $scope.baseCtrl = $controller(ctrlFunction, {$scope: $scope});
     
-    $scope.tplSrc = tplSrc;
+    $scope.stateStack = [];
+    
+    $scope.states = states;
     
     $scope.close = function() {
-        $modalInstance.close();
+        $modalInstance.dismiss();
     };
     
-    $scope.hide = function() {
-        console.log($rootScope);
-        $rootScope.$modal("hide");  
-
+    $scope.confirm = function(result) {
+        $modalInstance.close(result);
     };
-    
-    $scope.currentState = "";
     
     $scope.enterState = function(state) {
-        stateStack.push(state);
+        $scope.stateStack.push(state);
         $scope.currentState = state;
         console.log("New State: " + $scope.currentState);
     };
     
     $scope.leaveState = function() {
-        stateStack.pop();
-        $scope.currentState = stateStack[stateStack.length-1];
+        $scope.stateStack.pop();
+        if($scope.stateStack.length < 1) {
+            $scope.close();
+        }
+        $scope.currentState = $scope.stateStack[$scope.stateStack.length-1];
         console.log("New State: " + $scope.currentState);  
     };
+    
+    $scope.gotoBaseState = function() {
+        while($scope.stateStack.length > 1) {
+            $scope.stateStack.pop();
+        }
+        $scope.currentState = $scope.stateStack[$scope.stateStack.length-1];
+        console.log("New State: " + $scope.currentState);  
+    };
+    
+    var initialState = Object.keys(states)[0];
+    console.log(initialState);
+    $scope.enterState(initialState);
+    
+
     
 }]);
 //== Services ================================================================//
@@ -435,7 +450,7 @@ angular.module('dialogs.services',['ui.bootstrap.modal','dialogs.controllers'])
 					}
 				}); // end modal.open
 			}, // end create
-			newModal : function(data, wClass, tplSrc){
+			newModal : function(states, ctrlFunction, wClass){
                 return $modal.open({
                     templateUrl : MODULES_PREFIX + '/dialog/baseModal.tpl.html',
                     controller : 'baseModalController',
@@ -443,8 +458,8 @@ angular.module('dialogs.services',['ui.bootstrap.modal','dialogs.controllers'])
                     backdrop : true,
                     windowClass: wClass,
                     resolve : {
-                        data : function() { return data; },
-                        tplSrc: function() { return tplSrc;}   
+                        states : function() { return states; },
+                        ctrlFunction: function() { return ctrlFunction; }
                     }
                 });
             },

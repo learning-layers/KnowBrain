@@ -28,7 +28,6 @@
 
 		<div class="clearfix"></div>
 	</div>
-
 	<div class="share-entity-modal-body modal-body">
 		<div class="row clearfix" style="padding: 20px">
 			<div class="col-md-12 column">
@@ -50,9 +49,11 @@
 
 				<div class="row clearfix">
 					<div class="col-md-12 column" style="text-align: right">
-						<div class="btn-group"">
+						<div class="btn-group">
 							<button class="btn btn-default" type="button"
-								ng-click="confirm()">OK</button>
+								ng-click="back()" ng-show="stateStack.length > 1">OK</button>
+							<button class="btn btn-default" type="button"
+								ng-click="confirm(groupMembers)" ng-hide="stateStack.length > 1">Add</button>
 						</div>
 					</div>
 				</div>

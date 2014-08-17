@@ -66,33 +66,23 @@ angular.module('module.group').config(function($stateProvider) {
 
 angular.module('module.group').controller("newGroupController", ['$scope', '$q', '$dialogs', 'UserFetchService', 'GroupFetchService', 'ENTITY_TYPES', 'EntityModel', 'UserService', function($scope, $q, $dialogs, UserFetchService, GroupFetchService, ENTITY_TYPES, Entity, UserSrv){
     
-    $scope.enterState("new");
-    
     $scope.user = UserSrv.getUser();
     
     /* PATHS */
-    $scope.newGroupPath = MODULES_PREFIX+"/group/newGroup.tpl.html"; 
-    $scope.addMembersPath = MODULES_PREFIX+"/group/addMembers.tpl.html"; 
-    $scope.addEntitiesPath = MODULES_PREFIX+"/group/addEntities.tpl.html";
-    $scope.addFromCollectionPath = MODULES_PREFIX+"/group/addEntitiesCollection.tpl.html"; 
-    $scope.uploadResourcePath = MODULES_PREFIX+"/group/addEntitiesUpload.tpl.html";
-    $scope.addLinkPath = MODULES_PREFIX+"/group/addEntitiesLink.tpl.html";
+    
     
     $scope.group = {name: "", desc: ""};
-    $scope.groupMembers = [];
-    $scope.entities = [];
     
     var promise = UserFetchService.getAllUsers();
     promise.then(function(result) {
-        $scope.groupMembers = result.users;
-        console.log($scope.groupMembers);
+        for(var i=0; i < result.users.length; i++) {
+            $scope.groupMembers.push(result.users[i]);
+        }
     });
     
     
     $scope.uploadPic = function() {
-        console.log($scope.entities);
         console.log("TODO: Upload profile picture");
-        $scope.hide();
     };
     
     $scope.addMembers = function() {
@@ -134,7 +124,6 @@ angular.module('module.group').controller("newGroupController", ['$scope', '$q',
         }
         
         $q.all(promises).then(function(results) {
-            console.log(results);
             
             for(var i=0; i < results.length; i++) {
                 entityUrls.push(results[i].id);
@@ -158,20 +147,37 @@ angular.module('module.group').controller("newGroupController", ['$scope', '$q',
     };
 }]);
 
-angular.module('module.group').controller("addMembersController", ['$scope', '$rootScope', function($scope, $rootScope){
+angular.module('module.group').controller("addMembersController", ['$scope', '$rootScope', 'UserFetchService', function($scope, $rootScope, UserFetchService){
+    
+    if($scope.groupMembers.length == 0) {
+        var promise = UserFetchService.getAllUsers();
+        promise.then(function(result) {
+            for(var i=0; i < result.users.length; i++) {
+                $scope.groupMembers.push(result.users[i]);
+            }
+        });
+    };
     
     $scope.handleEntryClick = function(entry) {
         console.log("TODO: Go to user's profile");
     };
     
+    $scope.selectResource = function(entry) {
+        if(entry.isSelected) {
+            entry.isSelected = false; 
+        } else {
+            entry.isSelected = true;
+        }
+
+    };
     
-    $scope.confirm = function() {
+    $scope.back = function() {
        $scope.leaveState();
     };
 }]);
 
 angular.module('module.group').controller("addEntitiesController", ['$scope', 'i18nService', function($scope, $modalInstance){
-
+    
 }]);
 
 angular.module('module.group').controller("addLinkController", ['$scope', 'i18nService','EntityModel', 'ENTITY_TYPES', function($scope, i18nService, Entity, ENTITY_TYPES){
@@ -264,11 +270,10 @@ angular.module('module.group').controller("EntityUploadController", ['$q', '$sco
             entity.uploaded = false;
             entity.fileHandle = file;
             entity.isSelected = true;
-            
+            console.log($scope.entities);
             $scope.entities.push(entity);
         }
-        $scope.leaveState();
-        $scope.leaveState();
+        $scope.gotoBaseState();
     };
 
     $scope.uploadAllFiles = function(){
@@ -385,9 +390,9 @@ angular.module('module.group').controller("GroupController", ['$scope', '$stateP
     });
 }]);
 
-angular.module('module.group').controller("MembersController", ['$scope', '$state', 'GroupFetchService', 'UserFetchService', 'UserModel', function($scope, $state, GroupFetchService, UserFetchService, User){
+angular.module('module.group').controller("MembersController", ['$scope', '$state', '$dialogs', 'GroupFetchService', 'UserFetchService', 'UserModel', function($scope, $state, $dialogs, GroupFetchService, UserFetchService, User){
     
-    $scope.members = [];
+    $scope.groupMembers = [];
     
     var promise = GroupFetchService.getGroup($scope.groupId);
         
@@ -402,7 +407,7 @@ angular.module('module.group').controller("MembersController", ['$scope', '$stat
                 var user = new User();
                 user.id = result.desc.entity;
                 user.label = result.desc.label;
-                $scope.members.push(user);
+                $scope.groupMembers.push(user);
             });
         }
     });
@@ -412,9 +417,32 @@ angular.module('module.group').controller("MembersController", ['$scope', '$stat
             $state.go("app.social.groups", {profileId: entry.id});
         }
     };
+    
+    $scope.addMember = function() {
+
+        var states = {
+                "members": MODULES_PREFIX+"/group/addMembers.tpl.html",
+        };
+        
+        var ctrlFunction = function($scope) {
+            $scope.groupMembers = [];
+        };
+        
+        $dialogs.newModal(states, ctrlFunction, "modal-huge").result.then(function (result) {
+             
+            var userUrls = [];
+            
+            for(var i=0; i < result.length; i++) {
+                if(result[i].isSelected) {
+                    userUrls.push(result[i].id);
+                } 
+             }
+             GroupFetchService.addMembersToGroup(userUrls, $scope.groupId);
+        });
+    }
 }]);
 
-angular.module('module.group').controller("EntitiesController", ['$scope', 'GroupFetchService', 'EntityFetchService',function($scope, GroupFetchService, EntityFetchService){
+angular.module('module.group').controller("EntitiesController", ['$scope', '$q', '$dialogs', 'GroupFetchService', 'EntityFetchService', 'ENTITY_TYPES', function($scope, $q, $dialogs, GroupFetchService, EntityFetchService, ENTITY_TYPES){
     
     $scope.entities = [];
     
@@ -423,17 +451,56 @@ angular.module('module.group').controller("EntitiesController", ['$scope', 'Grou
     promise.then(function(result) {
         
         var group = result.circle;
-        console.log(group);
         var entityIds = group.entities;
-        console.log(entityIds);
         for(var i=0; i < entityIds.length; i++) {
             var promise = EntityFetchService.getEntityByUri(entityIds[i], false, false, false);
             promise.then(function(result){
-                console.log(result);
                 $scope.entities.push(result);
             });
         }
     });
+    
+    $scope.addEntity = function() {
+        console.log($scope.entities);
+
+        var states = {
+                "choose": MODULES_PREFIX+"/group/addEntities.tpl.html",
+                "upload": MODULES_PREFIX+"/group/addEntitiesUpload.tpl.html",
+                "link": MODULES_PREFIX+"/group/addEntitiesLink.tpl.html"
+                //MODULES_PREFIX+"/group/addEntitiesCollection.tpl.html"; 
+        };
+        
+        var ctrlFunction = function($scope) {
+            $scope.entities = [];
+        };
+        
+        $dialogs.newModal(states, ctrlFunction, "modal-huge").result.then(function (result) {
+            
+            var entityUrls = [];
+            
+            var promises = [];
+            
+            for(var i=0; i < result.length; i++) {
+                
+                if(result[i].type == ENTITY_TYPES.file) {
+                    var file = result[i];
+                    promises.push(file.uploadFile());
+                } 
+                else if(result[i].type == ENTITY_TYPES.link) {
+                    entityUrls.push(result[i].id);
+                }
+            }
+            
+            $q.all(promises).then(function(results) {
+                
+                for(var i=0; i < results.length; i++) {
+                    entityUrls.push(results[i].id);
+                }
+                
+                GroupFetchService.addEntitiesToGroup(entityUrls, $scope.groupId);
+            });
+        });
+    }
 }]);
 
 angular.module('module.group').controller("GroupActivitiesController", ['$scope', 'Activity', 'ActivityFetchService', function($scope, Activity, ActivityFetchService){
@@ -511,6 +578,36 @@ angular.module('module.group').service("GroupFetchService", ['$q','UserService',
         );
 
         return defer.promise;        
+    };
+    
+    this.addMembersToGroup = function(users, group) {
+        new SSEntityUsersToCircleAdd(
+                function(result) {
+                    console.log(result);
+                },
+                function(error) {
+                    console.log(error);
+                },
+                UserSrv.getUser(),
+                UserSrv.getKey(),
+                group,
+                users
+        );
+    };
+    
+    this.addEntitiesToGroup = function(entities, group) {
+        new SSEntityEntitiesToCircleAdd(
+                function(result) {
+                    console.log(result);
+                },
+                function(error) {
+                    console.log(error);
+                },
+                UserSrv.getUser(),
+                UserSrv.getKey(),
+                group,
+                entities
+        );
     };
 
 }]);
