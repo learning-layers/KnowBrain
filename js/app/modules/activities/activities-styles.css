@@ -1,0 +1,18 @@
+.post {
+	background-color: #F8F8F8; 
+	padding: 15px; 
+	border-radius: 20px
+}
+
+.post-comment {
+	resize: none; 
+	height: 70%;
+}
+
+.activity-entry {
+	background-color: #F8F8F8;
+}
+
+.grey-link {
+	color: #777;
+}
