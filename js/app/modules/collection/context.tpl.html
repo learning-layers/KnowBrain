@@ -21,31 +21,26 @@
 
 <div ng-controller="CollectionController">
 
-  <div class="btn-group" id="contextMenu" ng-show="resourcesSelected">
-    <button type="button" class="btn btn-default" >
-      <span class="glyphicon glyphicon-transfer" tooltip-placement="bottom" tooltip="{{t('move_resource')}}"></span>
-    </button>
-  <!--  <button type="button" class="btn btn-default" >
+	<div class="btn-group" id="contextMenu" ng-show="resourcesSelected">
+		<button type="button" class="btn btn-default">
+			<span class="glyphicon glyphicon-transfer" tooltip-placement="bottom"
+				tooltip="{{t('move_resource')}}"></span>
+		</button>
+		<!--  <button type="button" class="btn btn-default" >
       <span class="glyphicon glyphicon-share" tooltip-placement="bottom" tooltip="{{t('share_resource')}}"></span>
     </button> -->
-    <button type="button" class="btn btn-default" ng-click="deleteCollectionEntries()">
-      <span class="glyphicon glyphicon-trash" tooltip-placement="bottom" tooltip="{{t('delete_resource')}}"></span>
-    </button>
-  </div>
+		<button type="button" class="btn btn-default"
+			ng-click="deleteCollectionEntries()">
+			<span class="glyphicon glyphicon-trash" tooltip-placement="bottom"
+				tooltip="{{t('delete_resource')}}"></span>
+		</button>
+	</div>
 
-  <div ng-show="!ajaxLoading" id="upload-box" class="kb-fluid-container pull-left" ng-click="openAddResourceWizzard()" tooltip-placement="right"
-  tooltip="{{t('upload_tooltip')}}">  {{t('add')}}
-   <div id="upload-link" class="glyphicon glyphicon-plus-sign" ></div>
-  </div>
-
-  <div ng-show="ajaxLoading" id="upload-box-loading" class="kb-fluid-container pull-left">
-   <div class="ajax-loader-light-grey" ></div>
-  </div>
+	<ng-add-entity></ng-add-entity>
 
 
   <div id="collectionContent">
-    <div coll-content vie-map="currentCollection[sss:hasEntity] as entities" ng-repeat="entry in entities" class="collection-entry kb-fluid-container pull-left" ng-click="handleEntryClick(entry)"> 
-    </div>
+  	<ng-entity coll-content vie-map="currentCollection[sss:hasEntity] as entities" ng-repeat="entry in currentCollection.entries" ></ng-entity>
   </div>
   <div class="clearfix"></div>
 </div>

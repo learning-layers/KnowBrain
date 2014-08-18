@@ -1,0 +1,33 @@
+<div ng-show="!ajaxLoading"
+	ng-class="{'collection-entry-selected': entry.isSelected}"
+	class="collection-entry kb-fluid-container pull-left"
+	ng-click="handleEntryClick(entry)">
+	<div class="collection-entry-preview-box">
+		<div
+			ng-class="{'collection-entry-checkbox-wrapper-selected': entry.isSelected}"
+			class="collection-entry-checkbox-wrapper">
+			<input ng-checked="entry.isSelected"
+				class="collection-entry-checkbox" type="checkbox"
+				ng-click="selectResource(entry);$event.stopPropagation()" />
+		</div>
+		<div ng-switch="entry.type">
+			<img ng-switch-when="group" src="images/group_pic_dummy.jpg" class="collection-entry-profile-pic"/>
+			<img ng-switch-when="priv" src="images/group_pic_dummy.jpg" class="collection-entry-profile-pic"/>
+			<div ng-switch-when="coll" style="position: relative; z-index: 9;"
+			id="collection-entry-preview-box-glyphicon" class="glyphicon glyphicon-folder-close">
+			</div>
+			<div ng-switch-when="file" style="position: relative; z-index: 9;"
+			id="collection-entry-preview-box-glyphicon" class="glyphicon glyphicon-file">
+			</div>
+			<div ng-switch-when="entity" style="position: relative; z-index: 9;"
+			id="collection-entry-preview-box-glyphicon" class="glyphicon glyphicon-link">
+			</div>
+			<img ng-switch-default src="images/profile_pic_dummy.png" class="collection-entry-profile-pic"/>
+		</div>
+		<div class="collection-entry-shared"
+			ng-show="(entry.type == entityTypes.collection) && entry.space == spaceEnum.shared">{{t('shared')}}</div>
+	</div>
+	<div class="collection-entry-description-box">
+		<div shortenentryname model="entry.label">{{entry.label}}</div>
+	</div>
+</div>

@@ -1,0 +1,58 @@
+/* SHARE ENTITY */
+
+.add-members-header {
+  height: 51px; 
+  padding:0px;
+}
+
+.add-members-modal-body {
+  padding:0px; 
+  height:300px;
+}
+
+.add-members-close-button {
+  margin-right:10px; 
+  margin-top: 10px;
+}
+
+.add-members-type-icon {
+  margin-right: 10px; 
+  float: left; 
+  position: relative; 
+  margin-left: 15px; 
+  margin-top: 15px;
+}
+
+.add-members-modal-title {
+	margin-right: 10px; 
+  float: left; 
+  position: relative; 
+  margin-left: 15px; 
+  margin-top: 15px;
+}
+
+.add-members-preview-box {
+    padding: 20px;
+}
+
+.add-members-preview-box-icon {
+    position: relative;
+}
+
+.add-members-preview-box-icon div {
+    font-size: 60px;
+    padding-top: 0px;
+    margin: auto;
+}
+
+.add-members-preview-box-glyphicon {
+    padding-top: 8px;
+    line-height: 70px;
+}
+
+.add-members-preview-box-label {
+    overflow: hidden;
+    font-size: 16px;
+    margin-top: 3px;
+    line-height: 70px;
+}

@@ -1,0 +1,252 @@
+﻿/**
+* Code contributed to the Learning Layers project
+* http://www.learning-layers.eu
+* Development is partly funded by the FP7 Programme of the European Commission under
+* Grant Agreement FP7-ICT-318209.
+* Copyright (c) 2014, Graz University of Technology - KTI (Knowledge Technologies Institute).
+* For a list of contributors see the AUTHORS file at the top-level directory of this distribution.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+* http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
+
+@charset "UTF-8";
+
+/* QA MODULE CSS DEFINITONS */
+.row {
+    margin-bottom: 10px;
+}
+
+a:hover {
+    text-decoration:none;
+    cursor:pointer;
+    color: #152C40;
+}
+
+.qa-header {
+    margin-bottom: 60px;
+}
+
+.lead {
+    margin:0px 0px 10px 0px;
+    vertical-align: middle;
+}
+
+.underline {
+    border-bottom:1px solid #eee;
+    margin-bottom:10px;
+}
+
+.stretch {
+	width: 100%;
+}
+
+.add-attachment-box {
+	border: 2px dashed #DBDBDB;
+	color: #DBDBDB;
+	cursor: pointer;
+	text-align: center;
+	padding-top: 20px;
+	font-weight: bold;
+	width: 100%;
+	height: 115px;
+	margin-right: 5px;
+    margin-bottom: 10px;
+	z-index: 100;
+}
+
+.add-attachment-box:hover {
+  border:  2px dashed #2a6496;
+  color:  #2a6496;
+}
+
+.add-attachment-box div {
+  width: 100%;
+}
+
+.add-attachment-icon {
+    width: 100%;
+    font-size: 45px;
+}
+
+.rounded {
+	border-radius:4px;
+}
+
+.rounded-left {
+	border-top-left-radius:4px;
+	border-bottom-left-radius:4px;
+}
+
+.rounded-right {
+	border-top-right-radius:4px;
+	border-bottom-right-radius:4px;
+}
+
+.glyphicon-question{
+	width: 14px;
+	height: 14px;
+	background-image: url(../../../../images/qa/question_14x14.png);
+}
+
+.glyphicon-discussion{
+	width: 14px;
+	height: 14px;
+	background-image: url(../../../../images/qa/discussion_14x14.png);
+}
+
+.glyphicon-chat{
+	width: 14px;
+	height: 14px;
+	background-image: url(../../../../images/qa/chat_14x14.png);
+}
+
+.icon-small {
+    display:inline-block;
+    vertical-align:middle;
+	width: 32px;
+	height: 32px;
+	margin-right: 4px;
+}
+
+.icon-medium {
+    display:inline-block;
+    vertical-align:middle;
+	width:64px;
+	height:64px;
+	margin-right:15px;
+}
+
+.icon-large {
+    display:inline-block;
+    vertical-align:middle;
+	width:80px;
+	height:80px;
+	margin-right:15px;
+}
+
+.icon-user-small {
+	background-image: url(../../../../images/qa/user-default_32x32.png);
+}
+
+.icon-user-medium {
+	background-image: url(../../../../images/qa/user-default_64x64.png);
+}
+
+.icon-entity-small {
+	background-image: url(../../../../images/qa/entity_32x32.png);
+}
+
+.icon-file-small {
+	background-image: url(../../../../images/qa/file_32x32.png);
+}
+
+.icon-question-medium {
+	background-image: url(../../../../images/qa/question_64x64.png);
+}
+
+.icon-question-large {
+	background-image: url(../../../../images/qa/question_80x80.png);
+}
+
+.icon-discussion-large {
+	background-image: url(../../../../images/qa/discussion_80x80.png);
+}
+
+.icon-chat-large {
+	background-image: url(../../../../images/qa/chat_80x80.png);
+}
+
+.icon-answered-large {
+	background-image: url(../../../../images/qa/answered_80x80.png);
+}
+
+.icon-answered-medium {
+	background-image: url(../../../../images/qa/answered_64x64.png);
+}
+
+.icon-up-small {
+    background-image: url(../../../../images/qa/up_32x32.png);
+}
+
+.icon-down-small {
+    background-image: url(../../../../images/qa/down_32x32.png);
+}
+
+div.icon-attached {
+    display:inline-block;
+    margin-right:15px;
+    vertical-align:middle;
+}
+
+div.thread-statistic-box {
+	border:solid 1px #ddd;
+    padding-left: 15px;
+    padding-top: 8px;
+    padding-bottom: 8px;
+}
+
+.list-header-box {
+	background: #f5f5f5;
+	border: 1px solid #e3e3e3;
+    padding-top: 20px;
+    padding-left: 15px;
+    padding-bottom: 15px;
+}
+
+.list-header-box input {
+    margin-bottom: 6px;
+}
+
+.qa-tag {
+    display: inline-block;
+	font-size:smaller;
+	background: #428BCA;
+	border-radius: 0px;
+	padding-left: 8px;
+	padding-right: 8px;
+	padding-top: 5px;
+    padding-bottom: 5px;
+	margin-right: 5px;
+}
+
+.qa-tag a {
+	color: white;
+}
+
+/* Modals */
+.modal {
+    overflow-y:auto;
+    max-height:100%;
+}
+
+/* Question detail page */
+.description {
+    margin-bottom: 10px;
+}
+
+.answer {
+    padding-bottom: 40px;
+}
+
+.answer-comment {
+	color: #bbb;
+	border-top: 1px dotted #ddd;
+    padding-top: 8px;
+}
+
+.related {
+    margin-bottom: 40px;
+}
+
+
+

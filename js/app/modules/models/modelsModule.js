@@ -29,6 +29,7 @@ angular.module('module.models',[]);
 
 angular.module('module.models').constant('SPACE_ENUM', {private:'privateSpace', shared:'sharedSpace', follow:'followSpace'});
 angular.module('module.models').constant('ENTITY_TYPES', {collection:'coll', file:'file', link:'entity'});
+angular.module('module.models').constant('SHARING_OPTIONS', {private:'private', friends:'friends', public:'public', custom:'custom'});
 angular.module('module.models').constant('RATING_MAX', 5);
 
 angular.module('module.models').factory('BaseModel', ['$q', '$rootScope', 'UserService', 'FetchServiceHelper', "SPACE_ENUM", function($q, $rootScope, UserSrv, FetchServiceHelper, SPACE_ENUM){
@@ -59,7 +60,7 @@ angular.module('module.models').factory('BaseModel', ['$q', '$rootScope', 'UserS
       var defer = $q.defer();
       var self = this;
 
-      new SSEntityLabelSet().handle(
+      new SSEntityLabelSet(
         function(result){
           self.label = newLabel;
           defer.resolve(result); 
@@ -69,9 +70,9 @@ angular.module('module.models').factory('BaseModel', ['$q', '$rootScope', 'UserS
           defer.reject(error); 
           $rootScope.$apply();
         },
-        UserSrv.getUserUri(),
+        UserSrv.getUser(),
         UserSrv.getKey(),
-        self.uri,
+        self.id,
         newLabel
         );
 
@@ -81,7 +82,7 @@ angular.module('module.models').factory('BaseModel', ['$q', '$rootScope', 'UserS
       var defer = $q.defer();
       var self = this;
 
-      new SSRatingUserSet().handle(
+      new SSRatingSet(
         function(result){
           if(result.worked){
             var promise = FetchServiceHelper.getEntityDescribtion(self, true, true, true);
@@ -99,9 +100,9 @@ angular.module('module.models').factory('BaseModel', ['$q', '$rootScope', 'UserS
           console.log(error);
           $rootScope.$apply();
         },
-        UserSrv.getUserUri(),
+        UserSrv.getUser(),
         UserSrv.getKey(),
-        self.uri,
+        self.id,
         rating
         );
 
@@ -111,7 +112,7 @@ angular.module('module.models').factory('BaseModel', ['$q', '$rootScope', 'UserS
       var defer = $q.defer();
       var self = this;
 
-      new SSTagAdd().handle(
+      new SSTagAdd(
         function(result){
           defer.resolve(result); 
           $rootScope.$apply();
@@ -120,9 +121,9 @@ angular.module('module.models').factory('BaseModel', ['$q', '$rootScope', 'UserS
           defer.reject(error); 
           $rootScope.$apply();
         }, 
-        UserSrv.getUserUri(),
+        UserSrv.getUser(),
         UserSrv.getKey(),
-        self.uri, 
+        self.id, 
         tagString, 
         self.space
         );
@@ -133,7 +134,7 @@ angular.module('module.models').factory('BaseModel', ['$q', '$rootScope', 'UserS
       var defer = $q.defer();
       var self = this;
 
-      new SSTagsUserRemove().handle(
+      new SSTagsRemove(
         function(result){
           defer.resolve(result); 
           $rootScope.$apply();
@@ -142,61 +143,66 @@ angular.module('module.models').factory('BaseModel', ['$q', '$rootScope', 'UserS
           defer.reject(error); 
           $rootScope.$apply();
         }, 
-        UserSrv.getUserUri(),
+        UserSrv.getUser(),
         UserSrv.getKey(),
-        self.uri, 
+        self.id, 
         tagString, 
         self.space
         );
       return defer.promise;
     },
-    addComment: function(commentText){
+    addComment: function(entry){
       var defer = $q.defer();
       var self = this;
       var addNewDisc = true;
-      var target = null;
-
+      var entity = null;
+      var type   = "disc";
+      var label  = "newDisc";
 
       if(this.disc != null){
         addNewDisc = false;
-        target = this.disc.uri;
+        entity     = this.disc.id;
       }else{
-        self.disc = {uri:null,entries: new Array()};
+        self.disc = {id:null,entries: new Array()};
       }     
 
-      new SSDiscUserEntryAdd().handle(
+      new SSDiscEntryAdd(
         function(result){ 
 
           var newComment = {
-            content: commentText,
-            author: UserSrv.getUserUri(), //TODO
+            content: entry,
+          author: UserSrv.getUser(), //TODO
             timestamp: new Date().getTime(),
-            uri: result.discEntry,
+          id: result.entry,
           };
 
           self.disc.entries.push(newComment);
 
           if(addNewDisc){
-            self.disc.uri = result.disc;
+          self.disc.id = result.disc;
           }
 
           defer.resolve(newComment); 
           $rootScope.$apply();
         },
         function(error){ console.log(error); },
-        UserSrv.getUserUri(),
+      UserSrv.getUser(),
         UserSrv.getKey(),
-        target,
-        self.uri,
-        commentText,
-        addNewDisc
-        );
+      entity,
+      self.id,
+      entry,
+      addNewDisc,
+      type,
+      label,
+      "some explanation",
+      new Array(), //users
+      new Array()); //entities
 
       return defer.promise;
     },
-    uri: "",
+    id: "",
     uriPathnameHash: "",
-    overallRating: {score: 0, frequency: 0},
+    overallRating: {score: 0, frequ: 0},
     tags: null,
     disc: null
   };
@@ -237,13 +243,13 @@ angular.module('module.models').factory('CollectionModel', ['$q', '$rootScope','
     var defer = $q.defer();
     var self = this;
 
-    new SSCollUserEntryAdd().handle(
+    new SSCollEntryAdd(
       function(result){
 
         var entry = new EntityModel();
 
-        entry.init({uri:result.uri, label:label, parentColl: this, space: self.space, entityType: ENTITY_TYPES.collection});
-        entry.init({uriPathnameHash: UriToolbox.extractUriPathnameHash(result.uri)});
+        entry.init({id:result.entity, label:label, parentColl: this, space: self.space, type: ENTITY_TYPES.collection});
+        entry.init({uriPathnameHash: UriToolbox.extractUriPathnameHash(result.entity)});
 
         self.entries.push(entry);
 
@@ -254,9 +260,9 @@ angular.module('module.models').factory('CollectionModel', ['$q', '$rootScope','
         defer.reject(error);
         $rootScope.$apply();
       },
-      UserSrv.getUserUri(),
+      UserSrv.getUser(),
       UserSrv.getKey(),
-      this.uri,
+      this.id,
       null,
       label,
       true
@@ -269,7 +275,7 @@ angular.module('module.models').factory('CollectionModel', ['$q', '$rootScope','
     var defer = $q.defer();
     var self = this;
 
-    new SSCollUserHierarchyGet().handle(
+    new SSCollHierarchyGet(
       function(result){
         defer.resolve(result); 
         $rootScope.$apply();
@@ -278,9 +284,9 @@ angular.module('module.models').factory('CollectionModel', ['$q', '$rootScope','
         defer.reject(error);
         $rootScope.$apply();
       },
-      UserSrv.getUserUri(),
+      UserSrv.getUser(),
       UserSrv.getKey(),
-      this.uri
+      this.id
       );
 
     return defer.promise;
@@ -290,11 +296,11 @@ angular.module('module.models').factory('CollectionModel', ['$q', '$rootScope','
     var defer = $q.defer();
     var self = this;
 
-    new SSFileUpload().handle(
-      function(parentUri,fileUri,fileName){
+    new SSFileUpload(
+      function(fileUri,fileName){
         var entry = new EntityModel();
 
-        entry.init({uri:fileUri, label:fileName, parentColl: parentUri, space: self.space, entityType: ENTITY_TYPES.file});
+        entry.init({id:fileUri, label:fileName, parentColl: self.id, space: self.space, type: ENTITY_TYPES.file});
         entry.init({uriPathnameHash: UriToolbox.extractUriPathnameHash(fileUri)});
 
         defer.resolve(entry); 
@@ -304,19 +310,18 @@ angular.module('module.models').factory('CollectionModel', ['$q', '$rootScope','
         defer.reject(error);
         $rootScope.$apply();
       },
-      UserSrv.getUserUri(),
+      UserSrv.getUser(),
       UserSrv.getKey(),
-      file,
-      this.uri
+      file
       );
 
     return defer.promise;
   };
 
-  Collection.prototype.addEntries = function(entries, entryLabels){
+  Collection.prototype.addEntries = function(entries, labels){
 
     var defer = $q.defer();
-    new SSCollUserEntriesAdd().handle(
+    new SSCollEntriesAdd(
       function(result){
         defer.resolve(result); 
         $rootScope.$apply();
@@ -325,11 +330,11 @@ angular.module('module.models').factory('CollectionModel', ['$q', '$rootScope','
         defer.reject(error);
         $rootScope.$apply();
       },
-      UserSrv.getUserUri(),
+      UserSrv.getUser(),
       UserSrv.getKey(),
-      this.uri,
+      this.id,
       entries,
-      entryLabels
+      labels
       );
 
     return defer.promise;
@@ -340,10 +345,10 @@ angular.module('module.models').factory('CollectionModel', ['$q', '$rootScope','
     var defer = $q.defer();
     var self = this;
     
-    new SSCollUserEntryAdd().handle(
+    new SSCollEntryAdd(
       function(result){
         var link = new EntityModel();
-        link.init({label:label, uri:url, entityType: ENTITY_TYPES.link});
+        link.init({label:label, id:url, type: ENTITY_TYPES.link});
         link.init({uriPathnameHash: UriToolbox.extractUriHostPartWithoutProtocol(url)});
         self.entries.push(link);
 
@@ -354,9 +359,9 @@ angular.module('module.models').factory('CollectionModel', ['$q', '$rootScope','
         defer.reject(error);
         $rootScope.$apply();
       },
-      UserSrv.getUserUri(),
+      UserSrv.getUser(),
       UserSrv.getKey(),
-      this.uri,
+      this.id,
       url,
       label,
       false
@@ -370,7 +375,7 @@ angular.module('module.models').factory('CollectionModel', ['$q', '$rootScope','
     var defer = $q.defer();
     var self = this;
 
-    new SSCollUserEntriesDelete().handle(
+    new SSCollEntriesDelete(
       function(result){
         
         if(result.worked){
@@ -382,9 +387,9 @@ angular.module('module.models').factory('CollectionModel', ['$q', '$rootScope','
        defer.resolve(result);
      }, 
      function(error){ console.log(error); }, 
-     UserSrv.getUserUri(),
+     UserSrv.getUser(),
      UserSrv.getKey(), 
-     self.uri, 
+     self.id, 
      collEntries
      );
 
@@ -408,7 +413,7 @@ angular.module('module.models').factory('CollectionModel', ['$q', '$rootScope','
 
     var self = this;
 
-    new SSEntityUserPublicSet().handle(
+    new SSEntityPublicSet(
       function(result){
         if(result.worked){
           self.space = SPACE_ENUM.shared;
@@ -418,9 +423,9 @@ angular.module('module.models').factory('CollectionModel', ['$q', '$rootScope','
       function(error){
         console.log(error);
       },
-      UserSrv.getUserUri(),
+      UserSrv.getUser(),
       UserSrv.getKey(),
-      this.uri
+      this.id
       );
 
   };
@@ -430,16 +435,16 @@ angular.module('module.models').factory('CollectionModel', ['$q', '$rootScope','
     var defer = $q.defer();
     var self = this;
 
-    new SSCollUserCumulatedTagsGet().handle(
+    new SSCollCumulatedTagsGet(
       function(result){ 
         self.cumulatedTags = TagCloudToolbox.getWeightedTagsFromTagFrequencies(result.tagFrequs);
         defer.resolve();
         $rootScope.$apply();
       },
       function(error){ defer.reject(error); },
-      UserSrv.getUserUri(),
+      UserSrv.getUser(),
       UserSrv.getKey(),
-      this.uri
+      this.id
       );
 
     return defer.promise;
@@ -450,14 +455,14 @@ angular.module('module.models').factory('CollectionModel', ['$q', '$rootScope','
 
 }]);
 
-angular.module('module.models').factory('EntityModel', ['$q', '$rootScope','UserService', 'BaseModel', 'SPACE_ENUM', 'ENTITY_TYPES', function($q, $rootScope, UserSrv, BaseModel, SPACE_ENUM, ENTITY_TYPES){
+angular.module('module.models').factory('EntityModel', ['$q', '$rootScope','UserService', 'BaseModel', 'SPACE_ENUM', 'ENTITY_TYPES', 'SHARING_OPTIONS', function($q, $rootScope, UserSrv, BaseModel, SPACE_ENUM, ENTITY_TYPES, SHARING_OPTIONS){
 
   function Entity(){
     this.parentColl = null;
     this.author = null;
     this.label = null;
     this.space = SPACE_ENUM.private;
-    this.entityType = null;
+    this.type       = null;
     this.pos = null;
     this.mimeType = null;
 
@@ -483,7 +488,6 @@ angular.module('module.models').factory('EntityModel', ['$q', '$rootScope','User
     }
   }
 
-
   Entity.prototype = Object.create(BaseModel.prototype);
   Entity.prototype.constructor = Entity;
 
@@ -496,7 +500,7 @@ angular.module('module.models').factory('EntityModel', ['$q', '$rootScope','User
   };
 
   Entity.prototype.isCollection = function(){
-    if(this.entityType == ENTITY_TYPES.collection)
+    if(this.type === ENTITY_TYPES.collection)
       return true;
     else
       return false;
@@ -505,15 +509,15 @@ angular.module('module.models').factory('EntityModel', ['$q', '$rootScope','User
   Entity.prototype.downloadFile = function(){
     var defer = $q.defer();
 
-    if(this.entityType != ENTITY_TYPES.file)
+    if(this.type !== ENTITY_TYPES.file)
       return null;
 
-    new SSFileDownload().handle(
+    new SSFileDownload(
       this.servHandleFileDownload(defer),
       function(error){ defer.reject(); console.log(error); },
-      UserSrv.getUserUri(),
+      UserSrv.getUser(),
       UserSrv.getKey(),
-      this.uri
+      this.id
       );
 
     return defer.promise;
@@ -532,11 +536,10 @@ angular.module('module.models').service("CollectionFetchService", ['$q', '$rootS
 
   var self = this;
 
-
   var initCollection = function(result){
    var model = new CollectionModel();
    model.init(result.coll);
-   model.init({uriPathnameHash: UriToolbox.extractUriPathnameHash(model.uri)});
+   model.init({uriPathnameHash: UriToolbox.extractUriPathnameHash(model.id)});
 
    var tmpEntries = [];
 
@@ -546,10 +549,10 @@ angular.module('module.models').service("CollectionFetchService", ['$q', '$rootS
     entity.init(entry);
     entity.init({parentColl:model});
 
-    if(entity.entityType == ENTITY_TYPES.link){
-      entity.uriPathnameHash = UriToolbox.extractUriHostPartWithoutProtocol(entry.uri);
+    if(entity.type == ENTITY_TYPES.link){
+      entity.uriPathnameHash = UriToolbox.extractUriHostPartWithoutProtocol(entry.id);
     }else{
-      entity.uriPathnameHash =  UriToolbox.extractUriPathnameHash(entry.uri);
+      entity.uriPathnameHash =  UriToolbox.extractUriPathnameHash(entry.id);
     }
 
     tmpEntries.push(entity);
@@ -567,7 +570,7 @@ angular.module('module.models').service("CollectionFetchService", ['$q', '$rootS
       var hierarchy = [];
 
       angular.forEach(result.colls, function(coll, key){
-        coll.uriPathnameHash =  UriToolbox.extractUriPathnameHash(coll.uri);
+        coll.uriPathnameHash =  UriToolbox.extractUriPathnameHash(coll.id);
         hierarchy.push(coll);
       });
 
@@ -591,7 +594,7 @@ angular.module('module.models').service("CollectionFetchService", ['$q', '$rootS
 this.getRootCollection = function(){
   var defer = $q.defer();
 
-  new SSCollUserRootGet().handle(
+  new SSCollRootGet(
     function(result){
       var model = initCollection(result);
       model.isRoot = true;
@@ -610,18 +613,18 @@ this.getRootCollection = function(){
       defer.reject(error);
       $rootScope.$apply();
     },
-    UserSrv.getUserUri(),
+    UserSrv.getUser(),
     UserSrv.getKey()
     );
 
   return defer.promise;
 };
 
-this.getCollectionByUri = function(collUri){
+this.getCollectionByUri = function(coll){
   var defer = $q.defer();
   var self = this;
 
-  new SSCollUserWithEntries().handle(
+  new SSCollWithEntries(
     function(result){
       var model = initCollection(result);
       
@@ -639,9 +642,9 @@ this.getCollectionByUri = function(collUri){
       defer.reject(error);
       $rootScope.$apply();
     },
-    UserSrv.getUserUri(),
+    UserSrv.getUser(),
     UserSrv.getKey(),
-      UserSrv.getUserSpace()+"/coll/"+collUri //TODO
+      UserSrv.getUserSpace()+"/coll/"+coll //TODO
       );
 
   return defer.promise;     
@@ -651,26 +654,26 @@ this.getCollectionByUri = function(collUri){
 
 angular.module('module.models').service("EntityFetchService", ['$q', '$rootScope','UserService', 'EntityModel', 'UriToolbox', 'ENTITY_TYPES', 'FetchServiceHelper', function($q, $rootScope, UserSrv, EntityModel, UriToolbox, ENTITY_TYPES, FetchServiceHelper){
 
- this.getEntityByUri = function(entityUri, getTags, getOverallRating, getDiscUris){
+ this.getEntityByUri = function(entityUri, getTags, getOverallRating, getDiscs){
   var defer = $q.defer();
 
-  new SSEntityDescGet().handle(
+  new SSEntityDescGet(
     function(result){
 
-      var result = result.entityDesc;
+      var result = result.desc;
 
       var entity = new EntityModel();
-      entity.init({uri:result.entityUri});
-      entity.init({entityType:result.entityType});
+      entity.init({id:result.entity});
+      entity.init({type:result.type});
       entity.init({label:result.label});
       entity.init({tags:result.tags});
       entity.init({overallRating:result.overallRating});
       entity.init({creationTime:result.creationTime});
       entity.init({author:result.author});
 
-      if(entity.entityType == ENTITY_TYPES.file){
+      if(entity.type == ENTITY_TYPES.file){
 
-        var mimeType = jSGlobals.removeTrailingSlash(entity.uri);
+        var mimeType = jSGlobals.removeTrailingSlash(entity.id);
 
         if(jSGlobals.lastIndexOf(mimeType, jSGlobals.dot) === -1){
           console.log("could not determine mime-type");
@@ -700,12 +703,12 @@ angular.module('module.models').service("EntityFetchService", ['$q', '$rootScope
       defer.reject(error);
       $rootScope.$apply();
     },
-    UserSrv.getUserUri(),
+    UserSrv.getUser(),
     UserSrv.getKey(),
     entityUri,
     getTags,
     getOverallRating,
-    getDiscUris
+    getDiscs
     );
 
 return defer.promise;     
@@ -715,18 +718,18 @@ return defer.promise;
 
 angular.module('module.models').service("FetchServiceHelper", ['$q', '$rootScope','UserService', 'UriToolbox', 'SPACE_ENUM', function($q, $rootScope, UserSrv, UriToolbox, SPACE_ENUM){
 
-  this.getEntityDescribtion = function(model, getTags, getOverallRating, getDiscUris){
+  this.getEntityDescribtion = function(model, getTags, getOverallRating, getDiscs){
 
     var defer = $q.defer();
     var self = this;
 
-    new SSEntityDescGet().handle(
+    new SSEntityDescGet(
       function(result){
 
-        var result = result.entityDesc;
+        var result = result.desc;
 
-        model.init({uri:result.entityUri});
-        model.init({entityType:result.entityType});
+        model.init({id:result.entity});
+        model.init({type:result.type});
         model.init({label:result.label});
         model.init({tags:result.tags});
         model.init({overallRating:result.overallRating});
@@ -754,12 +757,12 @@ angular.module('module.models').service("FetchServiceHelper", ['$q', '$rootScope
         defer.reject(error);
         self.applyHelper();
       },
-      UserSrv.getUserUri(),
+      UserSrv.getUser(),
       UserSrv.getKey(),
-      model.uri,
+      model.id,
       getTags,
       getOverallRating,
-      getDiscUris
+      getDiscs
       );
 
 return defer.promise;
@@ -769,10 +772,10 @@ this.getDiscussionByUri = function(discUri){
   var defer = $q.defer();
   var self = this;
 
-  new SSDiscUserWithEntriesGet().handle(
+  new SSDiscWithEntriesGet(
     function(result){ defer.resolve(result); }, 
     function(error){ console.log(error); }, 
-    UserSrv.getUserUri(),
+    UserSrv.getUser(),
     UserSrv.getKey(), 
     discUri
     );
@@ -795,7 +798,7 @@ angular.module('module.models').service("TagFetchService", ['$q', '$rootScope','
     var defer = $q.defer();
     var self = this;
 
-    new SSTagUserFrequsGet().handle(
+    new SSTagFrequsGet(
       function(result){
         var tagArray = new Array();
         angular.forEach(result.tagFrequs, function(value, key){
@@ -807,11 +810,13 @@ angular.module('module.models').service("TagFetchService", ['$q', '$rootScope','
       function(error){
         console.log(error);
       },
-      UserSrv.getUserUri(),
+      UserSrv.getUser(),
       UserSrv.getKey(), 
+      null,
       null, 
       null, 
-      SPACE_ENUM.private
+      SPACE_ENUM.private,
+      null
       );
 
     return defer.promise;  
@@ -826,4 +831,137 @@ angular.module('module.models').service("TagFetchService", ['$q', '$rootScope','
 
 }]);
 
+angular.module('module.models').service('UserModel', ['$q', '$rootScope','UserService', function($q, $rootScope, UserSrv) {
+    
+    this.getAllUsers = function() {
 
+        var defer = $q.defer();
+        var self = this;
+
+        new SSUserAll(
+            function(result){
+                defer.resolve(result);
+            },
+            function(error){
+                console.log(error);
+            },
+            UserSrv.getUser(),
+            UserSrv.getKey()
+        );
+
+       return defer.promise;
+    };
+
+    this.getUserLabel = function(uri) {
+        var defer = $q.defer();
+        var self = this;
+
+        return new getUserLabelFromUri(uri);
+    };
+
+}]);
+
+angular.module('module.models').service("GroupFetchService", ['$q','UserService', function($q, UserSrv){
+    this.getUserGroups = function(user) {
+        var defer = $q.defer();
+        var self = this;
+
+        new SSEntityUserCirclesGet(function(result){
+                defer.resolve(result);
+            },
+            function(error){
+                console.log(error);
+            },
+            UserSrv.getUser(),
+            UserSrv.getKey(),
+            user
+        );
+       return defer.promise;
+    };
+    
+    this.createGroup = function(groupName, entities, users) {
+        var defer = $q.defer();
+        var self = this;
+
+        new SSEntityCircleCreate(
+            function(result){
+                defer.resolve(result);
+            },
+            function(error){
+                console.log(error);
+            },
+            UserSrv.getUser(),
+            UserSrv.getKey(),
+            groupName,
+            entities,
+            users
+        );
+
+        return defer.promise;        
+    };
+
+    this.getUserLabel = function(uri) {
+        var defer = $q.defer();
+        var self = this;
+
+        return new getUserLabelFromUri(uri);
+    };
+
+}]);
+
+
+angular.module('module.models').service('SharingModel', ['$q', 'UserService', function($q, UserSrv) {
+
+    this.getEntityUsers = function(entity) {
+
+        var defer = $q.defer();
+        var self = this;
+
+        new SSEntityEntityUsersGet(
+            function(result){
+                defer.resolve(result);
+            },
+            function(error){
+                console.log(error);
+            },
+            UserSrv.getUser(),
+            UserSrv.getKey(),
+            entity.id
+        );
+
+        return defer.promise;
+    };
+
+    this.shareEntityPublic = function(entity) {
+
+        new SSEntityPublicSet(
+            function(result){
+                console.log(result);
+            },
+            function(error){
+                console.log(error);
+            },
+            UserSrv.getUser(),
+            UserSrv.getKey(),
+            entity.id
+        );
+    };
+
+    this.shareEntityCustom = function(entity, shareWithArray, comment) {
+
+        new SSEntityShare(
+            function(result) {
+                console.log(result);
+            },
+            function(error) {
+                console.log(error);
+            },
+            UserSrv.getUser(),
+            UserSrv.getKey(),
+            entity.id,
+            shareWithArray,
+            "Test comment"
+        );
+
+    };
+}]);

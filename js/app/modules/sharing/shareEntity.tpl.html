@@ -1,0 +1,112 @@
+<!--
+- Code contributed to the Learning Layers project
+- http://www.learning-layers.eu
+- Development is partly funded by the FP7 Programme of the European Commission under
+- Grant Agreement FP7-ICT-318209.
+- Copyright (c) 2014, Graz University of Technology - KTI (Knowledge Technologies Institute).
+- For a list of contributors see the AUTHORS file at the top-level directory of this distribution.
+-
+- Licensed under the Apache License, Version 2.0 (the "License");
+- you may not use this file except in compliance with the License.
+- You may obtain a copy of the License at
+-
+- http://www.apache.org/licenses/LICENSE-2.0
+-
+- Unless required by applicable law or agreed to in writing, software
+- distributed under the License is distributed on an "AS IS" BASIS,
+- WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+- See the License for the specific language governing permissions and
+- limitations under the License.
+-->
+
+<div class="share-entity-header modal-header">
+	<button type="button" class="share-entity-close-button close"
+		ng-click="close()" style="margin-top: 5px;" aria-hidden="true">&times;</button>
+
+	<span class="share-entity-type-icon glyphicon glyphicon-share"></span>
+	<span class="share-entity-modal-title modal-title">Share</span>
+
+	<div class="clearfix"></div>
+</div>
+
+<div class="share-entity-modal-body modal-body">
+	<div class="row clearfix" style="padding: 20px">
+		<div class="col-md-12 column">
+
+			<textarea class="post form-control" maxlength="100"
+				placeholder="comment" rows="3"></textarea>
+
+			<div class="row clearfix share-entity-preview-box">
+				<div class="col-md-12 column">
+
+					<div class="share-entity-preview-box-icon">
+						<div style="position: relative; z-index: 9; float: left"
+							class="glyphicon share-entity-preview-box-glyphicon"
+							ng-class="{'glyphicon-folder-close': (entity.type == entityTypes.collection), 'glyphicon-file': (entity.type == entityTypes.file), 'glyphicon-link' : (entity.type == entityTypes.link)}">
+						</div>
+						<div style="float: left" class="share-entity-preview-box-label">{{entity.label}}
+						</div>
+					</div>
+
+				</div>
+			</div>
+
+			<div class="row clearfix">
+				<div class="col-md-12 column">
+					<p>Share With<p/>
+					<div class="dropdown form-control" id="shareDropdown">
+						<div id="dropDownToggle" class="dropdown-toggle"
+							data-toggle="dropdown"></div>
+						<div style="line-height: 30px">
+							<span ng-repeat="entity in shareEntities" class="tag"
+								ng-switch="entity.label"> 
+								<span ng-switch-when="public"
+									class="glyphicon glyphicon-globe"
+									style="margin-right: 3px; vertical-align: middle;">
+								</span> 
+								<span ng-switch-when="friends" class="glyphicon glyphicon-user"
+									style="margin-right: 3px; vertical-align: middle;">
+								</span> 
+								<img ng-switch-default src="images/small_profile_pic_dummy.png"
+									style="height: 15px; margin-right: 3px;"> {{entity.label}}
+								<button class="removeTag" ng-click="removeShareTag(entity)">x</button>
+							</span> 
+							<input id="shareInput" ng-click="activateDropdown($event)"
+								ng-model="userFilter.label" ng-blur="blurInput()" placeholder="+ Add name or circle" />
+						</div>
+						<ul id="shareDropdownContent" class="dropdown-menu">
+							<li ng-repeat="circle in allCircles | filter: entityUnselected | orderBy: 'label'"><a
+								href="" ng-click="addShareTag(circle)"><span
+									style="margin-right: 3px" class="glyphicon"
+									ng-class="{'glyphicon-globe':(circle.label == 'public'), 'glyphicon-user':(circle.label == 'friends')}"></span>{{circle.label}}</a></li>
+							<li role="presentation" class="divider"
+								ng-show="userFilter.label && (allCircles.length > 0)"></li>
+							<li
+								ng-repeat="user in allUsers |  filter: userFilter  | orderBy: 'label'"
+								ng-show="userFilter.label"><a href=""
+								ng-click="addShareTag(user)" href="#">{{}}<img
+									src="images/small_profile_pic_dummy.png"
+									style="height: 15px; margin-right: 3px; vertical-align: middle">{{user.label}}</a></li>
+						</ul>
+					</div>
+					<div style=" margin-top: 5px">
+						<a href="" ng-click="shareWithHandler()">
+							<span style="margin-right: 3px" class="glyphicon glyphicon-user"></span>
+							Choose persons
+						</a>
+					</div>
+				</div>
+			</div>
+			<div class="row clearfix" style="margin-top:10px">
+				<div class="col-md-12 column" style="text-align: right">
+					<div class="btn-group" style="text-align: right">
+						<button class="btn btn-default" type="button" ng-click="share()">
+							<em class="glyphicon glyphicon-share"></em> Share
+						</button>
+						<button class="btn btn-default" type="button" ng-click="close()">Cancel
+						</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>

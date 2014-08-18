@@ -1,0 +1,216 @@
+<div class="row clearfix qa-header">
+	<div class="col-md-12 column">
+		<div class="row">
+            <div class="col-md-1 column hidden-sm hidden-xs">
+                <div class="icon-question-medium icon-medium">
+                </div>
+            </div>
+			<div class="col-md-6 column">
+                <div class="lead">{{question.title}}</div>
+                <div class="description" ng-bind-html="question.description | checkNewlines"></div>
+			</div>
+			<div class="col-md-5 column">		
+				<div class="row">
+					<div class="col-md-12 column">
+                        <div class="icon-user-medium icon-medium">
+                        </div>
+                        <div class="icon-attached">
+                            <div><a href="#">{{question.author.name}}</a> has asked this question on {{question.getFormattedCreationTime()}}</div>
+                            <div>1234 reputation points</div>
+                        </div>
+					</div>
+				</div>	
+			</div>
+		</div>
+		
+        <div class="row clearfix">
+            <div class="col-md-1 column hidden-sm hidden-xs">
+                &nbsp;
+            </div>
+            <div class="col-md-8 column">
+                <div class="qa-tag" ng-repeat="tag in question.tags"><a href="#">{{tag.label}}</a></div>
+            </div>
+            <div class="col-md-3 column">
+                <div class="icon-small icon-up-small">
+                </div>
+                <div class="icon-attached">
+                    <div>123 users</div>
+                    <div>had the same question</div>
+                </div>
+            </div>
+        </div>
+		
+        <div class="row clearfix" ng-show="question.attachments.length">
+            <div class="col-md-1 column hidden-sm hidden-xs">
+                &nbsp;
+            </div>
+            <div class="col-md-11 column">
+                <div class="icon-file-small icon-small" ng-repeat-start="attachment in question.attachments">
+                </div>
+                <div class="icon-attached" ng-repeat-end>
+                    <div><a href="#">{{attachment.name}}</a></div>
+                    <div class="text-muted">{{attachment.type}}</div>
+                </div>
+            </div>
+        </div>
+		
+		<div class="row clearfix">
+            <div class="col-md-1 column hidden-sm hidden-xs">
+                &nbsp;
+            </div>
+			<div class="col-md-11 column">
+				<div><a href="#">share</a></div>
+			</div>
+		</div>
+		
+	</div>		
+</div>
+
+<div class="row clearfix">
+	<div class="col-md-9 column">
+		<div class="lead underline">Answers ({{question.entries.length}})</div>
+		
+		<!-- answer begin -->
+        <div class="answer underline" ng-repeat="answer in question.entries | orderBy:predicate">
+            <div class="row clearfix">
+                <div class="col-md-9 column">
+                    <div class="icon-user-medium icon-medium">
+                    </div>
+                    <div class="icon-attached">
+                        <div><a href="#">{{answer.author.name}}</a> has answered on {{answer.getFormattedCreationTime()}}</div>
+                        <div>1234 reputation points</div>
+                    </div>
+                </div>
+
+                <div class="col-md-3 column">
+                    <div class="icon-small icon-up-small">
+                    </div>
+                    <div class="icon-attached">
+                        <div>123</div>
+                        <div>likes</div>
+                    </div>
+
+                    <div class="icon-small icon-down-small">
+                    </div>
+                    <div class="icon-attached">
+                        <div>123</div>
+                        <div>dislikes</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row clearfix">
+                <div class="col-md-1 column">
+                    <!-- 				<div class="icon-answered-medium icon-medium">
+                                </div> -->
+                </div>
+                <div class="col-md-11 column">
+                    <div ng-bind-html="answer.content | checkNewlines"></div>
+                </div>
+            </div>
+
+            <div class="row clearfix" ng-show="answer.tags.length">
+                <div class="col-md-1 column hidden-sm hidden-xs">
+                    &nbsp;
+                </div>
+                <div class="col-md-11 column">
+                    <div class="qa-tag" ng-repeat="tag in answer.tags"><a href="#">{{tag.label}}</a></div>
+                </div>
+            </div>
+
+            <div class="row clearfix" ng-show="answer.attachments.length">
+                <div class="col-md-1 column hidden-sm hidden-xs">
+                    &nbsp;
+                </div>
+                <div class="col-md-11 column">
+
+                    <div class="icon-file-small icon-small" ng-repeat-start="attachment in answer.attachments">
+                    </div>
+                    <div class="icon-attached" ng-repeat-end>
+                        <div><a href="#">{{attachment.name}}</a></div>
+                        <div class="text-muted">{{attachment.type}}</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row clearfix">
+                <div class="col-md-1 column hidden-sm hidden-xs">
+                    &nbsp;
+                </div>
+                <div class="col-md-11 column">
+                    <div><a href="#">share</a> | <a href="#">mark as accepted answer</a></div>
+                </div>
+            </div>
+            <!-- comment begin -->
+            <div class="row clearfix" ng-repeat="comment in answer.comments">
+                <div class="col-md-2 column hidden-sm hidden-xs">
+                    &nbsp;
+                </div>
+                <div class="col-md-8 column answer-comment">
+                    <div>{{comment}}</div>
+                </div>
+            </div>
+            <!-- comment end -->
+            <div class="row clearfix">
+                <div class="col-md-2 column hidden-sm hidden-xs">
+                    &nbsp;
+                </div>
+                <div class="col-md-8 column">
+                    <textarea ng-model="answer.newComment" class="form-control" rows="1" placeholder="Add a comment" ng-enter="addComment(answer)"></textarea>
+                </div>
+            </div>
+        </div>
+		<!-- answer end -->
+	</div>
+	
+	<div class="col-md-3 column related">		
+		<div class="lead">Related Questions</div>
+		<div ng-repeat="thread in similarThreadList">
+			<a ng-click="loadDetailPage(thread)">{{thread.title}}</a>
+		</div>
+		<div ng-show="!similarThreadList.length">No related content available</div>
+	</div>
+</div>
+
+<div class="row clearfix">
+	<div class="col-md-10 column">
+		<div class="lead">Reply</div>
+		<div class="row">
+			<div class="col-md-8 column">
+			
+				<div class="row">
+					<div class="col-md-12 column">
+						<textarea ng-model="newAnswer.content" class="form-control" rows="5" placeholder="Add your answer"></textarea>
+					</div>
+				</div>
+				
+				<div class="row">
+					<div class="col-md-7 column">
+						<tags-input ng-model="tags" on-tag-added="onTagAdded($tag, newAnswer)" on-tag-removed="onTagRemoved($tag, newAnswer)" class="bootstrap" display-property="label" placeholder="Add tags"></tags-input>
+					</div>
+                    <div class="col-md-5 column">
+                        <button ng-click="postNewAnswer()" type="button" style="width:100%;" class="btn btn-success btn-lg stretch">Post your answer</button>
+                    </div>
+				</div>
+			
+			</div>
+			
+			<div class="col-md-4 column">
+					<div class="kb-fluid-container pull-left add-attachment-box" ng-click="openAddAttachments(newAnswer)">Add attachments
+						 <div class="glyphicon glyphicon-plus-sign add-attachment-icon" ></div>
+					</div>
+					
+					<div class="icon-file-small icon-small" ng-repeat-start="attachment in newAnswer.attachments">
+					</div>
+					<div class="icon-attached" ng-repeat-end>
+						<div><a href="#">{{attachment.name}}</a></div>
+                        <div>{{attachment.type}}</div>
+					</div>
+			</div>
+		</div>
+	</div>
+    <div class="col-md-2 column hidden-sm hidden-xs">
+        &nbsp;
+    </div>
+</div>
+

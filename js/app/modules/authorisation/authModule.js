@@ -72,12 +72,12 @@ angular.module('module.authorisation').controller("AuthController", [
   */
   $scope.login = function(auth){
     // login user
-    if(angular.isString(auth.username) && angular.isString(auth.password))
+    if(angular.isString(auth.label) && angular.isString(auth.password))
     {
       $rootScope.activateLoadingIndicator();
       UserSrv.login(auth).then(
         function(){
-          $state.transitionTo('app.collection', { collUri: 'root'});
+          $state.transitionTo('app.collection.content', { coll: 'root'});
           $rootScope.deactivateLoadingIndicator();
         },
         function(){
@@ -108,16 +108,16 @@ angular.module('module.authorisation').service('UserService', ['$q', '$rootScope
     return JSON.parse(cookiesSrv.getCookie(AUTH_CONSTANTS.authCookieName));
   };
 
+//  this.getUser = function(){
+//    return self.getUserCookie();
+//  };
+
+  this.getLabel = function(){
+    return self.getUserCookie().label;
+  };
+
   this.getUser = function(){
-    return self.getUserCookie();
-  };
-
-  this.getUsername = function(){
-    return self.getUserCookie().username;
-  };
-
-  this.getUserUri = function(){
-    return self.getUserCookie().uri;  
+    return self.getUserCookie().user;  
   };
 
   this.getUserSpace = function(){
@@ -128,48 +128,41 @@ angular.module('module.authorisation').service('UserService', ['$q', '$rootScope
     return self.getUserCookie().key;  
   };
 
-  this.login = function(auth){
-
-   var defer = $q.defer();
-
-   new SSAuthCheckCred().handle(
-    function(result){
-      var userKey = result.key;
-
-      new SSUserLogin().handle(
-        function(result){
-
+   this.login = function(auth){
+     
+     var defer = $q.defer();
+     
+     new SSAuthCheckCred(
+       
+       function(result){
+         var userKey = result.key;
+         var user    = result.user;
+       
          var authData = {
-          username: auth.username,
-          key: userKey,
-          uri: result.uri,
-          space: UriToolbox.extractUriHostPart(result.uri)
+           label: auth.label,
+           key: userKey,
+           user: user,
+           space: UriToolbox.extractUriHostPart(user)
          };
 
-        if(auth.remember){
-         cookiesSrv.setCookie(AUTH_CONSTANTS.authCookieName, JSON.stringify(authData));
-       }else{ 
-         cookiesSrv.setSessionCookie(AUTH_CONSTANTS.authCookieName, JSON.stringify(authData));
-       }
-       
-       defer.resolve();
-       $rootScope.$apply();
-     },
-     function(result){ defer.reject();  $rootScope.$apply(); },
-     auth.username,
-     result.key
-     );  
-    },
-    function(result){
-      defer.reject();
-      $rootScope.$apply();
-    },
-    auth.username,
-    auth.password
-    );
+         if(auth.remember){
+           cookiesSrv.setCookie(AUTH_CONSTANTS.authCookieName, JSON.stringify(authData));
+         }else{ 
+           cookiesSrv.setSessionCookie(AUTH_CONSTANTS.authCookieName, JSON.stringify(authData));
+         }
 
-   return defer.promise;
- };
+         defer.resolve();
+         $rootScope.$apply();
+       },
+       function(result){
+         defer.reject();
+         $rootScope.$apply();
+       },
+       auth.label,
+       auth.password);
+       
+     return defer.promise;
+   };
 
  this.logout = function(){
   cookiesSrv.eatCookie(AUTH_CONSTANTS.authCookieName);
