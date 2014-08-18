@@ -1,8 +1,7 @@
 // The SocialSemanticService wraps the SSS Client API.
 
-//define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
-        //'sss.conn.entity', 'sss.conn.userevent', 'sss.conn.learnep'], function(Logger, VIE, _, Voc, EntityView) {
-var SocialSemanticService = (function(){
+define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
+        'sss.conns'], function(Logger, VIE, _, Voc, EntityView) {
 
 // ## VIE.SocialSemanticService(options)
 // This is the constructor to instantiate a new service.
@@ -70,6 +69,8 @@ var SocialSemanticService = (function(){
             WIDGET: "Widget",
             DOCUMENT: "Document"
         },
+        pendingCalls: {},
+        pendingCallsCount : 0,
         init: function() {
             for (var key in this.options.namespaces) {
                 var val = this.options.namespaces[key];
@@ -136,14 +137,319 @@ var SocialSemanticService = (function(){
                 }
             });
         },
+        resolve: function() {
+            this.LOG.debug('resolve', this);
+            var i = 0;
+            var serviceCall;
+            var resultHandler;
+            var errorHandler;
+            var params = [];
+            for( var prop in arguments ) {
+                if( i == 0 ) { serviceCall = arguments[i]; }
+                if( i == 1 ) { resultHandler = arguments[i]; }
+                if( i == 2 ) { errorHandler = arguments[i]; }
+                if( i > 2 ) {
+                    params.push(arguments[i]);
+                }
+                i++;
+            }
+            var that = this;
+            var found;
+            this.LOG.debug('resolve', serviceCall, params);
+            if( this.pendingCalls[serviceCall] ) {
+                if( found = this.findPendingCall(serviceCall, params)) {
+                    this.LOG.debug('resolve params found');
+                    found.resultHandlers.push(resultHandler);
+                    found.errorHandlers.push(errorHandler);
+                    return;
+                }
+            } else {
+                this.pendingCalls[serviceCall] = {};
+            }
+            var p = {
+                'params' : params, 
+                'resultHandlers' : [resultHandler],
+                'errorHandlers' : [errorHandler]
+            };
+            var pos = this.pendingCallsCount++;
+            this.pendingCalls[serviceCall][pos] = p;
+            this.LOG.debug('resolve pos', pos);
+            var newParams = [
+                    function(result) {
+                        delete that.pendingCalls[serviceCall][pos];
+                        that.LOG.debug("resolve resultHandlers", p);
+                        _.each(p.resultHandlers, function(f) {
+                            f(result);
+                        });
+                    },
+                    function(result) {
+                        delete that.pendingCalls[serviceCall][pos];
+                        _.each(p.errorHandlers, function(f) {
+                            f(result);
+                        });
+                    }]
+                .concat(params);
+            this.LOG.debug('resolve newParams', newParams);
+            window[serviceCall].apply(window, newParams);
+        },
+        findPendingCall: function(serviceCall, params) {
+            for( var fp in this.pendingCalls[serviceCall] ) {
+                if( _.isEqual(this.pendingCalls[serviceCall][fp].params, params) ) {
+                    return this.pendingCalls[serviceCall][fp];
+                }
+            }
+        },
         analyze: function(analyzable) {
-            // in a certain way, analyze is the same as load
-            return this.load(analyzable);
+            var correct = analyzable instanceof this.vie.Analyzable 
+            if (!correct) {
+                throw new Error("Invalid Analyzable passed");
+            }
+            var service = this;
+            if( analyzable.options.service == "searchByTags" ) {
+                this.onUrisReady(
+                    this.user,
+                    function(userUri) {
+                        service.resolve('SSSearchWithTags', 
+                            function(object) {
+                                service.LOG.debug("searchResult", object);
+                                var entities = [];
+                                _.each(object['searchResults'], function(result) {
+                                    entities.push(service.fixForVIE(result, 'entity'));
+                                });
+                                analyzable.resolve(entities);
+                            },
+                            function(object) {
+                                service.LOG.warn("searchResult failed", object);
+                                analyzable.reject(object);
+                            },
+                            userUri,
+                            service.userKey,
+                            analyzable.options.op || "OR",
+                            analyzable.options.tags,
+                            analyzable.options.max
+                        );
+                    }
+                );
+            } else if ( analyzable.options.service == 'searchCombined' ) {
+                this.onUrisReady(
+                    this.user,
+                    function(userUri) {
+                        service.resolve('SSSearchCombined',
+                            function(object) {
+                                service.LOG.debug("searchResult", object);
+                                var entities = [];
+                                _.each(object['searchResults'], function(result) {
+                                    entities.push(service.fixForVIE(result, 'entity'));
+                                });
+                                analyzable.resolve(entities);
+                            },
+                            function(object) {
+                                service.LOG.warn("searchResult failed", object);
+                                analyzable.reject(object);
+                            },
+                            userUri,
+                            service.userKey,
+                            analyzable.options.tags,
+                            [],
+                            false,
+                            analyzable.options.types || [],
+                            true,
+                            false,
+                            true,
+                            true,
+                            false
+                        );
+                    }
+                );
+            } else if ( analyzable.options.service == "search" ) {
+                this.onUrisReady(
+                    this.user,
+                    function(userUri) {
+                        service.resolve('SSSearch',
+                            function(object) {
+                                service.LOG.debug("searchResult", object);
+                                var entities = [];
+                                _.each(object['entities'], function(result) {
+                                    entities.push(service.fixForVIE(result));
+                                });
+                                analyzable.resolve(entities);
+                            },
+                            function(object) {
+                                service.LOG.warn("searchResult failed", object);
+                                analyzable.reject(object);
+                            },
+                            userUri,
+                            service.userKey,
+                            analyzable.options.tags,
+                            false,
+                            null,
+                            true,
+                            null,
+                            false,
+                            null,
+                            true,
+                            null,
+                            true,
+                            null,
+                            analyzable.options.types || [],
+                            false,
+                            null,
+                            false,
+                            false,
+                            false
+                        );
+                    }
+                );
+            } else if ( analyzable.options.service == "entityShare" ) {
+                this.onUrisReady(
+                    function() {
+                        service.resolve('SSEntityShare', 
+                            function(object) {
+                                service.LOG.debug("entityShare success", object);
+                            },
+                            function(object) {
+                                service.LOG.debug("entityShare failed", object);
+                            },
+                            service.user,
+                            service.userKey,
+                            analyzable.options.entity,
+                            analyzable.options.users,
+                            analyzable.options.comment || ''
+                        );
+                    }
+                );
+            } else if ( analyzable.options.service == "entityCopy" ) {
+                this.onUrisReady(
+                    function() {
+                        service.resolve('SSEntityCopy', 
+                            function(object) {
+                                service.LOG.debug("entityCopy success", object);
+                            },
+                            function(object) {
+                                service.LOG.debug("entityCopy failed", object);
+                            },
+                            service.user,
+                            service.userKey,
+                            analyzable.options.entity,
+                            analyzable.options.users,
+                            analyzable.options.exclude || [],
+                            analyzable.options.comment || ''
+                        );
+                    }
+                );
+            } else if ( analyzable.options.service == "userAll" ) {
+                this.onUrisReady(
+                    function() {
+                        service.resolve('SSUserAll', 
+                            function(object) {
+                                service.LOG.debug("userAll success", object);
+                                var users = [];
+                                _.each(object['users'], function(result) {
+                                    // Required parameter type is missing
+                                    //result['type'] = 'user';
+                                    //users.push(service.fixForVIE(result, 'id'));
+                                    users.push(result);
+                                });
+                                analyzable.resolve(users);
+
+                            },
+                            function(object) {
+                                service.LOG.debug("userAll failed", object);
+                                analyzable.reject(object);
+                            },
+                            service.user,
+                            service.userKey
+                        );
+                    }
+                );
+            } else if ( analyzable.options.service == "recommTagsBasedOnUserEntityTagTime" ) {
+                this.onUrisReady(
+                    function() {
+                        service.resolve('SSScaffRecommTagsBasedOnUserEntityTagTime', 
+                            function(object) {
+                                service.LOG.debug("recommTagsBasedOnUserEntityTagTime success", object);
+                                analyzable.resolve(object.tags || []);
+                            },
+                            function(object) {
+                                service.LOG.debug("recommTagsBasedOnUserEntityTagTime failed", object);
+                                analyzable.reject(object);
+                            },
+                            service.user,
+                            service.userKey,
+                            analyzable.options.forUser || null,
+                            analyzable.options.entity || null,
+                            analyzable.options.maxTags || 20
+                        );
+                    }
+                );
+            } else if ( analyzable.options.service == "ueCountGet" ) {
+                this.onUrisReady(
+                    function() {
+                        service.resolve('SSUECountGet', 
+                            function(object) {
+                                service.LOG.debug("ueCountGet success", object);
+                                analyzable.resolve(object.count || 0);
+                            },
+                            function(object) {
+                                service.LOG.debug("ueCountGet failed", object);
+                                analyzable.reject(object);
+                            },
+                            service.user,
+                            service.userKey,
+                            analyzable.options.forUser || null,
+                            analyzable.options.entity || null,
+                            analyzable.options.startTime || null,
+                            analyzable.options.endTime || null,
+                            analyzable.options.type || null
+                        );
+                    }
+                );
+            } else if ( analyzable.options.service == "categoriesPredefinedGet" ) {
+                service.resolve('SSCategoriesPredefinedGet', 
+                    function(result) {
+                        service.LOG.debug("categoriesPredefinedGet success", result);
+                        analyzable.resolve(result.categories);
+                    },
+                    function(result) {
+                        service.LOG.error("categoriesPredefinedGet error", result);
+                        analyzable.reject(result);
+                    },
+                    service.user,
+                    service.userKey
+                );
+            } else if ( analyzable.options.service == "EntityDescsGet" ) {
+                service.resolve('SSEntityDescsGet', 
+                    function(result) {
+                        var entities = [];
+                        _.each(result['descs'], function(object) {
+                            service.fixEntityDesc(object);
+                            var entity = service.fixForVIE(object, 'entity', 'type');
+                            entities.push(entity);
+                        });
+                        analyzable.resolve(entities);
+                    },
+                    function(result) {
+                        service.LOG.error("EntityDescsGet", result);
+                        analyzable.reject(result);
+                    },
+                    service.user,
+                    service.userKey,
+                    analyzable.options.entities,
+                    analyzable.options.types,
+                    true,   //getTags
+                    false,  //getOverallRating
+                    false,   //getDiscs
+                    false,  //getUEs
+                    true,   //getThumb
+                    true    //getFlags
+                );
+            }
+
         },
         load: function(loadable) {
             var correct = loadable instanceof this.vie.Loadable || loadable instanceof this.vie.Analyzable;
             if (!correct) {
-                throw new Error("Invalid Loadable/Analyzable passed");
+                throw new Error("Invalid Loadable passed");
             }
             //if( !loadable.options.connector )
                 //throw new Error("No connector given");
@@ -152,14 +458,13 @@ var SocialSemanticService = (function(){
 
             loadable.options.data = loadable.options.data || {};
 
-            var service = this;
             try {
                 if ( loadable.options.resource ) {
                     this.ResourceGet(loadable);
                 } else if ( loadable.options.type ) {
                     this.TypeGet(loadable);
                 } else if ( loadable.options.service ) {
-                    new SSCollUserWithEntries().handle(
+                    service.resolve('SSCollWithEntries',
                         function(result){
                             service.LOG.debug('result', result);
                             var entries = [];
@@ -192,26 +497,29 @@ var SocialSemanticService = (function(){
                     this.user,
                     loadable.options.resource,
                     function(userUri, resourceUri) {
-                        new SSEntityDescGet().handle(
+                        service.resolve('SSEntityDescGet', 
                             function(object) {
                                 service.LOG.debug("handle result of EntityDescGet");
                                 service.LOG.debug("object", object);
-                                if( _.isEmpty(object['entityDesc'] ) )  {
+                                if( _.isEmpty(object['desc'] ) )  {
                                     loadable.reject(entity);
                                     service.LOG.error("error:",resourceUri, " is empty");
                                     return;
                                 }
-                                var entity = service.fixForVIE(object['entityDesc'], 'entityUri', 'entityType');
-                                var entityUri = object['entityDesc']['entityUri'];
+
+                                service.fixEntityDesc(object['desc']);
+
+                                var entity = service.fixForVIE(object['desc'], 'entity', 'type');
+                                var entityUri = object['desc']['entity'];
                                 //var vieEntity = new service.vie.Entity(entity);//SSS.Entity(entity);
-                                var type = object['entityDesc']['entityType'];
-                                service.LOG.debug('entityDesc.entityType', type);
+                                var type = object['desc']['type'];
+                                service.LOG.debug('desc.type', type);
                                 if( type && type == service.types.USER )  {
-                                    new SSLearnEpVersionCurrentGet().handle(
+                                    service.resolve('SSLearnEpVersionCurrentGet',
                                         function(object2) {
                                             service.LOG.debug("handle result of VersionCurrentGet");
                                             service.LOG.debug("object", object2);
-                                            entity[Voc.currentVersion] = object2['learnEpVersion']['learnEpVersionUri'];
+                                            entity[Voc.currentVersion] = object2['learnEpVersion']['id'];
                                             loadable.resolve(entity);
                                         },
                                         function(object2) {
@@ -222,13 +530,14 @@ var SocialSemanticService = (function(){
                                         service.userKey 
                                         );
                                 } else if( type && type == service.types.USEREVENT )  {
-                                    new SSUserEventGet().handle(
+                                    service.resolve('SSUserEventGet', 
                                         function(object2) {
                                             service.LOG.debug("handle result of UserEventTypeGet");
                                             service.LOG.debug("object", object2);
 
                                             if(!object2['uE']['timestamp'])
                                                 delete object2['uE']['timestamp'];
+                                            // XXX Possibly need to change uri to something else
                                             var entity = service.fixForVIE(object2['uE'], 'uri');
                                             //var vieEntity = new service.vie.Entity(entity);//SSS.Entity(entity);
                                             loadable.resolve(entity);
@@ -250,7 +559,13 @@ var SocialSemanticService = (function(){
                             },
                             userUri,
                             service.userKey,
-                            resourceUri
+                            resourceUri,
+                            true, // tags
+                            false, // rating
+                            false, // discussions
+                            false, // events
+                            true, // thumbnail
+                            true // flags
                         );
                 });
             } else {
@@ -270,7 +585,7 @@ var SocialSemanticService = (function(){
                     loadable.options.forUser,
                     loadable.options.resource,
                     function(userUri, forUserUri, resourceUri) {
-                        new SSUserEventsGet().handle(
+                        service.resolve('SSUserEventsGet', 
                             function(objects) {
                                 service.LOG.debug("handle result of userEventsOfUser");
                                 service.LOG.debug("objects", objects);
@@ -304,7 +619,7 @@ var SocialSemanticService = (function(){
                 this.onUrisReady(
                     this.user,
                     function(userUri) {
-                        new SSLearnEpsGet().handle(
+                        service.resolve('SSLearnEpsGet', 
                             function(objects) {
                                 service.LOG.debug("handle result of epsGet");
                                 service.LOG.debug("objects", objects);
@@ -312,7 +627,7 @@ var SocialSemanticService = (function(){
                                 _.each(objects['learnEps'], function(object) {
                                     object[Voc.belongsToUser] = object['user'];
                                     delete object['user'];
-                                    var entity = service.fixForVIE(object, 'learnEpUri');
+                                    var entity = service.fixForVIE(object, 'id');
                                     //var vieEntity = new service.vie.Entity(entity);
                                     entity['@type'] = Voc.EPISODE;
                                     entityInstances.push(entity);
@@ -335,17 +650,17 @@ var SocialSemanticService = (function(){
                     this.user,
                     loadable.options.episode,
                     function(userUri, episodeUri) {
-                        new SSLearnEpVersionsGet().handle(
+                        service.resolve('SSLearnEpVersionsGet', 
                             function(objects) {
                                 service.LOG.debug("handle result of epVersionsGet");
                                 service.LOG.debug("objects", objects);
                                 var entityInstances = [];
                                 _.each(objects['learnEpVersions'], function(object) {
-                                    object[Voc.belongsToEpisode] = object['learnEpUri'];
-                                    delete object['learnEpUri'];
+                                    object[Voc.belongsToEpisode] = object['learnEp'];
+                                    delete object['learnEp'];
                                     delete object['circles'];
                                     delete object['entities'];
-                                    var entity = service.fixForVIE(object, 'learnEpVersionUri');
+                                    var entity = service.fixForVIE(object, 'id');
                                     //var vieEntity = new service.vie.Entity(entity);
                                     entity['@type'] = Voc.VERSION;
                                     entityInstances.push(entity);
@@ -403,32 +718,37 @@ var SocialSemanticService = (function(){
                     // and store it in memory as it would come from the server
                     service.buffer[organize.uri] = organize;
                 }
-                resolve('versionget',this.fixForVIE(organize));
+                resolve('versionget',this.fixForVIE(organize, 'uri'));
 
                 this.LOG.log("SSLearnEPGetTimelineState");
                 this.onUrisReady(
                     this.user,
                     loadable.options.version,
                     function(userUri, versionUri) {
-                        new SSLearnEpVersionGetTimelineState().handle(
+                        service.resolve('SSLearnEpVersionGetTimelineState', 
                             function(object) {
                                 service.LOG.debug("handle result of LearnEpGetTimelineState");
                                 service.LOG.debug("object", object);
-                                if( !object['learnEpTimelineState']) {
-                                    resolve('timelineget');
-                                    return;
-                                }
-                                object = object['learnEpTimelineState'];
-                                //var vieEntity = new service.vie.Entity(service.fixForVIE({
+
                                 var entity = {};
-                                entity[VIE.prototype.Entity.prototype.idAttribute] = object.learnEpTimelineStateUri;
+                                entity[VIE.prototype.Entity.prototype.idAttribute] = object.id;
                                 entity['@type'] = Voc.TIMELINE;
                                 entity[Voc.belongsToUser] = service.user;
-                                entity[Voc.timeAttr]= Voc.timestamp;
+                                entity[Voc.timeAttr]= Voc.creationTime;
                                 entity[Voc.predicate] = Voc.USEREVENT;
                                 entity[Voc.belongsToVersion] = loadable.options.version;
-                                entity[Voc.start] = object.startTime;                            
-                                entity[Voc.end] = object.endTime
+
+                                if( !object['learnEpTimelineState']) {
+                                    // init time range
+                                    //entity[Voc.start] = jSGlobals.getTime() - jSGlobals.dayInMilliSeconds;
+                                    //entity[Voc.end] = jSGlobals.getTime() + 3600000;
+
+                                } else {
+                                    object = object['learnEpTimelineState'];
+                                    //var vieEntity = new service.vie.Entity(service.fixForVIE({
+                                    entity[Voc.start] = object.startTime;                            
+                                    entity[Voc.end] = object.endTime
+                                }
 
                                 //entity = service.fixForVIE(entity);
 
@@ -462,7 +782,7 @@ var SocialSemanticService = (function(){
                     this.user,
                     version,
                     function(userUri, versionUri) {
-                        new SSLearnEpVersionGet().handle(
+                        service.resolve('SSLearnEpVersionGet',
                             function(object) {
                                 service.LOG.debug("handle result of LearnEpVersionGet");
                                 service.LOG.debug("objects", object);
@@ -476,11 +796,11 @@ var SocialSemanticService = (function(){
                                     fixEntity.ry = item['yR'];
                                     fixEntity.cx = item['xC'];
                                     fixEntity.cy = item['yC'];
-                                    fixEntity.learnEpCircleUri = item['learnEpCircleUri'];
-                                    fixEntity = service.fixForVIE(fixEntity, 'learnEpCircleUri');
+                                    fixEntity.id = item['id'];
+                                    fixEntity = service.fixForVIE(fixEntity, 'id');
                                     fixEntity[Voc.belongsToOrganize] = loadable.options.organize;
                                     //var vieEntity = new service.vie.Entity(fixEntity);
-                                    fixEntity['@type'] = type.id;
+                                    fixEntity['@type'] = Voc.CIRCLE;
                                     entities.push(fixEntity);
                                 });
                                 loadable.resolve(entities);
@@ -506,19 +826,18 @@ var SocialSemanticService = (function(){
                     this.user,
                     version,
                     function(userUri, versionUri) {
-                        new SSLearnEpVersionGet().handle(
+                        service.resolve('SSLearnEpVersionGet',
                             function(object) {
                                 service.LOG.debug("handle result of LearnEpVersionGet");
                                 service.LOG.debug("objects", object);
                                 var key, idAttr;
                                 _.each(object['learnEpVersion']['entities'], function(item){
                                     var fixEntity = {};
-                                    fixEntity.learnEpEntityUri = item.learnEpEntityUri;
-                                    fixEntity = service.fixForVIE(fixEntity, 'learnEpEntityUri');
-                                    fixEntity[Voc.hasResource] = item['entityUri'];
+                                    fixEntity = service.fixForVIE(item, 'id');
+                                    fixEntity[Voc.hasResource] = item['entity'];
                                     fixEntity[Voc.belongsToOrganize] = loadable.options.organize;
                                     //var vieEntity = new service.vie.Entity(fixEntity);
-                                    fixEntity['@type'] = type.id;
+                                    fixEntity['@type'] = Voc.ORGAENTITY;
                                     entities.push(fixEntity);
                                 });
                                 loadable.resolve(entities);
@@ -568,7 +887,7 @@ var SocialSemanticService = (function(){
                     this.user,
                     obj[this.vie.namespaces.uri(Voc.belongsToVersion)],
                     function(userUri, versionUri) {
-                        new SSLearnEpVersionSetTimelineState().handle(
+                        service.resolve('SSLearnEpVersionSetTimelineState', 
                                 function(object) {
                                     service.LOG.debug("handle result of LearnEpVersionSetTimelinState");
                                     service.LOG.debug("object", object);
@@ -588,7 +907,7 @@ var SocialSemanticService = (function(){
                             );
                 });
             } else if( entity.isof(Voc.ORGANIZE )) {
-                this.LOG.debug("saving organize");
+                this.LOG.debug("saving organize", entity);
                 var obj = _.clone(entity.attributes);
                 obj.uri = entity.isNew() ? this.vie.namespaces.get('sss') + _.uniqueId('OrganizeWidget')
                                          : obj.uri;
@@ -607,11 +926,11 @@ var SocialSemanticService = (function(){
                     this.onUrisReady(
                         this.user,
                         function(userUri) {
-                            new SSLearnEpCreate().handle(
+                            service.resolve('SSLearnEpCreate', 
                                 function(object) {
                                     service.LOG.debug("handle result of LearnEpCreate");
                                     service.LOG.debug("object", object);
-                                    savable.resolve({'uri':object['learnEpUri']});
+                                    savable.resolve({'uri':object['learnEp']});
                                 },
                                 function(object) {
                                     service.LOG.warn("error:");
@@ -629,7 +948,7 @@ var SocialSemanticService = (function(){
                         this.user,
                         entity.getSubject(),
                         function(userUri, entityUri){
-                            new SSEntityLabelSet().handle(
+                            service.resolve('SSEntityUpdate', 
                                 function(object) {
                                     service.LOG.debug("handle result of SSLabelSet");
                                     service.LOG.debug("object", object);
@@ -643,7 +962,8 @@ var SocialSemanticService = (function(){
                                 userUri,
                                 service.userKey,
                                 entityUri,
-                                entity.get(Voc.label)
+                                savable.options.label || null,
+                                savable.options.description || null
                             );
                     });
                 }
@@ -655,11 +975,11 @@ var SocialSemanticService = (function(){
                     this.user,
                     episode,
                     function( userUri, episodeUri) {
-                        new SSLearnEpVersionCreate().handle(
+                        service.resolve('SSLearnEpVersionCreate', 
                                 function(object) {
                                     service.LOG.debug("handle result of LearnEpVersionCreate");
                                     service.LOG.debug("object", object);
-                                    savable.resolve({'uri':object['learnEpVersionUri']});
+                                    savable.resolve({'uri':object['learnEpVersion']});
                                 },
                                 function(object) {
                                     service.LOG.warn("error:");
@@ -685,7 +1005,13 @@ var SocialSemanticService = (function(){
                             savable.reject(entity);
                             return;
                         }
+
                         var version = service.buffer[organizeUri]['belongsToVersion'];
+                        // Newly created episode case
+                        // Namespace URI is used instead
+                        if (version === undefined) {
+                            version = service.buffer[organizeUri][service.vie.namespaces.uri(Voc.belongsToVersion)];
+                        }
                         // end map
 
                         if( entity.isNew() )
@@ -693,11 +1019,11 @@ var SocialSemanticService = (function(){
                                 service.user,
                                 version,
                                 function(userUri, versionUri) {
-                                    new SSLearnEpVersionAddCircle().handle(
+                                    service.resolve('SSLearnEpVersionAddCircle', 
                                         function(object) {
                                             service.LOG.debug("handle result of LearnEpVersionAddCircle");
                                             service.LOG.debug("object", object);
-                                            savable.resolve({'uri': object['learnEpCircleUri']});
+                                            savable.resolve({'uri': object['learnEpCircle']});
                                         },
                                         function(object) {
                                             service.LOG.warn("error:");
@@ -722,7 +1048,7 @@ var SocialSemanticService = (function(){
                                 service.user,
                                 entity.getSubject(),
                                 function(userUri, uriUri ) {
-                                    new SSLearnEpVersionUpdateCircle().handle(
+                                    service.resolve('SSLearnEpVersionUpdateCircle', 
                                         function(object) {
                                             service.LOG.debug("handle result of LearnEpVersionUpdateCircle");
                                             service.LOG.debug("object", object);
@@ -763,6 +1089,11 @@ var SocialSemanticService = (function(){
                             return;
                         }
                         var version = service.buffer[organizeUri]['belongsToVersion'];
+                        // This deals with case of newly added version
+                        // For some reason NAMESPACE URI is used instead of PARAMETER
+                        if (version === undefined) {
+                            version = service.buffer[organizeUri][service.vie.namespaces.uri(Voc.belongsToVersion)];
+                        }
                         // end map
                         //
                         var resourceUri = entity.get(Voc.hasResource);
@@ -774,11 +1105,11 @@ var SocialSemanticService = (function(){
                                 version,
                                 resourceUri,
                                 function(userUri, versionUri, resourceUri){
-                                    new SSLearnEpVersionAddEntity().handle(
+                                    service.resolve('SSLearnEpVersionAddEntity', 
                                         function(object) {
                                             service.LOG.debug("handle result of LearnEpVersionAddEntity");
                                             service.LOG.debug("object", object);
-                                            savable.resolve({'uri': object['learnEpEntityUri']});
+                                            savable.resolve({'uri': object['learnEpEntity']});
                                         },
                                         function(object) {
                                             service.LOG.warn("error:");
@@ -800,7 +1131,7 @@ var SocialSemanticService = (function(){
                                 entity.getSubject(),
                                 resourceUri,
                                 function(userUri,uriUri,resourceUri){
-                                    new SSLearnEpVersionUpdateEntity().handle(
+                                    service.resolve('SSLearnEpVersionUpdateEntity', 
                                         function(object) {
                                             service.LOG.debug("handle result of LearnEpVersionUpdateEntity");
                                             service.LOG.debug("object", object);
@@ -830,7 +1161,7 @@ var SocialSemanticService = (function(){
                         this.user,
                         versionUri,
                         function(userUri, versionUri) {
-                            new SSLearnEpVersionCurrentSet().handle(
+                            service.resolve('SSLearnEpVersionCurrentSet', 
                                 function(object) {
                                     service.LOG.debug("handle result of VersionCurrentSet");
                                     service.LOG.debug("object", object);
@@ -846,6 +1177,75 @@ var SocialSemanticService = (function(){
                     });
                 } else
                     savable.resolve(true);
+            } else if ( entity.isof(Voc.ENTITY) || entity.isof(Voc.FILE)
+                    || entity.isof(Voc.EVERNOTE_RESOURCE) || entity.isof(Voc.EVERNOTE_NOTE)
+                    || entity.isof(Voc.EVERNOTE_NOTEBOOK) ) {
+                if( savable.options.tag ) {
+                    this.onUrisReady(
+                        this.user,
+                        entity.getSubject(),
+                        function(userUri, entityUri) {
+                            service.resolve('SSTagAdd', 
+                                function(object) {
+                                    service.LOG.debug('result addTag', object);
+                                    savable.resolve(object);
+                                },
+                                function(object) {
+                                    service.LOG.warn('failed addTag', object);
+                                    savable.reject(object);
+                                },
+                                userUri,
+                                service.userKey,
+                                entityUri,
+                                savable.options.tag,
+                                'privateSpace' // XXX need to determine space!
+                            );
+                        }
+                    );
+                } else if ( savable.options.label ) {
+                    this.onUrisReady(
+                        entity.getSubject(),
+                        function(entityUri) {
+                            service.resolve('SSEntityUpdate', 
+                                function(object) {
+                                    service.LOG.debug('result entity setLabel', object);
+                                    savable.resolve(object);
+                                },
+                                function(object) {
+                                    service.LOG.debug('railed entity setLabel', object);
+                                    savable.reject(entity);
+                                },
+                                service.user,
+                                service.userKey,
+                                entityUri,
+                                savable.options.label
+                            );
+                        }
+                    );
+                } else if ( savable.options.importance ) {
+                    this.onUrisReady(
+                        entity.getSubject(),
+                        function(entityUri) {
+                            service.resolve('SSFlagsSet', 
+                                function(object) {
+                                    service.LOG.debug('setImportance success', object);
+                                    savable.resolve(object);
+                                },
+                                function(object) {
+                                    service.LOG.debug('setImportance fail', object);
+                                    savable.reject(entity);
+                                },
+                                service.user,
+                                service.userKey,
+                                [entityUri],
+                                ['importance'],
+                                null,
+                                savable.options.importance
+                            );
+                        }
+                    );
+                }
+                
             } else {
                 this.LOG.warn("SocialSemanticService save for " + type.id + " not implemented");
             }
@@ -873,7 +1273,7 @@ var SocialSemanticService = (function(){
                     this.user,
                     entity.getSubject(),
                     function(userUri,uriUri){
-                        new SSLearnEpVersionRemoveCircle().handle(
+                        service.resolve('SSLearnEpVersionRemoveCircle', 
                             function(object) {
                                 service.LOG.debug("handle result of LearnEpVersionRemoveCircle");
                                 service.LOG.debug("object", object);
@@ -894,7 +1294,7 @@ var SocialSemanticService = (function(){
                     this.user,
                     entity.getSubject(),
                     function(userUri,uriUri){
-                        new SSLearnEpVersionRemoveEntity().handle(
+                        service.resolve('SSLearnEpVersionRemoveEntity', 
                             function(object) {
                                 service.LOG.debug("handle result of LearnEpVersionRemoveEntity");
                                 service.LOG.debug("object", object);
@@ -910,8 +1310,55 @@ var SocialSemanticService = (function(){
                             uriUri
                         );
                 });
+            } else if ( entity.isof(Voc.ENTITY) || entity.isof(Voc.FILE)
+                    || entity.isof(Voc.EVERNOTE_RESOURCE) || entity.isof(Voc.EVERNOTE_NOTE)
+                    || entity.isof(Voc.EVERNOTE_NOTEBOOK) ) {
+                if( removable.options.tag ) {
+                    this.onUrisReady(
+                        this.user,
+                        entity.getSubject(),
+                        function(userUri, entityUri) {
+                            service.resolve('SSTagsRemove', 
+                                function(object) {
+                                    service.LOG.debug('result removeTag', object);
+                                    removable.resolve(object);
+                                },
+                                function(object) {
+                                    service.LOG.warn('failed removeTag', object);
+                                    removable.reject(object);
+                                },
+                                userUri,
+                                service.userKey,
+                                entityUri,
+                                removable.options.tag
+                            );
+                        }
+                    );
+                }
             } else {
                 this.LOG.warn("SocialSemanticService remove for " + type.id + " not implemented");
+            }
+
+        },
+        fixEntityDesc: function(object) {
+            // Extract importance from flags
+            // Remove flags from object
+            if ( _.isArray(object['flags']) ) {
+                if ( !_.isEmpty(object['flags']) ) {
+                    var importance;
+                        creationTime = 1;
+                    _.each(object['flags'], function(flag) {
+                        // In case multiple are provided
+                        if ( flag.type === 'importance'  && flag.creationTime > creationTime) {
+                            importance = flag.value;
+                            creationTime = flag.creationTime;
+                        }
+                    });
+                    if ( importance ) {
+                        object['importance'] = importance;
+                    }
+                }
+                delete object['flags'];
             }
 
         },
@@ -922,7 +1369,7 @@ var SocialSemanticService = (function(){
          */
         fixForVIE: function(object, idAttr, typeAttr) {
             var entity = _.clone(object);
-            if( !idAttr) idAttr = 'uri';
+            if( !idAttr) idAttr = 'id';
             if( !typeAttr) typeAttr = 'type';
             entity[VIE.prototype.Entity.prototype.idAttribute] = object[idAttr];
             if (object[typeAttr]) {
@@ -957,7 +1404,7 @@ var SocialSemanticService = (function(){
                 delete object[prop];
             }
             object['type'] = entity.get('@type').id;
-            object['uri'] = entity.getSubject();
+            object['id'] = entity.getSubject();
             delete object['@type'];
             delete object[VIE.prototype.Entity.prototype.idAttribute];
             return object;
@@ -968,5 +1415,5 @@ var SocialSemanticService = (function(){
 
     return VIE.prototype.SocialSemanticService;
 
-})();
+});
 
