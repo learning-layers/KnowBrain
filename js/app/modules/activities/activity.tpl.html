@@ -86,7 +86,38 @@
 				</span>
 				
 				<!-- addUsersToCircle -->
+				<span ng-switch-when="addUsersToCircle">
+					<span ng-switch="activity.entities.length > 2">
+						<span ng-switch-when="true"> added users </span>
+						<span ng-switch-when="false"> added user </span>
+					</span>
+					<span ng-repeat="user in activity.users">
+						<a ng-href="#/social/{{user}}/groups">{{user}}</a>
+						<span ng-if="$index < activity.users.length-2">, </span>
+						<span ng-if="$index == activity.users.length-2"> and </span>
+					</span>
+
+					<span> to group </span>
+					<a href="">{{activity.entities[0]}}</a>
+				</span>
+				
 				<!-- addEntitiesToCircle -->
+				<span ng-switch-when="addEntitiesToCircle">
+					<span ng-switch="activity.entities.length > 2">
+						<span ng-switch-when="true"> added ressources </span>
+						<span ng-switch-when="false"> added ressource </span>
+					</span>
+					<span ng-repeat="entity in activity.entities">
+						<span ng-if="!$first">
+							<a href="">{{entity}}</a>
+							<span ng-if="$index < activity.entities.length-2">, </span>
+							<span ng-if="$index == activity.entities.length-2"> and </span>
+						</span>
+					</span>
+					
+					<span> to group </span>
+					<a href="">{{activity.entities[0]}}</a>
+				</span>
 				
 				<!----------LEARNING EPISODES---------->
 				<!-- createLearnEp -->
