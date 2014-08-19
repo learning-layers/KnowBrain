@@ -143,12 +143,6 @@ angular.module('module.social').controller("GroupsController", ['$scope', '$stat
 
 }]);
 
-var newGroup = function($scope) {
-    console.log("BaseCtrl");
-    $scope.groupMembers = ["bla"];
-    $scope.entities = ["blub"];
-};
-
 angular.module('module.social').controller("FriendsController", ['$scope',function($scope){
     this.groups = "To be implemented";
 }]);

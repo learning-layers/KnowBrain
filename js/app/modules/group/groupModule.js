@@ -33,13 +33,12 @@ angular.module('module.group',['module.entity']);
 angular.module('module.group').config(function($stateProvider) {
 
 
-    $stateProvider
-        .state('app.group', {
-             url:'/group/*groupId',
-            abstract:true,
-            controller: 'GroupController',
-            templateUrl: MODULES_PREFIX + '/group/groupProfile.tpl.html'
-        });
+    $stateProvider.state('app.group', {
+         url:'/group/*groupId',
+        abstract:true,
+        controller: 'GroupController',
+        templateUrl: MODULES_PREFIX + '/group/groupProfile.tpl.html'
+    });
 
     $stateProvider.state('app.group.members', {
         url: '/members',
@@ -67,22 +66,12 @@ angular.module('module.group').config(function($stateProvider) {
 angular.module('module.group').controller("newGroupController", ['$scope', '$q', '$dialogs', 'UserFetchService', 'GroupFetchService', 'ENTITY_TYPES', 'EntityModel', 'UserService', function($scope, $q, $dialogs, UserFetchService, GroupFetchService, ENTITY_TYPES, Entity, UserSrv){
     
     $scope.user = UserSrv.getUser();
-    
-    /* PATHS */
-    
-    
+
     $scope.group = {name: "", desc: ""};
-    
-    var promise = UserFetchService.getAllUsers();
-    promise.then(function(result) {
-        for(var i=0; i < result.users.length; i++) {
-            $scope.groupMembers.push(result.users[i]);
-        }
-    });
-    
     
     $scope.uploadPic = function() {
         console.log("TODO: Upload profile picture");
+      //TODO:Upload profile picture
     };
     
     $scope.addMembers = function() {
@@ -104,6 +93,7 @@ angular.module('module.group').controller("newGroupController", ['$scope', '$q',
     
     $scope.handleEntryClick = function(entry) {
         console.log("TODO: Go to user's profile");
+        //TODO: Go to user's profile (?)
     };
     
     $scope.createGroup = function() {
@@ -160,6 +150,7 @@ angular.module('module.group').controller("addMembersController", ['$scope', '$r
     
     $scope.handleEntryClick = function(entry) {
         console.log("TODO: Go to user's profile");
+      //TODO: Go to user's profile (?)
     };
     
     $scope.selectResource = function(entry) {
@@ -186,6 +177,7 @@ angular.module('module.group').controller("addLinkController", ['$scope', 'i18nS
         {
           return;
         }
+        
         var entity = new Entity();
         entity.label = link.label;
         entity.id = link.url;
@@ -239,7 +231,6 @@ angular.module('module.group').controller("EntityUploadController", ['$q', '$sco
       file.uploading = false; 
       
       $scope.filesArray.unshift(file); 
-      console.log($scope.filesArray);
       $scope.$apply();
     };
 
@@ -270,7 +261,6 @@ angular.module('module.group').controller("EntityUploadController", ['$q', '$sco
             entity.uploaded = false;
             entity.fileHandle = file;
             entity.isSelected = true;
-            console.log($scope.entities);
             $scope.entities.push(entity);
         }
         $scope.gotoBaseState();
@@ -370,8 +360,8 @@ angular.module('module.group').controller("EntityUploadController", ['$q', '$sco
 angular.module('module.group').controller("GroupController", ['$scope', '$stateParams', 'GroupFetchService', function($scope, $stateParams, GroupFetchService){
     
     $scope.groupId = $stateParams.groupId;
-    $scope.groupName = " ";
-    $scope.groupDesc = "Hallo, dies ist eine Testgruppe zu Testzwecken und keinem anderen Zweck außer zu testen!";
+    $scope.groupName = "";
+    $scope.groupDesc = "";
     
     $scope.memberIds = [];
     $scope.entityIds = [];
@@ -381,7 +371,6 @@ angular.module('module.group').controller("GroupController", ['$scope', '$stateP
     promise.then(function(result) {
         
         var group = result.circle;
-        console.log(result);
         
         $scope.groupName = group.label;
         $scope.groupDesc = group.description;
@@ -461,13 +450,13 @@ angular.module('module.group').controller("EntitiesController", ['$scope', '$q',
     });
     
     $scope.addEntity = function() {
-        console.log($scope.entities);
 
         var states = {
                 "choose": MODULES_PREFIX+"/group/addEntities.tpl.html",
                 "upload": MODULES_PREFIX+"/group/addEntitiesUpload.tpl.html",
                 "link": MODULES_PREFIX+"/group/addEntitiesLink.tpl.html"
-                //MODULES_PREFIX+"/group/addEntitiesCollection.tpl.html"; 
+                //TODO: Add entities from collection
+                
         };
         
         var ctrlFunction = function($scope) {
@@ -510,7 +499,6 @@ angular.module('module.group').controller("GroupActivitiesController", ['$scope'
     $scope.activities = [];
     
     promise.then(function(result) {
-        console.log(result.activities);
         
         for(var i = 0; i < result.activities.length; i++) {
             var act = result.activities[i];
@@ -521,93 +509,4 @@ angular.module('module.group').controller("GroupActivitiesController", ['$scope'
     });
 }]);
 
-angular.module('module.group').service("GroupFetchService", ['$q','UserService', function($q, UserSrv){
-    
-    this.getGroup = function(groupId) {
-        var defer = $q.defer();
-        var self = this;
 
-        new SSEntityCircleGet(function(result){
-                defer.resolve(result);
-            },
-            function(error){
-                console.log(error);
-            },
-            UserSrv.getUser(),
-            UserSrv.getKey(),
-            groupId
-        );
-       return defer.promise;
-    };
-    
-
-    this.getUserGroups = function(user) {
-        var defer = $q.defer();
-        var self = this;
-
-        new SSEntityUserCirclesGet(function(result){
-                defer.resolve(result);
-            },
-            function(error){
-                console.log(error);
-            },
-            UserSrv.getUser(),
-            UserSrv.getKey(),
-            user
-        );
-       return defer.promise;
-    };
-    
-    this.createGroup = function(groupName, entities, users, description) {
-        var defer = $q.defer();
-        var self = this;
-
-        new SSEntityCircleCreate(
-            function(result){
-                defer.resolve(result);
-            },
-            function(error){
-                console.log(error);
-            },
-            UserSrv.getUser(),
-            UserSrv.getKey(),
-            groupName,
-            entities,
-            users,
-            description
-        );
-
-        return defer.promise;        
-    };
-    
-    this.addMembersToGroup = function(users, group) {
-        new SSEntityUsersToCircleAdd(
-                function(result) {
-                    console.log(result);
-                },
-                function(error) {
-                    console.log(error);
-                },
-                UserSrv.getUser(),
-                UserSrv.getKey(),
-                group,
-                users
-        );
-    };
-    
-    this.addEntitiesToGroup = function(entities, group) {
-        new SSEntityEntitiesToCircleAdd(
-                function(result) {
-                    console.log(result);
-                },
-                function(error) {
-                    console.log(error);
-                },
-                UserSrv.getUser(),
-                UserSrv.getKey(),
-                group,
-                entities
-        );
-    };
-
-}]);

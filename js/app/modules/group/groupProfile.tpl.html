@@ -1,13 +1,12 @@
 <div class="container">
     <div class="row clearfix">
-        <div class="col-md-3 column" style="border-right: 1px solid #ddd;padding: 10px;">
+        <div class="col-md-3 column group-profile-devider">
             <div id="profile_pic_container" width="200px" height="300px" style="overflow: hidden">
                 <img width="300px" src="images/profile_pic_dummy.png" />
             </div>
             <p style="margin-top: 50px">
             	<h3>{{groupName}}</h3>
             	<p>{{groupDesc}}</p>
-            	
             </p>
         </div>
         <div class="col-md-9 column">
@@ -19,8 +18,6 @@
                 </tab>
                 <tab style="cursor: pointer;" heading = "Entities" ui-sref="app.group.entities">
                 </tab>
-
-
             </tabset>
             <div id="content" ui-view autoscroll="false">
 
