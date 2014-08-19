@@ -129,6 +129,7 @@ angular.module('module.group').controller("newGroupController", ['$scope', '$q',
             
             var promise = GroupFetchService.createGroup($scope.group.name, entityUrls, userUrls, $scope.group.desc);
             promise.then(function(result) {
+                $scope.$apply();
                 $scope.close();
             });
         });
@@ -400,7 +401,7 @@ angular.module('module.group').controller("GroupController", ['$scope', '$state'
     });
 }]);
 
-angular.module('module.group').controller("MembersController", ['$scope', '$state', '$dialogs', 'GroupFetchService', 'UserFetchService', 'UserModel', function($scope, $state, $dialogs, GroupFetchService, UserFetchService, User){
+angular.module('module.group').controller("MembersController", ['$scope', '$rootScope', '$state', '$dialogs', 'GroupFetchService', 'UserFetchService', 'UserModel', function($scope, $rootScope, $state, $dialogs, GroupFetchService, UserFetchService, User){
     
     $scope.groupMembers = [];
     
@@ -447,7 +448,11 @@ angular.module('module.group').controller("MembersController", ['$scope', '$stat
                     userUrls.push(result[i].id);
                 } 
              }
-             GroupFetchService.addMembersToGroup(userUrls, $scope.groupId);
+             var promise = GroupFetchService.addMembersToGroup(userUrls, $scope.groupId);
+             
+             promise.then(function(result) {
+                 //$rootScope.$apply();
+             });
         });
     }
 }]);
@@ -507,7 +512,11 @@ angular.module('module.group').controller("EntitiesController", ['$scope', '$q',
                     entityUrls.push(results[i].id);
                 }
                 
-                GroupFetchService.addEntitiesToGroup(entityUrls, $scope.groupId);
+                var promise = GroupFetchService.addEntitiesToGroup(entityUrls, $scope.groupId);
+                
+                promise.then(function(result) {
+                   // $scope.$apply();
+                });
             });
         });
     }

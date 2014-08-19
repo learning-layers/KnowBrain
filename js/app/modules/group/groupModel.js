@@ -60,8 +60,12 @@ angular.module('module.group').service("GroupFetchService", ['$q','UserService',
     };
     
     this.addMembersToGroup = function(users, group) {
+        var defer = $q.defer();
+        var self = this;
+        
         new SSEntityUsersToCircleAdd(
             function(result) {
+                defer.resolve(result);
             },
             function(error) {
                 console.log(error);
@@ -71,11 +75,16 @@ angular.module('module.group').service("GroupFetchService", ['$q','UserService',
             group,
             users
         );
+        return defer.promise;
     };
     
     this.addEntitiesToGroup = function(entities, group) {
+        var defer = $q.defer();
+        var self = this;
+        
         new SSEntityEntitiesToCircleAdd(
             function(result) {
+                defer.resolve(result);
             },
             function(error) {
                 console.log(error);
@@ -85,6 +94,8 @@ angular.module('module.group').service("GroupFetchService", ['$q','UserService',
             group,
             entities
         );
+        
+        return defer.promise;
     };
 
 }]);
