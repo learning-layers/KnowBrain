@@ -151,17 +151,6 @@ sharingModule.controller("SharingController", ['$scope','$modalInstance', '$dial
                 return false;
             } 
         };
-
-        var getUserUris = function(users) {
-
-            var userUris = [];
-
-            for(var i = 0; i < users.length; i++) {
-                userUris.push(users[i].id);
-            }
-
-            return userUris;
-        };
         
         var arrayContains = function(array, entity) {
             for(var i=0; i < array.length; i++) {

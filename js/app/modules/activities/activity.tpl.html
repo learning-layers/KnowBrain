@@ -75,7 +75,7 @@
 					<a href="#/group/{{activity.entities[0]}}/activities">{{activity.entities[0]}}</a>
 					<span> with </span>
 					<span ng-repeat="user in activity.users">
-						<a ng-href="#/social/{{user}}/groups">{{user}}</a>
+						<a ng-href="#/social/{{user}}/activities">{{user}}</a>
 						<span ng-if="$index < activity.users.length-2">, </span>
 						<span ng-if="$index == activity.users.length-2"> and </span>
 					</span>
@@ -92,7 +92,7 @@
 						<span ng-switch-when="false"> added user </span>
 					</span>
 					<span ng-repeat="user in activity.users">
-						<a ng-href="#/social/{{user}}/groups">{{user}}</a>
+						<a ng-href="#/social/{{user}}/activities">{{user}}</a>
 						<span ng-if="$index < activity.users.length-2">, </span>
 						<span ng-if="$index == activity.users.length-2"> and </span>
 					</span>
@@ -158,7 +158,7 @@
 					</span>
 					<span ng-if="activity.type == 'shareEntityWithUsers'">with</span>
 					<span ng-repeat="user in activity.users">
-						<a ng-href="#/social/{{user}}/groups">{{user}}</a>
+						<a ng-href="#/social/{{user}}/activities">{{user}}</a>
 						<span ng-if="$index < activity.users.length-2">, </span>
 						<span ng-if="$index == activity.users.length-2"> and </span>
 					</span>

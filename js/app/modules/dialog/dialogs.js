@@ -354,7 +354,6 @@ angular.module('dialogs.controllers',['ui.bootstrap.modal', 'module.i18n', 'modu
     $scope.enterState = function(state) {
         $scope.stateStack.push(state);
         $scope.currentState = state;
-        console.log("New State: " + $scope.currentState);
     };
     
     $scope.leaveState = function() {
@@ -363,19 +362,16 @@ angular.module('dialogs.controllers',['ui.bootstrap.modal', 'module.i18n', 'modu
             $scope.close();
         }
         $scope.currentState = $scope.stateStack[$scope.stateStack.length-1];
-        console.log("New State: " + $scope.currentState);  
     };
     
     $scope.gotoBaseState = function() {
         while($scope.stateStack.length > 1) {
             $scope.stateStack.pop();
         }
-        $scope.currentState = $scope.stateStack[$scope.stateStack.length-1];
-        console.log("New State: " + $scope.currentState);  
+        $scope.currentState = $scope.stateStack[$scope.stateStack.length-1]; 
     };
     
     var initialState = Object.keys(states)[0];
-    console.log(initialState);
     $scope.enterState(initialState);
     
 
