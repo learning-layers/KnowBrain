@@ -1,23 +1,23 @@
 <div class="container">
     <div class="row clearfix">
-        <div class="col-md-3 column" style="border-right: 1px solid #ddd;padding: 10px;">
+        <div class="col-md-3 column group-profile-devider">
             <div id="profile_pic_container" width="200px" height="300px" style="overflow: hidden">
-                <img width="300px" src="images/group_pic_dummy.png" />
+                <img width="300px" src="images/profile_pic_dummy.png" />
             </div>
             <p style="margin-top: 50px">
-                Lorem ipsum dolor sit amet, <strong>consectetur adipiscing elit</strong>. Aliquam eget sapien sapien. Curabitur in metus urna. In hac habitasse platea dictumst. Phasellus eu sem sapien, sed vestibulum velit. Nam purus nibh, lacinia non faucibus et, pharetra in dolor. Sed iaculis posuere diam ut cursus. <em>Morbi commodo sodales nisi id sodales. Proin consectetur, nisi id commodo imperdiet, metus nunc consequat lectus, id bibendum diam velit et dui.</em> Proin massa magna, vulputate nec bibendum nec, posuere nec lacus. <small>Aliquam mi erat, aliquam vel luctus eu, pharetra quis elit. Nulla euismod ultrices massa, et feugiat ipsum consequat eu.</small>
+            	<h3>{{groupName}}</h3>
+            	<p>{{groupDesc}}</p>
             </p>
         </div>
         <div class="col-md-9 column">
 
             <tabset >
-                <tab style="cursor: pointer;" heading = "Members" ui-sref="app.group"  ui-sref-active="active">
-                </tab>
-                <tab style="cursor: pointer;" heading = "Entities" ui-sref="app.group">
-                </tab>
-                <tab style="cursor: pointer;" heading = "Activities" ui-sref="app.group">
-                </tab>
-
+                <tab
+		            ng-repeat="t in tabs"
+		            heading="{{t.heading}}"
+		            select="go(t.route)"
+		            active="t.active">
+		        </tab>
             </tabset>
             <div id="content" ui-view autoscroll="false">
 

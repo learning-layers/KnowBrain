@@ -14,11 +14,18 @@
         <div class="col-md-9 column" style="padding:20px">
 			<div class="row clearfix">
 				<tabset >
-               	<tab style="cursor: pointer;" heading = "Activities" ui-sref="app.social.activities" ui-sref-active="active">
-                </tab>
-                <tab style="cursor: pointer;" heading = "Groups" ui-sref="app.social.groups">
+				
+				<tab
+		            ng-repeat="t in tabs"
+		            heading="{{t.heading}}"
+		            select="go(t.route)"
+		            active="t.active">
+		        </tab>
+<!--                	<tab style="cursor: pointer;" heading = "Activities" ui-sref="app.social.activities"> -->
+<!--                 </tab> -->
+<!--                 <tab style="cursor: pointer;" heading = "Groups" ui-sref="app.social.groups"> -->
 
-                </tab>
+<!--                 </tab> -->
 <!--                 <tab style="cursor: pointer;" heading = "Friends" ui-sref="app.social.friends"> -->
 <!--                 </tab> -->
 

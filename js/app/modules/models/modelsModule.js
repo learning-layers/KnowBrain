@@ -455,7 +455,7 @@ angular.module('module.models').factory('CollectionModel', ['$q', '$rootScope','
 
 }]);
 
-angular.module('module.models').factory('EntityModel', ['$q', '$rootScope','UserService', 'BaseModel', 'SPACE_ENUM', 'ENTITY_TYPES', 'SHARING_OPTIONS', function($q, $rootScope, UserSrv, BaseModel, SPACE_ENUM, ENTITY_TYPES, SHARING_OPTIONS){
+angular.module('module.models').factory('EntityModel', ['$q', '$rootScope','UserService', 'BaseModel', 'UriToolbox', 'SPACE_ENUM', 'ENTITY_TYPES', 'SHARING_OPTIONS', function($q, $rootScope, UserSrv, BaseModel, UriToolbox, SPACE_ENUM, ENTITY_TYPES, SHARING_OPTIONS){
 
   function Entity(){
     this.parentColl = null;
@@ -465,6 +465,8 @@ angular.module('module.models').factory('EntityModel', ['$q', '$rootScope','User
     this.type       = null;
     this.pos = null;
     this.mimeType = null;
+    this.uploaded = false;
+    this.fileHandle = null;
 
     this.servHandleFileDownload = function(defer){
       var self = this;
@@ -522,9 +524,51 @@ angular.module('module.models').factory('EntityModel', ['$q', '$rootScope','User
 
     return defer.promise;
   };
+  
+  Entity.prototype.uploadFile = function(){
+      var defer = $q.defer();
+      var self = this;
+      
+      if(this.type == ENTITY_TYPES.file) {
+          new SSFileUpload(
+                  function(fileUri,fileName){
+                    console.log(fileUri);
+                    self.id = fileUri;
+                    self.label = fileName;
+                    self.type = ENTITY_TYPES.file;
+                    self.uriPathnameHash = UriToolbox.extractUriPathnameHash(fileUri);
+                    self.uploaded = true;
+  
+                    defer.resolve(self); 
+                    //$rootScope.$apply();
+                  },
+                  function(error){
+                    console.log("Error");
+                    defer.reject(error);
+                    //$rootScope.$apply();
+                  },
+                  UserSrv.getUser(),
+                  UserSrv.getKey(),
+                  this.fileHandle,
+                  null
+              );
+        return defer.promise;
+      }
+  }
 
   return (Entity);
 
+}]);
+
+angular.module('module.models').factory('UserModel', ['$q', '$rootScope','UserService', function($q, $rootScope, UserSrv){
+
+    function User(){
+        this.label = "";
+        this.id = "";
+        this.type = "user";
+    }
+    
+    return (User);
 }]);
 
 
@@ -714,6 +758,33 @@ angular.module('module.models').service("EntityFetchService", ['$q', '$rootScope
 return defer.promise;     
 };
 
+this.uploadEntity = function(file){
+    var defer = $q.defer();
+    var self = this;
+
+    new SSFileUpload(
+      function(parentUri,fileUri,fileName){
+        var entry = new Entity();
+
+        entry.init({id:fileUri, label:fileName, parentColl: parentUri, space: self.space, type: ENTITY_TYPES.file});
+        entry.init({uriPathnameHash: UriToolbox.extractUriPathnameHash(fileUri)});
+
+        defer.resolve(entry); 
+        $rootScope.$apply();
+      },
+      function(error){
+        defer.reject(error);
+        $rootScope.$apply();
+      },
+      UserSrv.getUser(),
+      UserSrv.getKey(),
+      file,
+      this.id
+      );
+
+    return defer.promise;
+  };
+
 }]);
 
 angular.module('module.models').service("FetchServiceHelper", ['$q', '$rootScope','UserService', 'UriToolbox', 'SPACE_ENUM', function($q, $rootScope, UserSrv, UriToolbox, SPACE_ENUM){
@@ -831,7 +902,7 @@ angular.module('module.models').service("TagFetchService", ['$q', '$rootScope','
 
 }]);
 
-angular.module('module.models').service('UserModel', ['$q', '$rootScope','UserService', function($q, $rootScope, UserSrv) {
+angular.module('module.models').service('UserFetchService', ['$q', '$rootScope','UserService', function($q, $rootScope, UserSrv) {
     
     this.getAllUsers = function() {
 
@@ -851,54 +922,28 @@ angular.module('module.models').service('UserModel', ['$q', '$rootScope','UserSe
 
        return defer.promise;
     };
-
-    this.getUserLabel = function(uri) {
-        var defer = $q.defer();
-        var self = this;
-
-        return new getUserLabelFromUri(uri);
-    };
-
-}]);
-
-angular.module('module.models').service("GroupFetchService", ['$q','UserService', function($q, UserSrv){
-    this.getUserGroups = function(user) {
-        var defer = $q.defer();
-        var self = this;
-
-        new SSEntityUserCirclesGet(function(result){
-                defer.resolve(result);
-            },
-            function(error){
-                console.log(error);
-            },
-            UserSrv.getUser(),
-            UserSrv.getKey(),
-            user
-        );
-       return defer.promise;
-    };
     
-    this.createGroup = function(groupName, entities, users) {
+    this.getUser = function(userId){
         var defer = $q.defer();
-        var self = this;
-
-        new SSEntityCircleCreate(
-            function(result){
-                defer.resolve(result);
-            },
-            function(error){
-                console.log(error);
-            },
-            UserSrv.getUser(),
-            UserSrv.getKey(),
-            groupName,
-            entities,
-            users
+        
+        new SSEntityDescGet(function(result) {
+            defer.resolve(result);
+        }, function(error) {
+            
+        },
+        UserSrv.getUser(),
+        UserSrv.getKey(),
+        userId,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null
         );
-
-        return defer.promise;        
-    };
+        
+        return defer.promise;
+    },
 
     this.getUserLabel = function(uri) {
         var defer = $q.defer();

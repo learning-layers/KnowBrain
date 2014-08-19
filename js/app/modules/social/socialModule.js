@@ -44,7 +44,7 @@ angular.module('module.social').config(function($stateProvider) {
     $stateProvider.state('app.social.activities', {
         url: '/activities',
         templateUrl: MODULES_PREFIX + '/social/activities.tpl.html',
-        controller: "activitiesController"
+        controller: "UserActivitiesController"
     });
 
     $stateProvider.state('app.social.groups', {
@@ -63,7 +63,7 @@ angular.module('module.social').config(function($stateProvider) {
 /**
 * CONTROLLER
 */
-angular.module('module.social').controller("SocialController", ['$scope', '$stateParams', 'UserService', 'UserFetchService', function($scope, $stateParams, UserSrv, UserFetchService){
+angular.module('module.social').controller("SocialController", ['$scope', '$state', '$stateParams', 'UserService', 'UserFetchService', function($scope, $state, $stateParams, UserSrv, UserFetchService){
 
     $scope.profileId = $stateParams.profileId;
     
@@ -72,186 +72,88 @@ angular.module('module.social').controller("SocialController", ['$scope', '$stat
         $scope.label = result.desc.label;
     });
     
-    var promise = UserFetchService.getAllUsers();
-    promise.then(function(result) {
-        console.log(result);
-    });
-    
     $scope.userId = UserSrv.getUser();
-}]);
-
-angular.module('module.social').controller("UserActivitiesController", ['$scope', 'Activity', 'UserActivitiesFetchService', function($scope, Activity, ActivityFetchService){
     
-    console.log($scope.profileId);
-    var promise = ActivityFetchService.getUserActivities($scope.profileId);
+    $scope.tabs = 
+        [
+           { heading: "Activities", route:"app.social.activities", active:false },
+           { heading: "Groups", route:"app.social.groups", active:false },
+        ];
     
-    var activities = [];
-    
-    promise.then(function(result) {
-        console.log(result.activities);
-        
-        for(var i = 0; i < result.activities.length; i++) {
-            var act = result.activities[i];
-            
-            var activity = new Activity("", act.type, act.creationTime, act.entities, act.users);
-            activities.push(activity);
-        }
-        
-        var promise = ActivityFetchService.getUsers(result.activities);
-        
-        
-        promise.then(function(results) {
-            console.log("Users:");
-            console.log(results);
-            for(var i = 0; i < results.length; i++) {
-                activities[i].user = results[i].desc;
-                console.log(activities[i].user);
-            }
-            $scope.activities = activities;
-            console.log(activities);
+    $scope.go = function(route){
+        $state.go(route);
+    };
+ 
+    $scope.active = function(route){
+        return $state.is(route);
+    };
+ 
+    $scope.$on("$stateChangeSuccess", function() {
+        $scope.tabs.forEach(function(tab) {
+            tab.active = $scope.active(tab.route);
         });
     });
 }]);
 
-angular.module('module.social').controller("GroupsController", ['$scope', '$dialogs', 'GroupFetchService', function($scope, $dialogs, GroupFetchService){
+
+angular.module('module.social').controller("UserActivitiesController", ['$scope', 'Activity', 'ActivityFetchService', function($scope, Activity, ActivityFetchService){
+    
+    var promise = ActivityFetchService.getActivities(null, [$scope.profileId], null, null, null, null);
+    
+    $scope.activities = [];
+    
+    promise.then(function(result) {
+        
+        for(var i = 0; i < result.activities.length; i++) {
+            var act = result.activities[i];
+            
+            var activity = new Activity(act.author, act.type, act.creationTime, act.entities, act.users);
+            $scope.activities.unshift(activity);
+        }
+    });
+}]);
+
+angular.module('module.social').controller("GroupsController", ['$scope', '$state', '$controller', '$dialogs', 'GroupFetchService', function($scope, $state, $controller, $dialogs, GroupFetchService){
     
     $scope.groups = [];
     
     var promise = GroupFetchService.getUserGroups($scope.profileId);
     
     promise.then(function(result){
-        console.log(result);
         $scope.groups = result.circles;
     });
+    
 
     this.createGroup = function() {
-        var newGroupDialog = $dialogs.createNewGroup($scope.groups);
         
-        newGroupDialog.result.then(function(result) {
-            var promise = GroupFetchService.getUserGroups();
-            promise.then(function(result){
-                $scope.groups = result.circles;
-            });
-        });
+        var states = {
+                "new": MODULES_PREFIX+"/group/newGroup.tpl.html",
+                "members": MODULES_PREFIX+"/group/addMembers.tpl.html",
+                "choose": MODULES_PREFIX+"/group/addEntities.tpl.html",
+                "upload": MODULES_PREFIX+"/group/addEntitiesUpload.tpl.html",
+                "link": MODULES_PREFIX+"/group/addEntitiesLink.tpl.html"
+                //TODO: Add from collection
+                
+                
+        };
+        
+        var ctrlFunction = function($scope) {
+            $scope.groupMembers = [];
+            $scope.entities = [];
+        };
+        
+        $dialogs.newModal(states, ctrlFunction, "modal-huge");
 
+    };
+    
+    $scope.handleEntryClick = function(entry) {
+        if(entry.type == "group") {
+            $state.go("app.group.activities", {groupId: entry.id});
+        }
     };
 
 }]);
 
 angular.module('module.social').controller("FriendsController", ['$scope',function($scope){
-    this.groups = "To be implemented";
+    //TODO: List friends
 }]);
-
-angular.module('module.social').service("UserFetchService", ['$q', 'UserService', function($q, UserSrv) {
-    this.getUser = function(userId){
-        var defer = $q.defer();
-        
-        new SSEntityDescGet(function(result) {
-            defer.resolve(result);
-        }, function(error) {
-            
-        },
-        UserSrv.getUser(),
-        UserSrv.getKey(),
-        userId,
-        null,
-        null,
-        null,
-        null,
-        null,
-        null
-        );
-        
-        return defer.promise;
-    },
-    
-    this.getAllUsers = function(){
-        var defer = $q.defer();
-        
-        new SSUserAll(function(result) {
-            defer.resolve(result);
-        }, function(error) {
-            
-        },
-        UserSrv.getUser(),
-        UserSrv.getKey()
-        );
-        
-        return defer.promise;
-    }
-    
-
-}]);
-
-angular.module('module.social').service("UserActivitiesFetchService", ['$q', 'UserService', function($q, UserSrv) {
-
-
-this.getUserActivities = function(userId) {
-    
-    var defer = $q.defer();
-    var self = this;
-    
-    new SSActivitiesGet(function(result){
-            defer.resolve(result);
-        },
-        function(error){
-            console.log(error);
-        },
-        UserSrv.getUser(),
-        UserSrv.getKey(),
-        null, //types
-        [userId], //users
-        null, //entities 
-        null, //startTime
-        null //endTime
-    );
-    
-    return defer.promise;
-};
-
-this.getUsers = function(activities) {
-    
-    var defer = $q.defer();
-    var self = this;
-    
-    var promises = [];
-    
-    for(var i = 0; i < activities.length; i++) {
-        
-        
-        var promise = this.getEntity(activities[i].author);
-        promises.push(promise);
-    }
-    
-    return $q.all(promises);
-};
-
-this.getEntity = function(entity) {
-    console.log("Get: " + entity);
-    
-    var defer = $q.defer();
-    var self = this;
-    
-    new SSEntityDescGet(
-            function(result) {
-                console.log(result);
-                return defer.resolve(result);
-            },
-            function(error) {
-                
-            },
-            UserSrv.getUser(),
-            UserSrv.getKey(),
-            entity,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false
-    );
-    
-    return defer.promise;
-}
-}]);
-

@@ -331,10 +331,52 @@ angular.module('dialogs.controllers',['ui.bootstrap.modal', 'module.i18n', 'modu
 	  	$scope.currentResourceType = 0;
 	  };
 
-	}]);
+	}])
 // end ConfirmDialogCtrl / dialogs.controllers
 
 
+.controller("baseModalController", ['$controller', '$scope', '$rootScope', '$modalInstance', 'i18nService', 'states', 'ctrlFunction', function($controller, $scope, $rootScope, $modalInstance, i18nService, states, ctrlFunction){
+    
+    $scope.baseCtrl = $controller(ctrlFunction, {$scope: $scope});
+    
+    $scope.stateStack = [];
+    
+    $scope.states = states;
+    
+    $scope.close = function() {
+        $modalInstance.dismiss();
+    };
+    
+    $scope.confirm = function(result) {
+        $modalInstance.close(result);
+    };
+    
+    $scope.enterState = function(state) {
+        $scope.stateStack.push(state);
+        $scope.currentState = state;
+    };
+    
+    $scope.leaveState = function() {
+        $scope.stateStack.pop();
+        if($scope.stateStack.length < 1) {
+            $scope.close();
+        }
+        $scope.currentState = $scope.stateStack[$scope.stateStack.length-1];
+    };
+    
+    $scope.gotoBaseState = function() {
+        while($scope.stateStack.length > 1) {
+            $scope.stateStack.pop();
+        }
+        $scope.currentState = $scope.stateStack[$scope.stateStack.length-1]; 
+    };
+    
+    var initialState = Object.keys(states)[0];
+    $scope.enterState(initialState);
+    
+
+    
+}]);
 //== Services ================================================================//
 
 angular.module('dialogs.services',['ui.bootstrap.modal','dialogs.controllers'])
@@ -404,6 +446,19 @@ angular.module('dialogs.services',['ui.bootstrap.modal','dialogs.controllers'])
 					}
 				}); // end modal.open
 			}, // end create
+			newModal : function(states, ctrlFunction, wClass){
+                return $modal.open({
+                    templateUrl : MODULES_PREFIX + '/dialog/baseModal.tpl.html',
+                    controller : 'baseModalController',
+                    keyboard : true,
+                    backdrop : true,
+                    windowClass: wClass,
+                    resolve : {
+                        states : function() { return states; },
+                        ctrlFunction: function() { return ctrlFunction; }
+                    }
+                });
+            },
 			entryDetail : function(entry, isSearchResult){
 				return $modal.open({
 					templateUrl : MODULES_PREFIX + '/dialog/entryDetail.tpl.html',
@@ -455,32 +510,6 @@ angular.module('dialogs.services',['ui.bootstrap.modal','dialogs.controllers'])
                     }
                 });
             },
-
-            createNewGroup: function() {
-                return $modal.open({
-                    templateUrl: MODULES_PREFIX + '/group/newGroup.tpl.html',
-                    controller: 'newGroupController',
-                    keyboard : true,
-                    backdrop : true,
-                    windowClass: 'modal-huge'
-                });
-            },
-			
-            addMembers: function(users) {
-                return $modal.open({
-                    templateUrl: MODULES_PREFIX + '/group/addMembers.tpl.html',
-                    controller: 'addMembersController',
-                    keyboard : true,
-                    backdrop : true,
-                    windowClass: 'modal-huge',
-                    resolve: {
-                    	users: function() {
-                    		return users;
-                    	},
-                    }
-                    
-                });
-            }
 		};
 	}]); // end $dialogs / dialogs.services
 
