@@ -72,24 +72,17 @@ angular.module('module.social').controller("SocialController", ['$scope', '$stat
         $scope.label = result.desc.label;
     });
     
-    var promise = UserFetchService.getAllUsers();
-    promise.then(function(result) {
-        console.log(result);
-    });
-    
     $scope.userId = UserSrv.getUser();
 }]);
 
 
 angular.module('module.social').controller("UserActivitiesController", ['$scope', 'Activity', 'ActivityFetchService', function($scope, Activity, ActivityFetchService){
     
-    console.log($scope.profileId);
     var promise = ActivityFetchService.getActivities(null, [$scope.profileId], null, null, null, null);
     
     $scope.activities = [];
     
     promise.then(function(result) {
-        console.log(result.activities);
         
         for(var i = 0; i < result.activities.length; i++) {
             var act = result.activities[i];
@@ -107,9 +100,7 @@ angular.module('module.social').controller("GroupsController", ['$scope', '$stat
     var promise = GroupFetchService.getUserGroups($scope.profileId);
     
     promise.then(function(result){
-        console.log(result);
         $scope.groups = result.circles;
-        console.log(result);
     });
     
 
@@ -121,7 +112,7 @@ angular.module('module.social').controller("GroupsController", ['$scope', '$stat
                 "choose": MODULES_PREFIX+"/group/addEntities.tpl.html",
                 "upload": MODULES_PREFIX+"/group/addEntitiesUpload.tpl.html",
                 "link": MODULES_PREFIX+"/group/addEntitiesLink.tpl.html"
-                //MODULES_PREFIX+"/group/addEntitiesCollection.tpl.html"; 
+                //TODO: Add from collection
                 
                 
         };
@@ -144,5 +135,5 @@ angular.module('module.social').controller("GroupsController", ['$scope', '$stat
 }]);
 
 angular.module('module.social').controller("FriendsController", ['$scope',function($scope){
-    this.groups = "To be implemented";
+    //TODO: List friends
 }]);
