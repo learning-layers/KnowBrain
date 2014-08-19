@@ -357,7 +357,7 @@ angular.module('module.group').controller("EntityUploadController", ['$q', '$sco
     });
   }]);
 
-angular.module('module.group').controller("GroupController", ['$scope', '$stateParams', 'GroupFetchService', function($scope, $stateParams, GroupFetchService){
+angular.module('module.group').controller("GroupController", ['$scope', '$state', '$stateParams', 'GroupFetchService', function($scope, $state, $stateParams, GroupFetchService){
     
     $scope.groupId = $stateParams.groupId;
     $scope.groupName = "";
@@ -376,6 +376,27 @@ angular.module('module.group').controller("GroupController", ['$scope', '$stateP
         $scope.groupDesc = group.description;
         $scope.memberIds = group.users;
         $scope.entityIds = group.entities;
+    });
+    
+    $scope.tabs = 
+        [
+           { heading: "Activities", route:"app.group.activities", active:false },
+           { heading: "Members", route:"app.group.members", active:false },
+           { heading: "Ressources", route:"app.group.entities", active:false },
+        ];
+    
+    $scope.go = function(route){
+        $state.go(route);
+    };
+ 
+    $scope.active = function(route){
+        return $state.is(route);
+    };
+ 
+    $scope.$on("$stateChangeSuccess", function() {
+        $scope.tabs.forEach(function(tab) {
+            tab.active = $scope.active(tab.route);
+        });
     });
 }]);
 

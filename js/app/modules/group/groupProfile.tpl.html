@@ -12,12 +12,12 @@
         <div class="col-md-9 column">
 
             <tabset >
-                <tab style="cursor: pointer;" heading = "Activities" ui-sref="app.group.activities"  ui-sref-active="active">
-                </tab>
-                <tab style="cursor: pointer;" heading = "Members" ui-sref="app.group.members" >
-                </tab>
-                <tab style="cursor: pointer;" heading = "Entities" ui-sref="app.group.entities">
-                </tab>
+                <tab
+		            ng-repeat="t in tabs"
+		            heading="{{t.heading}}"
+		            select="go(t.route)"
+		            active="t.active">
+		        </tab>
             </tabset>
             <div id="content" ui-view autoscroll="false">
 

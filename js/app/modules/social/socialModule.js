@@ -63,7 +63,7 @@ angular.module('module.social').config(function($stateProvider) {
 /**
 * CONTROLLER
 */
-angular.module('module.social').controller("SocialController", ['$scope', '$stateParams', 'UserService', 'UserFetchService', function($scope, $stateParams, UserSrv, UserFetchService){
+angular.module('module.social').controller("SocialController", ['$scope', '$state', '$stateParams', 'UserService', 'UserFetchService', function($scope, $state, $stateParams, UserSrv, UserFetchService){
 
     $scope.profileId = $stateParams.profileId;
     
@@ -73,6 +73,26 @@ angular.module('module.social').controller("SocialController", ['$scope', '$stat
     });
     
     $scope.userId = UserSrv.getUser();
+    
+    $scope.tabs = 
+        [
+           { heading: "Activities", route:"app.social.activities", active:false },
+           { heading: "Groups", route:"app.social.groups", active:false },
+        ];
+    
+    $scope.go = function(route){
+        $state.go(route);
+    };
+ 
+    $scope.active = function(route){
+        return $state.is(route);
+    };
+ 
+    $scope.$on("$stateChangeSuccess", function() {
+        $scope.tabs.forEach(function(tab) {
+            tab.active = $scope.active(tab.route);
+        });
+    });
 }]);
 
 
