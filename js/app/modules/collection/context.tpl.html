@@ -40,7 +40,7 @@
 
 
   <div id="collectionContent">
-  	<ng-entity coll-content vie-map="currentCollection[sss:hasEntity] as entities" ng-repeat="entry in currentCollection.entries" ></ng-entity>
+  	<ng-entity vie-map="currentCollection[sss:hasEntity] as [entries]" ng-repeat="entry in entries" ></ng-entity>
   </div>
   <div class="clearfix"></div>
 </div>
