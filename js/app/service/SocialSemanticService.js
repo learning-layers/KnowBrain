@@ -564,7 +564,7 @@ var SocialSemanticService = (function(){
                             service.userKey,
                             resourceUri,
                             true, // tags
-                            false, // rating
+                            true, // rating
                             false, // discussions
                             false, // events
                             true, // thumbnail
