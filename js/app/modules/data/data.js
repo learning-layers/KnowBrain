@@ -1,19 +1,19 @@
 'use strict';
 
-angular.module('adapter', []);
+angular.module('data', []);
 
-angular.module('adapter').factory('CollectionData', function() {
-    Logger.useDefaults();
-    Logger.get("adapter").setLevel(Logger.DEBUG);
-    Logger.get("adapter").debug("CollectionData", CollectionData);
-    return CollectionData;//require('data/sss/CollectionData');
+angular.module('data').factory('CollectionData', function() {
+    // simply returns the global object CollectionData of app/data/sss/CollectionData.js
+    // a better wrapping technique would be needed (eg. require.js)
+    // or the full integration of the data modules into Angular's dependency system
+    return CollectionData;
 });
 /**
  * DataStore module
  *
  * Wraps VIE.
  */
-angular.module('adapter').factory('DataStore', ['CollectionData', 'UserService', function(CollectionData, UserSrv) {
+angular.module('data').factory('DataStore', ['CollectionData', 'UserService', function(CollectionData, UserSrv) {
     var vie = new VIE();
     
     var namespace = UserSrv.getUserSpace() + "/";
@@ -38,7 +38,7 @@ angular.module('adapter').factory('DataStore', ['CollectionData', 'UserService',
 
 }]);
 
-angular.module('module.adapter').directive("vieMap", function() {
+angular.module('data').directive("vieMap", function() {
     var attr = "vieMap";
     var sep = " as ";
     var LOG = Logger.get('relDirective');
@@ -46,6 +46,7 @@ angular.module('module.adapter').directive("vieMap", function() {
         restrict: 'A',
         priority: 1001,
         link: function(scope, element, attrs ){
+            Logger.useDefaults();
 
             var mapAsArray = function(value) {
                 LOG.debug('mapAsArray', value, value.indexOf('['), value.indexOf(']'));
