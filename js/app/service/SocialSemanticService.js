@@ -1,7 +1,9 @@
 // The SocialSemanticService wraps the SSS Client API.
+//
 
-define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
-        'sss.conns'], function(Logger, VIE, _, Voc, EntityView) {
+//define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
+        //'sss.conn.entity', 'sss.conn.userevent', 'sss.conn.learnep'], function(Logger, VIE, _, Voc, EntityView) {
+var SocialSemanticService = (function(){
 
 // ## VIE.SocialSemanticService(options)
 // This is the constructor to instantiate a new service.
@@ -458,6 +460,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
 
             loadable.options.data = loadable.options.data || {};
 
+            var service = this;
             try {
                 if ( loadable.options.resource ) {
                     this.ResourceGet(loadable);
@@ -469,7 +472,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                             service.LOG.debug('result', result);
                             var entries = [];
                             _.each(result.coll.entries, function(entry) {
-                                entries.push(service.fixForVIE(entry, 'uri', 'entityType'));
+                                entries.push(service.fixForVIE(entry, 'id', 'type'));
                             });
                             loadable.resolve(entries);
                         },
@@ -1395,15 +1398,19 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
          * @return {undefined}
          */
         fixFromVIE: function(entity) {
-            var object = _.clone(entity.attributes);
+            var object = _.clone(entity.attributes),
+                curie, type, prop;
             this.LOG.debug('fixFromVIE', JSON.stringify(object));
-            for( var prop in object ) {
-                var curie = this.vie.namespaces.curie(prop);
+            for( prop in object ) {
+                curie = this.vie.namespaces.curie(prop);
                 if( curie.indexOf('sss:') === 0 ) curie = curie.substring(4);
                 object[curie] = object[prop];
                 delete object[prop];
             }
-            object['type'] = entity.get('@type').id;
+            type = entity.get('@type').id;
+            curie = this.vie.namespaces.curie(type);
+            if( curie.indexOf('sss:') === 0 ) curie = curie.substring(4);
+            object['type'] = curie;
             object['id'] = entity.getSubject();
             delete object['@type'];
             delete object[VIE.prototype.Entity.prototype.idAttribute];
@@ -1415,5 +1422,5 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
 
     return VIE.prototype.SocialSemanticService;
 
-});
+})();
 
