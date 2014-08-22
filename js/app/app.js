@@ -88,7 +88,6 @@ angular.module('knowbrain', [
      }
    });
 
-
   }]);
 
 /**
