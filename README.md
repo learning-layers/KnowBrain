@@ -1,3 +1,32 @@
+#Data Layer Integration branch
+
+This branch demonstrates a way of integrating the data layer of [Bits and Pieces](https://github.com/learning-layers/BitsAndPieces) (BnP) into the KnowBrain.
+
+##Changes
+
+Apart from external libraries the following files have been added:
+
+* `js/app/data` contains files of the BnP data layer. 
+* `js/app/service` contains the service adapter for the Social Semantic Server.
+* `js/app/modules/data/data.js`, anchor for the integration
+
+These files of the KB have had to be changed:
+
+* `js/app/modules/collection/collectionModule.js`
+* `js/app/modules/collection/context.tpl.html`
+
+See a comparison of this branch with the point where it diverged from master [here](https://github.com/learning-layers/KnowBrain/compare/c01b2821ab7c95c921b133e360a2c19afb14418a...data-layer-integration).
+
+##Further TODOs
+
+* Generally modules which make service calls (eg. `modelsModule.js`, `chatModule.js`,...) are good candidates to transform into the data layer since these modules handle data aspects of the application. However, the KB code base needs further decoupling to fully integrate with the data layer, see below.
+* The service calls should be aggregated into `SocialSemanticService.js`.
+
+##Problems
+
+* KnowBrain is not leveraging the semantics of the SSS data on a technical level as the BnP data layer does. So for the integration it is necessary to remove semantics from the entities of the data layer before they can go into KB's logic. This results in computational overhead.
+* KnowBrain follows a vertical separation of concerns into modules. Modules contain models, controllers, views, etc. BnP follows a horizontal separation into layers of service, data and presentation concerns. So on an architectural level the two systems are incompatible.
+
 #KnowBrain
 
 The KnowBrain (KB) is a self-hosting dropbox like knowledge repository. 
