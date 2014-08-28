@@ -173,8 +173,8 @@ angular.module('dialogs.controllers',['ui.bootstrap.modal', 'module.i18n', 'modu
 		};
 
 		$scope.tagAdded = function(tag) {
-            console.log(tag);
-			entry.addTag(tag).then(
+			// Passed variable is an object with structure { text : 'tagtext'}
+			entry.addTag(tag.text).then(
 
 				function(result){
 					CurrentCollectionService.getCurrentCollection().getCumulatedTags();
@@ -186,7 +186,8 @@ angular.module('dialogs.controllers',['ui.bootstrap.modal', 'module.i18n', 'modu
 		};
 
 		$scope.tagRemoved = function(tag) {
-			entry.removeTag(tag).then(
+			// Passed variable is an object with structure { text : 'tagtext'}
+			entry.removeTag(tag.text).then(
 				function(result){
 					CurrentCollectionService.getCurrentCollection().getCumulatedTags();
 				},
