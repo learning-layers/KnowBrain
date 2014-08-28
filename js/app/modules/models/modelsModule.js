@@ -60,7 +60,7 @@ angular.module('module.models').factory('BaseModel', ['$q', '$rootScope', 'UserS
       var defer = $q.defer();
       var self = this;
 
-      new SSEntityLabelSet(
+      new SSEntityUpdate(
         function(result){
           self.label = newLabel;
           defer.resolve(result); 
