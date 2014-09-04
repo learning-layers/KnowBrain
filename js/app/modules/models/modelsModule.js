@@ -707,7 +707,7 @@ angular.module('module.models').service("EntityFetchService", ['$q', '$rootScope
       var result = result.desc;
 
       var entity = new EntityModel();
-      entity.init({id:result.entity});
+      entity.init({id:result.id});
       entity.init({type:result.type});
       entity.init({label:result.label});
       entity.init({tags:result.tags});
@@ -799,7 +799,7 @@ angular.module('module.models').service("FetchServiceHelper", ['$q', '$rootScope
 
         var result = result.desc;
 
-        model.init({id:result.entity});
+        model.init({id:result.id});
         model.init({type:result.type});
         model.init({label:result.label});
         model.init({tags:result.tags});
