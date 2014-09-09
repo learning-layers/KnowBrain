@@ -95,82 +95,90 @@ angular.module('module.chat').service("chatService", ['$q', '$rootScope','UserSe
             }
         });
 
-        new SSDiscEntryAdd(
-			function (result) {
-
+      new SSDiscEntryAdd(
+        function (result) {
+          
 			    if (message !== null) {
-			        addNewMessage(result.disc, message)
-                        .then(function (result) {
-                            defer.resolve(result);
-                        });
-			    }
+            addNewMessage(result.disc, message)
+            .then(function (result) {
+              defer.resolve(result);
+          });
+        }
 			},
 			function (error) {
-			    console.log(error);
-			    defer.reject(error);
+        console.log(error);
+        defer.reject(error);
 			},
 			UserSrv.getUser(),
 			UserSrv.getKey(),
-			null,
-			null,
-			null,
-			true,
-			'chat',
-			currentTime.toLocaleDateString() + ' ' + currentTime.toLocaleTimeString(),
-			sharedUserIdList.toString(),
-			allOtherUserList,
-			null
+			null,//disc, 
+			null,//entity, 
+			null,//entry, 
+			true,//addNewDisc,
+			'chat',//type,
+			currentTime.toLocaleDateString() + ' ' + currentTime.toLocaleTimeString(), //label, 
+			sharedUserIdList.toString(),//description,
+			allOtherUserList,//users,
+			null//entities
 			);
 
+
+
+
+
+
+
+
+
         return defer.promise;
-    };
-
+      };
+    
     var addNewMessage = function (chatId, message) {
-        var defer = $q.defer();
-
-        new SSDiscEntryAdd(
-			function (result) {
+      var defer = $q.defer();
+      
+      new SSDiscEntryAdd(
+        function (result) {
 			    defer.resolve(result);
 			},
 			function (error) {
-			    console.log(error);
-			    defer.reject(error);
+        console.log(error);
+        defer.reject(error);
 			},
 			UserSrv.getUser(),
 			UserSrv.getKey(),
-			chatId,
-			null,
-			message.content,
-			false,
-			null,
-			null,
-			null,
-			null,
-			null
-			);
-
-        return defer.promise;
+			chatId,//disc, 
+			null,//entity, 
+			message.content,//entry, 
+			false,//addNewDisc,
+			null,//type,
+			null,//label, 
+			null,//description,
+			null,//users,
+			null//entities
+        );
+      
+      return defer.promise;
     };
-
+    
     this.addNewMessage = addNewMessage;
-
+    
     this.getMessages = function (chatId) {
-        var defer = $q.defer();
-
-        new SSDiscWithEntriesGet(
-			function (result) {
-                defer.resolve(result);
+      var defer = $q.defer();
+      
+      new SSDiscWithEntriesGet(
+        function (result) {
+          defer.resolve(result);
 			},
-            function (error) {
-                console.log(error);
-                defer.reject(error);
-            },
-            UserSrv.getUser(),
-            UserSrv.getKey(),
-	        chatId
-            );
-
-        return defer.promise;
+      function (error) {
+        console.log(error);
+        defer.reject(error);
+      },
+      UserSrv.getUser(),
+      UserSrv.getKey(),
+      chatId
+        );
+      
+      return defer.promise;
     };
 		
-}]);
+  }]);
