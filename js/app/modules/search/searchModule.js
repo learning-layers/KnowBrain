@@ -171,65 +171,92 @@ angular.module('module.search').controller("SearchController", [
       $scope.toggleTagSearchResults();
     }
   };
-
+  
   $scope.transitionToHome = function(){
     $state.go('app.collection.content',{coll: "root"});
   }
-
+  
   var searchByTags = function(tagsArray){
-   var defer = $q.defer();
-
-   new SSSearchWithTags(
-    function(result){
-
-      var entities = new Array()
-
-      if(result.searchResults.length > 0){
-        var entities = initEntitiesBySearchResult(result.searchResults);
+    var defer = $q.defer();
+    
+    new SSSearch(
+      function(result){
+        
+        var entities = new Array()
+      
+      if(result.entities.length > 0){
+        var entities = initEntitiesBySearchResult(result.entities);
         $scope.tagSearchResults = entities;
-        $scope.tagSearchResultsCount = result.searchResults.length;
+        $scope.tagSearchResultsCount = result.entities.length;
       }
-
+      
       defer.resolve(entities);
       $rootScope.$apply();
-    }, 
+    },  
     function(error){ console.log(error); }, 
     UserSrv.getUser(),
     UserSrv.getKey(),
-    jSGlobals.or, 
-    tagsArray, 
-    MAX_SEARCH_RESULTS
-    );
-
-   return defer.promise;
- };
-
- var searchByFullText = function(keywordsArray){
-  var defer = $q.defer();
-
-  new SSSearchWithSolr(
-    function(result){
-
-      var entities = new Array()
-
-      if(result.searchResults.length > 0){
-        var entities = initEntitiesBySearchResult(result.searchResults);
-        $scope.contentSearchResults = entities;
-        $scope.contentSearchResultsCount = result.searchResults.length;
+    null, //keywordsToSearchFor
+    false, //includeTextualContent,
+    null, //wordsToSearchFor,
+    true, //includeTags,
+    tagsArray, //tagsToSearchFor,
+    false, //includeMIs,
+    null, //misToSearchFor,
+    false, //includeLabel,
+    null, //labelsToSearchFor,
+    false, //includeDescription,
+    null, //descriptionsToSearchFor,
+    null, //typesToSearchOnlyFor,
+    false, //includeOnlySubEntities,
+    null, //entitiesToSearchWithin,
+    false, //extendToParents,
+    false, //includeRecommendedResults,
+    false); //provideEntries,
+    
+    return defer.promise;
+  };
+  
+  var searchByFullText = function(keywordsArray){
+    var defer = $q.defer();
+    
+    new SSSearch(
+      function(result){
+        
+        var entities = new Array()
+      
+      if(result.entities.length > 0){
+        var entities = initEntitiesBySearchResult(result.entities);
+        $scope.contentSearchResults      = entities;
+        $scope.contentSearchResultsCount = result.entities.length;
       } 
-
+      
       defer.resolve(entities);
       $rootScope.$apply();
-    }, 
+    },  
     function(error){ console.log(error); }, 
     UserSrv.getUser(),
     UserSrv.getKey(),
-    jSGlobals.or, 
-    keywordsArray
-    );
-
-  return defer.promise;
-};
+    null, //keywordsToSearchFor
+    true, //includeTextualContent,
+    keywordsArray, //wordsToSearchFor,
+    false, //includeTags,
+    null, //tagsToSearchFor,
+    false, //includeMIs,
+    null, //misToSearchFor,
+    false, //includeLabel,
+    null, //labelsToSearchFor,
+    false, //includeDescription,
+    null, //descriptionsToSearchFor,
+    null, //typesToSearchOnlyFor,
+    false, //includeOnlySubEntities,
+    null, //entitiesToSearchWithin,
+    false, //extendToParents,
+    false, //includeRecommendedResults,
+    false); //provideEntries,
+    
+    return defer.promise;
+  };
 
 var initEntitiesBySearchResult = function(searchResult){
 
@@ -248,7 +275,7 @@ var initEntitiesBySearchResult = function(searchResult){
 
   $scope.entityClickAction = function(entity){
 
-    var promise = EntityFetchService.getEntityByUri(entity.entity, true, true, true);
+    var promise = EntityFetchService.getEntityByUri(entity.id, true, true, true);
 
     promise.then(
       function(entity){
