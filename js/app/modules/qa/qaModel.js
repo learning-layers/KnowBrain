@@ -345,17 +345,17 @@ angular.module('module.qa').service("qaService", ['$q', '$rootScope','UserServic
 			new SSTagAdd(
 				function(result){
 					deferTag.resolve(result); 
-				},
-				function(error){
-					console.log(error);
-					deferTag.reject(error); 
-				}, 
-				UserSrv.getUser(),
-				UserSrv.getKey(),
-				object.id, 
-				value.label, 
-				value.space
-				);
+      },
+      function(error){
+        console.log(error);
+        deferTag.reject(error); 
+      }, 
+      UserSrv.getUser(),
+      UserSrv.getKey(),
+      object.id, 
+      value.label, 
+      value.space, //space
+      null);  //creationTime
 			
 			promiseListTag.push(deferTag.promise);
 		});

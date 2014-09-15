@@ -108,26 +108,26 @@ angular.module('module.models').factory('BaseModel', ['$q', '$rootScope', 'UserS
 
       return defer.promise;
     },
-    addTag: function(tagString){
-      var defer = $q.defer();
+      addTag: function(tagString){
+        var defer = $q.defer();
       var self = this;
-
+      
       new SSTagAdd(
         function(result){
           defer.resolve(result); 
-          $rootScope.$apply();
-        },
-        function(error){
-          defer.reject(error); 
-          $rootScope.$apply();
-        }, 
-        UserSrv.getUser(),
-        UserSrv.getKey(),
-        self.id, 
-        tagString, 
-        self.space
-        );
-
+        $rootScope.$apply();
+      },
+      function(error){
+        defer.reject(error); 
+        $rootScope.$apply();
+      }, 
+      UserSrv.getUser(),
+      UserSrv.getKey(),
+      self.id, 
+      tagString, 
+      self.space, //space
+      null);  //creationTime
+      
       return defer.promise;
     },
     removeTag: function(tagString){
