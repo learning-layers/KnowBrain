@@ -23,7 +23,7 @@
 		
 	<div class="row clearfix thread" ng-repeat="thread in similarThreadList">
 		<div class="col-md-1 column">
-			<p class="lead">{{65}}%</p>
+			<p class="lead" style="font-size:{{14 + thread.likelihood/100 * 8}}px;">{{thread.likelihood}}%</p>
 		</div>
 		<div class="col-md-11 column">
 			<div class="row">
