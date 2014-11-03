@@ -207,6 +207,10 @@ angular.module('module.qa').controller("qaController", ['$scope', '$state', '$q'
 		            break;
 		    }
 		}
+                
+                $scope.shareThread = function(thread) {
+                    $dialogs.shareEntity(thread);
+                }
 
 		// load data
 		loadThreadList();	

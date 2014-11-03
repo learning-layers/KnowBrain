@@ -1005,7 +1005,7 @@ angular.module('module.models').service('SharingModel', ['$q', 'UserService', fu
             UserSrv.getKey(),
             entity.id,
             shareWithArray,
-            "Test comment"
+            comment
         );
 
     };
