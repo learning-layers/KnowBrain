@@ -43,7 +43,7 @@ sharingModule.config(function ($stateProvider) {
 /**
  * CONTROLLER
  */
-sharingModule.controller("SharingController", ['$scope','$modalInstance', '$dialogs', '$q', 'i18nService', 'UserService', 'UserFetchService', 'SharingModel', 'ENTITY_TYPES', 'SHARING_OPTIONS', 'entity',function ($scope, $modalInstance, $dialogs, $q, i18nService, UserService, UserFetchService, SharingModel, ENTITY_TYPES, SHARING_OPTIONS, entity) {
+sharingModule.controller("SharingController", ['$scope','$modalInstance', '$dialogs', '$q', 'i18nService', 'UserService', 'UserFetchService', 'SharingModel', 'ENTITY_TYPES', 'SHARING_OPTIONS', 'entity', 'GroupFetchService',function ($scope, $modalInstance, $dialogs, $q, i18nService, UserService, UserFetchService, SharingModel, ENTITY_TYPES, SHARING_OPTIONS, entity, GroupFetchService) {
     
         $scope.entity = entity;
         $scope.entityTypes = ENTITY_TYPES;
@@ -54,6 +54,15 @@ sharingModule.controller("SharingController", ['$scope','$modalInstance', '$dial
         
         $scope.allUsers = [];
         $scope.allCircles = [{label: "public"}, {label:"friends"}];
+        
+        var promise = GroupFetchService.getUserGroups($scope.profileId);
+
+        promise.then(function (result) {
+            result.circles.sort(function (a, b) {
+                return a.label == b.label ? 0 : +(a.label > b.label) || -1;
+            });
+            $scope.allCircles = $scope.allCircles.concat(result.circles);
+        });
         
         $scope.shareInput;
         

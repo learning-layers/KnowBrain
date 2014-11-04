@@ -88,32 +88,27 @@
 .collection-entry-small {
   width: 95px;
   height: 85px;
-  margin-right: 2px;
+  margin-right: 4px;
   color: #5e5e5e;
   text-align: center;
-  padding-top: 1px;
   margin-top: 9px;
+  transition: background-color 0.3s ease;
+  background-color: transparent;
+  border-radius: 10px;
 }
 
 .collection-entry-small:hover{
   cursor: pointer;
   color: #2a6496;
-  border: 2px solid #DBDBDB;
-  padding-top: 0px;
+  background-color: #e8f0fa;
 }
 
-.collection-entry-small:hover .collection-entry-small-checkbox-wrapper{
+.collection-entry-small.selected {
   cursor: pointer;
-  color: #2a6496;
-  visibility: visible;
+  color: white;
+  background-color: #357ebd;
 }
 
-.collection-entry-small-selected {
-  cursor: pointer;
-  color: #2a6496;
-  border: 2px solid #DBDBDB;
-  padding-top: 0px;
-}
 
 .collection-entry-small-preview-box {
   position: relative; 
@@ -133,30 +128,6 @@
   font-size: 12px;
   margin-top: 2px;
   text-align: center;
-}
-
-.collection-entry-small-checkbox-wrapper {
-  position:absolute;
-  height:15px;
-  width: 15px;
-  visibility: hidden;
-  background-color: #DBDBDB;
-  padding-right: 0px;
-}
-
-.collection-entry-small-checkbox-wrapper-selected {
-  visibility: visible;
-}
-
-.collection-entry-small-checkbox {
-  position: relative;
-  width: 13px;
-  height: 12px;
-  vertical-align: top;
-  margin: 0px;
-  padding: 0px;
-  top: -3px;
-  cursor: pointer;
 }
 
 .collection-entry-small-shared {

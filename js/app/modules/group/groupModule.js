@@ -383,7 +383,7 @@ angular.module('module.group').controller("GroupController", ['$scope', '$state'
         [
            { heading: "Activities", route:"app.group.activities", active:false },
            { heading: "Members", route:"app.group.members", active:false },
-           { heading: "Ressources", route:"app.group.entities", active:false },
+           { heading: "Resources", route:"app.group.entities", active:false },
         ];
     
     $scope.go = function(route){

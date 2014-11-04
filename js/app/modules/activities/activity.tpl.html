@@ -21,7 +21,7 @@
 				<!-- rateEntity -->
 				
 				<span ng-switch-when="rateEntity">
-					<span> rated ressource </span>
+					<span> rated resource </span>
 					<a href="">{{activity.entities[0]}}</a>
 				</span>
 				
@@ -32,7 +32,7 @@
  					<!-- downloadFile -->
  					
  					<span ng-switch-when="downloadFile">
-					<span> downloaded ressource </span>
+					<span> downloaded resource </span>
 					<a href="">{{activity.entities[0]}}</a>
 				</span>
 
@@ -40,7 +40,7 @@
  					<!-- removeCollEntry -->
  					
  					<span ng-switch-when="removeCollEntry">
-					<span> removed ressource </span>
+					<span> removed resource </span>
 					<a href="">{{activity.entities[1]}}</a>
 					<span> from collection </span>
 					<a href="">{{activity.entities[0]}}</a>
@@ -50,8 +50,8 @@
 				
 				<span ng-switch-when="addCollEntry">
 					<span ng-switch="activity.entities.length > 2">
-						<span ng-switch-when="true"> added ressources </span>
-						<span ng-switch-when="false"> added ressource </span>
+						<span ng-switch-when="true"> added resources </span>
+						<span ng-switch-when="false"> added resource </span>
 					</span>
 					<span ng-repeat="entity in activity.entities">
 						<span ng-if="!$first">
@@ -104,8 +104,8 @@
 				<!-- addEntitiesToCircle -->
 				<span ng-switch-when="addEntitiesToCircle">
 					<span ng-switch="activity.entities.length > 2">
-						<span ng-switch-when="true"> added ressources </span>
-						<span ng-switch-when="false"> added ressource </span>
+						<span ng-switch-when="true"> added resources </span>
+						<span ng-switch-when="false"> added resource </span>
 					</span>
 					<span ng-repeat="entity in activity.entities">
 						<span ng-if="!$first">
@@ -135,7 +135,7 @@
 				<!-- setEntityPublic -->
 				
 				<span ng-switch-when="setEntityPublic">
-					<span> set ressource </span>
+					<span> set resource </span>
 					<a href="">{{activity.entities[0]}}</a>
 					<span> public.</span>
 				</span>
@@ -148,8 +148,8 @@
 				
 				<span ng-switch-when="shareEntityWithUsers">  
 					<span ng-switch="activity.entities.length > 1">
-						<span ng-switch-when="true"> shared ressources </span>
-						<span ng-switch-when="false"> shared ressource </span>
+						<span ng-switch-when="true"> shared resources </span>
+						<span ng-switch-when="false"> shared resource </span>
 					</span>
 					<span ng-repeat="entity in activity.entities">
 						<a href="">{{entity}}</a>
