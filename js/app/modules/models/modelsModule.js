@@ -923,6 +923,25 @@ angular.module('module.models').service('UserFetchService', ['$q', '$rootScope',
        return defer.promise;
     };
     
+    this.getFriends = function() {
+
+        var defer = $q.defer();
+        var self = this;
+
+        new SSFriendsGet(
+            function(result){
+                defer.resolve(result);
+            },
+            function(error){
+                console.log(error);
+            },
+            UserSrv.getUser(),
+            UserSrv.getKey()
+        );
+
+       return defer.promise;
+    };
+    
     this.getUser = function(userId){
         var defer = $q.defer();
         
@@ -994,6 +1013,17 @@ angular.module('module.models').service('SharingModel', ['$q', 'UserService', fu
 
     this.shareEntityCustom = function(entity, shareWithArray, comment) {
 
+        var shareWithUsers = [];
+        var shareWithCircles = [];
+        
+        for(var i=0; i < shareWithArray.length; i++) {
+            if (shareWithArray[i].type === 'circle') {
+                shareWithCircles.push(shareWithArray[i].id);
+            } else if (shareWithArray[i].type === 'user') {
+                shareWithUsers.push(shareWithArray[i].id);
+            }
+       }
+
         new SSEntityShare(
             function(result) {
                 console.log(result);
@@ -1004,8 +1034,9 @@ angular.module('module.models').service('SharingModel', ['$q', 'UserService', fu
             UserSrv.getUser(),
             UserSrv.getKey(),
             entity.id,
-            shareWithArray,
-            comment
+            shareWithUsers,
+            comment,
+            shareWithCircles
         );
 
     };

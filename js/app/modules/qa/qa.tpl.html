@@ -1,68 +1,68 @@
 <div class="container" role="main" ui-view>
-			
-	<form name="form" novalidate>
-		<div class="row clearfix qa-header">
-			<div class="col-md-8 column">
-				<!--
-				<div class="btn-group thread-input-group">
-					<button class="btn btn-default" ng-model="newThread.type" btn-radio="THREAD_TYPE.question" ng-click="showHelp('btnQuestion')">
-						<span class="glyphicon glyphicon-question"></span>
-							Question
-					</button>
-					
-					<button class="btn btn-default" ng-model="newThread.type" btn-radio="THREAD_TYPE.discussion" ng-click="showHelp('btnDiscussion')">
-						<span class="glyphicon glyphicon-discussion"></span>
-							Discussion
-					</button>
-					
-					<button class="btn btn-default" ng-model="newThread.type" btn-radio="THREAD_TYPE.chat" ng-click="showHelp('btnChat')">
-						<span class="glyphicon glyphicon-chat"></span>
-							Chat
-					</button>
-				</div>
-				-->
-			
-					<div class="row">
-						<div class="col-md-12 column">
-							<input type="text" class="form-control" placeholder="Enter title of your {{newThread.type.label}}" ng-model="newThread.title" required></input>
-						</div>
-					</div>
-					
-					<div class="row">
-						<div class="col-md-12 column">
-                            <textarea class="form-control" rows="5" placeholder="Enter explanation of your {{newThread.type.label}}" ng-model="newThread.description"></textarea>
-						</div>
-					</div>
-					
-					<div class="row">
-						<div class="col-md-7 column">
-							<tags-input ng-model="tags" on-tag-added="onTagAdded($tag, newThread)" on-tag-removed="onTagRemoved($tag, newThread)" class="bootstrap" display-property="label" placeholder="Add tags"></tags-input>
-						</div>
-                        <div class="col-md-5 column">
-                            <button type="button" class="btn btn-success btn-lg stretch" ng-click="invokePostNewThread()" ng-disabled="form.$invalid">Post your {{newThread.type.label}} now</button>
-                        </div>
-					</div>
-				
-			</div>
-			
-			<div class="col-md-4">
-				<div class="kb-fluid-container pull-left add-attachment-box" ng-click="openAddAttachments(newThread)">Add attachments
-                    <div class="glyphicon glyphicon-plus-sign add-attachment-icon"></div>
-				</div>
-					
-				<div class="icon-file-small icon-small" ng-repeat-start="attachment in newThread.attachments">
-				</div>
-				<div class="icon-attached" ng-repeat-end>
-					<div><a href="#">{{attachment.name}}</a></div>
-                    <div>{{attachment.type}}</div>
-				</div>
-			</div>
-			
-		</div>
-	</form>
 
-	<div class="row clearfix">
-	
+    <form name="form" novalidate>
+        <div class="row clearfix qa-header">
+            <div class="col-md-8 column">
+                <!--
+                <div class="btn-group thread-input-group">
+                        <button class="btn btn-default" ng-model="newThread.type" btn-radio="THREAD_TYPE.question" ng-click="showHelp('btnQuestion')">
+                                <span class="glyphicon glyphicon-question"></span>
+                                        Question
+                        </button>
+                        
+                        <button class="btn btn-default" ng-model="newThread.type" btn-radio="THREAD_TYPE.discussion" ng-click="showHelp('btnDiscussion')">
+                                <span class="glyphicon glyphicon-discussion"></span>
+                                        Discussion
+                        </button>
+                        
+                        <button class="btn btn-default" ng-model="newThread.type" btn-radio="THREAD_TYPE.chat" ng-click="showHelp('btnChat')">
+                                <span class="glyphicon glyphicon-chat"></span>
+                                        Chat
+                        </button>
+                </div>
+                -->
+
+                <div class="row">
+                    <div class="col-md-12 column">
+                        <input type="text" class="form-control" placeholder="Enter title of your {{newThread.type.label}}" ng-model="newThread.title" required></input>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-12 column">
+                        <textarea class="form-control" rows="5" placeholder="Enter explanation of your {{newThread.type.label}}" ng-model="newThread.description"></textarea>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-7 column">
+                        <tags-input ng-model="tags" on-tag-added="onTagAdded($tag, newThread)" on-tag-removed="onTagRemoved($tag, newThread)" class="bootstrap" display-property="label" placeholder="Add tags"></tags-input>
+                    </div>
+                    <div class="col-md-5 column">
+                        <button type="button" class="btn btn-success btn-lg stretch" ng-click="invokePostNewThread()" ng-disabled="form.$invalid">Post your {{newThread.type.label}} now</button>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="col-md-4">
+                <div class="kb-fluid-container pull-left add-attachment-box" ng-click="openAddAttachments(newThread)">Add attachments
+                    <div class="glyphicon glyphicon-plus-sign add-attachment-icon"></div>
+                </div>
+
+                <div class="icon-file-small icon-small" ng-repeat-start="attachment in newThread.attachments">
+                </div>
+                <div class="icon-attached" ng-repeat-end>
+                    <div><a href="#">{{attachment.name}}</a></div>
+                    <div>{{attachment.type}}</div>
+                </div>
+            </div>
+
+        </div>
+    </form>
+
+    <div class="row clearfix">
+
         <div class="row clearfix list-header-box">
             <div class="col-md-3 column">
                 <div class="lead">{{selectedThreadListType}} threads ({{threadList.length}})</div>
@@ -93,14 +93,14 @@
             </div>
 
         </div>
-	</div>		
-			
-	<div class="row clearfix" ng-repeat="thread in threadList | filter:{ title:searchString }">
+    </div>		
+
+    <div class="row clearfix" ng-repeat="thread in threadList| filter:{ title:searchString } | orderBy: 'creationTime' : true">
         <div class="col-md-1 column hidden-sm hidden-xs">
             <div class="icon-large" ng-class="(thread.type == THREAD_TYPE.question) ? 'icon-question-large' : ((thread.type == THREAD_TYPE.discussion) ? 'icon-discussion-large' : ((thread.type == THREAD_TYPE.chat) ? 'icon-chat-large' : ((thread.type == 'answered') ? 'icon-answered-large' : '')))">
-             </div>
+            </div>
         </div>
-		
+
         <div class="col-md-2 column hidden-sm hidden-xs">
 
             <div class="thread-statistic-box">
@@ -110,61 +110,60 @@
                 <div class="text-muted">{{120}} views</div>
             </div>
         </div>
-		<div class="col-md-9 column">
-			<div class="row">
-				<div class="col-md-12 column">
-					<a class="lead" ng-click="openThread(thread)">
-						{{thread.title}}
-					</a>
-					<span>&nbsp;&nbsp;</span>
-					<div class="qa-tag" ng-repeat="tag in thread.tags"><a ng-click="onTagClicked(tag)">{{tag.label}}</a></div>
-				</div>
-			</div>
-			<div class="row">
-				<div class="col-md-4 column">
-						<div class="icon-user-small icon-small">
-						</div>
-						<div class="icon-attached">
-							<div><a href="#">{{thread.author.name}}</a></div>
-							<div class="text-muted">{{564}}</div>
-						</div>
-						<div class="icon-attached">
-							<div class="text-muted">{{thread.creationTime.toLocaleDateString()}}</div>
-							<div class="text-muted">{{thread.creationTime.toLocaleTimeString()}}</div>
-						</div>
-				</div>
-				<div class="col-md-8 column">
-						<div class="icon-file-small icon-small" ng-repeat-start="attachment in thread.attachments">
-						</div>
-						<div class="icon-attached" ng-repeat-end>
-							<div><a href="#">{{attachment.name}}</a></div>
-							<div class="text-muted">{{attachment.type}}</div>
-						</div>
-				</div>
-				<div class="col-md-6 column">
-					<!-- <tags-input ng-model="tags" custom-class="bootstrap" placeholder="."></tags-input> -->
-				</div>
-			</div>
-		</div>
-	</div>
-	
-	<div class="row clearfix">
-		<div class="col-md-4">
-		</div>
-		<div class="col-md-4 column container">
-			<ul class="pagination">
-				<li class="disabled"><a href="">&laquo;</a></li>
-				<li class="active"><a href="">1 <span class="sr-only">(current)</span></a></li>
-					<li><a href="">2</a></li>
-					<li><a href="">3</a></li>
-					<li><a href="">4</a></li>
-					<li><a href="">5</a></li>
-					<li class="disabled"><a href="">&raquo;</a></li>
-			</ul>
-		</div>
-		<div class="col-md-4">
-		</div>
-	</div>							
-	
+        <div class="col-md-9 column">
+            <div class="row">
+                <div class="col-md-12 column">
+                    <a class="lead" ng-click="openThread(thread)">
+                        {{thread.title}}
+                    </a>
+                    <span>&nbsp;&nbsp;</span>
+                    <div class="qa-tag" ng-repeat="tag in thread.tags"><a ng-click="onTagClicked(tag)">{{tag.label}}</a></div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-4 column">
+                    <div class="icon-user-small icon-small">
+                    </div>
+                    <div class="icon-attached">
+                        <div><a href="#">{{thread.author.name}}</a></div>
+                        <div class="text-muted">{{564}}</div>
+                    </div>
+                    <div class="icon-attached">
+                        <div class="text-muted">{{thread.creationTime.toLocaleDateString()}}</div>
+                        <div class="text-muted">{{thread.creationTime.toLocaleTimeString()}}</div>
+                    </div>
+                </div>
+                <div class="col-md-8 column">
+                    <div class="icon-file-small icon-small" ng-repeat-start="attachment in thread.attachments">
+                    </div>
+                    <div class="icon-attached" ng-repeat-end>
+                        <div><a href="#">{{attachment.name}}</a></div>
+                        <div class="text-muted">{{attachment.type}}</div>
+                    </div>
+                </div>
+                <div class="col-md-6 column">
+                    <!-- <tags-input ng-model="tags" custom-class="bootstrap" placeholder="."></tags-input> -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row clearfix">
+        <div class="col-md-4">
+        </div>
+        <div class="col-md-4 column container">
+            <ul class="pagination">
+                <li class="disabled"><a href="">&laquo;</a></li>
+                <li class="active"><a href="">1 <span class="sr-only">(current)</span></a></li>
+                <li><a href="">2</a></li>
+                <li><a href="">3</a></li>
+                <li><a href="">4</a></li>
+                <li><a href="">5</a></li>
+                <li class="disabled"><a href="">&raquo;</a></li>
+            </ul>
+        </div>
+        <div class="col-md-4">
+        </div>
+    </div>							
+
 </div> <!-- /container -->
-						

@@ -147,7 +147,7 @@ angular.module('module.social').controller("GroupsController", ['$scope', '$stat
     };
     
     $scope.handleEntryClick = function(entry) {
-        if(entry.type == "group") {
+        if(entry.type == "circle") {
             $state.go("app.group.activities", {groupId: entry.id});
         }
     };

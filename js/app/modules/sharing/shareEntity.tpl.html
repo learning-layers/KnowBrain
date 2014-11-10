@@ -33,35 +33,59 @@
     <div class="row clearfix" style="padding: 20px">
         <div class="col-md-12 column">
 
-            <textarea class="post form-control" maxlength="100"
-                      placeholder="comment" rows="3"></textarea>
 
             <div class="row clearfix share-entity-preview-box">
-                <div class="col-md-12 column">
-
-                    <div class="share-entity-preview-box-icon">
-                        <div style="position: relative; z-index: 9; float: left"
-                             class="glyphicon share-entity-preview-box-glyphicon"
-                             ng-class="{'glyphicon-folder-close' : (entity.type === entityTypes.collection), 
+                <table style="width:100%">
+                    <tr>
+                        <td style="width: 70px;"><div class="share-entity-preview-box-icon">
+                                <div style="position: relative; z-index: 9; float: left"
+                                     class="glyphicon share-entity-preview-box-glyphicon"
+                                     ng-class="{'glyphicon-folder-close' : (entity.type === entityTypes.collection), 
                                                                            'glyphicon-file' : (entity.type === entityTypes.file), 
                                                                            'glyphicon-link' : (entity.type === entityTypes.link),
                                                                   'glyphicon-question-sign' : (entity.type.enum === 'qa')}">
-                        </div> 
-                        <div style="float: left" class="share-entity-preview-box-label">{{(entity.type.enum === 'qa') ? entity.title : entity.label}}
-                        </div>
-                    </div>
+                                </div> 
+                            </div></td>
+                        <td align="left"><div class="share-entity-preview-box-label">{{(entity.type.enum === 'qa') ? entity.title : entity.label}}
+                            </div></td> 
+                    </tr>
+                </table>
+            </div>
 
+            
+            <textarea class="post form-control" id="shareComment" maxlength="100"
+                      placeholder="comment" rows="3"></textarea>
+            
+            
+            <div class="row clearfix" style="margin-top:10px">
+                <div class="col-md-12 column" style="text-align: right">
+                    <div class="btn-group" style="text-align: left">
+                        <div class="btn-group">
+                            <button class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                                <em class="glyphicon" ng-class="{'glyphicon-globe':(sharingType == 0), 'glyphicon-user':(sharingType == 1), 'glyphicon-cog':(sharingType == 2)}" id="shareWithIcon"></em> 
+                                {{sharingType == 0 ? "public" : (sharingType == 1 ? "friends" : "custom")}} <span class="caret"></span>
+                            </button>
+                            <ul class="dropdown-menu" role="menu">
+                                <li><a href="" ng-click="setSharingType(0)"> <span style="margin-right: 3px" class="glyphicon glyphicon-globe"></span>public</a></li>
+                                <li><a href="" ng-click="setSharingType(1)"> <span style="margin-right: 3px" class="glyphicon glyphicon-user"></span>friends</a></li>
+                                <li><a href="" ng-click="setSharingType(2)"> <span style="margin-right: 3px" class="glyphicon glyphicon-cog"></span>custom</a></li>
+                            </ul>
+                        </div>
+                        <button class="btn btn-default" type="button" ng-click="share()">
+                            <em class="glyphicon glyphicon-share"></em> Share
+                        </button>
+                    </div>
                 </div>
             </div>
 
-            <div class="row clearfix">
+            <div class="row clearfix" ng-show="sharingType == 2">
                 <div class="col-md-12 column">
                     <p>Share With<p/>
-                    <div class="dropdown form-control" id="shareDropdown">
-                        <div id="dropDownToggle" class="dropdown-toggle"
+                    <div class="dropdown form-control" id="shareWithDropdown">
+                        <div id="shareWithDropDownToggle" class="dropdown-toggle"
                              data-toggle="dropdown"></div>
                         <div style="line-height: 30px">
-                            <span ng-repeat="entity in shareEntities" class="tag"
+                            <span ng-repeat="entity in sharedEntities" class="tag"
                                   ng-switch="entity.label"> 
                                 <span ng-switch-when="public"
                                       class="glyphicon glyphicon-globe"
@@ -75,17 +99,17 @@
                                 <button class="removeTag" ng-click="removeShareTag(entity)">x</button>
                             </span> 
                             <input id="shareInput" ng-click="activateDropdown($event)"
-                                   ng-model="userFilter.label" ng-blur="blurInput()" placeholder="+ Add name or circle" />
+                                   ng-model="userFilter.label" ng-blur="blurInput()" placeholder="+ Add friend or group" />
                         </div>
-                        <ul id="shareDropdownContent" class="dropdown-menu">
-                            <li ng-repeat="circle in allCircles| filter: entityUnselected"><a
+                        <ul id="shareWithDropdownContent" class="dropdown-menu">
+                            <li ng-repeat="circle in allCircles| filter: userFilter" ng-show="userFilter.label"><a
                                     href="" ng-click="addShareTag(circle)"><span
                                         style="margin-right: 3px" class="glyphicon"
                                         ng-class="{'glyphicon-globe':(circle.label == 'public'), 'glyphicon-heart':(circle.label == 'friends'), 'glyphicon-user':(circle.circleType == 'group')}"></span>{{circle.label}}</a></li>
                             <li role="presentation" class="divider"
                                 ng-show="userFilter.label && (allCircles.length > 0)"></li>
                             <li
-                                ng-repeat="user in allUsers|  filter: userFilter  | orderBy: 'label'"
+                                ng-repeat="user in allFriends|  filter: userFilter  | orderBy: 'label'"
                                 ng-show="userFilter.label"><a href=""
                                                           ng-click="addShareTag(user)" href="#">{{}}<img
                                         src="images/small_profile_pic_dummy.png"
@@ -93,21 +117,16 @@
                         </ul>
                     </div>
                     <div style=" margin-top: 5px">
-                        <a href="" ng-click="shareWithHandler()">
+                        <a href="" ng-click="choosePersonsHandler()">
                             <span style="margin-right: 3px" class="glyphicon glyphicon-user"></span>
-                            Choose persons
+                            Choose friends
                         </a>
                     </div>
-                </div>
-            </div>
-            <div class="row clearfix" style="margin-top:10px">
-                <div class="col-md-12 column" style="text-align: right">
-                    <div class="btn-group" style="text-align: right">
-                        <button class="btn btn-default" type="button" ng-click="share()">
-                            <em class="glyphicon glyphicon-share"></em> Share
-                        </button>
-                        <button class="btn btn-default" type="button" ng-click="close()">Cancel
-                        </button>
+                    <div style=" margin-top: 5px">
+                        <a href="" ng-click="chooseGroupsHandler()">
+                            <span style="margin-right: 3px" class="glyphicon glyphicon-user"></span>
+                            Choose groups
+                        </a>
                     </div>
                 </div>
             </div>

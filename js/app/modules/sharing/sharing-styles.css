@@ -30,7 +30,16 @@
 	vertical-align: middle;
 }
 
+#shareComment {
+    border-radius: 5px;
+}
+
 #shareDropdown {
+	height: auto !important; 
+	overflow: visible !important;
+}
+
+#shareWithDropdown {
 	height: auto !important; 
 	overflow: visible !important;
 }
@@ -44,6 +53,12 @@
 }
 
 #shareDropdownContent {
+	width:100%;
+	overflow-y: auto;
+	height: 100px;
+}
+
+#shareWithDropdownContent {
 	width:100%;
 	overflow-y: auto;
 	height: 150px;
