@@ -133,12 +133,32 @@
                         <div class="text-muted">{{thread.creationTime.toLocaleTimeString()}}</div>
                     </div>
                 </div>
-                <div class="col-md-8 column">
-                    <div class="icon-file-small icon-small" ng-repeat-start="attachment in thread.attachments">
+                <div class="col-md-8 column" ng-show="thread.attachments.length > 0">
+                    <div class="icon-file-small icon-small">
                     </div>
-                    <div class="icon-attached" ng-repeat-end>
-                        <div><a href="#">{{attachment.name}}</a></div>
-                        <div class="text-muted">{{attachment.type}}</div>
+                    <div class="icon-attached">
+                        <div><a href="#">{{thread.attachments[0].name}}</a></div>
+                        <div class="text-muted">{{thread.attachments[0].type}}</div>
+                    </div>
+                    
+                    <div ng-switch="thread.attachments.length" ng-show="thread.attachments.length > 1">
+
+                        <div ng-switch-when="2">
+                            <div class="icon-file-small icon-small">
+                            </div>
+                            <div class="icon-attached" ng-show="thread.attachments.length === 2">
+                                <div><a href="#">{{thread.attachments[0].name}}</a></div>
+                                <div class="text-muted">{{thread.attachments[0].type}}</div>
+                            </div>
+                        </div>
+                        <div ng-switch-default>
+                            <div class="icon-file-small icon-small" ng-show="thread.attachments.length > 2">
+                            </div>
+                            <div class="icon-attached" ng-show="thread.attachments.length > 2">
+                                <div><a href="#">{{thread.attachments.length - 1}} more</a></div>
+                            </div>
+                        </div>
+
                     </div>
                 </div>
                 <div class="col-md-6 column">

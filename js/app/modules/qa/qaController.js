@@ -242,36 +242,36 @@ angular.module('module.qa').controller('ModalSimilarThreadsController', ['$scope
 angular.module('module.qa').controller('ModalAddAttachmentsController', ['$scope', '$modalInstance', '$state', 'qaService', function($scope, $modalInstance, $state, qaService){
 	
 	$scope.fileList = [];
-		
-	$scope.ok = function () {
-    $modalInstance.close($scope.fileList);
-  };
 
-  $scope.cancel = function () {
-    $modalInstance.dismiss('cancel');
-  };
-	
-	$scope.appendFile = function(files){
-    angular.forEach(files, function(file, key){
-      $scope.fileList.unshift(file); 
-    });
-    $scope.$apply();
-  };
-	
-	$scope.removeFile = function(index){
-    $scope.fileList.splice(index, 1);   
-  };
-	
-	$scope.getFileSizeString = function(size){
-    var mb = ((size / 1024) / 1024);
+        $scope.ok = function () {
+            $modalInstance.close($scope.fileList);
+        };
 
-    if(mb < 0.01){
-      mb = (size / 1024);
-      return mb.toFixed(2) + " KB";
-    }    
+        $scope.cancel = function () {
+            $modalInstance.dismiss('cancel');
+        };
 
-    return mb.toFixed(2) + " MB";
-  };
+        $scope.appendFile = function (files) {
+            angular.forEach(files, function (file, key) {
+                $scope.fileList.unshift(file);
+            });
+            $scope.$apply();
+        };
+
+        $scope.removeFile = function (index) {
+            $scope.fileList.splice(index, 1);
+        };
+
+        $scope.getFileSizeString = function (size) {
+            var mb = ((size / 1024) / 1024);
+
+            if (mb < 0.01) {
+                mb = (size / 1024);
+                return mb.toFixed(2) + " KB";
+            }
+
+            return mb.toFixed(2) + " MB";
+        };
 	
 	
 	$scope.$on('$viewContentLoaded', function() {
