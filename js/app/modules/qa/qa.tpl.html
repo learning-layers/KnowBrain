@@ -50,11 +50,43 @@
                     <div class="glyphicon glyphicon-plus-sign add-attachment-icon"></div>
                 </div>
 
-                <div class="icon-file-small icon-small" ng-repeat-start="attachment in newThread.attachments">
+                <div ng-repeat="attachment in newThread.attachments">
+                    <div class="col-xs-10" style="margin-bottom: 10px; padding-left: 4px;" >
+                        <div ng-class="{'icon-file-small icon-small' : attachment.type === 'file',
+                        'icon-entity-small icon-small' : attachment.type === 'coll',
+                    'icon-link-small icon-small' : attachment.type === 'entity'}" >
+                        </div>
+                        <a href="#">{{attachment.label}}</a>
+
+                    </div>
+                    <div class="col-xs-2" style="padding-right:2px;">
+
+                        <div class="btn btn-group-xs" style="padding:0px; float: right;">
+                            <button class="btn btn-danger" ng-click="removeAttachment(attachment)">
+                                <i class="glyphicon glyphicon-trash"></i>
+                            </button>
+                        </div>
+                    </div>
                 </div>
-                <div class="icon-attached" ng-repeat-end>
-                    <div><a href="#">{{attachment.name}}</a></div>
-                    <div>{{attachment.type}}</div>
+                
+                <div ng-repeat="attachedFile in newThread.attachedFiles">
+                    <div class="col-xs-10" style="margin-bottom: 10px; padding-left: 4px;" >
+                        <div class="icon-file-small icon-small" >
+                        </div>
+                        <div class="icon-attached" ng-repeat-end>
+                            <div><a href="#">{{attachedFile.name}}</a></div>
+                            <div>{{attachedFile.type}}</div>
+                        </div>
+                
+                    </div>
+                    <div class="col-xs-2" style="padding-right:2px;">
+                
+                        <div class="btn btn-group-xs" style="padding:0px; float: right;">
+                            <button class="btn btn-danger" ng-click="removeAttachedFiles(attachedFile)">
+                                <i class="glyphicon glyphicon-trash"></i>
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -147,8 +179,8 @@
                             <div class="icon-file-small icon-small">
                             </div>
                             <div class="icon-attached" ng-show="thread.attachments.length === 2">
-                                <div><a href="#">{{thread.attachments[0].name}}</a></div>
-                                <div class="text-muted">{{thread.attachments[0].type}}</div>
+                                <div><a href="#">{{thread.attachments[1].name}}</a></div>
+                                <div class="text-muted">{{thread.attachments[1].type}}</div>
                             </div>
                         </div>
                         <div ng-switch-default>

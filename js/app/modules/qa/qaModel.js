@@ -51,6 +51,7 @@ angular.module('module.qa').factory('Thread', ['UriToolbox', function (UriToolbo
             this.author = null;
             this.tags = new Array();
             this.attachments = new Array();
+            this.attachedFiles = new Array();
         }
 
         // Public method
@@ -77,6 +78,7 @@ angular.module('module.qa').factory('ThreadEntry', function () {
         this.tags = new Array();
         this.attachments = new Array();
         this.comments = new Array();
+            this.attachedFiles = new Array();
     }
 
     // Public method
@@ -203,7 +205,12 @@ angular.module('module.qa').service("qaService", ['$q', '$rootScope', 'UserServi
 
             var attachmentIdList = new Array();
             angular.forEach(thread.attachments, function (attachment, key) {
-                attachmentIdList.push(attachment.id);
+                if (attachment.id !== undefined)
+                    attachmentIdList.push(attachment.id);
+            });
+            angular.forEach(thread.attachedFiles, function (attachedFile, key) {
+                if (attachedFile.id !== undefined)
+                    attachmentIdList.push(attachedFile.id);
             });
 
             new SSDiscEntryAdd(
@@ -305,7 +312,7 @@ angular.module('module.qa').service("qaService", ['$q', '$rootScope', 'UserServi
 
             var promiseList = [];
 
-            angular.forEach(object.attachments, function (attachment, key) {
+            angular.forEach(object.attachedFiles, function (attachment, key) {
                 var deferFile = $q.defer();
 
                 new SSFileUpload(
@@ -327,6 +334,7 @@ angular.module('module.qa').service("qaService", ['$q', '$rootScope', 'UserServi
 
             $q.all(promiseList)
                     .then(function (result) {
+                        object.attachments = object.attachments.concat(promiseList);
                         defer.resolve(object);
                     });
 
@@ -623,4 +631,83 @@ angular.module('module.qa').service("qaService", ['$q', '$rootScope', 'UserServi
             return deferThreadList.promise;
         };
 
+
+//         this.getSimilarThreads = function (thread) {
+// 
+//             var tagList = [];
+//             $.each(thread.tags, function( index, value ) {
+//                 tagList.push(value.label);
+//             });
+// 
+//             var deferThreadList = $q.defer();
+// 
+//             new SSSearch(
+//                     function (result) {
+//                         var promiseList = [];
+// 
+//                         angular.forEach(result.entities, function (value, key) {
+//                             var type = getThreadTypeByEnum(value.type);
+//                             var similar_thread = new Thread(value.id,
+//                                     value.resource.author,
+//                                     type,
+//                                     value.label,
+//                                     value.description,
+//                                     null,
+//                                     value.creationTime);
+//                                     /*
+//                             similar_thread.likelihood = Math.round(value.likelihood * 100);
+// //similar_thread.likelihood = Math.floor(Math.random() * 100) + 1;*/
+//                             var deferThread = $q.defer();
+// 
+//                             getAuthorDetails(similar_thread)
+//                                     .then(getTags)
+//                                     .then(function (result) {
+//                                         deferThread.resolve(result);
+//                                     });
+// 
+//                             promiseList.push(deferThread.promise);
+//                         });
+// 
+//                         $q.all(promiseList)
+//                                 .then(function (result) {
+//                                     /*
+//                                     result.sort(function (a, b) {
+//                                         if (a.likelihood > b.likelihood)
+//                                             return -1;
+//                                         else if (a.likelihood < b.likelihood)
+//                                             return 1;
+//                                         return 0;
+//                                     });*/
+//                                     deferThreadList.resolve(result);
+//                                 });
+//                     },
+//                     function (error) {  //errorHandler, 
+//                         console.log(error);
+//                         deferThreadList.reject(error);
+//                     },
+//                     UserSrv.getUser(),
+//                     UserSrv.getKey(),
+//                     null,                       //keywordsToSearchFor
+//                     false,                      //includeTextualContent
+//                     null,                       //wordsToSearchFor
+//                     true,                       //includeTags
+//                     tagList,                     //tagsToSearchFor
+//                     false,                      //includeMIs
+//                     null,                       //misToSearchFor
+//                     true,                       //includeLabel
+//                     thread.title.split(" "),    //labelsToSearchFor
+//                     false,                      //includeDescription
+//                     null,                       //descriptionsToSearchFor
+//                     ["qa"],                     //typesToSearchOnlyFor
+//                     false,                      //includeOnlySubEntities
+//                     null,                       //entitiesToSearchWithin
+//                     false,                      //extendToParents
+//                     true,                       //includeRecommendedResults
+//                     false,                      //provideEntries
+//                     null,                       //pagesID
+//                     null                        //pageNumber
+//                     );
+// 
+//             return deferThreadList.promise;
+//         };
     }]);

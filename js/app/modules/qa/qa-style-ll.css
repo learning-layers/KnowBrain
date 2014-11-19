@@ -150,6 +150,10 @@ a:hover {
     background-image: url(../../../../images/qa/file_32x32.png);
 }
 
+.icon-link-small {
+    background-image: url(../../../../images/qa/link_32x32.png);
+}
+
 .icon-question-medium {
     background-image: url(../../../../images/qa/question_64x64.png);
 }

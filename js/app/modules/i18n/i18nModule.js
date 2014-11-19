@@ -95,6 +95,9 @@ angular.module('module.i18n').constant('I18N_MESSAGES', {
   entry_will_be_skipped: 'Entry will be skipped.',
   file_type: 'Type:',
   file_size: 'File size:',
+  
+  //attachments
+  Resources: 'Resources',
 
   //collection
   collection_label: 'Collection label:',

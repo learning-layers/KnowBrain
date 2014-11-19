@@ -1,4 +1,4 @@
-﻿/**
+/**
 * Code contributed to the Learning Layers project
 * http://www.learning-layers.eu
 * Development is partly funded by the FP7 Programme of the European Commission under
@@ -349,7 +349,7 @@ input[name="searchInput"] {
 }
 
 .breadcrumbs-inactive:hover{
-    color: #00aff1;
+    color: #f6a551;
     text-decoration: none;
 }
 
@@ -502,7 +502,7 @@ input[name="searchInput"] {
 }
 
 .upload-wizzard-resource-type:hover span {
-    color: #3c7dc8;
+    color: #f6a551;
 }
 
 .upload-wizzard-resource-type div {
@@ -510,7 +510,7 @@ input[name="searchInput"] {
 }
 
 .upload-wizzard-resource-type:hover div {
-    color: #3c7dc8;
+    color: #f6a551;
 }
 
 .fileinput-button {
@@ -588,6 +588,10 @@ input[name="searchInput"] {
 .resourceUploadWidgetFileUploadedIcon {
     font-size: 20px;
     color: green;
+}
+
+.resource-attachment-icon {
+    font-size: 30px;
 }
 
 .uploadFile {

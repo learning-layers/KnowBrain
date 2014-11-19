@@ -1,0 +1,91 @@
+<div class="modal-header">
+	<button type="button" class="close" ng-click="cancel()" aria-hidden="true">&times;</button>
+	<h4 class="modal-title"><span class="glyphicon glyphicon-cloud-upload" style="margin-right:10px;"></span>Add attachment(s)</h4>
+</div>
+
+<div class="modal-body">
+
+		<form name="upload" role="form" class="form-horizontal">
+
+			<div class="form-group">
+				<div class="col-lg-7 text-center ">
+					<div class="wizzard-heading">
+						<div class="wizzard-heading-bottom">by drag & drop or<br>selecting with the system dialog:</div>
+						<span class="btn btn-default fileinput-button">
+							<i class="glyphicon glyphicon-plus"></i>
+							<span>Select files...</span>
+							<input type="file" multiple accept="audio/*,video/*,image/*,text/*,application/pdf" onclick="this.value = null;" onchange="angular.element(this).scope().appendFile(this.files)">
+						</span>
+					</div>
+				</div>
+				<div class="col-lg-5 text-center ">
+					<div id="upload-drop-container">
+						<div id="drop-container-text">Drag & Drop</div>
+						<div id="drop-container-subline">files here...</div>
+						<span class="glyphicon glyphicon-hand-down"></span>
+					</div>
+				</div>
+				<div class="clearfix"></div>
+			</div>
+
+
+			<div id="resourceUploadWidget" class="col-lg-12" ng-show="fileList.length > 0">
+				<div id="resourceUploadWidgetToolbar">
+					<div class="col-md-12 text-align-right" style="margin-top:5px;">{{fileList.length}}&nbsp;file(s)</div>
+					<div class="clearfix"></div>
+				</div>
+				<div id="resourceUploadWidgetFilesWrapper" >
+					<div ng-repeat="file in fileList">
+
+						<div class="uploadFileWrapper">
+
+							<div class="uploadFile">
+								<div class="col-xs-10" style="margin-bottom: 10px; padding-left: 4px;">
+
+									<div class="col-xs-2" style="display:inline-block; padding:0px;">
+										<div class="icon-small icon-file-small"></div>
+									</div>
+
+									<div class="col-xs-10" class="padding-zero" style="display:inline-block; padding-left:0px;">
+										<span><b>Filename:</b> {{file.name}}</span>
+										<span class="upload-additional-file-info">
+											<br>
+											<span><b>Type:</b> <span> {{file.type}}</span><span ng-hide="file.type"> unknown</span></span>
+											<br>
+											<span><b>File size:</b> {{getFileSizeString(file.size)}}</span>
+										</span>
+								 </div>
+								 <div class="clearfix"></div>
+
+								</div>
+								<div class="col-xs-2" style="padding-right:2px;">
+
+									<div class="btn btn-group-xs" style="padding:0px; float: right;">
+										<button class="btn btn-danger" ng-click="removeFile($index)">
+											<i class="glyphicon glyphicon-trash"></i>
+										</button>
+										<div class="clearfix"></div>
+									</div>
+
+								</div>
+							
+								<div class="clearfix"></div>
+							</div>
+
+						</div>
+
+					</div>
+				</div>
+			</div>
+		</form>
+	
+		<div class="clearfix"></div>
+
+		<div class="modal-footer">  
+		 <div>
+				<button class="btn btn-success" ng-click="ok()">Ok</button>
+			 <button class="btn" ng-click="cancel()">Cancel</button>
+		 </div>
+		</div>
+
+</div>
