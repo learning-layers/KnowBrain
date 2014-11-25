@@ -402,7 +402,7 @@ angular.module('module.qa').controller("questionController", ['$scope', '$state'
         {
             $state.transitionTo('app.qa.' + thread.type.enum, {id: UriToolbox.extractUriPathnameHash(thread.id)});
         };
-        loadThreadWithEntries(UserSrv.getUserSpace() + "/" + $stateParams.id)
+        loadThreadWithEntries(UserSrv.getUserSpace() + $stateParams.id)
                 .then(loadSimilarThreadList);
     }]);
 /**
