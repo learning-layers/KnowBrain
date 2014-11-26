@@ -60,11 +60,13 @@ angular.module('module.qa').controller("qaController", ['$scope', '$state', '$q'
         $scope.THREAD_TYPE = THREAD_TYPE;
         $scope.newThread = new Thread(null, null, THREAD_TYPE.question, null, null, null, null);
         $scope.threadList = null;
+        $scope.myOwnThreadList = [];
         $scope.threadResponseLabel = "answer";
         $scope.THREAD_LIST_TYPE = THREAD_LIST_TYPE;
         $scope.selectedThreadListType = THREAD_LIST_TYPE.own;
         $scope.threadListHeader = "My own";
         $scope.searchString = '';
+        
         var loadDetailPage = function (thread)
         {
             $state.transitionTo('app.qa.' + thread.type.enum, {id: UriToolbox.extractUriPathnameHash(thread.id)});
@@ -221,6 +223,14 @@ angular.module('module.qa').controller("qaController", ['$scope', '$state', '$q'
 
         $scope.shareThread = function (thread) {
             $dialogs.shareEntity(thread);
+        }
+        
+        $scope.showAttachment = function (attachment) {
+            if (attachment.type === 'entity') {
+                window.open(attachment.id,'_blank');
+            } else {
+                $dialogs.attachmentDetail(attachment);
+            }
         }
 
         // load data

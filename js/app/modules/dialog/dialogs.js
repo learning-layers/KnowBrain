@@ -154,7 +154,8 @@ angular.module('dialogs.controllers', ['ui.bootstrap.modal', 'module.i18n', 'mod
                     angular.forEach(entry.tags, function (tag, key) {
                         $scope.tags.push(tag);
                     });
-                    $scope.entryRating = entry.overallRating.score;
+                    if (entry.overallRating !== undefined)
+                        $scope.entryRating = entry.overallRating.score;
 
                     if (isSearchResult)
                     {
@@ -288,6 +289,85 @@ angular.module('dialogs.controllers', ['ui.bootstrap.modal', 'module.i18n', 'mod
                     $dialogs.shareEntity($scope.entry);
                 };
 
+            }])
+            
+            .controller('attachmentDetailController', ['$scope', '$modalInstance', 'attachment', '$q', 'i18nService', 'CurrentCollectionService', 'RATING_MAX', 'ENTITY_TYPES', 'UriToolbox', '$state', '$window', '$dialogs', function ($scope, $modalInstance, attachment, $q, i18nService, CurrentCollectionService, RATING_MAX, ENTITY_TYPES, UriToolbox, $state, $window, $dialogs) {
+            
+                $scope.attachment = attachment;
+                $scope.ENTITY_TYPES = ENTITY_TYPES;
+                
+                $scope.fileType = null;
+                
+                switch (attachment.mimeType.toLowerCase()) {
+                    case "png": case "jpg": case "jpeg": case "gif":
+                        $scope.fileType = 'image';
+                        break;
+                    case "html": case "c": case "js": case "h": case "cpp": case "m": case "css": case "htm":
+                        $scope.fileType = 'code';
+                        break;
+                    case "pdf":
+                        $scope.fileType = 'pdf';
+                        break;
+                }
+            
+                /**
+                 * TRANSLATION INJECTION
+                 */
+                $scope.t = function (identifier) {
+                    return i18nService.t(identifier);
+                };
+            
+                $scope.close = function () {
+                    $modalInstance.close();
+                };
+            
+                $scope.downloadAttachment = function () {
+                    if ($scope.attachment.type != ENTITY_TYPES.file)
+                        return;
+            
+                    $scope.attachment.downloading = true;
+            
+                    var promise = $scope.attachment.downloadFile();
+            
+                    promise.finally(function () {
+                        $scope.attachment.downloading = false;
+                    });
+            
+                };
+            
+                $scope.openLink = function () {
+                    if ($scope.attachment.type != ENTITY_TYPES.link)
+                        return;
+            
+                    $window.open(attachment.id);
+                };
+                
+                if ($scope.attachment.type === ENTITY_TYPES.file ||
+                    $scope.fileType === 'code') {
+                    var promise = $scope.attachment.getFile().then(function (result) {
+                                        var oFReader = new FileReader();
+                                        switch ($scope.fileType) {
+                                                                    case "image":
+oFReader.readAsDataURL(result);
+                                                                        break;
+                                                                    case "code":
+oFReader.readAsText(result);
+                                                                }
+                    
+                                        oFReader.onload = function (oFREvent) {
+                                            switch ($scope.fileType) {
+                                                case "image":
+                    document.getElementById("attachment-preview-image").src = oFREvent.target.result;
+                                                    break;
+                                                case "code":
+                                                document.getElementById("attachment-preview-code").innerHTML = oFREvent.target.result;
+                                                                                break;
+                                            }
+                                        };
+                                    });
+                }
+                
+            
             }])
 
         .controller("addResourceWizzardController", ['$scope', '$modalInstance', 'i18nService', function ($scope, $modalInstance, i18nService) {
@@ -503,6 +583,20 @@ angular.module('dialogs.services', ['ui.bootstrap.modal', 'dialogs.controllers']
                                         isSearchResult = false;
 
                                     return isSearchResult;
+                                }
+                            }
+                        });
+                    },
+                    attachmentDetail: function (attachment) {
+                        return $modal.open({
+                            templateUrl: MODULES_PREFIX + '/dialog/attachmentDetail.tpl.html',
+                            controller: 'attachmentDetailController',
+                            keyboard: true,
+                            backdrop: true,
+                            windowClass: 'modal-huge',
+                            resolve: {
+                                attachment: function () {
+                                    return attachment;
                                 }
                             }
                         });

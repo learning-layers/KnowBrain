@@ -108,17 +108,17 @@
                 <ul class="nav nav-pills">
                     <li ng-class="(selectedThreadListType == THREAD_LIST_TYPE.own) ? 'active' : ''">
                         <a ng-click="changeSelectedThreadListType(THREAD_LIST_TYPE.own)">
-                            <span class="badge">{{10}}</span> My own
+                            <span id="newest-badge" class="badge">{{threadList.length}}</span> Newest
                         </a>
                     </li>
                     <li ng-class="(selectedThreadListType == THREAD_LIST_TYPE.newest) ? 'active' : ''">
                         <a ng-click="changeSelectedThreadListType(THREAD_LIST_TYPE.newest)">
-                            <span class="badge">{{5}}</span> Newest
+                            <span id="my-own-badge" class="badge">{{5}}</span> My own
                         </a>
                     </li>
                     <li ng-class="(selectedThreadListType == THREAD_LIST_TYPE.unanswered) ? 'active' : ''">
                         <a ng-click="changeSelectedThreadListType(THREAD_LIST_TYPE.unanswered)">
-                            <span class="badge">{{10}}</span> Unanswered
+                            <span id="my-group-badge" class="badge">{{10}}</span> My group
                         </a>
                     </li>
                 </ul>
@@ -133,16 +133,7 @@
             </div>
         </div>
 
-        <div class="col-md-2 column hidden-sm hidden-xs">
-
-            <div class="thread-statistic-box">
-                <!--<div>{{35}} {{thread.type == THREAD_TYPE.question ? 'votes' : (thread.type == THREAD_TYPE.discussion ? 'likes' : (thread.type == THREAD_TYPE.chat ? 'members' : ''))}}</div>-->
-                <div>{{40}} have this question</div>
-                <div class="text-muted">{{11}} {{thread.type == THREAD_TYPE.question ? 'answers' : (thread.type == THREAD_TYPE.discussion ? 'opinions' : (thread.type == THREAD_TYPE.chat ? 'messages' : ''))}}</div>
-                <div class="text-muted">{{120}} views</div>
-            </div>
-        </div>
-        <div class="col-md-9 column">
+        <div class="col-md-11 column">
             <div class="row">
                 <div class="col-md-12 column">
                     <a class="lead" ng-click="openThread(thread)">
@@ -157,37 +148,40 @@
                     <div class="icon-user-small icon-small">
                     </div>
                     <div class="icon-attached">
-                        <div><a href="#">{{thread.author.name}}</a></div>
-                        <div class="text-muted">{{564}}</div>
+                        <div>{{thread.author.name}}</div>
                     </div>
                     <div class="icon-attached">
-                        <div class="text-muted">{{thread.creationTime.toLocaleDateString()}}</div>
+                        <div class="text-muted">{{thread.creationTime}}</div>
                         <div class="text-muted">{{thread.creationTime.toLocaleTimeString()}}</div>
                     </div>
                 </div>
                 <div class="col-md-8 column" ng-show="thread.attachments.length > 0">
-                    <div class="icon-file-small icon-small">
+                    <div class="icon-small" ng-class="{'icon-file-small' : thread.attachments[0].type === 'file',
+    'icon-entity-small' : thread.attachments[0].type === 'coll',
+'icon-link-small' : thread.attachments[0].type === 'entity'}">
                     </div>
                     <div class="icon-attached">
-                        <div><a href="#">{{thread.attachments[0].name}}</a></div>
+                        <div><a ng-click="showAttachment(thread.attachments[0])">{{thread.attachments[0].name}}</a></div>
                         <div class="text-muted">{{thread.attachments[0].type}}</div>
                     </div>
                     
                     <div ng-switch="thread.attachments.length" ng-show="thread.attachments.length > 1">
 
                         <div ng-switch-when="2">
-                            <div class="icon-file-small icon-small">
+                            <div class="icon-small" ng-class="{'icon-file-small' : thread.attachments[1].type === 'file',
+    'icon-entity-small' : thread.attachments[1].type === 'coll',
+'icon-link-small' : thread.attachments[1].type === 'entity'}">
                             </div>
                             <div class="icon-attached" ng-show="thread.attachments.length === 2">
-                                <div><a href="#">{{thread.attachments[1].name}}</a></div>
+                                <div><a ng-click="showAttachment(thread.attachments[1])">{{thread.attachments[1].name}}</a></div>
                                 <div class="text-muted">{{thread.attachments[1].type}}</div>
                             </div>
                         </div>
                         <div ng-switch-default>
-                            <div class="icon-file-small icon-small" ng-show="thread.attachments.length > 2">
+                            <div class="icon-small icon-file-small" ng-show="thread.attachments.length > 2">
                             </div>
                             <div class="icon-attached" ng-show="thread.attachments.length > 2">
-                                <div><a href="#">{{thread.attachments.length - 1}} more</a></div>
+                                <div><a >{{thread.attachments.length - 1}} more</a></div>
                             </div>
                         </div>
 

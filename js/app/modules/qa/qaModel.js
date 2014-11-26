@@ -78,7 +78,7 @@ angular.module('module.qa').factory('ThreadEntry', function () {
         this.tags = new Array();
         this.attachments = new Array();
         this.comments = new Array();
-            this.attachedFiles = new Array();
+        this.attachedFiles = new Array();
     }
 
     // Public method
@@ -115,7 +115,7 @@ angular.module('module.qa').factory('Author', function () {
     return Author;
 })
 
-angular.module('module.qa').factory('Attachment', function () {
+angular.module('module.qa').factory('Attachment', ['$q', 'UserService', 'ENTITY_TYPES', function($q, UserSrv, ENTITY_TYPES) {
 
     // Constructor
     function Attachment(id, label, type) {
@@ -123,10 +123,63 @@ angular.module('module.qa').factory('Attachment', function () {
         this.id = id;
         this.name = label;
         this.type = type;
+        this.mimeType = jSGlobals.substring(id, jSGlobals.lastIndexOf(id, jSGlobals.dot) + 1, jSGlobals.length(id));
+        
+        this.servHandleFileDownload = function(defer){
+          var self = this;
+        
+          return function(fileAsBlob){
+        
+            var a = document.createElement("a");
+            a.download    = self.name;
+        
+            a.href        = window.URL.createObjectURL(fileAsBlob);
+            a.textContent = jSGlobals.download;
+        
+            a.click(); 
+            defer.resolve();
+          };
+        }
     }
+    
+    Attachment.prototype.downloadFile = function(){
+        var defer = $q.defer();
+    
+        if(this.type !== ENTITY_TYPES.file)
+          return null;
+    
+        new SSFileDownload(
+          this.servHandleFileDownload(defer),
+          function(error){ defer.reject(); console.log(error); },
+          UserSrv.getUser(),
+          UserSrv.getKey(),
+          this.id
+          );
+    
+        return defer.promise;
+      };
+      
+      Attachment.prototype.getFile = function(){
+        var defer = $q.defer();
+      
+        if(this.type !== ENTITY_TYPES.file)
+          return null;
+      
+        new SSFileDownload(
+          function (result) {
+            defer.resolve(result);
+          },
+          function(error){ defer.reject(); console.log(error); },
+          UserSrv.getUser(),
+          UserSrv.getKey(),
+          this.id
+          );
+      
+        return defer.promise;
+      };
 
     return Attachment;
-})
+}])
 
 /**
  * Services
