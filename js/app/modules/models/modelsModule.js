@@ -72,10 +72,12 @@ angular.module('module.models').factory('BaseModel', ['$q', '$rootScope', 'UserS
         },
         UserSrv.getUser(),
         UserSrv.getKey(),
-        self.id,
-        newLabel
-        );
-
+        self.id, // entity, 
+        newLabel, //label, 
+        null, //description, 
+        null, //comments
+        null); //read
+     
       return defer.promise;
     },
     saveRating: function(rating){
@@ -839,20 +841,20 @@ angular.module('module.models').service("FetchServiceHelper", ['$q', '$rootScope
 return defer.promise;
 };
 
-this.getDiscussionByUri = function(discUri){
-  var defer = $q.defer();
-  var self = this;
-
-  new SSDiscWithEntriesGet(
-    function(result){ defer.resolve(result); }, 
-    function(error){ console.log(error); }, 
-    UserSrv.getUser(),
-    UserSrv.getKey(), 
-    discUri
-    );
-
-  return defer.promise;
-};
+    this.getDiscussionByUri = function(discUri){
+      var defer = $q.defer();
+      var self = this;
+      
+      new SSDiscWithEntriesGet(
+        function(result){ defer.resolve(result); }, 
+      function(error){ console.log(error); }, 
+      UserSrv.getUser(),
+      UserSrv.getKey(), 
+      discUri, //disc
+      false); //includeComments
+      
+      return defer.promise;
+    };
 
   //helper
   this.applyHelper = function(){

@@ -285,27 +285,27 @@ angular.module('module.qa').service("qaService", ['$q', '$rootScope', 'UserServi
             return defer.promise;
         };
 
-        this.addNewComment = function (answer) {
-            var defer = $q.defer();
-
-            new SSEntityUpdate(
-                    function (result) {
-                        defer.resolve(answer)
-                    },
-                    function (error) {
-                        console.log(error);
-                        defer.reject(error);
-                    },
-                    UserSrv.getUser(),
-                    UserSrv.getKey(),
-                    answer.id,
-                    null,
-                    null,
-                    answer.comments
-                    );
-
-            return defer.promise;
-        };
+    this.addNewComment = function (answer) {
+      var defer = $q.defer();
+      
+      new SSEntityUpdate(
+        function (result) {
+          defer.resolve(answer)
+      },
+      function (error) {
+        console.log(error);
+        defer.reject(error);
+      },
+      UserSrv.getUser(),
+      UserSrv.getKey(),
+      answer.id,
+      null,//label, 
+      null,//description, 
+      [answer.comments[answer.comments.length - 1]], //comments
+      null); //read
+      
+      return defer.promise;
+    };
 
         this.uploadAttachments = function (object) {
             var defer = $q.defer();
@@ -496,35 +496,35 @@ angular.module('module.qa').service("qaService", ['$q', '$rootScope', 'UserServi
             return;
         };
 
-        var getThreadWithEntries = function (id) {
-            var deferThread = $q.defer();
-
-            new SSDiscWithEntriesGet(
-                    function (result) {
-
-                        var thread = new Thread(result.disc.id, result.disc.author, getThreadTypeByEnum(result.disc.type), result.disc.label, result.disc.description, result.disc.entity, result.disc.creationTime);
-                        var entries = result.disc.entries;
-
-                        getAttachmentDetailsSync(thread, result.disc.attachedEntities);
-
-                        getThreadEntryDetails(thread, entries)
-                                .then(getAuthorDetails)
-                                .then(getTags)
-                                .then(function () {
-                                    deferThread.resolve(thread);
-                                });
-                    },
-                    function (error) {
-                        console.log(error);
-                        deferThread.reject(error);
-                    },
-                    UserSrv.getUser(),
-                    UserSrv.getKey(),
-                    id
-                    );
-
-            return deferThread.promise;
-        };
+    var getThreadWithEntries = function (id) {
+      var deferThread = $q.defer();
+      
+      new SSDiscWithEntriesGet(
+        function (result) {
+          
+          var thread = new Thread(result.disc.id, result.disc.author, getThreadTypeByEnum(result.disc.type), result.disc.label, result.disc.description, result.disc.entity, result.disc.creationTime);
+        var entries = result.disc.entries;
+        
+        getAttachmentDetailsSync(thread, result.disc.attachedEntities);
+        
+        getThreadEntryDetails(thread, entries)
+          .then(getAuthorDetails)
+          .then(getTags)
+          .then(function () {
+            deferThread.resolve(thread);
+        });
+      },
+      function (error) {
+        console.log(error);
+        deferThread.reject(error);
+      },
+      UserSrv.getUser(),
+      UserSrv.getKey(),
+      id, //disc
+      true); //includeComments
+      
+      return deferThread.promise;
+    };
 
         // to make the function accessible from the controller
         this.getThreadWithEntries = getThreadWithEntries;
