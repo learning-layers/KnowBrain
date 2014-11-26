@@ -22,7 +22,9 @@
 			<div ng-switch-when="entity" style="position: relative; z-index: 9;"
 			id="collection-entry-preview-box-glyphicon" class="glyphicon glyphicon-link">
 			</div>
-			<img ng-switch-default src="images/profile_pic_dummy.png" class="collection-entry-profile-pic"/>
+			<div ng-switch-default style="position: relative; z-index: 9;"
+           id="collection-entry-preview-box-glyphicon"  class="glyphicon glyphicon-link">
+           </div>
 		</div>
 		<div class="collection-entry-shared"
 			ng-show="(entry.type == entityTypes.collection) && entry.space == spaceEnum.shared">{{t('shared')}}</div>

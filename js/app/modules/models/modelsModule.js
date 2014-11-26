@@ -688,7 +688,7 @@ this.getCollectionByUri = function(coll){
     },
     UserSrv.getUser(),
     UserSrv.getKey(),
-      UserSrv.getUserSpace()+"/coll/"+coll //TODO
+      UserSrv.getUserSpace() + "collection/" + coll //TODO
       );
 
   return defer.promise;     

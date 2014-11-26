@@ -48,16 +48,19 @@ angular.module('module.utilities').service("UriToolbox", [function(){
 
  this.extractUriHostPart = function(uri){
 
-   var a = document.createElement("a");
-   a.href = uri;
+//   var a = document.createElement("a");
+//   a.href = uri;
 
-   return a.protocol + "//" + a.hostname + (a.port ? ':' + window.location.port: '');
+   return sSGlobals.serverHost; //   this.serverHost a.protocol + "//" + a.hostname + (a.port ? ':' + window.location.port: '');
  };
 
  this.extractUriHostPartWithoutProtocol = function(uri){
-   var a = document.createElement("a");
-   a.href = uri;
+//   var a = document.createElement("a");
+//   a.href = uri;
 
+   var a = document.createElement("a");
+   a.href = sSGlobals.serverHost;
+   
    return a.hostname;
  };
 
