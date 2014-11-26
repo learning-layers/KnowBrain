@@ -625,8 +625,8 @@ angular.module('module.qa').service("qaService", ['$q', '$rootScope', 'UserServi
                     null, //entity, 
                     null, //categories, 
                     5, //maxResources, 
-                    ["qa"]         //typesToRecommOnly
-                    );
+                    ["qa"],         //typesToRecommOnly
+                    true); //setCircleTypes
 
             return deferThreadList.promise;
         };
