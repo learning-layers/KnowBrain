@@ -36,7 +36,7 @@
 
                 <div class="row">
                     <div class="col-md-7 column">
-                        <tags-input ng-model="tags" on-tag-added="onTagAdded($tag, newThread)" on-tag-removed="onTagRemoved($tag, newThread)" class="bootstrap" display-property="label" placeholder="Add tags"></tags-input>
+                        <tags-input ng-model="newThread.tags" on-tag-added="onTagAdded($tag, newThread)" class="bootstrap" display-property="label" placeholder="Add tags"></tags-input>
                     </div>
                     <div class="col-md-5 column">
                         <button type="button" class="btn btn-success btn-lg stretch" ng-click="invokePostNewThread()" ng-disabled="form.$invalid">Post your {{newThread.type.label}} now</button>
@@ -97,7 +97,7 @@
 
         <div class="row clearfix list-header-box">
             <div class="col-md-3 column">
-                <div class="lead">{{selectedThreadListType}} threads ({{threadList.length}})</div>
+                <div class="lead">{{selectedThreadListType}} threads ({{selectedThreadList().length}})</div>
             </div>
 
             <div class="col-md-5 column">
@@ -120,6 +120,14 @@
                         </a>
                     </li>
                 </ul>
+            </div>
+            <div ng-show="searchTags.length > 0">
+                <div class="col-md-3 column">
+                </div>
+                
+                <div class="col-md-5 column">
+                    <div class="qa-tag" ng-repeat="tag in searchTags track by $index">{{tag}} <a ng-click="removeSearchTag($index)"><span class="glyphicon glyphicon-remove"></span></a></div>
+                </div>
             </div>
 
         </div>

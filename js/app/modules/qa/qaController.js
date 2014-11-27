@@ -60,6 +60,7 @@ angular.module('module.qa').controller("qaController", ['$scope', '$state', '$q'
         $scope.THREAD_TYPE = THREAD_TYPE;
         $scope.newThread = new Thread(null, null, THREAD_TYPE.question, null, null, null, null);
         $scope.threadList = null;
+        $scope.tagThreadList = null;
         $scope.myOwnThreadList = [];
         $scope.myGroupThreadList = [];
         $scope.threadResponseLabel = "answer";
@@ -67,6 +68,7 @@ angular.module('module.qa').controller("qaController", ['$scope', '$state', '$q'
         $scope.selectedThreadListType = THREAD_LIST_TYPE.all;
         $scope.threadListHeader = "All";
         $scope.searchString = '';
+        $scope.searchTags = [];
         
         var loadDetailPage = function (thread)
         {
@@ -81,35 +83,42 @@ angular.module('module.qa').controller("qaController", ['$scope', '$state', '$q'
         {
             switch ($scope.selectedThreadListType) {
                 case THREAD_LIST_TYPE.all:
-                    return $scope.threadList;
+                    return $scope.tagThreadList;
                 case THREAD_LIST_TYPE.own:
                     return $scope.myOwnThreadList;
                 case THREAD_LIST_TYPE.group:
                     return $scope.myGroupThreadList;
             };
         };
-        $scope.tags = null;
         $scope.onTagAdded = function ($tag, object)
         {
-            object.tags.push(new Tag(null, null, $tag.label));
-        };
-        $scope.onTagRemoved = function ($tag, object)
-        {
-            object.tags = [];
-            var index = 0;
-            angular.forEach(object.tags, function (value, key) {
-                index++;
-                if (value.label === $tag.label) {
-                    object.tags.splice(index, 1);
-                    return;
-                }
-            });
+            $tag.space = 'privateSpace';
         };
         $scope.onTagClicked = function (tag) {
-            return qaService.getEntitiesForTag(tag)
-                    .then(function (result) {
-                        var test = result;
-                    })
+            $scope.searchTags.push(tag.label);
+            updateThreadLists();
+        };
+        
+        $scope.removeSearchTag = function(tagIndex) {
+            $scope.searchTags.splice(tagIndex, 1);
+            updateThreadLists();
+        } 
+        
+        var updateThreadLists = function () {
+            $scope.tagThreadList = $scope.threadList.filter(function(val) {
+                return ($scope.searchTags.length == 0 ||
+                        $scope.searchTags.every(function(value) { return $.map(val.tags,function(v){return v.label;}).indexOf(value) >= 0; }));
+            });
+            $scope.myOwnThreadList = $scope.threadList.filter(function(val) {
+                return ($.inArray('priv', val.circleTypes) >= 0) &&
+                        ($scope.searchTags.length == 0 ||
+                        $scope.searchTags.every(function(value) { return $.map(val.tags,function(v){return v.label;}).indexOf(value) >= 0; }));
+            });
+            $scope.myGroupThreadList = $scope.threadList.filter(function(val) {
+                return ($.inArray('group', val.circleTypes) >= 0) &&
+                        ($scope.searchTags.length == 0 ||
+                        $scope.searchTags.every(function(value) { return $.map(val.tags,function(v){return v.label;}).indexOf(value) >= 0; }));
+            });
         };
         
         $scope.removeAttachment = function (attachment) {
@@ -136,6 +145,7 @@ angular.module('module.qa').controller("qaController", ['$scope', '$state', '$q'
                     .getAllThreads()
                     .then(function (result) {
                         $scope.threadList = result;
+                        $scope.tagThreadList = result;
                         $scope.myOwnThreadList = result.filter(function(val) {
                             return $.inArray('priv', val.circleTypes) >= 0;
                         });
@@ -166,6 +176,7 @@ angular.module('module.qa').controller("qaController", ['$scope', '$state', '$q'
                     .then(qaService.addNewThread)
                     .then(function (result) {
                         $scope.threadList.push(result);
+                        updateThreadLists();
                         $scope.newThread = new Thread(null, null, THREAD_TYPE.question, null, null, null, null);
                         return result;
                     });
