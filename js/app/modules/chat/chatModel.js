@@ -175,8 +175,8 @@ angular.module('module.chat').service("chatService", ['$q', '$rootScope','UserSe
       },
       UserSrv.getUser(),
       UserSrv.getKey(),
-      chatId
-        );
+      chatId, //disc
+      false); //includeComments
       
       return defer.promise;
     };
