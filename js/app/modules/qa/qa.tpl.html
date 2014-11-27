@@ -107,9 +107,7 @@
             <div class="col-md-4 column">
                 <ul class="nav nav-pills">
                     <li ng-class="(selectedThreadListType == THREAD_LIST_TYPE.own) ? 'active' : ''">
-                        <a ng-click="changeSelectedThreadListType(THREAD_LIST_TYPE.own)">
-                            <span id="newest-badge" class="badge">{{threadList.length}}</span> Newest
-                        </a>
+                        <a ng-click="changeSelectedThreadListType(THREAD_LIST_TYPE.own)">Newest</a>
                     </li>
                     <li ng-class="(selectedThreadListType == THREAD_LIST_TYPE.newest) ? 'active' : ''">
                         <a ng-click="changeSelectedThreadListType(THREAD_LIST_TYPE.newest)">
@@ -149,10 +147,7 @@
                     </div>
                     <div class="icon-attached">
                         <div>{{thread.author.name}}</div>
-                    </div>
-                    <div class="icon-attached">
-                        <div class="text-muted">{{thread.creationTime}}</div>
-                        <div class="text-muted">{{thread.creationTime.toLocaleTimeString()}}</div>
+                        <span class="text-muted" data-livestamp="{{thread.creationTime.toISOString()}}"></span>
                     </div>
                 </div>
                 <div class="col-md-8 column" ng-show="thread.attachments.length > 0">
