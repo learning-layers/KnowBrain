@@ -15,8 +15,8 @@
                         <div class="icon-user-medium icon-medium">
                         </div>
                         <div class="icon-attached">
-                            <div>{{question.author.name}}</div>
-                            <div>{{question.getFormattedCreationTime()}}</div>
+	                        <div>{{question.author.name}}</div>
+                            <span class="text-muted" data-livestamp="{{question.creationTime.toISOString()}}"></span>
                         </div>
 					</div>
 				</div>	
@@ -72,8 +72,8 @@
                     <div class="icon-user-medium icon-medium">
                     </div>
                     <div class="icon-attached">
-                        <div>{{answer.author.name}}</div>
-                        <div>{{answer.getFormattedCreationTime()}}</div>
+                        <div class="text-muted" >{{answer.author.name}}</div>
+						<span class="text-muted" data-livestamp="{{answer.creationTime.toISOString()}}"></span>
                     </div>
                 </div>
 

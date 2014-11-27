@@ -512,7 +512,7 @@ angular.module('module.qa').service("qaService", ['$q', '$rootScope', 'UserServi
             var promiseListEntryAuthor = [];
 
             angular.forEach(entries, function (value, key) {
-                var entry = new ThreadEntry(value.id, value.author, getThreadEntryTypeByEnum(value.type), value.content, value.pos, value.timestamp);
+                var entry = new ThreadEntry(value.id, value.author, getThreadEntryTypeByEnum(value.type), value.content, value.pos, value.creationTime);
 
                 if (value.comments != null) {
                     entry.comments = value.comments;
