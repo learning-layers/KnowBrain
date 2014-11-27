@@ -20,12 +20,14 @@
 		</h4>
 </div>
 <div class="modal-body">
-		
-	<div class="row clearfix thread" ng-repeat="thread in similarThreadList">
-		<div class="col-md-1 column">
-			<p class="lead" style="font-size:{{14 + thread.likelihood/100 * 8}}px;">{{thread.likelihood}}%</p>
-		</div>
-		<div class="col-md-11 column">
+	<ul class="nav nav-tabs">
+ 		<li role="presentation" ng-class="(selectedSimilarThreadListType == THREAD_LIST_TYPE.own) ? 'active' : ''" ng-click="changeSelectedSimilarThreadListType(THREAD_LIST_TYPE.own)"><a>My Own</a></li>
+  		<li role="presentation" ng-class="(selectedSimilarThreadListType == THREAD_LIST_TYPE.group) ? 'active' : ''" ng-click="changeSelectedSimilarThreadListType(THREAD_LIST_TYPE.group)"><a>My Group</a></li>
+	</ul>
+	<div class="row clearfix">
+</div>
+	<div class="row clearfix thread" ng-repeat="thread in selectedSimilarThreadList()">
+		<div class="col-md-8 column">
 			<div class="row">
 				<div class="col-md-12">
 					<a class="lead thread-title" ng-click="loadDetailPage(thread)">
@@ -35,47 +37,17 @@
 			</div>
 			<div class="row" ng-show="thread.tags">
 				<div class="col-md-12">
-					<div class="qa-tag" ng-repeat="tag in thread.tags"><a href="#">{{tag.label}}</a></div>
+					<div class="qa-tag" ng-repeat="tag in thread.tags">{{tag.label}}</div>
 				</div>
 			</div>
-			<div class="row">
-				<div class="col-md-6">
-						<!-- <div class="thread-icon icon-user">
-						</div>
-						<div class="thread-author">
-							<p class="thread-author">{{thread.author.name}}</p>
-							<p class="thread-author text-muted">{{364}}</p>
-						</div>
-						<div class="thread-author">
-							<p class="thread-author text-muted">{{thread.creationTime.toLocaleDateString()}}</p>
-							<p class="thread-author text-muted">{{thread.creationTime.toLocaleTimeString()}}</p>
-						</div> -->
-						<div class="icon-user-small icon-small">
-						</div>
-						<div class="icon-attached">
-							<div><a href="#">{{thread.author.name}}</a></div>
-							<div class="text-muted">{{329}}</div>
-						</div>
-						<div class="icon-attached">
-							<div class="text-muted">{{thread.creationTime.toLocaleDateString()}}</div>
-							<div class="text-muted">{{thread.creationTime.toLocaleTimeString()}}</div>
-						</div>
+		</div>
+		<div class="col-md-4 column">
+			<div class="icon-user-small icon-small">
 				</div>
-				<div class="col-md-6">
-						<!-- <div class="thread-icon icon-entity">
-						</div>
-						<div class="thread-author">
-							<p class="thread-author">collection</p>
-							<p class="thread-author text-muted">my folder</p>
-						</div> -->
-						<div class="icon-file-small icon-small" ng-repeat-start="attachment in thread.attachments">
-						</div>
-						<div class="icon-attached" ng-repeat-end>
-							<div><a href="#">{{attachment.label}}</a></div>
-							<div class="text-muted">{{attachment.type}}</div>
-						</div>
+				<div class="icon-attached">
+					<div>{{thread.author.name}}</div>
+					<span class="text-muted" data-livestamp="{{thread.creationTime.toISOString()}}"></span>
 				</div>
-			</div>
 		</div>
 	</div>
 	

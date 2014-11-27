@@ -38,7 +38,7 @@ angular.module('module.qa').constant('THREAD_ENTRY_TYPE', {answer: {enum: 'qaEnt
 angular.module('module.qa').factory('Thread', ['UriToolbox', function (UriToolbox) {
 
         // Constructor
-        function Thread(id, author_id, type, title, description, entity_id, creationTime) {
+        function Thread(id, author_id, type, title, description, entity_id, creationTime, circleTypes) {
             // Public properties
             this.id = id;
             this.type = type;
@@ -52,6 +52,7 @@ angular.module('module.qa').factory('Thread', ['UriToolbox', function (UriToolbo
             this.tags = new Array();
             this.attachments = new Array();
             this.attachedFiles = new Array();
+            this.circleTypes = circleTypes;
         }
 
         // Public method
@@ -555,7 +556,7 @@ angular.module('module.qa').service("qaService", ['$q', '$rootScope', 'UserServi
       new SSDiscWithEntriesGet(
         function (result) {
           
-          var thread = new Thread(result.disc.id, result.disc.author, getThreadTypeByEnum(result.disc.type), result.disc.label, result.disc.description, result.disc.entity, result.disc.creationTime);
+          var thread = new Thread(result.disc.id, result.disc.author, getThreadTypeByEnum(result.disc.type), result.disc.label, result.disc.description, result.disc.entity, result.disc.creationTime, result.disc.circleTypes);
         var entries = result.disc.entries;
         
         getAttachmentDetailsSync(thread, result.disc.attachedEntities);
@@ -592,7 +593,7 @@ angular.module('module.qa').service("qaService", ['$q', '$rootScope', 'UserServi
 
                         angular.forEach(result.discs, function (value, key) {
                             var type = getThreadTypeByEnum(value.type);
-                            var thread = new Thread(value.id, value.author, type, value.label, value.description, value.entity, value.creationTime);
+                            var thread = new Thread(value.id, value.author, type, value.label, value.description, value.entity, value.creationTime, value.circleTypes);
 
                             getAttachmentDetailsSync(thread, value.attachedEntities);
 
@@ -627,89 +628,25 @@ angular.module('module.qa').service("qaService", ['$q', '$rootScope', 'UserServi
             return deferThreadList.promise;
         };
 
-        this.getSimilarThreads = function (thread) {
-            var deferThreadList = $q.defer();
-
-            new SSRecommResources(
-                    function (result) {
-                        var promiseList = [];
-
-                        angular.forEach(result.resources, function (value, key) {
-                            var type = getThreadTypeByEnum(value.resource.type);
-                            var similar_thread = new Thread(value.resource.id,
-                                    value.resource.author,
-                                    type,
-                                    value.resource.label,
-                                    value.resource.description,
-                                    null,
-                                    value.resource.creationTime);
-                            similar_thread.likelihood = Math.round(value.likelihood * 100);
-//similar_thread.likelihood = Math.floor(Math.random() * 100) + 1;
-                            var deferThread = $q.defer();
-
-                            getAuthorDetails(similar_thread)
-                                    .then(getTags)
-                                    .then(function (result) {
-                                        deferThread.resolve(result);
-                                    });
-
-                            promiseList.push(deferThread.promise);
-                        });
-
-                        $q.all(promiseList)
-                                .then(function (result) {
-                                    result.sort(function (a, b) {
-                                        if (a.likelihood > b.likelihood)
-                                            return -1;
-                                        else if (a.likelihood < b.likelihood)
-                                            return 1;
-                                        return 0;
-                                    });
-                                    deferThreadList.resolve(result);
-                                });
-                    },
-                    function (error) {  //errorHandler, 
-                        console.log(error);
-                        deferThreadList.reject(error);
-                    },
-                    UserSrv.getUser(), //user
-                    UserSrv.getKey(), //key,
-                    UserSrv.getUser(), //forUser, 
-                    null, //entity, 
-                    null, //categories, 
-                    5, //maxResources, 
-                    ["qa"],         //typesToRecommOnly
-                    true); //setCircleTypes
-
-            return deferThreadList.promise;
-        };
-
-
-//         this.getSimilarThreads = function (thread) {
-// 
-//             var tagList = [];
-//             $.each(thread.tags, function( index, value ) {
-//                 tagList.push(value.label);
-//             });
-// 
-//             var deferThreadList = $q.defer();
-// 
-//             new SSSearch(
+//        this.getSimilarThreads = function (thread) {
+//           var deferThreadList = $q.defer();
+//
+//             new SSRecommResources(
 //                     function (result) {
 //                         var promiseList = [];
 // 
-//                         angular.forEach(result.entities, function (value, key) {
-//                             var type = getThreadTypeByEnum(value.type);
-//                             var similar_thread = new Thread(value.id,
+//                         angular.forEach(result.resources, function (value, key) {
+//                             var type = getThreadTypeByEnum(value.resource.type);
+//                             var similar_thread = new Thread(value.resource.id,
 //                                     value.resource.author,
 //                                     type,
-//                                     value.label,
-//                                     value.description,
+//                                     value.resource.label,
+//                                     value.resource.description,
 //                                     null,
-//                                     value.creationTime);
-//                                     /*
+//                                     value.resource.creationTime,
+//                                     value.circleTypes);
 //                             similar_thread.likelihood = Math.round(value.likelihood * 100);
-// //similar_thread.likelihood = Math.floor(Math.random() * 100) + 1;*/
+// //similar_thread.likelihood = Math.floor(Math.random() * 100) + 1;
 //                             var deferThread = $q.defer();
 // 
 //                             getAuthorDetails(similar_thread)
@@ -723,14 +660,13 @@ angular.module('module.qa').service("qaService", ['$q', '$rootScope', 'UserServi
 // 
 //                         $q.all(promiseList)
 //                                 .then(function (result) {
-//                                     /*
 //                                     result.sort(function (a, b) {
 //                                         if (a.likelihood > b.likelihood)
 //                                             return -1;
 //                                         else if (a.likelihood < b.likelihood)
 //                                             return 1;
 //                                         return 0;
-//                                     });*/
+//                                     });
 //                                     deferThreadList.resolve(result);
 //                                 });
 //                     },
@@ -738,29 +674,85 @@ angular.module('module.qa').service("qaService", ['$q', '$rootScope', 'UserServi
 //                         console.log(error);
 //                         deferThreadList.reject(error);
 //                     },
-//                     UserSrv.getUser(),
-//                     UserSrv.getKey(),
-//                     null,                       //keywordsToSearchFor
-//                     false,                      //includeTextualContent
-//                     null,                       //wordsToSearchFor
-//                     true,                       //includeTags
-//                     tagList,                     //tagsToSearchFor
-//                     false,                      //includeMIs
-//                     null,                       //misToSearchFor
-//                     true,                       //includeLabel
-//                     thread.title.split(" "),    //labelsToSearchFor
-//                     false,                      //includeDescription
-//                     null,                       //descriptionsToSearchFor
-//                     ["qa"],                     //typesToSearchOnlyFor
-//                     false,                      //includeOnlySubEntities
-//                     null,                       //entitiesToSearchWithin
-//                     false,                      //extendToParents
-//                     true,                       //includeRecommendedResults
-//                     false,                      //provideEntries
-//                     null,                       //pagesID
-//                     null                        //pageNumber
-//                     );
+//                     UserSrv.getUser(), //user
+//                     UserSrv.getKey(), //key,
+//                     UserSrv.getUser(), //forUser, 
+//                     null, //entity, 
+//                     null, //categories, 
+//                     5, //maxResources, 
+//                     ["qa"],         //typesToRecommOnly
+//                     true); //setCircleTypes
 // 
 //             return deferThreadList.promise;
 //         };
+
+
+        this.getSimilarThreads = function (thread) {
+
+            var tagList = [];
+            $.each(thread.tags, function( index, value ) {
+                tagList.push(value.label);
+            });
+
+            var deferThreadList = $q.defer();
+
+            new SSSearch(
+                    function (result) {
+                        var promiseList = [];
+
+                        angular.forEach(result.entities, function (value, key) {
+                            var type = getThreadTypeByEnum(value.type);
+                            var similar_thread = new Thread(value.id,
+                                    value.author,
+                                    type,
+                                    value.label,
+                                    value.description,
+                                    null,
+                                    value.creationTime,
+                                    value.circleTypes);
+                            var deferThread = $q.defer();
+
+                            getAuthorDetails(similar_thread)
+                                    .then(getTags)
+                                    .then(function (result) {
+                                        deferThread.resolve(result);
+                                    });
+
+                            promiseList.push(deferThread.promise);
+                        });
+
+                        $q.all(promiseList)
+                                .then(function (result) {
+                                    deferThreadList.resolve(result);
+                                });
+                    },
+                    function (error) {  //errorHandler, 
+                        console.log(error);
+                        deferThreadList.reject(error);
+                    },
+                    UserSrv.getUser(),
+                    UserSrv.getKey(),
+                    null,                       //keywordsToSearchFor
+                    false,                      //includeTextualContent
+                    null,                       //wordsToSearchFor
+                    true,                       //includeTags
+                    tagList,                     //tagsToSearchFor
+                    false,                      //includeMIs
+                    null,                       //misToSearchFor
+                    true,                       //includeLabel
+                    thread.title.split(" "),    //labelsToSearchFor
+                    false,                      //includeDescription
+                    null,                       //descriptionsToSearchFor
+                    ["qa"],                     //typesToSearchOnlyFor
+                    false,                      //includeOnlySubEntities
+                    null,                       //entitiesToSearchWithin
+                    false,                      //extendToParents
+                    true,                       //includeRecommendedResults
+                    false,                      //provideEntries
+                    null,                       //pagesID
+                    null                        //pageNumber
+                    );
+
+            return deferThreadList.promise;
+        };
     }]);

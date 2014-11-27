@@ -50,7 +50,7 @@ angular.module('module.qa').config(function ($stateProvider) {
 /**
  * Constants
  */
-angular.module('module.qa').constant('THREAD_LIST_TYPE', {own: 'My own', newest: 'Newest', unanswered: 'Unanswered'});
+angular.module('module.qa').constant('THREAD_LIST_TYPE', {all: 'All', own: 'My Own', group: 'My Group'});
 
 /**
  * CONTROLLER
@@ -61,10 +61,11 @@ angular.module('module.qa').controller("qaController", ['$scope', '$state', '$q'
         $scope.newThread = new Thread(null, null, THREAD_TYPE.question, null, null, null, null);
         $scope.threadList = null;
         $scope.myOwnThreadList = [];
+        $scope.myGroupThreadList = [];
         $scope.threadResponseLabel = "answer";
         $scope.THREAD_LIST_TYPE = THREAD_LIST_TYPE;
-        $scope.selectedThreadListType = THREAD_LIST_TYPE.own;
-        $scope.threadListHeader = "My own";
+        $scope.selectedThreadListType = THREAD_LIST_TYPE.all;
+        $scope.threadListHeader = "All";
         $scope.searchString = '';
         
         var loadDetailPage = function (thread)
@@ -74,6 +75,18 @@ angular.module('module.qa').controller("qaController", ['$scope', '$state', '$q'
         $scope.changeSelectedThreadListType = function (threadListType)
         {
             $scope.selectedThreadListType = threadListType;
+        };
+        
+        $scope.selectedThreadList = function ()
+        {
+            switch ($scope.selectedThreadListType) {
+                case THREAD_LIST_TYPE.all:
+                    return $scope.threadList;
+                case THREAD_LIST_TYPE.own:
+                    return $scope.myOwnThreadList;
+                case THREAD_LIST_TYPE.group:
+                    return $scope.myGroupThreadList;
+            };
         };
         $scope.tags = null;
         $scope.onTagAdded = function ($tag, object)
@@ -123,6 +136,12 @@ angular.module('module.qa').controller("qaController", ['$scope', '$state', '$q'
                     .getAllThreads()
                     .then(function (result) {
                         $scope.threadList = result;
+                        $scope.myOwnThreadList = result.filter(function(val) {
+                            return $.inArray('priv', val.circleTypes) >= 0;
+                        });
+                        $scope.myGroupThreadList = result.filter(function(val) {
+                            return $.inArray('group', val.circleTypes) >= 0;
+                        });
                         return result;
                     });
         };
@@ -237,10 +256,34 @@ angular.module('module.qa').controller("qaController", ['$scope', '$state', '$q'
         loadThreadList();
     }]);
     
-angular.module('module.qa').controller('ModalSimilarThreadsController', ['$scope', '$modalInstance', '$state', 'qaService', 'UriToolbox', 'thread', 'similarThreadList', function ($scope, $modalInstance, $state, qaService, UriToolbox, thread, similarThreadList) {
+angular.module('module.qa').controller('ModalSimilarThreadsController', ['$scope', '$modalInstance', '$state', 'qaService', 'UriToolbox', 'thread', 'similarThreadList', 'THREAD_LIST_TYPE', function ($scope, $modalInstance, $state, qaService, UriToolbox, thread, similarThreadList, THREAD_LIST_TYPE) {
 
+        $scope.THREAD_LIST_TYPE = THREAD_LIST_TYPE;
+        $scope.selectedSimilarThreadListType = THREAD_LIST_TYPE.own;
         $scope.thread = thread;
         $scope.similarThreadList = similarThreadList;
+        $scope.myOwnSimilarThreadList = similarThreadList.filter(function(val) {
+            return $.inArray('priv', val.circleTypes) >= 0;
+        });
+        $scope.myGroupSimilarThreadList = similarThreadList.filter(function(val) {
+            return $.inArray('group', val.circleTypes) >= 0;
+        });
+        
+        $scope.changeSelectedSimilarThreadListType = function (threadListType)
+        {
+            $scope.selectedSimilarThreadListType = threadListType;
+        };
+        
+        $scope.selectedSimilarThreadList = function ()
+        {
+            switch ($scope.selectedSimilarThreadListType) {
+                case THREAD_LIST_TYPE.own:
+                    return $scope.myOwnSimilarThreadList;
+                case THREAD_LIST_TYPE.group:
+                    return $scope.myGroupSimilarThreadList;
+            };
+        };
+        
         $scope.loadDetailPage = function (thread)
         {
             $state.transitionTo('app.qa.' + thread.type.enum, {id: UriToolbox.extractUriPathnameHash(thread.id)});
