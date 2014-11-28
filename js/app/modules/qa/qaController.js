@@ -429,6 +429,7 @@ angular.module('module.qa').controller("questionController", ['$scope', '$state'
 
         $scope.question = null;
         $scope.similarThreadList = null;
+        $scope.sortBy = 'date';
         $scope.newAnswer = new ThreadEntry(null, null, THREAD_ENTRY_TYPE.qaEntry, null, null, null);
         // used for sorting
         $scope.predicate = '+position';
