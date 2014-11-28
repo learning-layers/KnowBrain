@@ -16,7 +16,8 @@
                         </div>
                         <div class="icon-attached">
 	                        <div>{{question.author.name}}</div>
-                            <span class="text-muted" data-livestamp="{{question.creationTime.toISOString()}}"></span>
+							<span class="text-muted" data-livestamp="{{question.creationTime.toISOString()}}" ng-mouseenter="question_date_hover = true" ng-mouseleave="question_date_hover = false" ng-hide="question_date_hover === true"></span>
+							<span class="text-muted" ng-mouseenter="question_date_hover = true" ng-mouseleave="question_date_hover = false" ng-hide="question_date_hover !== true">{{question.getFormattedCreationTime()}}</span>
                         </div>
 					</div>
 				</div>	
@@ -83,7 +84,8 @@
                     </div>
                     <div class="icon-attached">
                         <div class="text-muted" >{{answer.author.name}}</div>
-						<span class="text-muted" data-livestamp="{{answer.creationTime.toISOString()}}"></span>
+						<span class="text-muted" data-livestamp="{{answer.creationTime.toISOString()}}" ng-mouseenter="answer_date_hover = true" ng-mouseleave="answer_date_hover = false" ng-hide="answer_date_hover === true"></span>
+						<span class="text-muted" ng-mouseenter="answer_date_hover = true" ng-mouseleave="answer_date_hover = false" ng-hide="answer_date_hover !== true">{{answer.getFormattedCreationTime()}}</span>
                     </div>
                 </div>
 
@@ -92,7 +94,7 @@
 		                <a>
 		                    <div 
 		                        class="icon-small" 
-		                        ng-class="up_hover === true ? (answer.likes.like === true ? 'icon-up-neutral-small' : 'icon-up-small') :
+		                        ng-class="up_hover === true ? (answer.likes.like === null ? 'icon-up-small' : 'icon-up-neutral-small') :
 		                        (answer.likes.like === true ? 'icon-up-small' : 'icon-up-neutral-small')"
 		                        ng-mouseenter="up_hover = true"
 		                        ng-mouseleave="up_hover = false"

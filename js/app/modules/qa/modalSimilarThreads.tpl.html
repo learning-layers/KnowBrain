@@ -46,7 +46,8 @@
 				</div>
 				<div class="icon-attached">
 					<div>{{thread.author.name}}</div>
-					<span class="text-muted" data-livestamp="{{thread.creationTime.toISOString()}}"></span>
+					<span class="text-muted" data-livestamp="{{thread.creationTime.toISOString()}}" ng-mouseenter="thread_date_hover = true" ng-mouseleave="thread_date_hover = false" ng-hide="thread_date_hover === true"></span>
+					<span class="text-muted" ng-mouseenter="thread_date_hover = true" ng-mouseleave="thread_date_hover = false" ng-hide="thread_date_hover !== true">{{thread.creationTime.toLocaleDateString()}}</span>
 				</div>
 		</div>
 	</div>
