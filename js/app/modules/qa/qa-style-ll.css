@@ -178,12 +178,20 @@ a:hover {
     background-image: url(../../../../images/qa/answered_64x64.png);
 }
 
+.icon-up-neutral-small {
+    background-image: url(../../../../images/qa/up-neutral_32x32.svg);
+}
+
 .icon-up-small {
-    background-image: url(../../../../images/qa/up_32x32.png);
+    background-image: url(../../../../images/qa/up_32x32.svg);
+}
+
+.icon-down-neutral-small {
+    background-image: url(../../../../images/qa/down-neutral_32x32.svg);
 }
 
 .icon-down-small {
-    background-image: url(../../../../images/qa/down_32x32.png);
+    background-image: url(../../../../images/qa/down_32x32.svg);
 }
 
 div.icon-attached {
@@ -250,6 +258,15 @@ div.thread-statistic-box {
 
 .related {
     margin-bottom: 40px;
+}
+
+.likes {
+    font-size: 12px;
+    text-align: center;
+}
+
+.dislikes {
+    font-size: 12px;
 }
 
 /* ATTACHMENT DETAIL*/

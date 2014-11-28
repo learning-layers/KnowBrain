@@ -38,7 +38,7 @@ angular.module('module.qa').constant('THREAD_ENTRY_TYPE', {answer: {enum: 'qaEnt
 angular.module('module.qa').factory('Thread', ['UriToolbox', function (UriToolbox) {
 
         // Constructor
-        function Thread(id, author_id, type, title, description, entity_id, creationTime, circleTypes) {
+        function Thread(id, author_id, type, title, description, entity_id, creationTime, circleTypes, likes) {
             // Public properties
             this.id = id;
             this.type = type;
@@ -53,6 +53,7 @@ angular.module('module.qa').factory('Thread', ['UriToolbox', function (UriToolbo
             this.attachments = new Array();
             this.attachedFiles = new Array();
             this.circleTypes = circleTypes;
+            this.likes = likes;
         }
 
         // Public method
@@ -66,7 +67,7 @@ angular.module('module.qa').factory('Thread', ['UriToolbox', function (UriToolbo
 angular.module('module.qa').factory('ThreadEntry', function () {
 
     // Constructor
-    function ThreadEntry(id, author_id, type, content, position, creationTime) {
+    function ThreadEntry(id, author_id, type, content, position, creationTime, likes) {
         // Public properties
         this.id = id;
         this.threadId = null;
@@ -80,6 +81,7 @@ angular.module('module.qa').factory('ThreadEntry', function () {
         this.attachments = new Array();
         this.comments = new Array();
         this.attachedFiles = new Array();
+        this.likes = likes;
     }
 
     // Public method
@@ -512,7 +514,7 @@ angular.module('module.qa').service("qaService", ['$q', '$rootScope', 'UserServi
             var promiseListEntryAuthor = [];
 
             angular.forEach(entries, function (value, key) {
-                var entry = new ThreadEntry(value.id, value.author, getThreadEntryTypeByEnum(value.type), value.content, value.pos, value.creationTime);
+                var entry = new ThreadEntry(value.id, value.author, getThreadEntryTypeByEnum(value.type), value.content, value.pos, value.creationTime, {likes : Math.floor((Math.random() * 100) + 1), dislikes : Math.floor((Math.random() * 20) + 1), like : (Math.floor((Math.random() * 3) + 1) == 1 ? true : (Math.floor((Math.random() * 3) + 1) == 2 ? false : null))});
 
                 if (value.comments != null) {
                     entry.comments = value.comments;
@@ -556,7 +558,7 @@ angular.module('module.qa').service("qaService", ['$q', '$rootScope', 'UserServi
       new SSDiscWithEntriesGet(
         function (result) {
           
-          var thread = new Thread(result.disc.id, result.disc.author, getThreadTypeByEnum(result.disc.type), result.disc.label, result.disc.description, result.disc.entity, result.disc.creationTime, result.disc.circleTypes);
+          var thread = new Thread(result.disc.id, result.disc.author, getThreadTypeByEnum(result.disc.type), result.disc.label, result.disc.description, result.disc.entity, result.disc.creationTime, result.disc.circleTypes, {likes : 10, dislikes : 5, like : null});
         var entries = result.disc.entries;
         
         getAttachmentDetailsSync(thread, result.disc.attachedEntities);
@@ -593,7 +595,7 @@ angular.module('module.qa').service("qaService", ['$q', '$rootScope', 'UserServi
 
                         angular.forEach(result.discs, function (value, key) {
                             var type = getThreadTypeByEnum(value.type);
-                            var thread = new Thread(value.id, value.author, type, value.label, value.description, value.entity, value.creationTime, value.circleTypes);
+                            var thread = new Thread(value.id, value.author, type, value.label, value.description, value.entity, value.creationTime, value.circleTypes, {likes : 10, dislikes : 5, like : null});
 
                             getAttachmentDetailsSync(thread, value.attachedEntities);
 
@@ -709,7 +711,8 @@ angular.module('module.qa').service("qaService", ['$q', '$rootScope', 'UserServi
                                     value.description,
                                     null,
                                     value.creationTime,
-                                    value.circleTypes);
+                                    value.circleTypes, 
+                                    {likes : 10, dislikes : 5, like : null});
                             var deferThread = $q.defer();
 
                             getAuthorDetails(similar_thread)

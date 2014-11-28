@@ -466,6 +466,43 @@ angular.module('module.qa').controller("questionController", ['$scope', '$state'
         {
             $state.transitionTo('app.qa.' + thread.type.enum, {id: UriToolbox.extractUriPathnameHash(thread.id)});
         };
+        
+        $scope.onLikeClicked = function (answer) {
+            switch (answer.likes.like) {
+                case true: 
+                    answer.likes.like = null;
+                    answer.likes.likes -= 1;
+                    break;
+                case null: 
+                    answer.likes.like = true;
+                    answer.likes.likes += 1;
+                    break;
+                case false: 
+                    answer.likes.like = true;
+                    answer.likes.likes += 1;
+                    answer.likes.dislikes -= 1;
+                    break;
+            }
+        }
+        
+        $scope.onDisLikeClicked = function (answer) {
+            switch (answer.likes.like) {
+                case true: 
+                    answer.likes.like = false;
+                    answer.likes.likes -= 1;
+                    answer.likes.dislikes += 1;
+                    break;
+                case null: 
+                    answer.likes.like = false;
+                    answer.likes.dislikes += 1;
+                    break;
+                case false: 
+                    answer.likes.like = null;
+                    answer.likes.dislikes -= 1;
+                    break;
+            }
+        }
+        
         loadThreadWithEntries(UserSrv.getUserSpace() + "discussion/" + $stateParams.id)
                 .then(loadSimilarThreadList);
     }]);

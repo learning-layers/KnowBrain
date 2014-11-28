@@ -68,7 +68,7 @@
 		<!-- answer begin -->
         <div class="answer underline" ng-repeat="answer in question.entries | orderBy:predicate">
             <div class="row clearfix">
-                <div class="col-md-9 column">
+                <div class="col-md-10 column">
                     <div class="icon-user-medium icon-medium">
                     </div>
                     <div class="icon-attached">
@@ -77,12 +77,34 @@
                     </div>
                 </div>
 
-                <div class="col-md-3 column">
-                    <div class="icon-small icon-up-small">
-                    </div>
-                    <div class="icon-small icon-down-small">
-                    </div>
-                </div>
+                <div class="col-md-2 column">
+	                <div class="col-md-6 column">
+		                <a>
+		                    <div 
+		                        class="icon-small" 
+		                        ng-class="up_hover === true ? (answer.likes.like === true ? 'icon-up-neutral-small' : 'icon-up-small') :
+		                        (answer.likes.like === true ? 'icon-up-small' : 'icon-up-neutral-small')"
+		                        ng-mouseenter="up_hover = true"
+		                        ng-mouseleave="up_hover = false"
+		                        ng-click="onLikeClicked(answer)">
+		                    </div>
+	                		</a>
+						<div class="icon-attached likes text-muted">{{answer.likes.likes}}</div>
+					</div>
+					<div class="col-md-6 column">
+						<a>
+							<div 
+							class="icon-small" 
+								ng-class="down_hover === true ? (answer.likes.like === false ? 'icon-down-neutral-small' : 'icon-down-small') :
+								(answer.likes.like === false ? 'icon-down-small' : 'icon-down-neutral-small')"
+								ng-mouseenter="down_hover = true"
+								ng-mouseleave="down_hover = false"
+								ng-click="onDisLikeClicked(answer)">
+		                    </div>
+						</a>
+	                    <div class="icon-attached dislikes text-muted">{{answer.likes.dislikes}}</div>
+					</div>
+				</div>
             </div>
 
             <div class="row clearfix">
