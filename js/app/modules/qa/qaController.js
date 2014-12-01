@@ -451,6 +451,10 @@ angular.module('module.qa').controller("questionController", ['$scope', '$state'
                         return result;
                     });
         };
+        $scope.onTagAdded = function ($tag, object)
+        {
+            $tag.space = 'privateSpace';
+        };
         $scope.postNewAnswer = function ()
         {
             $scope.newAnswer.threadId = $scope.question.id;
