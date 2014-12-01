@@ -94,8 +94,8 @@
 		                <a>
 		                    <div 
 		                        class="icon-small" 
-		                        ng-class="up_hover === true ? (answer.likes.like === null ? 'icon-up-small' : 'icon-up-neutral-small') :
-		                        (answer.likes.like === true ? 'icon-up-small' : 'icon-up-neutral-small')"
+		                        ng-class="up_hover === true ? (answer.likes.like === 0 ? 'icon-up-small' : 'icon-up-neutral-small') :
+		                        (answer.likes.like === 1 ? 'icon-up-small' : 'icon-up-neutral-small')"
 		                        ng-mouseenter="up_hover = true"
 		                        ng-mouseleave="up_hover = false"
 		                        ng-click="onLikeClicked(answer)">
@@ -108,7 +108,7 @@
 							<div 
 							class="icon-small" 
 								ng-class="down_hover === true ? (answer.likes.like === false ? 'icon-down-neutral-small' : 'icon-down-small') :
-								(answer.likes.like === false ? 'icon-down-small' : 'icon-down-neutral-small')"
+								(answer.likes.like === -1 ? 'icon-down-small' : 'icon-down-neutral-small')"
 								ng-mouseenter="down_hover = true"
 								ng-mouseleave="down_hover = false"
 								ng-click="onDisLikeClicked(answer)">

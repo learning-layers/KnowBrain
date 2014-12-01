@@ -459,7 +459,7 @@ angular.module('module.qa').controller("questionController", ['$scope', '$state'
                     .then(qaService.addNewAnswer)
                     .then(function (result) {
                         $scope.question.entries.push(result);
-                        $scope.newAnswer = new ThreadEntry(null, null, THREAD_ENTRY_TYPE.qaEntry, null, null, null);
+                        $scope.newAnswer = new ThreadEntry(null, null, THREAD_ENTRY_TYPE.qaEntry, null, null, null, {likes : 0, dislikes : 0, like : null});
                         return result;
                     });
         };
@@ -469,47 +469,25 @@ angular.module('module.qa').controller("questionController", ['$scope', '$state'
         };
         
         $scope.onLikeClicked = function (answer) {
-            var newStatus = 0;
-            if (answer.likes.like === null || answer.likes.like === false)
-                newStatus = 1;
+            var newStatus = 1;
+            if (answer.likes.like === 1)
+                newStatus = 0;
 
              qaService.setLikeStatus(answer, newStatus)
                     .then(function (result) {
-                        loadThreadWithEntries();
+                        loadThreadWithEntries(UserSrv.getUserSpace() + "discussion/" + $stateParams.id);
                     });
-            /*switch (answer.likes.like) {
-                case true: 
-                    answer.likes.like = null;
-                    answer.likes.likes -= 1;
-                    break;
-                case null: 
-                    answer.likes.like = true;
-                    answer.likes.likes += 1;
-                    break;
-                case false: 
-                    answer.likes.like = true;
-                    answer.likes.likes += 1;
-                    answer.likes.dislikes -= 1;
-                    break;
-            }*/
         }
         
         $scope.onDisLikeClicked = function (answer) {
-            switch (answer.likes.like) {
-                case true: 
-                    answer.likes.like = false;
-                    answer.likes.likes -= 1;
-                    answer.likes.dislikes += 1;
-                    break;
-                case null: 
-                    answer.likes.like = false;
-                    answer.likes.dislikes += 1;
-                    break;
-                case false: 
-                    answer.likes.like = null;
-                    answer.likes.dislikes -= 1;
-                    break;
-            }
+            var newStatus = -1;
+            if (answer.likes.like === -1)
+                newStatus = 0;
+
+             qaService.setLikeStatus(answer, newStatus)
+                    .then(function (result) {
+                        loadThreadWithEntries(UserSrv.getUserSpace() + "discussion/" + $stateParams.id);
+                    });
         }
         
         loadThreadWithEntries(UserSrv.getUserSpace() + "discussion/" + $stateParams.id)
