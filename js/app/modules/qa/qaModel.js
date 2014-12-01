@@ -54,6 +54,8 @@ angular.module('module.qa').factory('Thread', ['UriToolbox', function (UriToolbo
             this.attachedFiles = new Array();
             this.circleTypes = circleTypes;
             this.likes = likes;
+            if (!likes)
+                this.likes = {likes : 0, dislikes : 0, like : null};
         }
 
         // Public method
@@ -82,6 +84,8 @@ angular.module('module.qa').factory('ThreadEntry', function () {
         this.comments = new Array();
         this.attachedFiles = new Array();
         this.likes = likes;
+        if (!likes)
+            this.likes = {likes : 0, dislikes : 0, like : null};
     }
 
     // Public method
