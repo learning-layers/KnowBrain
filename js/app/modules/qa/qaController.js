@@ -469,7 +469,15 @@ angular.module('module.qa').controller("questionController", ['$scope', '$state'
         };
         
         $scope.onLikeClicked = function (answer) {
-            switch (answer.likes.like) {
+            var newStatus = 0;
+            if (answer.likes.like === null || answer.likes.like === false)
+                newStatus = 1;
+
+             qaService.setLikeStatus(answer, newStatus)
+                    .then(function (result) {
+                        loadThreadWithEntries();
+                    });
+            /*switch (answer.likes.like) {
                 case true: 
                     answer.likes.like = null;
                     answer.likes.likes -= 1;
@@ -483,7 +491,7 @@ angular.module('module.qa').controller("questionController", ['$scope', '$state'
                     answer.likes.likes += 1;
                     answer.likes.dislikes -= 1;
                     break;
-            }
+            }*/
         }
         
         $scope.onDisLikeClicked = function (answer) {

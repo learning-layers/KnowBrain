@@ -363,6 +363,25 @@ angular.module('module.qa').service("qaService", ['$q', '$rootScope', 'UserServi
       return defer.promise;
     };
 
+    this.setLikeStatus = function (answer, status) {
+      var defer = $q.defer();
+      
+      new SSLikeSet(
+        function (result) {
+            defer.resolve(answer)
+        },
+        function (error) {
+            console.log(error);
+            defer.reject(error);
+        },
+        UserSrv.getUser(),
+        UserSrv.getKey(),
+        answer.id,
+        status);
+      
+      return defer.promise;
+    };
+
         this.uploadAttachments = function (object) {
             var defer = $q.defer();
 
@@ -514,7 +533,7 @@ angular.module('module.qa').service("qaService", ['$q', '$rootScope', 'UserServi
             var promiseListEntryAuthor = [];
 
             angular.forEach(entries, function (value, key) {
-                var entry = new ThreadEntry(value.id, value.author, getThreadEntryTypeByEnum(value.type), value.content, value.pos, value.creationTime, {likes : Math.floor((Math.random() * 100) + 1), dislikes : Math.floor((Math.random() * 20) + 1), like : (Math.floor((Math.random() * 3) + 1) == 1 ? true : (Math.floor((Math.random() * 3) + 1) == 2 ? false : null))});
+                var entry = new ThreadEntry(value.id, value.author, getThreadEntryTypeByEnum(value.type), value.content, value.pos, value.creationTime, value.likes);
 
                 if (value.comments != null) {
                     entry.comments = value.comments;
@@ -595,7 +614,7 @@ angular.module('module.qa').service("qaService", ['$q', '$rootScope', 'UserServi
 
                         angular.forEach(result.discs, function (value, key) {
                             var type = getThreadTypeByEnum(value.type);
-                            var thread = new Thread(value.id, value.author, type, value.label, value.description, value.entity, value.creationTime, value.circleTypes, {likes : 10, dislikes : 5, like : null});
+                            var thread = new Thread(value.id, value.author, type, value.label, value.description, value.entity, value.creationTime, value.circleTypes, value.likes);
 
                             getAttachmentDetailsSync(thread, value.attachedEntities);
 
