@@ -315,11 +315,11 @@ angular.module('module.qa').controller('ModalAddAttachmentsController', ['$scope
         $scope.resourceTypes = ['choose', 'dropbox', 'upload', 'link'];
         $scope.currentResourceType = 0;
         /* PATHS */
-        $scope.addLinkTplPath = MODULES_PREFIX + "/dialog/wizzard-create-link.tpl.html";
+        $scope.addLinkTplPath = MODULES_PREFIX + "/qa/add-attachments-create-link.tpl.html";
         $scope.chooseFromDropboxTplPath = MODULES_PREFIX + "/dialog/wizzard-choose-from-dropbox.tpl.html";
         $scope.uploadResourceTplPath = MODULES_PREFIX + "/qa/add-attachments-upload-files.tpl.html";
         $scope.chooseResourceTypeTplPath = MODULES_PREFIX + "/qa/add-attachments-choose-type.tpl.html";
-        
+        $scope.link = {id : null};
         
         
         
@@ -340,6 +340,13 @@ angular.module('module.qa').controller('ModalAddAttachmentsController', ['$scope
         };
         $scope.selectedResources = [];
         $scope.attachAllResources = function () {
+            $modalInstance.close($scope.selectedResources);
+        };
+
+        $scope.attachLink = function (link) {
+            link.label = link.id;
+            link.type = 'entity';
+            $scope.selectedResources.push(link);
             $modalInstance.close($scope.selectedResources);
         };
         

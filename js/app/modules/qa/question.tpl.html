@@ -44,7 +44,7 @@
 'icon-link-small' : attachment.type === 'entity'}" ng-repeat-start="attachment in question.attachments">
                 </div>
                 <div class="icon-attached" ng-repeat-end>
-                    <div><a ng-click="showAttachment(attachment)">{{attachment.name}}</a></div>
+                    <div><a ng-click="showAttachment(attachment)">{{attachment.name.length !== 0 ? attachment.name : attachment.id}}</a></div>
                     <div class="text-muted">{{attachment.type}}</div>
                 </div>
             </div>
