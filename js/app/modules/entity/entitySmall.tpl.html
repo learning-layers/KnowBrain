@@ -22,7 +22,5 @@
     <div class="collection-entry-small-shared"
          ng-show="(entry.type == entityTypes.collection) && entry.space == spaceEnum.shared" >{{t('shared')}}</div>
 
-    <div class="collection-entry-small-description-box">
-        <div shortenentryname model="entry.label">{{entry.label}}</div>
-    </div>
+    <div class="collection-entry-small-description-box" model="entry.label">{{entry.label}}</div>
 </div>
