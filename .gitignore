@@ -13,6 +13,10 @@
 /js/vendors/SSS/SSSClientInterfaceGlobals/globals
 /js/vendors/SSS/.svn
 /nbproject/private
+<<<<<<< HEAD
 /build/
 index.html
 .gitignore
+=======
+/nbproject
+>>>>>>> 678111899edbc12cfedbaa1544f3d9a8b9a8341e

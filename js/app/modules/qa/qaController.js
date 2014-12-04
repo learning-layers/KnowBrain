@@ -486,7 +486,7 @@ angular.module('module.qa').controller("questionController", ['$scope', '$state'
 
              qaService.setLikeStatus(answer, newStatus)
                     .then(function (result) {
-                        loadThreadWithEntries(UserSrv.getUserSpace() + "discussion/" + $stateParams.id);
+                        loadThreadWithEntries(UserSrv.getUserSpace() + "entities/entities/" + $stateParams.id);
                     });
         }
         
@@ -497,11 +497,11 @@ angular.module('module.qa').controller("questionController", ['$scope', '$state'
 
              qaService.setLikeStatus(answer, newStatus)
                     .then(function (result) {
-                        loadThreadWithEntries(UserSrv.getUserSpace() + "discussion/" + $stateParams.id);
+                        loadThreadWithEntries(UserSrv.getUserSpace() + "entities/entities/" + $stateParams.id);
                     });
         }
         
-        loadThreadWithEntries(UserSrv.getUserSpace() + "discussion/" + $stateParams.id)
+        loadThreadWithEntries(UserSrv.getUserSpace() + "entities/entities/" + $stateParams.id)
                 .then(loadSimilarThreadList);
     }]);
 /**
