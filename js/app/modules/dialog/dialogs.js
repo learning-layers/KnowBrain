@@ -298,17 +298,30 @@ angular.module('dialogs.controllers', ['ui.bootstrap.modal', 'module.i18n', 'mod
                 
                 $scope.fileType = null;
                 
-                switch (attachment.mimeType.toLowerCase()) {
-                    case "png": case "jpg": case "jpeg": case "gif":
-                        $scope.fileType = 'image';
-                        break;
-                    case "html": case "c": case "js": case "h": case "cpp": case "m": case "css": case "htm":
-                        $scope.fileType = 'code';
-                        break;
-                    case "pdf":
-                        $scope.fileType = 'pdf';
-                        break;
-                }
+                if (attachment.mimeType != undefined) {
+                    switch (attachment.mimeType.toLowerCase()) {
+                        case "png":
+                        case "jpg":
+                        case "jpeg":
+                        case "gif":
+                            $scope.fileType = 'image';
+                            break;
+                        case "html":
+                        case "c":
+                        case "js":
+                        case "h":
+                        case "cpp":
+                        case "m":
+                        case "css":
+                        case "htm":
+                            $scope.fileType = 'code';
+                            break;
+                        case "pdf":
+                            $scope.fileType = 'pdf';
+                            break;
+                    }
+                };
+                
             
                 /**
                  * TRANSLATION INJECTION

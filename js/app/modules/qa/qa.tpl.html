@@ -165,7 +165,7 @@
 'icon-link-small' : thread.attachments[0].type === 'entity'}">
                     </div>
                     <div class="icon-attached">
-                        <div><a ng-click="showAttachment(thread.attachments[0])">{{thread.attachments[0].name.length !== 0 ? thread.attachments[0].name : thread.attachments[0].id}}</a></div>
+                        <div><a ng-click="showAttachment(thread.attachments[0])">{{thread.attachments[0].name !== undefined && thread.attachments[0].name.length !== 0 ? thread.attachments[0].name : thread.attachments[0].id}}</a></div>
                         <div class="text-muted">{{thread.attachments[0].type}}</div>
                     </div>
                     
@@ -177,7 +177,7 @@
 'icon-link-small' : thread.attachments[1].type === 'entity'}">
                             </div>
                             <div class="icon-attached" ng-show="thread.attachments.length === 2">
-                                <div><a ng-click="showAttachment(thread.attachments[1])">{{thread.attachments[1].name.length !== 0 ? thread.attachments[1].name : thread.attachments[1].id}}</a></div>
+                                <div><a ng-click="showAttachment(thread.attachments[1])">{{thread.attachments[1].name !== undefined && thread.attachments[1].name.length !== 0 ? thread.attachments[1].name : thread.attachments[1].id}}</a></div>
                                 <div class="text-muted">{{thread.attachments[1].type}}</div>
                             </div>
                         </div>

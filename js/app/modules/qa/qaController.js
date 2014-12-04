@@ -486,7 +486,9 @@ angular.module('module.qa').controller("questionController", ['$scope', '$state'
 
              qaService.setLikeStatus(answer, newStatus)
                     .then(function (result) {
-                        loadThreadWithEntries(UserSrv.getUserSpace() + "entities/entities/" + $stateParams.id);
+                        answer.likes.likes += newStatus === 1 ? 1 : -1;
+                        answer.likes.dislikes -= answer.likes.like === -1 ? 1 : 0;
+                        answer.likes.like = newStatus;
                     });
         }
         
@@ -497,7 +499,9 @@ angular.module('module.qa').controller("questionController", ['$scope', '$state'
 
              qaService.setLikeStatus(answer, newStatus)
                     .then(function (result) {
-                        loadThreadWithEntries(UserSrv.getUserSpace() + "entities/entities/" + $stateParams.id);
+                        answer.likes.dislikes += newStatus === -1 ? 1 : -1;
+                        answer.likes.likes -= answer.likes.like === 1 ? 1 : 0;
+                        answer.likes.like = newStatus;
                     });
         }
         

@@ -54,6 +54,7 @@ angular.module('module.qa').factory('Thread', ['UriToolbox', function (UriToolbo
             this.attachedFiles = new Array();
             this.circleTypes = circleTypes;
             this.likes = likes;
+            this.mimeType = null;
             if (!likes)
                 this.likes = {likes : 0, dislikes : 0, like : null};
         }
@@ -84,6 +85,7 @@ angular.module('module.qa').factory('ThreadEntry', function () {
         this.comments = new Array();
         this.attachedFiles = new Array();
         this.likes = likes;
+        this.mimeType = null;
         if (!likes)
             this.likes = {likes : 0, dislikes : 0, like : null};
     }
@@ -129,7 +131,7 @@ angular.module('module.qa').factory('Attachment', ['$q', 'UserService', 'ENTITY_
         // Public properties
         this.id = id;
         this.name = label;
-        this.type = type;
+        this.type = type == null ? 'file' : type;
         this.mimeType = jSGlobals.substring(id, jSGlobals.lastIndexOf(id, jSGlobals.dot) + 1, jSGlobals.length(id));
         
         this.servHandleFileDownload = function(defer){
@@ -268,10 +270,6 @@ angular.module('module.qa').service("qaService", ['$q', '$rootScope', 'UserServi
                 if (attachment.id !== undefined)
                     attachmentIdList.push(attachment.id);
             });
-            angular.forEach(thread.attachedFiles, function (attachedFile, key) {
-                if (attachedFile.id !== undefined)
-                    attachmentIdList.push(attachedFile.id);
-            });
 
             new SSDiscEntryAdd(
                     function (result) {
@@ -310,7 +308,8 @@ angular.module('module.qa').service("qaService", ['$q', '$rootScope', 'UserServi
 
             var attachmentIdList = new Array();
             angular.forEach(answer.attachments, function (attachment, key) {
-                attachmentIdList.push(attachment.id);
+                if (attachment.id !== undefined)
+                    attachmentIdList.push(attachment.id);
             });
 
             new SSDiscEntryAdd(
@@ -396,7 +395,7 @@ angular.module('module.qa').service("qaService", ['$q', '$rootScope', 'UserServi
 
                 new SSFileUpload(
                         function (file_id) {
-                            attachment.id = file_id;
+                            attachment = new Attachment(file_id, file_id, 'file');
                             deferFile.resolve(attachment);
                         },
                         function (error) {
@@ -413,7 +412,8 @@ angular.module('module.qa').service("qaService", ['$q', '$rootScope', 'UserServi
 
             $q.all(promiseList)
                     .then(function (result) {
-                        object.attachments = object.attachments.concat(promiseList);
+                        object.attachments = object.attachments.concat(result);
+                        object.attachedFiles = [];
                         defer.resolve(object);
                     });
 
