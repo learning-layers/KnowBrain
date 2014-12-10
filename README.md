@@ -40,4 +40,3 @@ This is an early Version. It's functions have only been tested in Google Chrome 
 
 ##Contact:
 * Dieter Theiler, Know-Center, Graz University of Technology, dtheiler@tugraz.at
-* Dominik Moesslang, Know-Center, Graz University of Technology, dominik.moesslang@student.tugraz.at
