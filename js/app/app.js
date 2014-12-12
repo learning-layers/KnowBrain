@@ -50,7 +50,8 @@ angular.module('knowbrain', [
   'module.chat',
   'module.group',
   'module.entity',
-  'module.activities'
+  'module.activities',
+  'angularSlideables'
 
   ]).config(['$stateProvider', '$urlRouterProvider', '$locationProvider', '$tooltipProvider',function ($stateProvider, $urlRouterProvider, $locationProvider, $tooltipProvider) {
 

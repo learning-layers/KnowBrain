@@ -31,7 +31,7 @@
  */
 
 // type of the thread
-angular.module('module.qa').constant('THREAD_TYPE', {discussion: {enum: 'disc', label: 'discussion'}, question: {enum: 'qa', label: 'question'}, chat: {enum: 'chat', label: 'chat'}});
+angular.module('module.qa').constant('THREAD_TYPE', {discussion: {enum: 'disc', label: 'discussion'}, question: {enum: 'qa', label: 'question'}, answer: {enum: 'qaEntry', label: 'answer'}, chat: {enum: 'chat', label: 'chat'}});
 // type of thread entry
 angular.module('module.qa').constant('THREAD_ENTRY_TYPE', {answer: {enum: 'qaEntry', label: 'answer'}});
 
@@ -648,6 +648,79 @@ angular.module('module.qa').service("qaService", ['$q', '$rootScope', 'UserServi
                     },
                     UserSrv.getUser(),
                     UserSrv.getKey()
+                    );
+
+            return deferThreadList.promise;
+        };
+
+        this.searchThreads = function (keywordsToSearchFor, tagsToSearchFor, searchAnswers) {
+
+            var tagList = [];
+            $.each(tagsToSearchFor, function( index, value ) {
+                tagList.push(value.label);
+            });
+
+            var deferThreadList = $q.defer();
+
+            var typesToSearchOnlyFor = ["qa"];
+            if (searchAnswers) {typesToSearchOnlyFor.push("qaEntry")};
+
+            new SSSearch(
+                    function (result) {
+
+                        var promiseList = [];
+
+                        angular.forEach(result.entities, function (value, key) {
+                            var type = getThreadTypeByEnum(value.type);
+                            var thread = new Thread(value.id, value.author, type, value.label, value.description, value.entity, value.creationTime, value.circleTypes, value.likes);
+
+                            getAttachmentDetailsSync(thread, value.attachedEntities);
+
+                            var deferThread = $q.defer();
+
+                            getAuthorDetails(thread)
+                                    .then(getTags)
+                                    .then(function (result) {
+                                        deferThread.resolve(result);
+                                    }, function (error) {
+                                        var test = error;
+                                    });
+
+                            promiseList.push(deferThread.promise);
+                        });
+
+                        $q.all(promiseList)
+                                .then(function (result) {
+                                    deferThreadList.resolve(result);
+                                }, function (error) {
+                                    var test = error;
+                                });
+                    },
+                    function (error) {
+                        console.log(error);
+                        deferThreadList.reject(error);
+                    },
+                    UserSrv.getUser(),
+                    UserSrv.getKey(),
+                    null,        //keywordsToSearchFor
+                    false,                       //includeTextualContent
+                    keywordsToSearchFor,                       //wordsToSearchFor
+                    tagList.length > 0,         //includeTags
+                    tagList,                    //tagsToSearchFor
+                    false,                      //includeMIs
+                    null,                       //misToSearchFor
+                    true,                      //includeLabel
+                    keywordsToSearchFor,                       //labelsToSearchFor
+                    true,                      //includeDescription
+                    keywordsToSearchFor,                       //descriptionsToSearchFor
+                    typesToSearchOnlyFor,       //typesToSearchOnlyFor
+                    false,                      //includeOnlySubEntities
+                    null,                       //entitiesToSearchWithin
+                    false,                      //extendToParents
+                    false,                      //includeRecommendedResults
+                    false,                      //provideEntries
+                    null,                       //pagesID
+                    null                        //pageNumber
                     );
 
             return deferThreadList.promise;

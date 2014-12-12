@@ -55,217 +55,242 @@ angular.module('module.qa').constant('THREAD_LIST_TYPE', {all: 'All', own: 'My O
 /**
  * CONTROLLER
  */
-angular.module('module.qa').controller("qaController", ['$scope', '$state', '$q', '$modal', '$dialogs', '$filter', 'UserService', 'sharedService', 'UriToolbox', 'qaService', 'Thread', 'THREAD_TYPE', 'THREAD_LIST_TYPE', 'Tag', function ($scope, $state, $q, $modal, $dialogs, $filter, UserSrv, sharedService, UriToolbox, qaService, Thread, THREAD_TYPE, THREAD_LIST_TYPE, Tag) {
+angular.module('module.qa').controller("qaController", ['$scope', '$state', '$q', '$modal', '$dialogs', '$filter', 'UserService', 'sharedService', 'UriToolbox', 'qaService', 'Thread', 'THREAD_TYPE', 'THREAD_LIST_TYPE', 'Tag', 'SearchToolbox', function($scope, $state, $q, $modal, $dialogs, $filter, UserSrv, sharedService, UriToolbox, qaService, Thread, THREAD_TYPE, THREAD_LIST_TYPE, Tag, SearchToolbox) {
 
-        $scope.THREAD_TYPE = THREAD_TYPE;
-        $scope.newThread = new Thread(null, null, THREAD_TYPE.question, null, null, null, null);
-        $scope.threadList = null;
-        $scope.tagThreadList = null;
-        $scope.myOwnThreadList = [];
-        $scope.myGroupThreadList = [];
-        $scope.threadResponseLabel = "answer";
-        $scope.THREAD_LIST_TYPE = THREAD_LIST_TYPE;
-        $scope.selectedThreadListType = THREAD_LIST_TYPE.all;
-        $scope.threadListHeader = "All";
-        $scope.searchString = '';
-        $scope.searchTags = [];
-        
-        var loadDetailPage = function (thread)
-        {
-            $state.transitionTo('app.qa.' + thread.type.enum, {id: UriToolbox.extractUriPathnameHash(thread.id)});
-        };
-        $scope.changeSelectedThreadListType = function (threadListType)
-        {
-            $scope.selectedThreadListType = threadListType;
-        };
-        
-        $scope.selectedThreadList = function ()
-        {
-            switch ($scope.selectedThreadListType) {
-                case THREAD_LIST_TYPE.all:
-                    return $scope.tagThreadList;
-                case THREAD_LIST_TYPE.own:
-                    return $scope.myOwnThreadList;
-                case THREAD_LIST_TYPE.group:
-                    return $scope.myGroupThreadList;
-            };
-        };
-        $scope.onTagAdded = function ($tag, object)
-        {
-            $tag.space = 'privateSpace';
-        };
-        $scope.onTagClicked = function (tag) {
-            $scope.searchTags.push(tag.label);
-            updateThreadLists();
-        };
-        
-        $scope.removeSearchTag = function(tagIndex) {
-            $scope.searchTags.splice(tagIndex, 1);
-            updateThreadLists();
-        } 
-        
-        var updateThreadLists = function () {
-            $scope.tagThreadList = $scope.threadList.filter(function(val) {
-                return ($scope.searchTags.length == 0 ||
-                        $scope.searchTags.every(function(value) { return $.map(val.tags,function(v){return v.label;}).indexOf(value) >= 0; }));
-            });
-            $scope.myOwnThreadList = $scope.threadList.filter(function(val) {
-                return ($.inArray('priv', val.circleTypes) >= 0) &&
-                        ($scope.searchTags.length == 0 ||
-                        $scope.searchTags.every(function(value) { return $.map(val.tags,function(v){return v.label;}).indexOf(value) >= 0; }));
-            });
-            $scope.myGroupThreadList = $scope.threadList.filter(function(val) {
-                return ($.inArray('group', val.circleTypes) >= 0) &&
-                        ($scope.searchTags.length == 0 ||
-                        $scope.searchTags.every(function(value) { return $.map(val.tags,function(v){return v.label;}).indexOf(value) >= 0; }));
-            });
-        };
-        
-        $scope.removeAttachment = function (attachment) {
-            $.each($scope.newThread.attachments, function (i) {
-                if ($scope.newThread.attachments[i].id === attachment.id) {
-                    $scope.newThread.attachments.splice(i, 1);
-                    return false;
-                }
-            });
-        };
-        
-        $scope.removeAttachedFiles = function (attachedFile) {
-            $.each($scope.newThread.attachedFiles, function (i) {
-                if ($scope.newThread.attachedFiles[i].id === attachedFile.id) {
-                    $scope.newThread.attachedFiles.splice(i, 1);
-                    return false;
-                }
-            });
-        };
+    $scope.THREAD_TYPE = THREAD_TYPE;
+    $scope.newThread = new Thread(null, null, THREAD_TYPE.question, null, null, null, null);
+    $scope.threadList = null;
+    $scope.tagThreadList = null;
+    $scope.myOwnThreadList = [];
+    $scope.myGroupThreadList = [];
+    $scope.threadResponseLabel = "answer";
+    $scope.THREAD_LIST_TYPE = THREAD_LIST_TYPE;
+    $scope.selectedThreadListType = THREAD_LIST_TYPE.all;
+    $scope.threadListHeader = "All";
+    $scope.searchTags = [];
+    $scope.searchAnswers = true;
+    $scope.showingAdvancedSearch = false;
 
-        var loadThreadList = function ()
-        {
-            return qaService
-                    .getAllThreads()
-                    .then(function (result) {
-                        $scope.threadList = result;
-                        $scope.tagThreadList = result;
-                        $scope.myOwnThreadList = result.filter(function(val) {
-                            return $.inArray('priv', val.circleTypes) >= 0;
-                        });
-                        $scope.myGroupThreadList = result.filter(function(val) {
-                            return $.inArray('group', val.circleTypes) >= 0;
-                        });
-                        return result;
-                    });
-        };
-        $scope.invokePostNewThread = function ()
-        {
-            loadSimilarThreadList()
-                    .then(openSimilarThreads);
-        };
-        var loadSimilarThreadList = function ()
-        {
-            return qaService
-                    .getSimilarThreads($scope.newThread)
-                    .then(function (result) {
-                        return $filter('threadTypeFilter')(result, $scope.newThread.type);
-                    });
-        };
-        var postNewThread = function ()
-        {
+    var loadDetailPage = function(thread) {
+        $state.transitionTo('app.qa.' + thread.type.enum, {
+            id: UriToolbox.extractUriPathnameHash(thread.id)
+        });
+    };
+    $scope.changeSelectedThreadListType = function(threadListType) {
+        $scope.selectedThreadListType = threadListType;
+    };
 
-            return qaService
-                    .uploadAttachments($scope.newThread)
-                    .then(qaService.addNewThread)
-                    .then(function (result) {
-                        $scope.threadList.push(result);
-                        updateThreadLists();
-                        $scope.newThread = new Thread(null, null, THREAD_TYPE.question, null, null, null, null);
-                        return result;
-                    });
+    $scope.selectedThreadList = function() {
+        switch ($scope.selectedThreadListType) {
+            case THREAD_LIST_TYPE.all:
+                return $scope.tagThreadList;
+            case THREAD_LIST_TYPE.own:
+                return $scope.myOwnThreadList;
+            case THREAD_LIST_TYPE.group:
+                return $scope.myGroupThreadList;
         };
-        var openSimilarThreads = function (similarThreadList) {
-            if (similarThreadList.length > 0)
-            {
-                var modalInstance = $modal.open({
-                    templateUrl: MODULES_PREFIX + '/qa/modalSimilarThreads.tpl.html',
-                    controller: 'ModalSimilarThreadsController',
-                    size: 'lg',
-                    resolve: {
-                        thread: function () {
-                            return $scope.newThread;
-                        },
-                        similarThreadList: function () {
-                            return similarThreadList;
-                        }
-                    }
-                });
-                modalInstance.result.then(function (post) {
-                    if (post) {
-                        postNewThread();
-                    }
-                }, function () {
-                    //$log.info('Modal dismissed at: ' + new Date());
-                });
+    };
+    $scope.onTagAdded = function($tag, object) {
+        $tag.space = 'privateSpace';
+    };
+    
+    $scope.onTagClicked = function(tag) {
+        $scope.searchTags.push(tag);
+        $scope.reloadThreads();
+    };
+
+    $scope.reloadThreads = function() {
+        $scope.searchThreads();
+        updateThreadLists();
+    };
+
+    $scope.removeSearchTag = function(tagIndex) {
+        $scope.searchTags.splice(tagIndex, 1);
+        $scope.reloadThreads();
+    }
+
+    var updateThreadLists = function() {
+        $scope.tagThreadList = $scope.threadList.filter(function(val) {
+            return true;
+        });
+        $scope.myOwnThreadList = $scope.threadList.filter(function(val) {
+            return $.inArray('priv', val.circleTypes) >= 0;
+        });
+        $scope.myGroupThreadList = $scope.threadList.filter(function(val) {
+            return $.inArray('group', val.circleTypes) >= 0;
+        });
+    };
+
+    $scope.removeAttachment = function(attachment) {
+        $.each($scope.newThread.attachments, function(i) {
+            if ($scope.newThread.attachments[i].id === attachment.id) {
+                $scope.newThread.attachments.splice(i, 1);
+                return false;
             }
-            else
-            {
-                postNewThread();
+        });
+    };
+
+    $scope.removeAttachedFiles = function(attachedFile) {
+        $.each($scope.newThread.attachedFiles, function(i) {
+            if ($scope.newThread.attachedFiles[i].id === attachedFile.id) {
+                $scope.newThread.attachedFiles.splice(i, 1);
+                return false;
             }
-        };
-        $scope.openAddAttachments = function (object) {
+        });
+    };
+
+    $scope.clearSearch = function() {
+        loadThreadList();
+        this.searchThreadsString = "";
+    };
+
+    var loadThreadList = function() {
+        return qaService
+            .getAllThreads()
+            .then(function(result) {
+                $scope.threadList = result;
+                $scope.tagThreadList = result;
+                $scope.myOwnThreadList = result.filter(function(val) {
+                    return $.inArray('priv', val.circleTypes) >= 0;
+                });
+                $scope.myGroupThreadList = result.filter(function(val) {
+                    return $.inArray('group', val.circleTypes) >= 0;
+                });
+                return result;
+            });
+    };
+
+    $scope.searchThreads = function() {
+
+        if ((this.searchThreadsString === undefined) && ($scope.searchTags.length === 0)) {
+            return loadThreadList();
+        }
+
+        var keywords = Array();
+        if (this.searchThreadsString != undefined)
+            angular.forEach(this.searchThreadsString.split(","), function(string, key) {
+                angular.forEach(string.replace(/^\s+|\s+$/g, '').split(" "), function(subString, key2) {
+                    keywords.push(subString);
+                });
+            });
+
+        qaService.searchThreads(keywords, $scope.searchTags, this.searchAnswers)
+            .then(function(result) {
+                $scope.threadList = result;
+                $scope.tagThreadList = result;
+                $scope.myOwnThreadList = result.filter(function(val) {
+                    return $.inArray('priv', val.circleTypes) >= 0;
+                });
+                $scope.myGroupThreadList = result.filter(function(val) {
+                    return $.inArray('group', val.circleTypes) >= 0;
+                });
+                return result;
+            });
+    };
+
+    $scope.invokePostNewThread = function() {
+        loadSimilarThreadList()
+            .then(openSimilarThreads);
+    };
+    var loadSimilarThreadList = function() {
+        return qaService
+            .getSimilarThreads($scope.newThread)
+            .then(function(result) {
+                return $filter('threadTypeFilter')(result, $scope.newThread.type);
+            });
+    };
+    var postNewThread = function() {
+
+        return qaService
+            .uploadAttachments($scope.newThread)
+            .then(qaService.addNewThread)
+            .then(function(result) {
+                $scope.threadList.push(result);
+                updateThreadLists();
+                $scope.newThread = new Thread(null, null, THREAD_TYPE.question, null, null, null, null);
+                return result;
+            });
+    };
+    var openSimilarThreads = function(similarThreadList) {
+        if (similarThreadList.length > 0) {
             var modalInstance = $modal.open({
-                templateUrl: MODULES_PREFIX + '/qa/modalAddAttachments.tpl.html',
-                controller: 'ModalAddAttachmentsController',
+                templateUrl: MODULES_PREFIX + '/qa/modalSimilarThreads.tpl.html',
+                controller: 'ModalSimilarThreadsController',
                 size: 'lg',
                 resolve: {
+                    thread: function() {
+                        return $scope.newThread;
+                    },
+                    similarThreadList: function() {
+                        return similarThreadList;
+                    }
                 }
             });
-            modalInstance.result.then(function (fileList) {
-                fileList.forEach(function (entry) {
-                    if (entry.id !== null && entry.id !== undefined) {
-                        object.attachments.push(entry);
-                    } else {
-                        object.attachedFiles.push(entry);
-                    }
-                });
-            }, function () {
+            modalInstance.result.then(function(post) {
+                if (post) {
+                    postNewThread();
+                }
+            }, function() {
                 //$log.info('Modal dismissed at: ' + new Date());
             });
-        };
-        $scope.addComment = function (answer) {
-            answer.comments.push(answer.newComment);
-            qaService.addNewComment(answer)
-                    .then(function (result) {
-                        answer.newComment = null;
-                        var test = result;
-                    });
+        } else {
+            postNewThread();
         }
+    };
+    $scope.openAddAttachments = function(object) {
+        var modalInstance = $modal.open({
+            templateUrl: MODULES_PREFIX + '/qa/modalAddAttachments.tpl.html',
+            controller: 'ModalAddAttachmentsController',
+            size: 'lg',
+            resolve: {}
+        });
+        modalInstance.result.then(function(fileList) {
+            fileList.forEach(function(entry) {
+                if (entry.id !== null && entry.id !== undefined) {
+                    object.attachments.push(entry);
+                } else {
+                    object.attachedFiles.push(entry);
+                }
+            });
+        }, function() {
+            //$log.info('Modal dismissed at: ' + new Date());
+        });
+    };
+    $scope.addComment = function(answer) {
+        answer.comments.push(answer.newComment);
+        qaService.addNewComment(answer)
+            .then(function(result) {
+                answer.newComment = null;
+                var test = result;
+            });
+    }
 
-        $scope.openThread = function (thread)
-        {
-            switch (thread.type) {
-                case THREAD_TYPE.question:
-                    loadDetailPage(thread);
-                    break;
-                case THREAD_TYPE.chat:
-                    sharedService.prepareForBroadcast('openChatBox', thread);
-                    break;
-            }
+    $scope.openThread = function(thread) {
+        switch (thread.type) {
+            case THREAD_TYPE.question:
+                loadDetailPage(thread);
+                break;
+            case THREAD_TYPE.chat:
+                sharedService.prepareForBroadcast('openChatBox', thread);
+                break;
         }
+    }
 
-        $scope.shareThread = function (thread) {
-            $dialogs.shareEntity(thread);
-        }
-        
-        $scope.showAttachment = function (attachment) {
-            if (attachment.type === 'entity') {
-                window.open(attachment.id,'_blank');
-            } else {
-                $dialogs.attachmentDetail(attachment);
-            }
-        }
+    $scope.shareThread = function(thread) {
+        $dialogs.shareEntity(thread);
+    }
 
-        // load data
-        loadThreadList();
-    }]);
+    $scope.showAttachment = function(attachment) {
+        if (attachment.type === 'entity') {
+            window.open(attachment.id, '_blank');
+        } else {
+            $dialogs.attachmentDetail(attachment);
+        }
+    }
+
+    // load data
+    loadThreadList();
+}]);
     
 angular.module('module.qa').controller('ModalSimilarThreadsController', ['$scope', '$modalInstance', '$state', 'qaService', 'UriToolbox', 'thread', 'similarThreadList', 'THREAD_LIST_TYPE', function ($scope, $modalInstance, $state, qaService, UriToolbox, thread, similarThreadList, THREAD_LIST_TYPE) {
 
