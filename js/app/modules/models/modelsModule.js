@@ -690,7 +690,7 @@ this.getCollectionByUri = function(coll){
     },
     UserSrv.getUser(),
     UserSrv.getKey(),
-      UserSrv.getUserSpace() + "entities/entities/" + coll //TODO
+      UserSrv.getUserSpace() + "entities/" + coll //TODO
       );
 
   return defer.promise;     
