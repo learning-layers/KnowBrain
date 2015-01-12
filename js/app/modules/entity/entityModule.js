@@ -36,3 +36,19 @@ entityModule.directive('ngAddEntitySmall', function() {
         templateUrl: MODULES_PREFIX + "/entity/addEntitySmall.tpl.html"
       };
 });
+
+entityModule.directive('ngUserSmall', function() {
+    return {
+        restrict:"E",
+        transclude:true,
+        templateUrl: MODULES_PREFIX + "/entity/userSmall.tpl.html"
+      };
+});
+
+entityModule.directive('ngUser', function() {
+    return {
+        restrict:"E",
+        transclude:true,
+        templateUrl: MODULES_PREFIX + "/entity/user.tpl.html"
+      };
+});

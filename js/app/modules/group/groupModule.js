@@ -138,6 +138,7 @@ angular.module('module.group').controller("newGroupController", ['$scope', '$q',
     };
 }]);
 
+/*
 angular.module('module.group').controller("addMembersController", ['$scope', '$rootScope', 'UserFetchService', function($scope, $rootScope, UserFetchService){
     
     if($scope.groupMembers.length == 0) {
@@ -167,6 +168,7 @@ angular.module('module.group').controller("addMembersController", ['$scope', '$r
        $scope.leaveState();
     };
 }]);
+*/
 
 angular.module('module.group').controller("addEntitiesController", ['$scope', 'i18nService', function($scope, $modalInstance){
     

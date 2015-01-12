@@ -174,7 +174,7 @@ angular.module('module.qa').controller("qaController", ['$scope', '$state', '$q'
                 });
             });
 
-        qaService.searchThreads(keywords, $scope.searchTags, this.searchAnswers)
+        qaService.searchThreads(keywords, $scope.searchTags, $scope.searchAnswers)
             .then(function(result) {
                 $scope.threadList = result;
                 $scope.tagThreadList = result;

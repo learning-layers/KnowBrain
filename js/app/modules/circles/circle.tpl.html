@@ -1,0 +1,17 @@
+<div class="container">
+    <h1>{{circle.label}}</h1>
+    <div id="members-container">
+        <a ng-click="addMember()">
+        <div id="add-member-container" class="user-small-container">
+            <div id="add-member-pic" class="icon-user"></div>
+            <div id="add-member-label">Add</div>
+        </div>
+        </a>
+
+            <ng-user-small ng-repeat="user in groupMembers"></ng-user-small>
+            <ng-user-small ng-repeat="user in groupMembers"></ng-user-small>
+            <ng-user-small ng-repeat="user in groupMembers"></ng-user-small>
+            <ng-user-small ng-repeat="user in groupMembers"></ng-user-small>
+            <ng-user-small ng-repeat="user in groupMembers"></ng-user-small>
+    </div>
+</div>

@@ -1,0 +1,221 @@
+/**
+* Code contributed to the Learning Layers project
+* http://www.learning-layers.eu
+* Development is partly funded by the FP7 Programme of the European Commission under
+* Grant Agreement FP7-ICT-318209.
+* Copyright (c) 2014, Graz University of Technology - KTI (Knowledge Technologies Institute).
+* For a list of contributors see the AUTHORS file at the top-level directory of this distribution.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+* http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
+
+@charset "UTF-8";
+/* CIRCLES MODULE CSS DEFINITONS */
+
+.circle-preview-container {
+    width: 400px;
+    height: 200px;
+    float: left;
+    border-radius: 4px;
+    -webkit-border-radius: 4px;
+    -moz-border-radius: 4px;
+    border: 1px solid;
+    border-color: #eee;
+    background-color: #F7F7F7;
+    cursor: pointer;
+}
+
+
+
+.circle-preview-profile-container {
+    display:inline-block;
+    width: 130px;
+    height: 200px;
+    margin-left: 8px;
+    margin-top: 30px;
+    white-space:normal;
+}
+
+.circle-preview-pic {
+    margin-left: auto;
+    margin-right: auto;
+    display: block;
+    width: 100px;
+    height: 100px;
+    font-size: 100px;
+    display: block;
+    border-radius: 50%;
+    -webkit-border-radius: 50%;
+    -moz-border-radius: 50px;
+}
+
+.circle-preview-title {
+    text-align: center;
+    font-size: 18px;
+    color: #535353;
+}
+
+.circle-preview-members-count {
+    text-align: center;
+    font-size: 14px;
+    color: #999;
+}
+
+
+
+/* CIRCLE */
+
+#members-container {
+    width: 90%;
+    height: 72px;
+    background-color: #F7F7F7;
+    border: 1px solid;
+    border-color: #CFCFCF;
+    border-radius: 5px;
+    white-space:nowrap;
+    overflow: auto;
+}
+
+#friends-container {
+    overflow: auto;
+}
+
+.user-small-container {
+    display:inline-block;
+    width: 60px;
+    height: 65px;
+    margin-left: 8px;
+    margin-top: 3px;
+    white-space:normal;
+}
+
+.user-small-pic {
+    margin-left: auto;
+    margin-right: auto;
+    width: 45px;
+    height: 45px;
+    background-image: url(http://lorempixel.com/400/200/);
+    background-size: cover;
+    display: block;
+    border-radius: 50%;
+    -webkit-border-radius: 50%;
+    -moz-border-radius: 100px;
+    border: 1px solid;
+    border-color: #7C7C7C;
+}
+
+.user-small-label {
+    text-align: center;
+    font-size: 12px;
+    color: #535353;
+}
+
+.user-container {
+    display:inline-block;
+    width: 90px;
+    height: 110px;
+    margin-left: 8px;
+    margin-top: 3px;
+    white-space:normal;
+    cursor: pointer;
+}
+
+.user-pic {
+    position: relative;
+    margin-left: auto;
+    margin-right: auto;
+    width: 85px;
+    height: 85px;
+    background-image: url(http://lorempixel.com/400/200/);
+    background-size: cover;
+    display: block;
+    border-radius: 50%;
+    -webkit-border-radius: 50%;
+    -moz-border-radius: 100px;
+    border: 3px solid;
+    border-color: #7C7C7C;
+    transition: border-color 0.2s ease;
+}
+
+.user-plus {
+    position: absolute;
+  opacity: 1;
+    right: 0;
+    bottom: 0; 
+    width: 25px;
+    height: 25px;
+    text-align: center;
+    line-height: 25px;
+    font-size: 17px;
+    color: white;
+    background-color: #f6a551;
+    border-radius: 50%;
+    -webkit-border-radius: 50%;
+    -moz-border-radius: 100px;
+    border: 2px solid;
+    border-color: #fbd3a9;
+}
+
+.user-plus.ng-hide-add.ng-hide-add-active,
+.user-plus.ng-hide-remove.ng-hide-remove-active {
+  
+    -webkit-transition: opacity 0.5s ease-in-out;
+    -moz-transition: opacity 0.5s ease-in-out;
+    transition: opacity 0.5s ease-in-out;
+}
+
+.user-plus.ng-hide {
+  opacity: 0;
+}
+
+.user-container.friend .user-pic{
+    border-color: #5ba74a;
+}
+
+
+.user-container.selected .user-pic{
+    border-color: #f6a551;
+}
+
+
+.user-label {
+    text-align: center;
+    font-size: 14px;
+    color: #535353;
+}
+
+#add-member-container {
+    color: #959595;
+    transition: color 0.3s ease;
+}
+
+#add-member-pic {
+    margin-left: auto;
+    margin-right: auto;
+    overflow: hidden;
+    width: 45px;
+    height: 45px;
+    font-size: 45px;
+    display: block;
+}
+
+#add-member-label {
+    text-align: center;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+
+#add-member-container:hover{
+    color: #f6a551;
+}

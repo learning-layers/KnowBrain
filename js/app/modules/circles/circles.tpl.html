@@ -1,0 +1,18 @@
+<div class="container" ui-view>
+    <h1>My Circles</h1>
+    <div>
+        <div ng-repeat="circle in circles"
+            ng-show="!ajaxLoading"
+            class="circle-preview-container"
+            ng-click="handleEntryClick(circle)">
+            <div class="circle-preview-profile-container">
+                <div class="icon-circle circle-preview-pic"></div>
+                <div class="circle-preview-title">{{circle.label}}</div>
+                <div class="circle-preview-members-count">
+                    <span class="glyphicon glyphicon-user"></span> {{circle.users.length}}
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>

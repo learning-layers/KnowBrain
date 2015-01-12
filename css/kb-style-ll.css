@@ -32,6 +32,11 @@ body {
     height: 100%;
 }
 
+input[type="text"], textarea {
+outline: none;
+box-shadow:none !important;
+border:1px solid #ccc !important;
+}
 .ajax-loader-white{
     top:3px;
     margin: 0px;

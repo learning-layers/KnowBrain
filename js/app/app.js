@@ -49,6 +49,7 @@ angular.module('knowbrain', [
   'module.qa',
   'module.chat',
   'module.group',
+  'module.circles',
   'module.entity',
   'module.activities',
   'angularSlideables'
