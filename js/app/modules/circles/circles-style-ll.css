@@ -22,10 +22,18 @@
 @charset "UTF-8";
 /* CIRCLES MODULE CSS DEFINITONS */
 
+#add-circle-icon {
+    font-size: 25px;
+}
+
+
 .circle-preview-container {
     width: 400px;
+    max-width: 95%;
     height: 200px;
     float: left;
+    margin-left: 10px;
+    margin-top: 10px;
     border-radius: 4px;
     -webkit-border-radius: 4px;
     -moz-border-radius: 4px;
@@ -34,8 +42,6 @@
     background-color: #F7F7F7;
     cursor: pointer;
 }
-
-
 
 .circle-preview-profile-container {
     display:inline-block;
@@ -218,4 +224,81 @@
 
 #add-member-container:hover{
     color: #f6a551;
+}
+
+/* CREATE CIRCLE */
+
+#new-circle-member-container {
+    height: 335px;
+    overflow-y: scroll;
+}
+
+.circle-profile-devider {
+    border-right: 1px solid #ddd;
+    padding: 10px;
+}
+
+.new-circle-picture {
+    max-width: 100%;
+    opacity: 0.5;
+    position: relative;
+}
+
+.new-circle-picture-frame {
+    border-style: solid;
+    border-width: 2px;
+    border-color: #e7e7e7;
+    position: relative;
+    line-height: 120px;
+    width: 200px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.new-circle-picture-label {
+    cursor: pointer;
+}
+
+.new-circle-picture-label-frame {
+    text-align: center;
+    padding-top: 2%
+}
+
+.new-circle-name-frame {
+    width: 100%;
+    height: 25%;
+}
+
+.new-circle-name-input {
+    display: block;
+    width: 50%;
+}
+
+.new-circle-name-label {
+    width: display:   block;
+}
+
+.new-circle-desc-frame {
+    width: 100%;
+    height: 75%;
+    margin-top: 20px;
+}
+
+.new-circle-desc-input {
+    resize: none;
+    width: 100%;
+    height: 70%;
+}
+
+.new-circle-desc-label {
+    width: display:   block;
+}
+
+.new-circle-content {
+    padding: 10px;
+    height: 390px;
+}
+
+.new-circle-tab {
+    cursor: pointer;
 }

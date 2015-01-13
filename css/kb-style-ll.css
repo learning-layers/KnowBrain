@@ -98,6 +98,16 @@ a:hover{
     color: #d79634;
 }
 
+.highlight {
+    color: #959595;
+    transition: color 0.3s ease;
+    cursor: pointer;
+}
+
+.highlight:hover {
+    color: #f6a551;
+}
+
 /* BUTTONS */
 
 .btn-success{

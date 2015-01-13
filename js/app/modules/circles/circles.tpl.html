@@ -1,9 +1,17 @@
 <div class="container" ui-view>
-    <h1>My Circles</h1>
+    <div class="row clearfix">
+        <div class="col-md-11 column">
+            <h1>My Circles</h1>
+        </div>
+        <div class="col-md-1 column">
+            <div id="add-circle-icon" class="icon-add-circle highlight" ng-click="addCircle()"></div>
+        </div>
+    </div>
+
     <div>
         <div ng-repeat="circle in circles"
             ng-show="!ajaxLoading"
-            class="circle-preview-container"
+            class="circle-preview-container highlight"
             ng-click="handleEntryClick(circle)">
             <div class="circle-preview-profile-container">
                 <div class="icon-circle circle-preview-pic"></div>
@@ -13,6 +21,5 @@
                 </div>
             </div>
         </div>
-
     </div>
 </div>

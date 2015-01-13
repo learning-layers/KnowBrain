@@ -1,11 +1,11 @@
-<div ng-animate="'slide'" class="slide-frame" ng-controller="newGroupController">
+<div ng-animate="'slide'" class="slide-frame">
 
 <div class="share-entity-header modal-header">
 	<button type="button" class="share-entity-close-button close"
 		ng-click="close()" style="margin-top: 5px;" aria-hidden="true">&times;</button>
 
 	<span class="share-entity-type-icon glyphicon glyphicon-user"></span> <span
-		class="share-entity-modal-title modal-title">New Group</span>
+		class="share-entity-modal-title modal-title">New Circle</span>
 
 	<div class="clearfix"></div>
 </div>
@@ -16,49 +16,38 @@
 		<div class="col-md-4 column" style="height: 100%;">
 			<div id="upload_pic"
 				style="position: relative; width: 100%; height: 100%;">
-				<div class="new-group-picture-frame">
-					<img class="new-group-picture" src="images/group_pic_dummy.jpg" />
-				</div>
-				<div class="new-group-picture-label-frame">
-					<a class="new-group-picture-label" ng-click="uploadPic()"> + Upload group picture</a>
+                <div class="icon-circle circle-preview-pic"></div>
+				<div class="new-circle-picture-label-frame">
+					<a class="new-circle-picture-label" ng-click="uploadPic()"> + Upload circle picture</a>
 				</div>
 			</div>
 		</div>
 		<div class="col-md-8 column" style="height: 100%">
-			<div class="new-group-name-frame">
-				<label class="new-group-name-label">
-					<p>Group name</p>
+			<div class="new-circle-name-frame">
+				<label class="new-circle-name-label">
+					<p>Circle name</p>
 				</label> 
-				<input class="new-group-name-input" ng-model="group.name" />
+				<input class="new-circle-name-input" ng-model="circle.name" />
 			</div>
-			<div class="new-group-desc-frame">
-				<label class="new-group-desc-label">
-					<p>Group description</p>
+			<div class="new-circle-desc-frame">
+				<label class="new-circle-desc-label">
+					<p>Circle description</p>
 				</label>
-				<textarea class="new-group-desc-input" ng-model="group.desc"></textarea>
+				<textarea class="new-circle-desc-input" ng-model="circle.desc"></textarea>
 			</div>
 		</div>
 	</div>
-	<div class="row clearfix new-group-content">
+	<div class="row clearfix new-circle-content">
 		<div class="col-md-12 column">
 			<tabset> 
-				<tab class="new-group-tab" heading="Members"
+				<tab class="new-circle-tab" heading="Members"
 					ui-sref-active="active">
-					<div id="group-member-container" style="padding-top: 20px;">
-						<div style="" ng-show="!ajaxLoading" id="upload-box-small"
-							class="kb-fluid-container pull-left" ng-click="addMembers()"
-							tooltip-placement="right">
-							add
-							<div id="upload-link-small" class="glyphicon glyphicon-plus-sign"></div>
-						</div>
-						<ng-entity-small
-							ng-repeat="entry in groupMembers | filter:userFilter"
-							ng-show="entry.isSelected">
-						</ng-entity-small>
+					<div id="new-circle-member-container" style="padding-top: 20px;">
+						<ng-user ng-hide="user.id == user+'/'" ng-click="selectUser(user)" ng-repeat="user in allUsers | filter: userFilter"></ng-user>
 					</div>
 				</tab> 
-				<tab class="new-group-tab" heading="Resources">
-					<div id="group-entities-container" style="padding-top: 20px;">
+				<tab class="new-circle-tab" heading="Resources">
+					<div id="circle-entities-container" style="padding-top: 20px;">
 						<div ng-show="!ajaxLoading" id="upload-box-small"
 							class="kb-fluid-container pull-left" ng-click="addEntities()"
 							tooltip-placement="right">
@@ -77,9 +66,9 @@
 	<div class="row clearfix" style="padding: 5px;">
 		<div class="col-md-6 column"></div>
 		<div class="col-md-6 column">
-			<div class="btn-group" style="float: right">
+			<div class="btn-circle" style="float: right">
 				<button class="btn btn-default" type="button"
-					ng-click="createGroup()">Create</button>
+					ng-click="createCircle()">Create</button>
 			</div>
 		</div>
 	</div>

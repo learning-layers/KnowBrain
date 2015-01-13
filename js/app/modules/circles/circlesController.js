@@ -42,7 +42,7 @@ angular.module('module.circles').config(function($stateProvider) {
 /**
  * CONTROLLER
  */
-angular.module('module.circles').controller("CirclesController", ['$scope', '$state', '$controller', '$dialogs', 'GroupFetchService', 'UriToolbox', function($scope, $state, $controller, $dialogs, GroupFetchService, UriToolbox) {
+angular.module('module.circles').controller("CirclesController", function($scope, $state, $modal, $controller, $dialogs, GroupFetchService, UriToolbox) {
     $scope.circles = [];
     var promise = GroupFetchService.getUserGroups($scope.profileId);
     promise.then(function(result) {
@@ -55,7 +55,23 @@ angular.module('module.circles').controller("CirclesController", ['$scope', '$st
             });
         }
     };
-}]);
+    $scope.addCircle = function() {
+        $modal.open({
+            templateUrl: MODULES_PREFIX + '/circles/createCircle.tpl.html',
+            controller: 'createCircleController',
+            backdrop: true,
+            windowClass: "modal-huge",
+            resolve: {
+                excludeUsers: function () {
+                    return $scope.groupMembers;
+                }
+            }
+        }).result.then(function(result) {
+           
+        });
+    };
+
+});
 
 angular.module('module.circles').controller("CircleController", function($scope, $state, $modal, $controller, $dialogs, GroupFetchService, UserService, UserFetchService, UserModel) {
     $scope.circleId = $state.params.id;
@@ -134,4 +150,69 @@ angular.module('module.circles').controller("addMembersController", function($q,
     $scope.addUsers = function(users) {
         $modalInstance.close(users);
     }
+});
+
+angular.module('module.circles').controller("createCircleController", function($q, $scope, $rootScope, $modalInstance, UserFetchService, GroupFetchService, UserService, excludeUsers) {
+    $scope.circle = {name: "", desc: ""};
+    $scope.allUsers = [];
+    $scope.friends = [];
+    $scope.selectedUsers = [];
+    $scope.selectedResources = [];
+
+    var friendsPromise = UserFetchService.getFriends();
+    friendsPromise.then(function(result) {
+        for (var i = 0; i < result.friends.length; i++) {
+            result.friends[i].isFriend = true;
+            $scope.friends.push(result.friends[i]);
+        }
+        var allUsersPromise = UserFetchService.getAllUsers();
+        allUsersPromise.then(function(result) {
+            $scope.allUsers = result.users;
+        });
+    });
+
+    $scope.selectUser = function(user) {
+        user.isSelected = !user.isSelected;
+        if (user.isSelected) {
+            $scope.selectedUsers.push(user);
+        } else {
+            $scope.selectedUsers = $.grep($scope.selectedUsers, function(o, i) {
+                return o.id === user.id;
+            }, true);
+        }
+    };
+
+    $scope.createCircle = function() {
+        var userUrls = []; 
+        var entityUrls = [];
+        
+        var promises = [];
+        
+        for(var i=0; i < $scope.selectedResources.length; i++) {
+            
+            if($scope.selectedResources[i].uploaded == false && $scope.selectedResources[i].type == ENTITY_TYPES.file) {
+                var file = $scope.selectedResources[i];
+                promises.push(file.uploadFile());
+            } 
+            else if($scope.selectedResources[i].type == ENTITY_TYPES.link) {
+                entityUrls.push($scope.selectedResources[i].id);
+            }
+        }
+        
+        $q.all(promises).then(function(results) {
+            
+            for(var i=0; i < results.length; i++) {
+                entityUrls.push(results[i].id);
+            }
+            
+            for(var i=0; i < $scope.selectedUsers.length; i++) {
+                    userUrls.push($scope.selectedUsers[i].id);
+            }
+            
+            var promise = GroupFetchService.createGroup($scope.circle.name, entityUrls, userUrls, $scope.circle.desc);
+            promise.then(function(result) {
+                $modalInstance.close();
+            });
+        });
+    };
 });

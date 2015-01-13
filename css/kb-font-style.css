@@ -23,6 +23,10 @@
 	-moz-osx-font-smoothing: grayscale;
 }
 
+.icon-add-circle:before {
+	content: "\e602";
+}
+
 .icon-circle:before {
 	content: "\e601";
 }
