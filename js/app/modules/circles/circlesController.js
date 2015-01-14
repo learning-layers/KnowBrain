@@ -78,7 +78,7 @@ angular.module('module.circles').controller("CircleController", function($scope,
     $scope.circle = null;
     $scope.groupMembers = [];
 
-    var promise = GroupFetchService.getGroup(UserService.getUserSpace() + "entities/entities/" + $scope.circleId);
+    var promise = GroupFetchService.getGroup("http://sss.eu/" + $scope.circleId);
     promise.then(function(result) {
         $scope.circle = result.circle;
         var memberIds = $scope.circle.users;
