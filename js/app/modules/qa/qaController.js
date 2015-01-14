@@ -530,7 +530,8 @@ angular.module('module.qa').controller("questionController", ['$scope', '$state'
                     });
         }
         
-        loadThreadWithEntries(UserSrv.getUserSpace() + "entities/entities/" + $stateParams.id)
+        loadThreadWithEntries(
+          "http://sss.eu/" + $stateParams.id)  //UserSrv.getUserSpace() + "entities/"  + $stateParams.id
                 .then(loadSimilarThreadList);
     }]);
 /**
