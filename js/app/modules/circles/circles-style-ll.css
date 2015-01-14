@@ -28,8 +28,7 @@
 
 
 .circle-preview-container {
-    width: 400px;
-    max-width: 95%;
+    width: 45%;
     height: 200px;
     float: left;
     margin-left: 10px;
@@ -41,6 +40,12 @@
     border-color: #eee;
     background-color: #F7F7F7;
     cursor: pointer;
+}
+
+@media (min-width: 600px) {
+    .circle-preview-container {
+        width: 30%;
+    }
 }
 
 .circle-preview-profile-container {
@@ -71,10 +76,10 @@
     color: #535353;
 }
 
-.circle-preview-members-count {
+.circle-preview-entities-count {
     text-align: center;
     font-size: 14px;
-    color: #999;
+    color: #BBB;
 }
 
 
@@ -265,14 +270,11 @@
 }
 
 .new-circle-name-frame {
+    margin-top: 8px;
     width: 100%;
     height: 25%;
 }
 
-.new-circle-name-input {
-    display: block;
-    width: 50%;
-}
 
 .new-circle-name-label {
     width: display:   block;
@@ -284,12 +286,6 @@
     margin-top: 20px;
 }
 
-.new-circle-desc-input {
-    resize: none;
-    width: 100%;
-    height: 70%;
-}
-
 .new-circle-desc-label {
     width: display:   block;
 }
@@ -299,6 +295,14 @@
     height: 390px;
 }
 
-.new-circle-tab {
-    cursor: pointer;
+.v-center {
+    display:table !important;
+    height:200px;
 }
+
+#upload-pic {
+    display:table-cell;
+    vertical-align:middle;
+    text-align:center;
+}
+

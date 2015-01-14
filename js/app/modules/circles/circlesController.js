@@ -67,13 +67,16 @@ angular.module('module.circles').controller("CirclesController", function($scope
                 }
             }
         }).result.then(function(result) {
-           
+            var promise = GroupFetchService.getGroup(result);
+            promise.then(function(result) {
+                $scope.circles.push(result.circle);
+            });
         });
     };
 
 });
 
-angular.module('module.circles').controller("CircleController", function($scope, $state, $modal, $controller, $dialogs, GroupFetchService, UserService, UserFetchService, UserModel) {
+angular.module('module.circles').controller("CircleController", function($scope, $state, $modal, $controller, $dialogs, GroupFetchService, UserService, UserFetchService, UserModel, UriToolbox) {
     $scope.circleId = $state.params.id;
     $scope.circle = null;
     $scope.groupMembers = [];
@@ -109,7 +112,7 @@ angular.module('module.circles').controller("CircleController", function($scope,
                 $scope.groupMembers.push(result[i]);
                 userUrls.push(result[i].id);
             }
-            var promise = GroupFetchService.addMembersToGroup(userUrls, $scope.groupId);
+            var promise = GroupFetchService.addMembersToGroup(userUrls, $scope.circle.id);
             promise.then(function(result) {
                 //$rootScope.$apply();
             });
@@ -150,14 +153,17 @@ angular.module('module.circles').controller("addMembersController", function($q,
     $scope.addUsers = function(users) {
         $modalInstance.close(users);
     }
+
+    $scope.close = function() {
+        $modalInstance.close();
+    }
 });
 
-angular.module('module.circles').controller("createCircleController", function($q, $scope, $rootScope, $modalInstance, UserFetchService, GroupFetchService, UserService, excludeUsers) {
+angular.module('module.circles').controller("createCircleController", function($q, $scope, $modal, $rootScope, $modalInstance, UserFetchService, GroupFetchService, UserService, ENTITY_TYPES) {
     $scope.circle = {name: "", desc: ""};
     $scope.allUsers = [];
     $scope.friends = [];
     $scope.selectedUsers = [];
-    $scope.selectedResources = [];
 
     var friendsPromise = UserFetchService.getFriends();
     friendsPromise.then(function(result) {
@@ -184,35 +190,36 @@ angular.module('module.circles').controller("createCircleController", function($
 
     $scope.createCircle = function() {
         var userUrls = []; 
-        var entityUrls = [];
-        
-        var promises = [];
-        
-        for(var i=0; i < $scope.selectedResources.length; i++) {
-            
-            if($scope.selectedResources[i].uploaded == false && $scope.selectedResources[i].type == ENTITY_TYPES.file) {
-                var file = $scope.selectedResources[i];
-                promises.push(file.uploadFile());
-            } 
-            else if($scope.selectedResources[i].type == ENTITY_TYPES.link) {
-                entityUrls.push($scope.selectedResources[i].id);
-            }
+        for(var i=0; i < $scope.selectedUsers.length; i++) {
+            userUrls.push($scope.selectedUsers[i].id);
         }
-        
-        $q.all(promises).then(function(results) {
-            
-            for(var i=0; i < results.length; i++) {
-                entityUrls.push(results[i].id);
-            }
-            
-            for(var i=0; i < $scope.selectedUsers.length; i++) {
-                    userUrls.push($scope.selectedUsers[i].id);
-            }
-            
-            var promise = GroupFetchService.createGroup($scope.circle.name, entityUrls, userUrls, $scope.circle.desc);
-            promise.then(function(result) {
-                $modalInstance.close();
-            });
+        var promise = GroupFetchService.createGroup($scope.circle.name, null, userUrls, $scope.circle.desc);
+        promise.then(function(result) {
+            $modalInstance.close(result.circle);
         });
     };
+
+    $scope.openAddResources = function() {
+        var modalInstance = $modal.open({
+            templateUrl: MODULES_PREFIX + '/qa/modalAddAttachments.tpl.html',
+            controller: 'ModalAddAttachmentsController',
+            size: 'lg',
+            resolve: {}
+        });
+        modalInstance.result.then(function(fileList) {
+            fileList.forEach(function(entry) {
+                if (entry.id !== null && entry.id !== undefined) {
+                    $scope.selectedResources.push(entry);
+                } else {
+                    // TODO: upload files
+                }
+            });
+        }, function() {
+            //$log.info('Modal dismissed at: ' + new Date());
+        });
+    };
+
+    $scope.close = function() {
+        $modalInstance.close();
+    }
 });

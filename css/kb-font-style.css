@@ -23,6 +23,10 @@
 	-moz-osx-font-smoothing: grayscale;
 }
 
+.icon-file:before {
+	content: "\e603";
+}
+
 .icon-add-circle:before {
 	content: "\e602";
 }
@@ -31,6 +35,14 @@
 	content: "\e601";
 }
 
-.icon-user:before {
+.icon-user-in-circle:before {
 	content: "\e600";
+}
+
+.icon-add-user:before {
+	content: "\e605";
+}
+
+.icon-user:before {
+	content: "\e604";
 }

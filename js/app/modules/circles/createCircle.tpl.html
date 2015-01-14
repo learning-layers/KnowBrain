@@ -4,7 +4,7 @@
 	<button type="button" class="share-entity-close-button close"
 		ng-click="close()" style="margin-top: 5px;" aria-hidden="true">&times;</button>
 
-	<span class="share-entity-type-icon glyphicon glyphicon-user"></span> <span
+	<span class="share-entity-type-icon icon-add-circle"></span> <span
 		class="share-entity-modal-title modal-title">New Circle</span>
 
 	<div class="clearfix"></div>
@@ -12,62 +12,39 @@
 
 
 <div class="container" style="width: 100%">
-	<div class="row clearfix" style="padding: 10px;">
-		<div class="col-md-4 column" style="height: 100%;">
-			<div id="upload_pic"
-				style="position: relative; width: 100%; height: 100%;">
+	<div class="row clearfix">
+		<div class="col-md-4 column v-center">
+			<div id="upload-pic">
                 <div class="icon-circle circle-preview-pic"></div>
 				<div class="new-circle-picture-label-frame">
 					<a class="new-circle-picture-label" ng-click="uploadPic()"> + Upload circle picture</a>
 				</div>
 			</div>
 		</div>
-		<div class="col-md-8 column" style="height: 100%">
+		<div class="col-md-8 column">
 			<div class="new-circle-name-frame">
 				<label class="new-circle-name-label">
 					<p>Circle name</p>
 				</label> 
-				<input class="new-circle-name-input" ng-model="circle.name" />
+				<input type="text" class="form-control" ng-model="circle.name" />
 			</div>
 			<div class="new-circle-desc-frame">
 				<label class="new-circle-desc-label">
 					<p>Circle description</p>
 				</label>
-				<textarea class="new-circle-desc-input" ng-model="circle.desc"></textarea>
+				<textarea class="form-control" ng-model="circle.desc"></textarea>
 			</div>
 		</div>
 	</div>
-	<div class="row clearfix new-circle-content">
-		<div class="col-md-12 column">
-			<tabset> 
-				<tab class="new-circle-tab" heading="Members"
-					ui-sref-active="active">
-					<div id="new-circle-member-container" style="padding-top: 20px;">
+	<label>Members</label>
+					<div id="new-circle-member-container">
 						<ng-user ng-hide="user.id == user+'/'" ng-click="selectUser(user)" ng-repeat="user in allUsers | filter: userFilter"></ng-user>
 					</div>
-				</tab> 
-				<tab class="new-circle-tab" heading="Resources">
-					<div id="circle-entities-container" style="padding-top: 20px;">
-						<div ng-show="!ajaxLoading" id="upload-box-small"
-							class="kb-fluid-container pull-left" ng-click="addEntities()"
-							tooltip-placement="right">
-							add
-							<div id="upload-link-small" class="glyphicon glyphicon-plus-sign"></div>
-						</div>
-						<ng-entity-small
-							ng-repeat="entry in entities"
-							ng-show="entry.isSelected">
-						</ng-entity-small>
-					</div>
-				</tab> 
-			</tabset>
-		</div>
-	</div>
 	<div class="row clearfix" style="padding: 5px;">
 		<div class="col-md-6 column"></div>
 		<div class="col-md-6 column">
 			<div class="btn-circle" style="float: right">
-				<button class="btn btn-default" type="button"
+				<button class="btn btn-success" type="button"
 					ng-click="createCircle()">Create</button>
 			</div>
 		</div>
