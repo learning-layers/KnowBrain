@@ -702,17 +702,16 @@ angular.module('module.qa').service("qaService", ['$q', '$rootScope', 'UserServi
                     },
                     UserSrv.getUser(),
                     UserSrv.getKey(),
-                    null,        //keywordsToSearchFor
                     false,                       //includeTextualContent
-                    keywordsToSearchFor,                       //wordsToSearchFor
+                    keywordsToSearchFor,         //wordsToSearchFor
                     tagList.length > 0,         //includeTags
                     tagList,                    //tagsToSearchFor
                     false,                      //includeMIs
                     null,                       //misToSearchFor
                     true,                      //includeLabel
-                    keywordsToSearchFor,                       //labelsToSearchFor
+                    keywordsToSearchFor,       //labelsToSearchFor
                     true,                      //includeDescription
-                    keywordsToSearchFor,                       //descriptionsToSearchFor
+                    keywordsToSearchFor,       //descriptionsToSearchFor
                     typesToSearchOnlyFor,       //typesToSearchOnlyFor
                     false,                      //includeOnlySubEntities
                     null,                       //entitiesToSearchWithin
@@ -831,7 +830,6 @@ angular.module('module.qa').service("qaService", ['$q', '$rootScope', 'UserServi
                     },
                     UserSrv.getUser(),
                     UserSrv.getKey(),
-                    null,                       //keywordsToSearchFor
                     false,                      //includeTextualContent
                     null,                       //wordsToSearchFor
                     true,                       //includeTags
