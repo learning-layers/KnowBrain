@@ -154,7 +154,7 @@ angular.module('dialogs.controllers', ['ui.bootstrap.modal', 'module.i18n', 'mod
                     angular.forEach(entry.tags, function (tag, key) {
                         $scope.tags.push(tag);
                     });
-                    if (entry.overallRating !== undefined)
+                    if (entry.overallRating !== null && entry.overallRating.score != null)
                         $scope.entryRating = entry.overallRating.score;
 
                     if (isSearchResult)

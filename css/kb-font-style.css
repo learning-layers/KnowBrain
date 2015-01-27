@@ -23,8 +23,48 @@
 	-moz-osx-font-smoothing: grayscale;
 }
 
+.icon-file-code:before {
+	content: "\e607";
+}
+
+.icon-file-movie:before {
+	content: "\e608";
+}
+
+.icon-file-audio:before {
+	content: "\e609";
+}
+
+.icon-file-archive:before {
+	content: "\e60a";
+}
+
+.icon-file-image:before {
+	content: "\e60b";
+}
+
+.icon-file-powerpoint:before {
+	content: "\e60c";
+}
+
+.icon-file-excel:before {
+	content: "\e60d";
+}
+
+.icon-file-word:before {
+	content: "\e60e";
+}
+
+.icon-file-pdf:before {
+	content: "\e60f";
+}
+
+.icon-file-text:before {
+	content: "\e610";
+}
+
 .icon-file:before {
-	content: "\e603";
+	content: "\e606";
 }
 
 .icon-add-circle:before {
@@ -39,7 +79,7 @@
 	content: "\e600";
 }
 
-.icon-add-user:before {
+.icon-user-add:before {
 	content: "\e605";
 }
 

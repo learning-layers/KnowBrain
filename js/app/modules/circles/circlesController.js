@@ -34,9 +34,14 @@ angular.module('module.circles').config(function($stateProvider) {
         templateUrl: MODULES_PREFIX + '/circles/circles.tpl.html'
     });
     $stateProvider.state('app.circles.circle', {
-        url: '/circles/:id',
+        url: '/:id',
         controller: 'CircleController',
         templateUrl: MODULES_PREFIX + '/circles/circle.tpl.html'
+    });
+    $stateProvider.state('app.circles.circle.resources', {
+        url: '/resources',
+        controller: 'CircleResourcesController',
+        templateUrl: MODULES_PREFIX + '/circles/resources.tpl.html'
     });
 });
 /**
@@ -76,25 +81,48 @@ angular.module('module.circles').controller("CirclesController", function($scope
 
 });
 
-angular.module('module.circles').controller("CircleController", function($scope, $state, $modal, $controller, $dialogs, GroupFetchService, UserService, UserFetchService, UserModel, UriToolbox) {
+angular.module('module.circles').controller("CircleController", function($compile, $scope, $state, $modal, $controller, $dialogs, GroupFetchService, UserService, UserFetchService, UserModel, UriToolbox) {
     $scope.circleId = $state.params.id;
     $scope.circle = null;
     $scope.groupMembers = [];
+    $scope.circles = [];
+    $scope.tab = 0;
 
-    var promise = GroupFetchService.getGroup("http://sss.eu/" + $scope.circleId);
-    promise.then(function(result) {
-        $scope.circle = result.circle;
-        var memberIds = $scope.circle.users;
-        for (var i = 0; i < memberIds.length; i++) {
-            var promise = UserFetchService.getUser(memberIds[i]);
-            promise.then(function(result) {
-                var user = new UserModel();
-                user.id = result.desc.entity;
-                user.label = result.desc.label;
-                $scope.groupMembers.push(user);
-            });
-        }
+    var circlesPromise = GroupFetchService.getUserGroups($scope.profileId);
+    circlesPromise.then(function(result) {
+        $scope.circles = result.circles;
     });
+
+    $scope.groupMembers = [];
+        var promise = GroupFetchService.getGroup("http://sss.eu/" + $scope.circleId);
+        promise.then(function(result) {
+            $scope.circle = result.circle;
+            var memberIds = $scope.circle.users;
+            for (var i = 0; i < memberIds.length; i++) {
+                var promise = UserFetchService.getUser(memberIds[i]);
+                promise.then(function(result) {
+                    var user = new UserModel();
+                    user.id = result.desc.entity;
+                    user.label = result.desc.label;
+                    $scope.groupMembers.push(user);
+                });
+            }
+        });
+
+    $scope.setTab = function(index) {
+        $scope.tab = index;
+        if (index == 1) {
+            $state.go("app.circles.circle.resources");
+        };
+    }
+
+
+    $scope.showCircle = function(circleId) {
+            $state.go('app.circles.circle', {
+                id: UriToolbox.extractUriPathnameHash(circleId)
+            });
+    };
+
     $scope.addMember = function() {
         $modal.open({
             templateUrl: MODULES_PREFIX + '/circles/addMembers.tpl.html',
@@ -118,6 +146,95 @@ angular.module('module.circles').controller("CircleController", function($scope,
             });
         });
     }
+
+    $scope.friend = function(user) {
+        UserService.addFriend(user.id);
+    }
+
+    $scope.$on('ngRepeatFinished', function(ngRepeatFinishedEvent) {
+        $(function () {
+            $('[data-toggle="popover"]').popover({ html : true })
+    .click(function(ev) {
+     //this is workaround needed in order to make ng-click work inside of popover
+     $compile($('.popover.in').contents())($scope);
+});
+        })
+    });
+});
+
+angular.module('module.circles').controller("CircleResourcesController", function($scope, $state, $q, $dialogs, GroupFetchService, EntityFetchService, ENTITY_TYPES){
+    
+    $scope.entities = [];
+    
+    var promise = GroupFetchService.getGroup("http://sss.eu/" + $scope.circleId);
+        
+    promise.then(function(result) {
+        
+        var circle = result.circle;
+        var entityIds = circle.entities;
+        for(var i=0; i < entityIds.length; i++) {
+            var promise = EntityFetchService.getEntityByUri(entityIds[i], false, false, false);
+            promise.then(function(result){
+                $scope.entities.push(result);
+            });
+        }
+    });
+    
+    $scope.addEntity = function() {
+
+        var states = {
+                "choose": MODULES_PREFIX+"/group/addEntities.tpl.html",
+                "upload": MODULES_PREFIX+"/group/addEntitiesUpload.tpl.html",
+                "link": MODULES_PREFIX+"/group/addEntitiesLink.tpl.html"
+                //TODO: Add entities from collection
+                
+        };
+        
+        var ctrlFunction = function($scope) {
+            $scope.entities = [];
+        };
+        
+        $dialogs.newModal(states, ctrlFunction, "modal-huge").result.then(function (result) {
+            
+            var entityUrls = [];
+            
+            var promises = [];
+            
+            for(var i=0; i < result.length; i++) {
+                
+                if(result[i].type == ENTITY_TYPES.file) {
+                    var file = result[i];
+                    promises.push(file.uploadFile());
+                } 
+                else if(result[i].type == ENTITY_TYPES.link) {
+                    entityUrls.push(result[i].id);
+                }
+            }
+            
+            $q.all(promises).then(function(results) {
+                
+                for(var i=0; i < results.length; i++) {
+                    entityUrls.push(results[i].id);
+                }
+                
+                var promise = GroupFetchService.addEntitiesToGroup(entityUrls, $scope.groupId);
+                
+                promise.then(function(result) {
+                   // $scope.$apply();
+                });
+            });
+        });
+    }
+
+            $scope.handleEntryClick = function (entry) {
+
+            if (entry.isCollection()) {
+                $scope.openCollection(entry.uriPathnameHash);
+            } else {
+                var dialog = $dialogs.entryDetail(entry);
+            }
+
+        };
 });
 
 angular.module('module.circles').controller("addMembersController", function($q, $scope, $rootScope, $modalInstance, UserFetchService, UserService, excludeUsers) {

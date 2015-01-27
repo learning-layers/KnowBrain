@@ -17,7 +17,7 @@
 			id="collection-entry-preview-box-glyphicon" class="glyphicon glyphicon-folder-close">
 			</div>
 			<div ng-switch-when="file" style="position: relative; z-index: 9;"
-			id="collection-entry-preview-box-glyphicon" class="glyphicon glyphicon-file">
+			id="collection-entry-preview-box-glyphicon" ng-class="{'icon-file' : entry.fileType == null, 'icon-file-image' : entry.fileType == 'image', 'icon-file-pdf' : entry.mimeType == 'application/pdf', 'icon-file-audio' : entry.fileType == 'audio'}">
 			</div>
 			<div ng-switch-when="entity" style="position: relative; z-index: 9;"
 			id="collection-entry-preview-box-glyphicon" class="glyphicon glyphicon-link">

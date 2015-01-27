@@ -147,6 +147,13 @@ a.list-group-item.active>.badge, .nav-pills>.active>a>.badge {
     color: #f6a551;
 }
 
+a.list-group-item.active, a.list-group-item.active:hover, a.list-group-item.active:focus {
+    z-index: 2;
+    color: #fff;
+    background-color: #f6a551;
+    border-color: #d79634;
+}
+
 textarea.form-control {
     background-color: #fef3e9;
 }

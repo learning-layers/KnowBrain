@@ -176,5 +176,3 @@ angular.module('knowbrain').controller('MainController', ['$scope', 'sharedServi
             });
     }
 }]);
-
-

@@ -1,13 +1,34 @@
 <div class="container">
-    <h1>{{circle.label}}</h1>
-    <div id="members-container">
-        <a ng-click="addMember()">
-        <div id="add-member-container" class="user-small-container">
-            <div id="add-member-pic" class="icon-user-in-circle"></div>
-            <div id="add-member-label">Add</div>
+    <div class="col-md-3 column">
+        <div id="circles-list">
+            <h4>Circles</h4>
+            <ul class="list-group">
+                <a class="list-group-item" ng-class="{ 'active': item.id == circle.id }" ng-click="showCircle(item.id)" ng-repeat="item in circles">
+                <div>{{item.label}}</div>
+                </a>
+            </ul>
         </div>
-        </a>
-
-            <ng-user-small ng-repeat="user in groupMembers"></ng-user-small>
     </div>
-</div>
+    <div class="col-md-9 column">
+        <div class="row">
+        <h1>{{circle.label}}</h1>
+        {{circle.description}}
+        </div>
+        <div class="row">
+            <div id="members-container">
+                <a ng-click="addMember()">
+                <div id="add-member-container" class="user-small-container">
+                    <div id="add-member-pic" class="icon-user-in-circle"></div>
+                    <div id="add-member-label">Add</div>
+                </div>
+                </a>
+                <ng-user-small ng-repeat="user in groupMembers" on-finish-ng-repeat-load="ngRepeatFinished"></ng-user-small>
+            </div>
+        </div>
+        <ul class="nav nav-tabs">
+            <li role="presentation" ng-class="{'active' : tab == 0}" ng-click="setTab(0)"><a>Activities</a></li>
+            <li role="presentation" ng-class="{'active' : tab == 1}" ng-click="setTab(1)"><a>Resources</a></li>
+        </ul>
+        <div ui-view autoscroll="false">
+        </div>
+    </div>

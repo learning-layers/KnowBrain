@@ -467,6 +467,8 @@ angular.module('module.models').factory('EntityModel', ['$q', '$rootScope','User
     this.type       = null;
     this.pos = null;
     this.mimeType = null;
+    this.fileType = null;
+    this.fileExtension = null;
     this.uploaded = false;
     this.fileHandle = null;
 
@@ -477,10 +479,10 @@ angular.module('module.models').factory('EntityModel', ['$q', '$rootScope','User
 
         var a = document.createElement("a");
 
-        if(jSGlobals.endsWith(self.label, "." + self.mimeType)){
+        if(jSGlobals.endsWith(self.label, "." + self.fileExtension)){
           a.download    = self.label;
         }else{
-          a.download    = self.label + "." + self.mimeType;  
+          a.download    = self.label + "." + self.fileExtension;  
         }
 
         a.href        = window.URL.createObjectURL(fileAsBlob);
@@ -526,6 +528,7 @@ angular.module('module.models').factory('EntityModel', ['$q', '$rootScope','User
 
     return defer.promise;
   };
+
   
   Entity.prototype.uploadFile = function(){
       var defer = $q.defer();
@@ -719,14 +722,14 @@ angular.module('module.models').service("EntityFetchService", ['$q', '$rootScope
 
       if(entity.type == ENTITY_TYPES.file){
 
-        var mimeType = jSGlobals.removeTrailingSlash(entity.id);
-
-        if(jSGlobals.lastIndexOf(mimeType, jSGlobals.dot) === -1){
-          console.log("could not determine mime-type");
+        entity.mimeType = result.mimeType;
+        entity.fileExtension = result.fileExt;
+        
+        if (result.mimeType.indexOf('/') > 0) {
+          entity.fileType = result.mimeType.substr(0, result.mimeType.indexOf('/'));
+        } else {
+          entity.fileType = result.mimeType;
         }
-
-        entity.mimeType = jSGlobals.substring(mimeType, jSGlobals.lastIndexOf(mimeType, jSGlobals.dot) + 1, jSGlobals.length(mimeType));
-
       }
 
       if(result.discs.length > 0){
@@ -924,6 +927,25 @@ angular.module('module.models').service('UserFetchService', ['$q', '$rootScope',
 
        return defer.promise;
     };
+
+    this.addFriend = function(friendId) {
+      var defer = $q.defer();
+        var self = this;
+
+        new SSFriendAdd(
+            function(result){
+                defer.resolve(result);
+            },
+            function(error){
+                console.log(error);
+            },
+            UserSrv.getUser(),
+            UserSrv.getKey(),
+            friendId
+        );
+
+       return defer.promise;
+    }
     
     this.getFriends = function() {
 

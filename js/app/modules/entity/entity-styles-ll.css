@@ -17,7 +17,7 @@
 
 .collection-entry:hover .collection-entry-checkbox-wrapper{
   cursor: pointer;
-  color: #2a6496;
+  color: #f6a551;
   visibility: visible;
 }
 
@@ -162,8 +162,8 @@
 }
 
 #upload-box:hover {
-  border:  2px dashed #2a6496;
-  color:  #2a6496;
+  border:  2px dashed #f6a551;
+  color:  #f6a551;
 }
 
 #upload-box div {
@@ -209,8 +209,8 @@
 }
 
 #upload-box-small:hover {
-  border:  2px dashed #2a6496;
-  color:  #2a6496;
+  border:  2px dashed #f6a551;
+  color:  #f6a551;
 }
 
 #upload-box-small div {
