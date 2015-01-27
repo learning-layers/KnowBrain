@@ -196,7 +196,6 @@ angular.module('module.search').controller("SearchController", [
     function(error){ console.log(error); }, 
     UserSrv.getUser(),
     UserSrv.getKey(),
-    null, //keywordsToSearchFor
     false, //includeTextualContent,
     null, //wordsToSearchFor,
     true, //includeTags,
@@ -237,7 +236,6 @@ angular.module('module.search').controller("SearchController", [
     function(error){ console.log(error); }, 
     UserSrv.getUser(),
     UserSrv.getKey(),
-    null, //keywordsToSearchFor
     true, //includeTextualContent,
     keywordsArray, //wordsToSearchFor,
     false, //includeTags,
