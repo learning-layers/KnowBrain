@@ -162,7 +162,7 @@ angular.module('module.circles').controller("CircleController", function($compil
     });
 });
 
-angular.module('module.circles').controller("CircleResourcesController", function($scope, $state, $q, $dialogs, GroupFetchService, EntityFetchService, ENTITY_TYPES){
+angular.module('module.circles').controller("CircleResourcesController", function($scope, $state, $q, $dialogs, GroupFetchService, EntityFetchService, CollectionFetchService, UriToolbox, ENTITY_TYPES){
     
     $scope.entities = [];
     
@@ -226,15 +226,34 @@ angular.module('module.circles').controller("CircleResourcesController", functio
         });
     }
 
-            $scope.handleEntryClick = function (entry) {
 
-            if (entry.isCollection()) {
-                $scope.openCollection(entry.uriPathnameHash);
+    $scope.loadCollectionByUri = function (coll, defer) {
+        var promise = CollectionFetchService.getCollectionByUri(coll);
+
+        promise.then(function (model) {
+            $scope.currentCollection = model;
+            $scope.entities = model.entries;
+        }, function (error) {
+            console.log(error);
+        });
+
+    };
+
+    $scope.handleEntryClick = function (entry) {
+        if (entry.isCollection()) {
+                $scope.loadCollectionByUri(UriToolbox.extractUriPathnameHash(entry.id));
+        } else {
+            if (entry.type == "qa") {
+                $state.transitionTo('app.qa.qa', {
+                    id: UriToolbox.extractUriPathnameHash(entry.id)
+                });
             } else {
                 var dialog = $dialogs.entryDetail(entry);
             }
+            
+        }
 
-        };
+    };
 });
 
 angular.module('module.circles').controller("addMembersController", function($q, $scope, $rootScope, $modalInstance, UserFetchService, UserService, excludeUsers) {

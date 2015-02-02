@@ -23,6 +23,22 @@
 	-moz-osx-font-smoothing: grayscale;
 }
 
+.icon-question-mark:before {
+	content: "\e612";
+}
+
+.icon-folder:before {
+	content: "\e611";
+}
+
+.icon-user-add:before {
+	content: "\e605";
+}
+
+.icon-user:before {
+	content: "\e604";
+}
+
 .icon-file-code:before {
 	content: "\e607";
 }
@@ -63,6 +79,10 @@
 	content: "\e610";
 }
 
+.icon-file-filled:before {
+	content: "\e603";
+}
+
 .icon-file:before {
 	content: "\e606";
 }
@@ -79,10 +99,3 @@
 	content: "\e600";
 }
 
-.icon-user-add:before {
-	content: "\e605";
-}
-
-.icon-user:before {
-	content: "\e604";
-}
