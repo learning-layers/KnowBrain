@@ -471,6 +471,7 @@ angular.module('module.models').factory('EntityModel', ['$q', '$rootScope','User
     this.fileExtension = null;
     this.uploaded = false;
     this.fileHandle = null;
+    this.creationTime = null;
 
     this.servHandleFileDownload = function(defer){
       var self = this;
@@ -560,6 +561,10 @@ angular.module('module.models').factory('EntityModel', ['$q', '$rootScope','User
         return defer.promise;
       }
   }
+
+  Entity.prototype.getFormattedCreationTime = function () {
+    return (new Date(this.creationTime)).toLocaleDateString();
+  };
 
   return (Entity);
 

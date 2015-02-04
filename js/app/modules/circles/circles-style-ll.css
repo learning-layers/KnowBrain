@@ -309,3 +309,57 @@
     text-align:center;
 }
 
+#resources-toolbar {
+    margin-top: 10px;
+    /*border: 1px solid;
+    border-color: #CFCFCF;
+    border-radius: 5px;*/
+}
+
+.sort-order-bar {
+    margin-top: 10px;
+    font-size: 13px;
+}
+
+.sort-order-filter-active {
+    font-weight: bold;
+}
+
+.list-entity-icon {
+    position: relative;
+    z-index: 9;
+    width: 35px;
+    height: 35px;
+    font-size: 35px;
+}
+
+.list-entitity-clickable {
+    cursor: pointer;
+}
+
+.list-entitity-clickable:hover {
+    color: #f6a551;
+}
+
+.list-divider {
+  height: 1px;
+  width:100%;
+  display:block;
+  overflow: hidden;
+  background-color: #e5e5e5;
+}
+
+.vertical-align {
+  display: -webkit-flex;
+  display: flex;
+  -webkit-align-items: center;
+  align-items: center;
+  -webkit-justify-content: center;
+  justify-content: center;
+  -webkit-flex-direction: row;
+  flex-direction: row;
+}
+
+.top-buffer { 
+    margin-top: 20px; 
+}

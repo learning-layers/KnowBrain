@@ -162,9 +162,14 @@ angular.module('module.circles').controller("CircleController", function($compil
     });
 });
 
-angular.module('module.circles').controller("CircleResourcesController", function($scope, $state, $q, $dialogs, GroupFetchService, EntityFetchService, CollectionFetchService, UriToolbox, ENTITY_TYPES){
+angular.module('module.circles').controller("CircleResourcesController", function($scope, $state, $q, $dialogs, GroupFetchService, UserFetchService, EntityFetchService, CollectionFetchService, UriToolbox, ENTITY_TYPES){
     
     $scope.entities = [];
+    $scope.isGridViewMode = true;
+    $scope.isListViewMode = false;
+    $scope.predicate = 'creationTime';
+    $scope.reverse = false;
+    $scope.selectedTags = [];
     
     var promise = GroupFetchService.getGroup("http://sss.eu/" + $scope.circleId);
         
@@ -173,12 +178,22 @@ angular.module('module.circles').controller("CircleResourcesController", functio
         var circle = result.circle;
         var entityIds = circle.entities;
         for(var i=0; i < entityIds.length; i++) {
-            var promise = EntityFetchService.getEntityByUri(entityIds[i], false, false, false);
-            promise.then(function(result){
-                $scope.entities.push(result);
+            var promise = EntityFetchService.getEntityByUri(entityIds[i], true, false, false);
+            promise.then(function(entityResult){
+                var promise = UserFetchService.getUser(entityResult.author);
+                promise.then(function(userResult) {
+                    entityResult.author = userResult.desc;
+                    $scope.entities.push(entityResult);
+                });
             });
         }
     });
+
+    $scope.selectTag = function(tag) {
+        $scope.selectedTags.push(tag);
+    }
+    
+    
     
     $scope.addEntity = function() {
 
