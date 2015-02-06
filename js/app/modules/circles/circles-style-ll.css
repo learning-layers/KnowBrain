@@ -316,6 +316,28 @@
     border-radius: 5px;*/
 }
 
+#tags-dropdown {
+    width: 100%;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.tag-circle {
+    width: 16px;
+    height: 16px;
+    background-color: #f6a551;
+    border: 1px solid;
+    border-color: #535353;
+    border-radius: 8px;
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.tag-circle:hover {
+    cursor: pointer;
+}
+
 .sort-order-bar {
     margin-top: 10px;
     font-size: 13px;

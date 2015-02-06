@@ -2,17 +2,12 @@
   width: 124px;
   height: 112px;
   margin-right: 4px;
-  color: #5e5e5e;
   text-align: center;
   padding-top: 2px;
   margin-top: 18px;
 }
 
 .collection-entry:hover{
-  cursor: pointer;
-  color: #d79634;
-  border: 2px solid #DBDBDB;
-  padding-top: 0px;
 }
 
 .collection-entry:hover .collection-entry-checkbox-wrapper{
@@ -40,12 +35,45 @@
 }
 
 .collection-entry-description-box {
-  position: relative;
-  height: 40px;
+  width: 100%;
   overflow: hidden;
+  position: relative;
   font-size: 12px;
   margin-top: 3px;
   text-align: center;
+}
+
+.collection-entry-date-box {
+  position: relative;
+  overflow: hidden;
+  font-size: 11px;
+  text-align: center;
+  color: #999999;
+}
+
+.collection-entry-tags-box {
+  float: left;
+}
+
+.grid-tag-circle {
+  margin-left: -8px;
+}
+
+.collection-entry-label {
+  height: 17px;
+  padding-left: 5px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.collection-entry-label:hover {
+  cursor: pointer;
+  color: #f6a551;
+}
+
+
+.tooltip {
+    position: fixed;
 }
 
 .collection-entry-checkbox-wrapper {

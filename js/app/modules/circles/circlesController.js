@@ -169,7 +169,9 @@ angular.module('module.circles').controller("CircleResourcesController", functio
     $scope.isListViewMode = false;
     $scope.predicate = 'creationTime';
     $scope.reverse = false;
-    $scope.selectedTags = [];
+    $scope.selectedTag = null;
+    $scope.availableTags = [];
+    $scope.searchResourcesString = null;
     
     var promise = GroupFetchService.getGroup("http://sss.eu/" + $scope.circleId);
         
@@ -184,16 +186,39 @@ angular.module('module.circles').controller("CircleResourcesController", functio
                 promise.then(function(userResult) {
                     entityResult.author = userResult.desc;
                     $scope.entities.push(entityResult);
+                    for (var i = 0; i < entityResult.tags.length; i++) {
+                        if ($.inArray(entityResult.tags[i], $scope.availableTags) == -1) {
+                            $scope.availableTags.push(entityResult.tags[i]);
+                        }
+                    }
                 });
             });
         }
     });
 
     $scope.selectTag = function(tag) {
-        $scope.selectedTags.push(tag);
-    }
+        $scope.selectedTag = tag;
+    };
     
-    
+    $scope.filterFunction = function(element) {
+        var matchesSearch = true;
+        if ($scope.searchResourcesString != null && !element.label.match($scope.searchResourcesString)) {
+            matchesSearch = false;
+        }
+
+        var matchesTag = false
+        if ($scope.selectedTag != null) {
+            for (var i = 0; i < element.tags.length; i++) {
+                if ($.inArray($scope.selectedTag, element.tags) != -1) {
+                    matchesTag = true;
+                    break;
+                }
+            }
+        } else {
+            matchesTag = true;
+        }
+        return matchesSearch && matchesTag;
+    };
     
     $scope.addEntity = function() {
 
@@ -269,6 +294,12 @@ angular.module('module.circles').controller("CircleResourcesController", functio
         }
 
     };
+
+    $scope.$on('ngRepeatFinished', function(ngRepeatFinishedEvent) {
+        $(function () {
+            $('[data-toggle="tooltip"]').tooltip();
+        })
+    });
 });
 
 angular.module('module.circles').controller("addMembersController", function($q, $scope, $rootScope, $modalInstance, UserFetchService, UserService, excludeUsers) {

@@ -1,38 +1,45 @@
 <div ng-show="!ajaxLoading"
-	ng-class="{'collection-entry-selected': entry.isSelected}"
-	class="collection-entry kb-fluid-container pull-left"
-	ng-click="handleEntryClick(entry)">
-	<div class="collection-entry-preview-box">
-		<div
-			ng-class="{'collection-entry-checkbox-wrapper-selected': entry.isSelected}"
-			class="collection-entry-checkbox-wrapper">
-			<input ng-checked="entry.isSelected"
-				class="collection-entry-checkbox" type="checkbox"
-				ng-click="selectResource(entry);$event.stopPropagation()" />
-		</div>
-		<div ng-switch="entry.type">
-			<img ng-switch-when="group" src="images/group_pic_dummy.jpg" class="collection-entry-profile-pic"/>
-			<img ng-switch-when="priv" src="images/group_pic_dummy.jpg" class="collection-entry-profile-pic"/>
-			<div ng-switch-when="coll" style="position: relative; z-index: 9;"
-			id="collection-entry-preview-box-glyphicon" class="icon-folder">
-			</div>
-			<div ng-switch-when="file" style="position: relative; z-index: 9;"
-			id="collection-entry-preview-box-glyphicon" ng-class="{'icon-file' : entry.fileType == null, 'icon-file-image' : entry.fileType == 'image', 'icon-file-pdf' : entry.mimeType == 'application/pdf', 'icon-file-audio' : entry.fileType == 'audio'}">
-			</div>
-			<div ng-switch-when="entity" style="position: relative; z-index: 9;"
-			id="collection-entry-preview-box-glyphicon" class="glyphicon glyphicon-link">
-			</div>
-			<div ng-switch-when="qa" style="position: relative; z-index: 9;"
-			id="collection-entry-preview-box-glyphicon" class="icon-question-mark">
-			</div>
-			<div ng-switch-default style="position: relative; z-index: 9;"
-           id="collection-entry-preview-box-glyphicon"  class="glyphicon glyphicon-link">
-           </div>
-		</div>
-		<div class="collection-entry-shared"
-			ng-show="(entry.type == entityTypes.collection) && entry.space == spaceEnum.shared">{{t('shared')}}</div>
-	</div>
-	<div class="collection-entry-description-box">
-		<div shortenentryname model="entry.label">{{entry.label}}</div>
-	</div>
+
+    ng-class="{'collection-entry-selected': entry.isSelected}"
+    class="collection-entry kb-fluid-container pull-left">
+    <div class="collection-entry-preview-box">
+        <div
+            ng-class="{'collection-entry-checkbox-wrapper-selected': entry.isSelected}"
+            class="collection-entry-checkbox-wrapper">
+            <input ng-checked="entry.isSelected"
+            class="collection-entry-checkbox" type="checkbox"
+            ng-click="selectResource(entry);$event.stopPropagation()" />
+        </div>
+        <div ng-switch="entry.type" ng-click="handleEntryClick(entry)">
+            <img ng-switch-when="group" src="images/group_pic_dummy.jpg" class="collection-entry-profile-pic"/>
+            <img ng-switch-when="priv" src="images/group_pic_dummy.jpg" class="collection-entry-profile-pic"/>
+            <div ng-switch-when="coll" style="position: relative; z-index: 9;"
+                id="collection-entry-preview-box-glyphicon" class="icon-folder">
+            </div>
+            <div ng-switch-when="file" style="position: relative; z-index: 9;"
+                id="collection-entry-preview-box-glyphicon" ng-class="{'icon-file' : entry.fileType == null, 'icon-file-image' : entry.fileType == 'image', 'icon-file-pdf' : entry.mimeType == 'application/pdf', 'icon-file-audio' : entry.fileType == 'audio'}">
+            </div>
+            <div ng-switch-when="entity" style="position: relative; z-index: 9;"
+                id="collection-entry-preview-box-glyphicon" class="glyphicon glyphicon-link">
+            </div>
+            <div ng-switch-when="qa" style="position: relative; z-index: 9;"
+                id="collection-entry-preview-box-glyphicon" class="icon-question-mark">
+            </div>
+            <div ng-switch-default style="position: relative; z-index: 9;"
+                id="collection-entry-preview-box-glyphicon"  class="glyphicon glyphicon-link">
+            </div>
+        </div>
+        <div class="collection-entry-shared"
+        ng-show="(entry.type == entityTypes.collection) && entry.space == spaceEnum.shared">{{t('shared')}}</div>
+    </div>
+    <div class="collection-entry-description-box">
+        <div class="collection-entry-tags-box">
+            <div class="tag-circle" ng-class="{'grid-tag-circle' : !$first}" ng-repeat="tag in entry.tags" ng-click="selectTag(tag)" data-toggle="tooltip" data-trigger="hover" data-placement="bottom" title="{{tag}}" on-finish-ng-repeat-load="ngRepeatFinished"></div>
+        </div>
+
+        <div class="collection-entry-label" ng-click="handleEntryClick(entry)">{{entry.label}}</div>
+    </div>
+    <div class="collection-entry-date-box">
+        {{entry.getFormattedCreationTime()}}
+    </div>
 </div>

@@ -1,6 +1,19 @@
 <div id="resources-toolbar">
     <div class="row">
-        <div class="col-md-10">
+        <div class="col-md-3">
+            <div class="dropdown">
+                <button class="btn btn-default dropdown-toggle" type="button" id="tags-dropdown" data-toggle="dropdown" aria-expanded="true"><div class="tag-circle" ng-show="selectedTag != null"></div>
+                {{selectedTag != null ? selectedTag : 'All tags'}}
+                <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu1">
+                    <li role="presentation"><a role="menuitem" tabindex="-1" ng-click="selectTag(null)">All tags</a></li>
+                    <li role="presentation" class="divider"></li>
+                    <li role="presentation" ng-repeat="tag in availableTags"><a role="menuitem" tabindex="-1" ng-click="selectTag(tag)"><div class="tag-circle"></div> {{tag}}</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="col-md-7">
             <div class="input-group">
                 <input id="circle-resources-search-field" type="search" class="form-control" placeholder="search" ng-model="searchResourcesString">
                 <span id="searchclear" class="glyphicon glyphicon-remove-circle" ng-click="searchResourcesString = ''" ng-show="searchResourcesString.length > 0"></span>
@@ -22,32 +35,27 @@
             </div>
         </div>
     </div>
-    <div class="row">
-        <div class="col-md-12">
-            <div class="qa-tag" ng-repeat="tag in selectedTags">{{tag}}</div>
-        </div>
-    </div>
 </div>
 <div class="sort-order-bar row">
-        <div class="col-md-1 col-xs-2">
-            <a ng-class="{'sort-order-filter-active' : predicate == 'fileType'}" ng-click="reverse = predicate != 'fileType' ? false : !reverse; predicate = 'fileType';">Type<span ng-show="predicate == 'fileType'">{{reverse ? '&#9650;' : '&#9660;'}}</span></a>
-        </div>
-        <div class="col-md-7 col-xs-10">
-            <a ng-class="{'sort-order-filter-active' : predicate == 'label'}" ng-click="reverse = predicate != 'label' ? false : !reverse; predicate = 'label';">Title <span ng-show="predicate == 'label'">{{reverse ? '&#9650;' : '&#9660;'}}</span></a>
-        </div>
-        <div class="col-md-2 hidden-xs">
-            <a ng-class="{'sort-order-filter-active' : predicate == 'creationTime'}" ng-click=" reverse = predicate != 'creationTime' ? false : !reverse; predicate = 'creationTime';">Date <span ng-show="predicate == 'creationTime'">{{reverse ? '&#9650;' : '&#9660;'}}</span></a>
-        </div>
-        <div class="col-md-2 hidden-xs">
-            <a ng-class="{'sort-order-filter-active' : predicate == 'author.label'}" ng-click=" reverse = predicate != 'author.label' ? false : !reverse; predicate = 'author.label';">Author <span ng-show="predicate == 'author.label'">{{reverse ? '&#9650;' : '&#9660;'}}</span></a>
-        </div>
+    <div class="col-md-1 col-xs-2">
+        <a ng-class="{'sort-order-filter-active' : predicate == 'fileType'}" ng-click="reverse = predicate != 'fileType' ? false : !reverse; predicate = 'fileType';">Type<span ng-show="predicate == 'fileType'">{{reverse ? '&#9650;' : '&#9660;'}}</span></a>
     </div>
+    <div class="col-md-7 col-xs-10">
+        <a ng-class="{'sort-order-filter-active' : predicate == 'label'}" ng-click="reverse = predicate != 'label' ? false : !reverse; predicate = 'label';">Title <span ng-show="predicate == 'label'">{{reverse ? '&#9650;' : '&#9660;'}}</span></a>
+    </div>
+    <div class="col-md-2 hidden-xs">
+        <a ng-class="{'sort-order-filter-active' : predicate == 'creationTime'}" ng-click=" reverse = predicate != 'creationTime' ? false : !reverse; predicate = 'creationTime';">Date <span ng-show="predicate == 'creationTime'">{{reverse ? '&#9650;' : '&#9660;'}}</span></a>
+    </div>
+    <div class="col-md-2 hidden-xs">
+        <a ng-class="{'sort-order-filter-active' : predicate == 'author.label'}" ng-click=" reverse = predicate != 'author.label' ? false : !reverse; predicate = 'author.label';">Author <span ng-show="predicate == 'author.label'">{{reverse ? '&#9650;' : '&#9660;'}}</span></a>
+    </div>
+</div>
 <div ng-show="isGridViewMode">
-    <ng-entity ng-repeat="entry in entities"></ng-entity>
+    <ng-entity ng-repeat="entry in entities | orderBy: predicate : reverse | filter : filterFunction"></ng-entity>
 </div>
 <div ng-show="isListViewMode">
-    
-    <div ng-repeat="entry in entities | orderBy: predicate : reverse | filter : {label : searchResourcesString}">
+
+    <div ng-repeat="entry in entities | orderBy: predicate : reverse | filter : filterFunction">
         <div class="row vertical-align top-buffer">
             <div class="col-md-1 col-xs-1" ng-switch="entry.type">
                 <div class="list-entitity-clickable" ng-click="handleEntryClick(entry)">
