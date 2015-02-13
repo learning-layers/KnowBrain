@@ -190,7 +190,7 @@ angular.module('module.qa').controller("qaController", ['$scope', '$state', '$q'
 
     $scope.invokePostNewThread = function() {
         loadSimilarThreadList()
-            .then(openSimilarThreads);
+            .then(openSimilarThreads); 
     };
     var loadSimilarThreadList = function() {
         return qaService

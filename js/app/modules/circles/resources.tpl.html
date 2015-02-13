@@ -1,19 +1,19 @@
 <div id="resources-toolbar">
     <div class="row">
-        <div class="col-md-3">
+        <div class="col-md-2">
             <div class="dropdown">
                 <button class="btn btn-default dropdown-toggle" type="button" id="tags-dropdown" data-toggle="dropdown" aria-expanded="true"><div class="tag-circle" ng-show="selectedTag != null"></div>
                 {{selectedTag != null ? selectedTag : 'All tags'}}
                 <span class="caret"></span>
                 </button>
-                <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu1">
+                <ul class="dropdown-menu" role="menu" aria-labelledby="tagsDropdownMenu">
                     <li role="presentation"><a role="menuitem" tabindex="-1" ng-click="selectTag(null)">All tags</a></li>
                     <li role="presentation" class="divider"></li>
                     <li role="presentation" ng-repeat="tag in availableTags"><a role="menuitem" tabindex="-1" ng-click="selectTag(tag)"><div class="tag-circle"></div> {{tag}}</a></li>
                 </ul>
             </div>
         </div>
-        <div class="col-md-7">
+        <div class="col-md-6">
             <div class="input-group">
                 <input id="circle-resources-search-field" type="search" class="form-control" placeholder="search" ng-model="searchResourcesString">
                 <span id="searchclear" class="glyphicon glyphicon-remove-circle" ng-click="searchResourcesString = ''" ng-show="searchResourcesString.length > 0"></span>
@@ -24,7 +24,7 @@
                 </span>
             </div>
         </div>
-        <div class="col-md-2">
+        <div class="col-md-4">
             <div class="btn-group" role="group" aria-label="...">
                 <button type="button" class="btn btn-default" ng-class="{active : isGridViewMode == true}" ng-click="isGridViewMode = true; isListViewMode = false;">
                 <span class="glyphicon glyphicon-th" aria-hidden="true"></span>
@@ -32,6 +32,16 @@
                 <button type="button" class="btn btn-default" ng-class="{active : isListViewMode == true}" ng-click="isGridViewMode = false; isListViewMode = true;">
                 <span class="glyphicon glyphicon-th-list" aria-hidden="true"></span>
                 </button>
+            </div>
+            <div class="btn-group">
+                <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                Add <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu" role="menu">
+                    <li><a ng-click="addEntity()">Upload</a></li>
+                    <li><a >Link</a></li>
+                    <li><a >Dropbox</a></li>
+                </ul>
             </div>
         </div>
     </div>
@@ -54,7 +64,6 @@
     <ng-entity ng-repeat="entry in entities | orderBy: predicate : reverse | filter : filterFunction"></ng-entity>
 </div>
 <div ng-show="isListViewMode">
-
     <div ng-repeat="entry in entities | orderBy: predicate : reverse | filter : filterFunction">
         <div class="row vertical-align top-buffer">
             <div class="col-md-1 col-xs-1" ng-switch="entry.type">
@@ -89,6 +98,6 @@
                 {{entry.author.label}}
             </div>
         </div>
-        <div ng-hide="$last" class="col-md-12 col-xs-12 list-divider"/>
-        </div>
+        <div ng-hide="$last" class="col-md-12 col-xs-12 list-divider"></div>
     </div>
+</div>

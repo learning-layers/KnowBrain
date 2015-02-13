@@ -179,8 +179,12 @@ angular.module('module.circles').controller("CircleResourcesController", functio
         
         var circle = result.circle;
         var entityIds = circle.entities;
-        for(var i=0; i < entityIds.length; i++) {
-            var promise = EntityFetchService.getEntityByUri(entityIds[i], true, false, false);
+        addEntitiesToCircle(entityIds);
+    });
+
+    var addEntitiesToCircle = function(entities) {
+        for(var i=0; i < entities.length; i++) {
+            var promise = EntityFetchService.getEntityByUri(entities[i], true, false, false);
             promise.then(function(entityResult){
                 var promise = UserFetchService.getUser(entityResult.author);
                 promise.then(function(userResult) {
@@ -194,7 +198,7 @@ angular.module('module.circles').controller("CircleResourcesController", functio
                 });
             });
         }
-    });
+    };
 
     $scope.selectTag = function(tag) {
         $scope.selectedTag = tag;
@@ -221,48 +225,13 @@ angular.module('module.circles').controller("CircleResourcesController", functio
     };
     
     $scope.addEntity = function() {
-
-        var states = {
-                "choose": MODULES_PREFIX+"/group/addEntities.tpl.html",
-                "upload": MODULES_PREFIX+"/group/addEntitiesUpload.tpl.html",
-                "link": MODULES_PREFIX+"/group/addEntitiesLink.tpl.html"
-                //TODO: Add entities from collection
-                
-        };
-        
-        var ctrlFunction = function($scope) {
-            $scope.entities = [];
-        };
-        
-        $dialogs.newModal(states, ctrlFunction, "modal-huge").result.then(function (result) {
-            
-            var entityUrls = [];
-            
-            var promises = [];
-            
-            for(var i=0; i < result.length; i++) {
-                
-                if(result[i].type == ENTITY_TYPES.file) {
-                    var file = result[i];
-                    promises.push(file.uploadFile());
-                } 
-                else if(result[i].type == ENTITY_TYPES.link) {
-                    entityUrls.push(result[i].id);
-                }
-            }
-            
-            $q.all(promises).then(function(results) {
-                
-                for(var i=0; i < results.length; i++) {
-                    entityUrls.push(results[i].id);
-                }
-                
-                var promise = GroupFetchService.addEntitiesToGroup(entityUrls, $scope.groupId);
-                
-                promise.then(function(result) {
-                   // $scope.$apply();
-                });
+        $dialogs.uploadResources().result.then(function(uploadedEntities) {
+            var promise = GroupFetchService.addEntitiesToGroup(uploadedEntities, $scope.circle.id);
+            promise.then(function(result) {
+                addEntitiesToCircle(uploadedEntities);
             });
+        }, function() {
+            //$log.info('Modal dismissed at: ' + new Date());
         });
     }
 
@@ -381,25 +350,7 @@ angular.module('module.circles').controller("createCircleController", function($
         });
     };
 
-    $scope.openAddResources = function() {
-        var modalInstance = $modal.open({
-            templateUrl: MODULES_PREFIX + '/qa/modalAddAttachments.tpl.html',
-            controller: 'ModalAddAttachmentsController',
-            size: 'lg',
-            resolve: {}
-        });
-        modalInstance.result.then(function(fileList) {
-            fileList.forEach(function(entry) {
-                if (entry.id !== null && entry.id !== undefined) {
-                    $scope.selectedResources.push(entry);
-                } else {
-                    // TODO: upload files
-                }
-            });
-        }, function() {
-            //$log.info('Modal dismissed at: ' + new Date());
-        });
-    };
+    
 
     $scope.close = function() {
         $modalInstance.close();

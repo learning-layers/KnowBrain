@@ -385,3 +385,10 @@
 .top-buffer { 
     margin-top: 20px; 
 }
+
+#resources-sidebar {
+    width: 100%;
+    background-color: #efefef;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+}
