@@ -172,6 +172,10 @@ angular.module('module.circles').controller("CircleResourcesController", functio
     $scope.selectedTag = null;
     $scope.availableTags = [];
     $scope.searchResourcesString = null;
+    $scope.selectedEntities = [];
+    $scope.actions = [{title : 'Delete', cssClass : 'glyphicon glyphicon-trash'},
+    {title : 'Add to Dropbox', cssClass : 'glyphicon glyphicon-floppy-open'},
+    {title : 'Download', cssClass : 'glyphicon glyphicon-download-alt'}];
     
     var promise = GroupFetchService.getGroup("http://sss.eu/" + $scope.circleId);
         
@@ -197,6 +201,25 @@ angular.module('module.circles').controller("CircleResourcesController", functio
                     }
                 });
             });
+        }
+    };
+
+    $scope.downloadEntity = function(entity) {
+        //$scope.entry.downloading = true;
+
+        var promise = entity.downloadFile();
+        promise.finally(function() {
+            //$scope.entry.downloading = false;
+        });
+    };
+
+    $scope.selectEntity = function(entity) {
+        if (entity.isSelected) {
+            entity.isSelected = false;
+            $scope.selectedEntities.splice($scope.selectedEntities.indexOf(entity), 1);
+        } else {
+            entity.isSelected = true;
+            $scope.selectedEntities.push(entity);
         }
     };
 

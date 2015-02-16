@@ -52,7 +52,8 @@ angular.module('knowbrain', [
   'module.circles',
   'module.entity',
   'module.activities',
-  'angularSlideables'
+  'angularSlideables',
+  'ng-context-menu'
 
   ]).config(['$stateProvider', '$urlRouterProvider', '$locationProvider', '$tooltipProvider',function ($stateProvider, $urlRouterProvider, $locationProvider, $tooltipProvider) {
 

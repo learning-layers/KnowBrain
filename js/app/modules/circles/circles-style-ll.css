@@ -340,11 +340,15 @@
 
 .sort-order-bar {
     margin-top: 10px;
-    font-size: 13px;
+    font-size: 16px;
 }
 
 .sort-order-filter-active {
     font-weight: bold;
+}
+
+.list-item-selected {
+    background-color: #fbd3a9;
 }
 
 .list-entity-icon {
@@ -361,14 +365,6 @@
 
 .list-entitity-clickable:hover {
     color: #f6a551;
-}
-
-.list-divider {
-  height: 1px;
-  width:100%;
-  display:block;
-  overflow: hidden;
-  background-color: #e5e5e5;
 }
 
 .vertical-align {
@@ -391,4 +387,33 @@
     background-color: #efefef;
     border: 1px solid #ccc;
     border-radius: 3px;
+}
+
+.animate-show {
+  -webkit-transition:all ease-in-out 0.2s;
+  transition:all ease-in-out 0.2s;
+  line-height:60px;
+  opacity:1;
+}
+ 
+.animate-show.ng-hide-add,
+.animate-show.ng-hide-remove {
+  display:block!important;
+}
+ 
+.animate-show.ng-hide {
+  line-height:0;
+  opacity:0;
+}
+
+.action-button {
+    width: 22px;
+    height: 22px;
+    font-size: 22px;
+    display:table-cell;
+    vertical-align:middle;
+}
+
+.position-fixed {
+  position: fixed;
 }
