@@ -365,6 +365,7 @@
 
 .list-entitity-clickable:hover {
     color: #f6a551;
+    text-decoration: underline;
 }
 
 .vertical-align {

@@ -46,93 +46,95 @@
         </div>
     </div>
 </div>
-<div ng-repeat="entity in entities" class="dropdown position-fixed" id="menu-{{ $index }}" style="z-index:1;">
-  <ul class="dropdown-menu" role="menu">
-    <li>
-      <a class="pointer" role="menuitem" tabindex="1"
-         ng-click="downloadEntity(entity)">
-         Download
-      </a>
-    </li>
-    <li>
-      <a class="pointer" role="menuitem" tabindex="2"
-         ng-click="panel.highlight = false">
-         Delete
-      </a>
-    </li>
-    <li>
-      <a class="pointer" role="menuitem" tabindex="3"
-         ng-click="panel.expanded = true">
-         Add to Dropbox
-      </a>
-    </li>
-  </ul>
+<div ng-repeat="entity in entities | orderBy: predicate : reverse | filter : filterFunction" class="dropdown position-fixed" id="menu-{{ $index }}" style="z-index:1;">
+    <ul class="dropdown-menu" role="menu">
+        <li>
+            <a class="pointer" role="menuitem" tabindex="1"
+            ng-click="downloadEntity(entity)">
+            Download
+            </a>
+        </li>
+        <li>
+            <a class="pointer" role="menuitem" tabindex="3"
+            ng-click="addEntityToHomeCollection(entity)">
+            Add to Dropbox
+            </a>
+        </li>
+        <li>
+            <a class="pointer" role="menuitem" tabindex="2"
+            ng-click="panel.highlight = false">
+            Delete
+            </a>
+        </li>
+    </ul>
 </div>
-
-<!-- sort bar -->
-<div style="height:60px; overflow:hidden;">
-    <div class="sort-order-bar animate-show row" ng-show="selectedEntities.length == 0">
-        <div class="col-md-1 col-xs-2">
-            <a ng-class="{'sort-order-filter-active' : predicate == 'fileType'}" ng-click="reverse = predicate != 'fileType' ? false : !reverse; predicate = 'fileType';">Type<span ng-show="predicate == 'fileType'">{{reverse ? '&#9650;' : '&#9660;'}}</span></a>
+<div click-anywhere-but-here="deselectAllEntities()">
+    <!-- sort bar -->
+    <div style="height:60px; overflow:hidden;">
+        <div class="sort-order-bar animate-show row" ng-show="selectedEntities.length == 0">
+            <div class="col-md-1 col-xs-2">
+                <a ng-class="{'sort-order-filter-active' : predicate == 'fileType'}" ng-click="reverse = predicate != 'fileType' ? false : !reverse; predicate = 'fileType';">Type<span ng-show="predicate == 'fileType'">{{reverse ? '&#9650;' : '&#9660;'}}</span></a>
+            </div>
+            <div class="col-md-7 col-xs-10">
+                <a ng-class="{'sort-order-filter-active' : predicate == 'label'}" ng-click="reverse = predicate != 'label' ? false : !reverse; predicate = 'label';">Title <span ng-show="predicate == 'label'">{{reverse ? '&#9650;' : '&#9660;'}}</span></a>
+            </div>
+            <div class="col-md-2 hidden-xs">
+                <a ng-class="{'sort-order-filter-active' : predicate == 'creationTime'}" ng-click=" reverse = predicate != 'creationTime' ? false : !reverse; predicate = 'creationTime';">Date <span ng-show="predicate == 'creationTime'">{{reverse ? '&#9650;' : '&#9660;'}}</span></a>
+            </div>
+            <div class="col-md-2 hidden-xs">
+                <a ng-class="{'sort-order-filter-active' : predicate == 'author.label'}" ng-click=" reverse = predicate != 'author.label' ? false : !reverse; predicate = 'author.label';">Author <span ng-show="predicate == 'author.label'">{{reverse ? '&#9650;' : '&#9660;'}}</span></a>
+            </div>
         </div>
-        <div class="col-md-7 col-xs-10">
-            <a ng-class="{'sort-order-filter-active' : predicate == 'label'}" ng-click="reverse = predicate != 'label' ? false : !reverse; predicate = 'label';">Title <span ng-show="predicate == 'label'">{{reverse ? '&#9650;' : '&#9660;'}}</span></a>
-        </div>
-        <div class="col-md-2 hidden-xs">
-            <a ng-class="{'sort-order-filter-active' : predicate == 'creationTime'}" ng-click=" reverse = predicate != 'creationTime' ? false : !reverse; predicate = 'creationTime';">Date <span ng-show="predicate == 'creationTime'">{{reverse ? '&#9650;' : '&#9660;'}}</span></a>
-        </div>
-        <div class="col-md-2 hidden-xs">
-            <a ng-class="{'sort-order-filter-active' : predicate == 'author.label'}" ng-click=" reverse = predicate != 'author.label' ? false : !reverse; predicate = 'author.label';">Author <span ng-show="predicate == 'author.label'">{{reverse ? '&#9650;' : '&#9660;'}}</span></a>
+        <div class="animate-show row" ng-hide="selectedEntities.length == 0">
+            <div class="col-md-12">
+                <a ng-repeat="action in actions" ng-click="clickedAction($index)" style="float:left; display:table; margin-left: 15px;"><span class="action-button" ng-class="action.cssClass"></span>&nbsp;{{action.title}}</a>
+            </div>
         </div>
     </div>
-    <div class="animate-show row" ng-hide="selectedEntities.length == 0">
-        <div class="col-md-12">
-            <a ng-repeat="action in actions" style="float:left; display:table; margin-left: 15px;"><span class="action-button" ng-class="action.cssClass"></span>&nbsp;{{action.title}}</a>
-        </div>
+    <!-- grid or list-->
+    <div ng-show="isGridViewMode">
+        <ng-entity ng-repeat="entry in entities | orderBy: predicate : reverse | filter : filterFunction"></ng-entity>
     </div>
-</div>
-<!-- grid or list-->
-<div ng-show="isGridViewMode">
-    <ng-entity ng-repeat="entry in entities | orderBy: predicate : reverse | filter : filterFunction"></ng-entity>
-</div>
-<div ng-show="isListViewMode">
-    <table class="table vertical-aligned-table">
-        <tbody>
-            <tr ng-repeat="entry in entities | orderBy: predicate : reverse | filter : filterFunction"  ng-click="selectEntity(entry)" context-menu data-target="menu-{{ $index }}" ng-class="{'list-item-selected' : entry.isSelected}">
-                <td>
-                    <div ng-switch="entry.type">
-                        <div class="list-entitity-clickable" ng-click="handleEntryClick(entry)">
-                            <img ng-switch-when="group" src="images/group_pic_dummy.jpg" class="collection-entry-profile-pic"/>
-                            <img ng-switch-when="priv" src="images/group_pic_dummy.jpg" class="collection-entry-profile-pic"/>
-                            <div ng-switch-when="coll" class="list-entity-icon icon-folder">
-                            </div>
-                            <div ng-switch-when="file" class="list-entity-icon" ng-class="{'icon-file' : entry.fileType == null, 'icon-file-image' : entry.fileType == 'image', 'icon-file-pdf' : entry.mimeType == 'application/pdf', 'icon-file-audio' : entry.fileType == 'audio'}">
-                            </div>
-                            <div ng-switch-when="entity" class="list-entity-icon" class="glyphicon glyphicon-link">
-                            </div>
-                            <div ng-switch-when="qa" class="list-entity-icon icon-question-mark">
-                            </div>
-                            <div ng-switch-default class="list-entity-icon" class="glyphicon glyphicon-link">
+    <div ng-show="isListViewMode">
+        <table class="table vertical-aligned-table">
+            <tbody>
+                <tr ng-repeat="entry in entities | orderBy: predicate : reverse | filter : filterFunction"  ng-click="selectEntity(entry)" context-menu data-target="menu-{{ $index }}" ng-class="{'list-item-selected' : entry.isSelected}">
+                    <td>
+                        <div ng-switch="entry.type">
+                            <div class="list-entitity-clickable" ng-click="handleEntryClick(entry); $event.stopPropagation();">
+                                <img ng-switch-when="group" src="images/group_pic_dummy.jpg" class="collection-entry-profile-pic"/>
+                                <img ng-switch-when="priv" src="images/group_pic_dummy.jpg" class="collection-entry-profile-pic"/>
+                                <div ng-switch-when="coll" class="list-entity-icon icon-folder">
+                                </div>
+                                <div ng-switch-when="file" class="list-entity-icon" ng-class="{'icon-file' : entry.fileType == null, 'icon-file-image' : entry.fileType == 'image', 'icon-file-pdf' : entry.mimeType == 'application/pdf', 'icon-file-audio' : entry.fileType == 'audio'}">
+                                </div>
+                                <div ng-switch-when="entity" class="list-entity-icon" class="glyphicon glyphicon-link">
+                                </div>
+                                <div ng-switch-when="qa" class="list-entity-icon icon-question-mark">
+                                </div>
+                                <div ng-switch-default class="list-entity-icon" class="glyphicon glyphicon-link">
+                                </div>
                             </div>
                         </div>
-                    </div>
-                </td>
-                <td>
-                    <div class="col-md-12 list-entitity-clickable" ng-click="handleEntryClick(entry)">
-                        {{entry.label}}
-                    </div>
-                    <div class="col-md-12" ng-show="entry.tags.length > 0">
-                        <div class="qa-tag" ng-repeat="tag in entry.tags"><a ng-click="selectTag(tag)">{{tag}}</a>
+                    </td>
+                    <td>
+                        <div class="col-md-12">
+                            <span class="list-entitity-clickable" ng-click="handleEntryClick(entry); $event.stopPropagation();">{{entry.label}}
+                            </span>
                         </div>
-                    </div>
-                </td>
-                <td>
-                    {{entry.getFormattedCreationTime()}}
-                </td>
-                <td>
-                    {{entry.author.label}}
-                </td>
-            </tr>
-        </tbody>
-    </table>
+                        <div class="col-md-12" ng-show="entry.tags.length > 0">
+                            <div class="qa-tag" ng-repeat="tag in entry.tags"><a ng-click="selectTag(tag); $event.stopPropagation();">{{tag}}</a>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        {{entry.getFormattedCreationTime()}}
+                    </td>
+                    <td>
+                        {{entry.author.label}}
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
 </div>

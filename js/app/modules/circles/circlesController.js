@@ -173,9 +173,9 @@ angular.module('module.circles').controller("CircleResourcesController", functio
     $scope.availableTags = [];
     $scope.searchResourcesString = null;
     $scope.selectedEntities = [];
-    $scope.actions = [{title : 'Delete', cssClass : 'glyphicon glyphicon-trash'},
+    $scope.actions = [{title : 'Download', cssClass : 'glyphicon glyphicon-download-alt'},
     {title : 'Add to Dropbox', cssClass : 'glyphicon glyphicon-floppy-open'},
-    {title : 'Download', cssClass : 'glyphicon glyphicon-download-alt'}];
+    {title : 'Delete', cssClass : 'glyphicon glyphicon-trash'}];
     
     var promise = GroupFetchService.getGroup("http://sss.eu/" + $scope.circleId);
         
@@ -223,9 +223,17 @@ angular.module('module.circles').controller("CircleResourcesController", functio
         }
     };
 
+    $scope.deselectAllEntities = function() {
+        for(var i=0; i < $scope.selectedEntities.length; i++) {
+            $scope.selectedEntities[i].isSelected = false;
+        }
+        $scope.selectedEntities = [];
+    };
+
     $scope.selectTag = function(tag) {
         $scope.selectedTag = tag;
     };
+
     
     $scope.filterFunction = function(element) {
         var matchesSearch = true;
@@ -282,9 +290,40 @@ angular.module('module.circles').controller("CircleResourcesController", functio
             } else {
                 var dialog = $dialogs.entryDetail(entry);
             }
-            
         }
+    };
 
+    $scope.clickedAction = function (index) {
+        if (index == 1) {
+            $scope.addEntitiesToHomeCollection();
+        }
+    };
+
+    $scope.addEntityToHomeCollection = function (entity) {
+        var promise = CollectionFetchService.getRootCollection();
+
+        promise.then(function (model) {
+            model.addEntries([entity.id], [entity.label]);
+        }, function (error) {
+            console.log(error);
+        });
+    };
+
+    $scope.addEntitiesToHomeCollection = function() {
+        var selectedEntitiesIDs = [];
+        var selectedLabels = [];
+        for(var i=0; i < $scope.selectedEntities.length; i++) {
+            selectedEntitiesIDs.push($scope.selectedEntities[i].id);
+            selectedLabels.push($scope.selectedEntities[i].label);
+        }
+        var promise = CollectionFetchService.getRootCollection();
+
+        promise.then(function (model) {
+            model.addEntries(selectedEntitiesIDs, selectedLabels);
+            $scope.deselectAllEntities();
+        }, function (error) {
+            console.log(error);
+        });
     };
 
     $scope.$on('ngRepeatFinished', function(ngRepeatFinishedEvent) {
