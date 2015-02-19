@@ -311,7 +311,208 @@ angular.module('dialogs.controllers', ['ui.bootstrap.modal', 'module.i18n', 'mod
         $scope.backToChoose = function() {
             $scope.currentResourceType = 0;
         };
-    }]).controller("UploadResourcesController", function($q, $scope, $modalInstance, $http, $location, $state, i18nService, CurrentCollectionService, UriToolbox, UserService, EntityModel, ENTITY_TYPES) {
+    }])
+
+
+ .controller("ChooseFromDropboxController", function ($scope, $q, $location, $rootScope, $state, i18nService, CollectionFetchService, CurrentCollectionService, EntityFetchService, $modal, EntityModel, ENTITY_TYPES, SPACE_ENUM, RATING_MAX, $dialogs, $modalInstance) {
+
+        var self = this;
+        var selectedCounter = 0;
+
+        $scope.entityTypes = ENTITY_TYPES;
+        $scope.spaceEnum = SPACE_ENUM;
+        $scope.selectedResources = [];
+
+
+        /**
+         * TRANSLATION INJECTION
+         */
+        $scope.t = function (identifier) {
+            return i18nService.t(identifier);
+        };
+
+        /**
+         * METHODS
+         */
+
+        $scope.transitionToHome = function () {
+        };
+
+
+        $scope.loadCurrentCollection = function(coll){
+
+            $rootScope.activateLoadingIndicator();
+
+            var defer = $q.defer();
+
+            if (coll === 'root') {
+                $scope.loadRootCollection(defer);
+            } else {
+                self.loadCollectionByUri(coll, defer);
+            }
+
+            return defer.promise;
+        };
+        
+
+        $scope.loadRootCollection = function (defer) {
+
+            var promise = CollectionFetchService.getRootCollection();
+
+            promise.then(function (model) {
+                $rootScope.deactivateLoadingIndicator();
+                self.renderCollectionContent(model);
+                defer.resolve();
+            }, function (error) {
+                console.log(error);
+            });
+        };
+
+        $scope.loadCollectionByUri = function (coll, defer) {
+
+            var promise = CollectionFetchService.getCollectionByUri(coll);
+
+            promise.then(function (model) {
+                $rootScope.deactivateLoadingIndicator();
+                self.renderCollectionContent(model);
+                defer.resolve();
+            }, function (error) {
+                console.log(error);
+            });
+
+        };
+
+        this.renderCollectionContent = function (collection) {
+            $scope.collectionRating = collection.overallRating.score;
+            CurrentCollectionService.setCurrentCollection(collection);
+            $scope.currentCollection = CurrentCollectionService.getCurrentCollection();
+            
+            var selectedResourcesIDs = [];
+            $scope.selectedResources.forEach(function (entry) {
+                selectedResourcesIDs.push(entry.id);
+            });
+            $scope.currentCollection.entries.forEach(function(entry) {
+                entry.isSelected = $.inArray(entry.id, selectedResourcesIDs) !== -1;
+            });
+        };
+
+        $scope.selectResource = function (entry) {
+
+            if (entry.isSelected) {
+                $scope.deselectResource($scope.selectedResources.indexOf(entry));
+            } else {
+                entry.isSelected = true;
+                selectedCounter++;
+                $scope.selectedResources.push(entry);
+            }
+
+            if (selectedCounter <= 0) {
+                $scope.resourcesSelected = false;
+            } else {
+                $scope.resourcesSelected = true;
+            }
+        };
+        
+        $scope.deselectResource = function (index) {
+            var entry = $scope.selectedResources[index];
+            if (entry.isSelected) {
+                entry.isSelected = false;
+                selectedCounter--;
+                
+            }
+            $scope.selectedResources.splice(index, 1);
+        };
+
+        var resetSelectCounter = function () {
+            selectedCounter = 0;
+            $scope.resourcesSelected = false;
+        };
+
+        $scope.handleEntryClick = function (entry) {
+            if (entry.type === 'coll') {
+                $scope.loadCollectionByUri(entry.uriPathnameHash);
+            } else {
+                $scope.selectResource(entry);
+            }
+        };
+
+        $scope.clickEventloadRootCollection = function () {
+            $rootScope.activateLoadingIndicator();
+            var defer = $q.defer();
+            $scope.loadRootCollection(defer);
+        }
+
+        $scope.openCollection = function (uriPathnameHash) {
+            $scope.loadCollectionByUri(uriPathnameHash);
+        };
+
+        $scope.loadCurrentEntity = function (event, entryUri, parentCollectionUri) {
+
+            event.then(function () {
+
+                var entry = CurrentCollectionService.getCurrentCollection().getEntryByUriPathnameHash(entryUri);
+
+                if (entry != null) {
+
+                    var promise = EntityFetchService.getEntityByUri(entry.id, true, true, true);
+
+                    promise.then(
+                            function (entity) {
+                                entity.init({parentColl: CurrentCollectionService.getCurrentCollection()});
+                                self.openEntryDetailView(entity, $scope);
+                            },
+                            function (error) {
+                                console.log(error);
+                            }
+                    );
+
+                } else {
+                    //TODO
+                    //404 error page
+                }
+
+            });
+        };
+
+        this.openEntryDetailView = function (entry, scope) {
+            var dialog = $dialogs.entryDetail(entry);
+
+            dialog.result.finally(function (btn) {
+                $state.transitionTo('app.collection.content', {coll: CurrentCollectionService.getCurrentCollection().uriPathnameHash});
+            });
+        };
+
+        $scope.closeModal = function () {
+            
+            $scope.modal.close(true);
+        };
+
+
+        $scope.resetAttachedResources = function () {
+            $scope.currentCollection.entries.forEach(function(entry) {
+                entry.isSelected = false;
+            });
+            $scope.selectedResources.forEach(function(entry) {entry.isSelected = false;});
+            $scope.selectedResources = [];
+            resetSelectCounter();
+        };
+
+        $scope.doneClicked = function () {
+            $modalInstance.close($scope.selectedResources);
+        };
+
+
+        $scope.loadCurrentCollection('root');
+
+    })
+
+
+
+
+
+
+
+.controller("UploadResourcesController", function($q, $scope, $modalInstance, $http, $location, $state, i18nService, CurrentCollectionService, UriToolbox, UserService, EntityModel, ENTITY_TYPES) {
         var self = this;
         /**
          * TRANSLATION INJECTION
@@ -686,6 +887,14 @@ angular.module('dialogs.services', ['ui.bootstrap.modal', 'dialogs.controllers']
                     backdrop: true
                 });
             },
+            chooseFromDropbox: function() {
+                return $modal.open({
+                    templateUrl: MODULES_PREFIX + '/dialog/wizzard-choose-from-dropbox.tpl.html',
+                    controller: 'ChooseFromDropboxController',
+                    keyboard: true,
+                    backdrop: true
+                });
+            }
         };
     }]); // end $dialogs / dialogs.services
 //== Module ==================================================================//

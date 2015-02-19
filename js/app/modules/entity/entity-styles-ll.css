@@ -18,9 +18,8 @@
 
 .collection-entry-selected{
   cursor: pointer;
-  color: #d79634;
-  border: 2px solid #DBDBDB;
-  padding-top: 0px;
+  background-color: #F9EADA;
+  border-radius: 5px;
 }
 
 .collection-entry-preview-box {
@@ -68,6 +67,7 @@
 
 .collection-entry-label:hover {
   cursor: pointer;
+  text-decoration: underline;
   color: #f6a551;
 }
 

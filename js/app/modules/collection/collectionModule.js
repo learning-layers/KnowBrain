@@ -363,7 +363,7 @@ angular.module('module.collection').controller("CollectionController", [
 
 
 
-angular.module('module.collection').controller("ChooseFromDropboxController", [
+angular.module('module.collection').controller("ChooseFromDropboxControdller", [
     '$scope', '$q', '$location', '$rootScope', '$state', 'i18nService', 'CollectionFetchService', 'CurrentCollectionService', 'EntityFetchService', '$modal', 'EntityModel', 'ENTITY_TYPES', 'SPACE_ENUM', 'RATING_MAX', '$dialogs',
     function ($scope, $q, $location, $rootScope, $state, i18nService, CollectionFetchService, CurrentCollectionService, EntityFetchService, $modal, EntityModel, ENTITY_TYPES, SPACE_ENUM, RATING_MAX, $dialogs) {
 

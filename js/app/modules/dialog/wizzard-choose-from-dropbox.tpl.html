@@ -13,7 +13,7 @@
   -  See the License for the specific language governing permissions and
   -  limitations under the License.
 -->
-<div class="modal-content" ng-controller="ChooseFromDropboxController">
+<div class="modal-content">
     <div class="modal-header">
         <button type="button" class="close" ng-click="cancel()" aria-hidden="true">&times;</button>
         <h4 class="modal-title"><span class="glyphicon glyphicon-link" style="margin-right:10px;"></span>{{getCurrentWizzardTitle()}}</h4>
@@ -34,7 +34,7 @@
         <div id="resourceUploadWidget" class="col-lg-12">
                     <div id="resourceUploadWidgetToolbar">
                         <div class="btn-group col-md-9">
-                            <button class="btn btn-success" ng-click="attachAllResources()"><i class="glyphicon glyphicon-paperclip"></i>&nbsp;Attach all</button>
+                            <button class="btn btn-success" ng-click="doneClicked()"><i class="glyphicon glyphicon-paperclip"></i>&nbsp;Attach all</button>
                             <button class="btn btn-danger" ng-click="resetAttachedResources()"><i class="glyphicon glyphicon-trash"></i>&nbsp;Clear list</button>
                         </div>
                         <div class="col-md-3 text-align-right" style="margin-top:5px;">{{selectedResources.length}}&nbsp;{{t('Resources')}}.</div>

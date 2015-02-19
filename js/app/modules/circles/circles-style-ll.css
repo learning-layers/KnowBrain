@@ -393,8 +393,8 @@
 .animate-show {
   -webkit-transition:all ease-in-out 0.2s;
   transition:all ease-in-out 0.2s;
-  line-height:60px;
   opacity:1;
+  line-height: 40px;
 }
  
 .animate-show.ng-hide-add,
@@ -403,8 +403,8 @@
 }
  
 .animate-show.ng-hide {
-  line-height:0;
   opacity:0;
+  line-height: 40px;
 }
 
 .action-button {

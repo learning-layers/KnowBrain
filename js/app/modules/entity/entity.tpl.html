@@ -10,7 +10,7 @@
             class="collection-entry-checkbox" type="checkbox"
             ng-click="selectResource(entry);$event.stopPropagation()" />
         </div>
-        <div ng-switch="entry.type" ng-click="handleEntryClick(entry)">
+        <div ng-switch="entry.type" ng-click="selectResource(entry)">
             <img ng-switch-when="group" src="images/group_pic_dummy.jpg" class="collection-entry-profile-pic"/>
             <img ng-switch-when="priv" src="images/group_pic_dummy.jpg" class="collection-entry-profile-pic"/>
             <div ng-switch-when="coll" style="position: relative; z-index: 9;"

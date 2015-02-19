@@ -84,7 +84,6 @@ angular.module('module.circles').controller("CirclesController", function($scope
 angular.module('module.circles').controller("CircleController", function($compile, $scope, $state, $modal, $controller, $dialogs, GroupFetchService, UserService, UserFetchService, UserModel, UriToolbox) {
     $scope.circleId = $state.params.id;
     $scope.circle = null;
-    $scope.groupMembers = [];
     $scope.circles = [];
     $scope.tab = 0;
 
@@ -93,21 +92,10 @@ angular.module('module.circles').controller("CircleController", function($compil
         $scope.circles = result.circles;
     });
 
-    $scope.groupMembers = [];
-        var promise = GroupFetchService.getGroup("http://sss.eu/" + $scope.circleId);
-        promise.then(function(result) {
-            $scope.circle = result.circle;
-            var memberIds = $scope.circle.users;
-            for (var i = 0; i < memberIds.length; i++) {
-                var promise = UserFetchService.getUser(memberIds[i]);
-                promise.then(function(result) {
-                    var user = new UserModel();
-                    user.id = result.desc.entity;
-                    user.label = result.desc.label;
-                    $scope.groupMembers.push(user);
-                });
-            }
-        });
+    var promise = GroupFetchService.getGroup("http://sss.eu/" + $scope.circleId);
+    promise.then(function(result) {
+        $scope.circle = result.circle;
+    });
 
     $scope.setTab = function(index) {
         $scope.tab = index;
@@ -118,9 +106,9 @@ angular.module('module.circles').controller("CircleController", function($compil
 
 
     $scope.showCircle = function(circleId) {
-            $state.go('app.circles.circle', {
-                id: UriToolbox.extractUriPathnameHash(circleId)
-            });
+        $state.go('app.circles.circle', {
+            id: UriToolbox.extractUriPathnameHash(circleId)
+        });
     };
 
     $scope.addMember = function() {
@@ -131,13 +119,13 @@ angular.module('module.circles').controller("CircleController", function($compil
             windowClass: "modal-huge",
             resolve: {
                 excludeUsers: function () {
-                    return $scope.groupMembers;
+                    return $scope.circle.users;
                 }
             }
         }).result.then(function(result) {
             var userUrls = [];
             for (var i = 0; i < result.length; i++) {
-                $scope.groupMembers.push(result[i]);
+                $scope.circle.users.push(result[i]);
                 userUrls.push(result[i].id);
             }
             var promise = GroupFetchService.addMembersToGroup(userUrls, $scope.circle.id);
@@ -182,25 +170,22 @@ angular.module('module.circles').controller("CircleResourcesController", functio
     promise.then(function(result) {
         
         var circle = result.circle;
-        var entityIds = circle.entities;
-        addEntitiesToCircle(entityIds);
+        addEntitiesToCircle(circle.entities);
     });
 
     var addEntitiesToCircle = function(entities) {
         for(var i=0; i < entities.length; i++) {
-            var promise = EntityFetchService.getEntityByUri(entities[i], true, false, false);
-            promise.then(function(entityResult){
-                var promise = UserFetchService.getUser(entityResult.author);
-                promise.then(function(userResult) {
-                    entityResult.author = userResult.desc;
-                    $scope.entities.push(entityResult);
-                    for (var i = 0; i < entityResult.tags.length; i++) {
-                        if ($.inArray(entityResult.tags[i], $scope.availableTags) == -1) {
-                            $scope.availableTags.push(entityResult.tags[i]);
-                        }
+            var entity = entities[i];
+            entity.isSelected = false;
+            $scope.entities.push(entity);
+
+            if (entity.tags != null) {
+                for (var j = 0; j < entity.tags.length; j++) {
+                    if ($.inArray(entity.tags[j], $scope.availableTags) == -1) {
+                        $scope.availableTags.push(entity.tags[j]);
                     }
-                });
-            });
+                }
+            }            
         }
     };
 
@@ -213,7 +198,7 @@ angular.module('module.circles').controller("CircleResourcesController", functio
         });
     };
 
-    $scope.selectEntity = function(entity) {
+    $scope.selectResource = function(entity) {
         if (entity.isSelected) {
             entity.isSelected = false;
             $scope.selectedEntities.splice($scope.selectedEntities.indexOf(entity), 1);
@@ -266,6 +251,22 @@ angular.module('module.circles').controller("CircleResourcesController", functio
         });
     }
 
+    $scope.chooseEntity = function() {
+        $dialogs.chooseFromDropbox().result.then(function(chosenEntities) {
+            var entityIds = [];
+            for (var i = 0; i < chosenEntities.length; i++) {
+                entityIds.push(chosenEntities[i].id);
+            }
+
+            var promise = GroupFetchService.addEntitiesToGroup(entityIds, $scope.circle.id);
+            promise.then(function(result) {
+                addEntitiesToCircle(chosenEntities);
+            });
+        }, function() {
+            //$log.info('Modal dismissed at: ' + new Date());
+        });
+    }
+
 
     $scope.loadCollectionByUri = function (coll, defer) {
         var promise = CollectionFetchService.getCollectionByUri(coll);
@@ -296,7 +297,28 @@ angular.module('module.circles').controller("CircleResourcesController", functio
     $scope.clickedAction = function (index) {
         if (index == 1) {
             $scope.addEntitiesToHomeCollection();
+        } else if (index == 2) {
+            $scope.removeEntities($scope.selectedEntities);
         }
+    };
+
+    $scope.removeEntities = function (entities) {
+        var entityIds = [];
+        for (var i = 0; i < entities.length; i++) {
+            entityIds.push(entities[i].id);
+        }
+        var promise = GroupFetchService.removeEntitiesFromGroup(entityIds, $scope.circle.id);
+        promise.then(function(result) {
+            for (var i = 0; i < entities.length; i++) {
+                $.each($scope.entities, function(j){
+                    if($scope.entities[j].id === entities[i].id) {
+                        $scope.entities.splice(j,1);
+                        return false;
+                    }
+                });
+            }
+            $scope.deselectAllEntities();
+        });
     };
 
     $scope.addEntityToHomeCollection = function (entity) {

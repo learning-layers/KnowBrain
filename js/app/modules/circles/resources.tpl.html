@@ -39,14 +39,14 @@
                 </button>
                 <ul class="dropdown-menu" role="menu">
                     <li><a ng-click="addEntity()">Upload</a></li>
+                    <li><a ng-click="chooseEntity()">Dropbox</a></li>
                     <li><a >Link</a></li>
-                    <li><a >Dropbox</a></li>
                 </ul>
             </div>
         </div>
     </div>
 </div>
-<div ng-repeat="entity in entities | orderBy: predicate : reverse | filter : filterFunction" class="dropdown position-fixed" id="menu-{{ $index }}" style="z-index:1;">
+<div ng-repeat="entity in entities | orderBy: predicate : reverse | filter : filterFunction" class="dropdown position-fixed" id="menu-{{ $index }}" style="z-index:10;">
     <ul class="dropdown-menu" role="menu">
         <li>
             <a class="pointer" role="menuitem" tabindex="1"
@@ -62,7 +62,7 @@
         </li>
         <li>
             <a class="pointer" role="menuitem" tabindex="2"
-            ng-click="panel.highlight = false">
+            ng-click="removeEntities([entity])">
             Delete
             </a>
         </li>
@@ -70,7 +70,7 @@
 </div>
 <div click-anywhere-but-here="deselectAllEntities()">
     <!-- sort bar -->
-    <div style="height:60px; overflow:hidden;">
+    <div style="height:40px; overflow:hidden;">
         <div class="sort-order-bar animate-show row" ng-show="selectedEntities.length == 0">
             <div class="col-md-1 col-xs-2">
                 <a ng-class="{'sort-order-filter-active' : predicate == 'fileType'}" ng-click="reverse = predicate != 'fileType' ? false : !reverse; predicate = 'fileType';">Type<span ng-show="predicate == 'fileType'">{{reverse ? '&#9650;' : '&#9660;'}}</span></a>
@@ -93,12 +93,12 @@
     </div>
     <!-- grid or list-->
     <div ng-show="isGridViewMode">
-        <ng-entity ng-repeat="entry in entities | orderBy: predicate : reverse | filter : filterFunction"></ng-entity>
+        <ng-entity ng-repeat="entry in entities | orderBy: predicate : reverse | filter : filterFunction"  context-menu data-target="menu-{{ $index }}"></ng-entity>
     </div>
     <div ng-show="isListViewMode">
         <table class="table vertical-aligned-table">
             <tbody>
-                <tr ng-repeat="entry in entities | orderBy: predicate : reverse | filter : filterFunction"  ng-click="selectEntity(entry)" context-menu data-target="menu-{{ $index }}" ng-class="{'list-item-selected' : entry.isSelected}">
+                <tr ng-repeat="entry in entities | orderBy: predicate : reverse | filter : filterFunction"  ng-click="selectResource(entry)" context-menu data-target="menu-{{ $index }}" ng-class="{'list-item-selected' : entry.isSelected}">
                     <td>
                         <div ng-switch="entry.type">
                             <div class="list-entitity-clickable" ng-click="handleEntryClick(entry); $event.stopPropagation();">
