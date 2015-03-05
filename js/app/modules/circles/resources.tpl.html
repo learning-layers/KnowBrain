@@ -40,7 +40,7 @@
                 <ul class="dropdown-menu" role="menu">
                     <li><a ng-click="addEntity()">Upload</a></li>
                     <li><a ng-click="chooseEntity()">Dropbox</a></li>
-                    <li><a >Link</a></li>
+                    <li><a ng-click="addLink()">Link</a></li>
                 </ul>
             </div>
         </div>
@@ -48,7 +48,7 @@
 </div>
 <div ng-repeat="entity in entities | orderBy: predicate : reverse | filter : filterFunction" class="dropdown position-fixed" id="menu-{{ $index }}" style="z-index:10;">
     <ul class="dropdown-menu" role="menu">
-        <li>
+        <li ng-hide="entity.type != 'file'">
             <a class="pointer" role="menuitem" tabindex="1"
             ng-click="downloadEntity(entity)">
             Download
@@ -70,8 +70,9 @@
 </div>
 <div click-anywhere-but-here="deselectAllEntities()">
     <!-- sort bar -->
-    <div style="height:40px; overflow:hidden;">
-        <div class="sort-order-bar animate-show row" ng-show="selectedEntities.length == 0">
+    <div class="well" style="padding : 1px;">
+       <div style="height:40px; overflow:hidden;">
+        <div class="sort-order-bar animate-show row" style="margin-left : 10px;" ng-show="selectedEntities.length == 0">
             <div class="col-md-1 col-xs-2">
                 <a ng-class="{'sort-order-filter-active' : predicate == 'fileType'}" ng-click="reverse = predicate != 'fileType' ? false : !reverse; predicate = 'fileType';">Type<span ng-show="predicate == 'fileType'">{{reverse ? '&#9650;' : '&#9660;'}}</span></a>
             </div>
@@ -85,12 +86,14 @@
                 <a ng-class="{'sort-order-filter-active' : predicate == 'author.label'}" ng-click=" reverse = predicate != 'author.label' ? false : !reverse; predicate = 'author.label';">Author <span ng-show="predicate == 'author.label'">{{reverse ? '&#9650;' : '&#9660;'}}</span></a>
             </div>
         </div>
-        <div class="animate-show row" ng-hide="selectedEntities.length == 0">
+        <div class="animate-show row" ng-hide="selectedEntities.length == 0" style="line-height:40px;">
             <div class="col-md-12">
                 <a ng-repeat="action in actions" ng-click="clickedAction($index)" style="float:left; display:table; margin-left: 15px;"><span class="action-button" ng-class="action.cssClass"></span>&nbsp;{{action.title}}</a>
             </div>
         </div>
+    </div> 
     </div>
+    
     <!-- grid or list-->
     <div ng-show="isGridViewMode">
         <ng-entity ng-repeat="entry in entities | orderBy: predicate : reverse | filter : filterFunction"  context-menu data-target="menu-{{ $index }}"></ng-entity>
@@ -108,18 +111,18 @@
                                 </div>
                                 <div ng-switch-when="file" class="list-entity-icon" ng-class="{'icon-file' : entry.fileType == null, 'icon-file-image' : entry.fileType == 'image', 'icon-file-pdf' : entry.mimeType == 'application/pdf', 'icon-file-audio' : entry.fileType == 'audio'}">
                                 </div>
-                                <div ng-switch-when="entity" class="list-entity-icon" class="glyphicon glyphicon-link">
+                                <div ng-switch-when="entity" class="list-entity-icon glyphicon glyphicon-link">
                                 </div>
                                 <div ng-switch-when="qa" class="list-entity-icon icon-question-mark">
                                 </div>
-                                <div ng-switch-default class="list-entity-icon" class="glyphicon glyphicon-link">
+                                <div ng-switch-default class="list-entity-icon glyphicon glyphicon-link">
                                 </div>
                             </div>
                         </div>
                     </td>
                     <td>
                         <div class="col-md-12">
-                            <span class="list-entitity-clickable" ng-click="handleEntryClick(entry); $event.stopPropagation();">{{entry.label}}
+                            <span class="list-entitity-clickable" ng-click="handleEntryClick(entry); $event.stopPropagation();">{{entry.label.length != 0 ? entry.label : entry.id}}
                             </span>
                         </div>
                         <div class="col-md-12" ng-show="entry.tags.length > 0">

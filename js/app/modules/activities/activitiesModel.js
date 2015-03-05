@@ -43,17 +43,15 @@ angular.module('module.activities').factory('Activity', [function() {
         var myDate = new Date(time);
         var hours = myDate.getHours(); //returns 0-23
         var minutes = myDate.getMinutes(); //returns 0-59
-        var seconds = myDate.getSeconds(); //returns 0-59
         
         if (hours < 10) hours = '0' + hours;
         if (minutes < 10) minutes = '0' + minutes;
-        if (seconds < 10) seconds = '0' + seconds;
         
-        return hours + ":" + minutes + ":" + seconds;
+        return hours + ":" + minutes;
     }
     
     var parseDate = function(time) {
-        var myDate = new Date(1000*time);
+        var myDate = new Date(time);
         
         var day = myDate.getDate();
         var month = myDate.getMonth();

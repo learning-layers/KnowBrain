@@ -1,54 +1,50 @@
 <div ng-animate="'slide'" class="slide-frame">
-
-<div class="share-entity-header modal-header">
-	<button type="button" class="share-entity-close-button close"
-		ng-click="close()" style="margin-top: 5px;" aria-hidden="true">&times;</button>
-
-	<span class="share-entity-type-icon icon-add-circle"></span> <span
-		class="share-entity-modal-title modal-title">New Circle</span>
-
-	<div class="clearfix"></div>
-</div>
-
-
-<div class="container" style="width: 100%">
-	<div class="row clearfix">
-		<div class="col-md-4 column v-center">
-			<div id="upload-pic">
-                <div class="icon-circle circle-preview-pic"></div>
-				<div class="new-circle-picture-label-frame">
-					<a class="new-circle-picture-label" ng-click="uploadPic()"> + Upload circle picture</a>
-				</div>
-			</div>
-		</div>
-		<div class="col-md-8 column">
-			<div class="new-circle-name-frame">
-				<label class="new-circle-name-label">
-					<p>Circle name</p>
-				</label> 
-				<input type="text" class="form-control" ng-model="circle.name" />
-			</div>
-			<div class="new-circle-desc-frame">
-				<label class="new-circle-desc-label">
-					<p>Circle description</p>
-				</label>
-				<textarea class="form-control" ng-model="circle.desc"></textarea>
-			</div>
-		</div>
-	</div>
-	<label>Members</label>
-					<div id="new-circle-member-container">
-						<ng-user ng-hide="user.id == user+'/'" ng-click="selectUser(user)" ng-repeat="user in allUsers | filter: userFilter"></ng-user>
-					</div>
-	<div class="row clearfix" style="padding: 5px;">
-		<div class="col-md-6 column"></div>
-		<div class="col-md-6 column">
-			<div class="btn-circle" style="float: right">
-				<button class="btn btn-success" type="button"
-					ng-click="createCircle()">Create</button>
-			</div>
-		</div>
-	</div>
-</div>
-
+    <div class="share-entity-header modal-header">
+        <button type="button" class="share-entity-close-button close"
+        ng-click="close()" style="margin-top: 5px;" aria-hidden="true">&times;</button>
+        <span class="share-entity-type-icon icon-add-circle"></span> <span
+        class="share-entity-modal-title modal-title">{{editingCircle ? 'Edit Circle' : 'New Circle'}}</span>
+        <div class="clearfix"></div>
+    </div>
+    <div class="container" style="width: 100%">
+        <div class="row clearfix">
+            <div class="col-md-4 column v-center">
+                <div id="upload-pic">
+                    <div class="icon-circle circle-preview-pic"></div>
+                    <div class="new-circle-picture-label-frame">
+                        <a class="new-circle-picture-label" ng-click="uploadPic()"> + Upload circle picture</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-8 column">
+                <div class="new-circle-name-frame">
+                    <label class="new-circle-name-label">
+                        <p>Circle name</p>
+                    </label>
+                    <input type="text" class="form-control" ng-model="circle.label" />
+                </div>
+                <div class="new-circle-desc-frame">
+                    <label class="new-circle-desc-label">
+                        <p>Circle description</p>
+                    </label>
+                    <textarea class="form-control" ng-model="circle.description"></textarea>
+                </div>
+            </div>
+        </div>
+        <div ng-hide="editingCircle">
+            <label>Members</label>
+            <div id="new-circle-member-container">
+                <ng-user ng-hide="user.id == user+'/'" ng-click="selectUser(user)" ng-repeat="user in allUsers | filter: userFilter"></ng-user>
+            </div>
+        </div>
+        <div class="row clearfix" style="padding: 5px;">
+            <div class="col-md-6 column"></div>
+            <div class="col-md-6 column">
+                <div class="btn-circle" style="float: right">
+                    <button class="btn btn-success" type="button"
+                    ng-click="save()">{{editingCircle ? 'Save changes' : 'Create Circle'}}</button>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>

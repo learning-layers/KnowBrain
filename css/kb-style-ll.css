@@ -388,7 +388,6 @@ input[name="searchInput"] {
 #content {
     position: relative;
     height: 100%;
-    background-color: #ffffff;
 }
 
 #context {
@@ -573,6 +572,11 @@ input[name="searchInput"] {
     font-size:40px;
     color: #999;
 }
+
+.upload-drop-container-file-over {
+    border: 3px dashed #f6a551;
+}
+
 
 #drop-container-text {
     font-size: 16px;

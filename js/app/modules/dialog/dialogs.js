@@ -16,10 +16,10 @@ angular.module('dialogs.controllers', ['ui.bootstrap.modal', 'module.i18n', 'mod
         }; // end close
     }]) // end ErrorDialogCtrl
 
-    /**
-     * Wait Dialog Controller
-     */
-    .controller('waitDialogCtrl', ['$scope', '$modalInstance', '$timeout', 'header', 'msg', 'progress', function($scope, $modalInstance, $timeout, header, msg, progress) {
+/**
+ * Wait Dialog Controller
+ */
+.controller('waitDialogCtrl', ['$scope', '$modalInstance', '$timeout', 'header', 'msg', 'progress', function($scope, $modalInstance, $timeout, header, msg, progress) {
         //-- Variables -----//
         $scope.header = (angular.isDefined(header)) ? header : 'Please Wait...';
         $scope.msg = (angular.isDefined(msg)) ? msg : 'Waiting on operation to complete.';
@@ -49,10 +49,10 @@ angular.module('dialogs.controllers', ['ui.bootstrap.modal', 'module.i18n', 'mod
         }; // end getProgress
     }]) // end WaitDialogCtrl
 
-    /**
-     * Notify Dialog Controller
-     */
-    .controller('notifyDialogCtrl', ['$scope', '$modalInstance', 'header', 'msg', function($scope, $modalInstance, header, msg) {
+/**
+ * Notify Dialog Controller
+ */
+.controller('notifyDialogCtrl', ['$scope', '$modalInstance', 'header', 'msg', function($scope, $modalInstance, header, msg) {
         //-- Variables -----//
         $scope.header = (angular.isDefined(header)) ? header : 'Notification';
         $scope.msg = (angular.isDefined(msg)) ? msg : 'Unknown application notification.';
@@ -62,651 +62,690 @@ angular.module('dialogs.controllers', ['ui.bootstrap.modal', 'module.i18n', 'mod
         }; // end close
     }]) // end WaitDialogCtrl
 
+/**
+ * Confirm Dialog Controller
+ */
+.controller('confirmDialogCtrl', ['$scope', '$modalInstance', 'header', 'msg', function($scope, $modalInstance, header, msg) {
+    //-- Variables -----//
+    $scope.header = (angular.isDefined(header)) ? header : 'Confirmation';
+    $scope.msg = (angular.isDefined(msg)) ? msg : 'Confirmation required.';
+    //-- Methods -----//
+    $scope.no = function() {
+        $modalInstance.dismiss('no');
+    }; // end close
+    $scope.yes = function() {
+        $modalInstance.close('yes');
+    }; // end yes
+}]).controller('entryDetailController', ['$scope', '$modalInstance', 'entry', '$q', 'i18nService', 'CurrentCollectionService', 'RATING_MAX', 'ENTITY_TYPES', 'TagFetchService', 'isSearchResult', 'UserService', 'UriToolbox', '$state', '$window', '$dialogs', function($scope, $modalInstance, entry, $q, i18nService, CurrentCollectionService, RATING_MAX, ENTITY_TYPES, TagFetchService, isSearchResult, UserSrv, UriToolbox, $state, $window, $dialogs) {
+    $scope.entry = entry;
+    $scope.tags = new Array();
+    $scope.ratingReadOnly = false;
+    $scope.ENTITY_TYPES = ENTITY_TYPES;
+    $scope.isSearchResult = isSearchResult;
+    $scope.locations = [];
+    var tagsLoaded = false;
     /**
-     * Confirm Dialog Controller
+     * TRANSLATION INJECTION
      */
-    .controller('confirmDialogCtrl', ['$scope', '$modalInstance', 'header', 'msg', function($scope, $modalInstance, header, msg) {
-        //-- Variables -----//
-        $scope.header = (angular.isDefined(header)) ? header : 'Confirmation';
-        $scope.msg = (angular.isDefined(msg)) ? msg : 'Confirmation required.';
-        //-- Methods -----//
-        $scope.no = function() {
-            $modalInstance.dismiss('no');
-        }; // end close
-        $scope.yes = function() {
-            $modalInstance.close('yes');
-        }; // end yes
-    }]).controller('entryDetailController', ['$scope', '$modalInstance', 'entry', '$q', 'i18nService', 'CurrentCollectionService', 'RATING_MAX', 'ENTITY_TYPES', 'TagFetchService', 'isSearchResult', 'UserService', 'UriToolbox', '$state', '$window', '$dialogs', function($scope, $modalInstance, entry, $q, i18nService, CurrentCollectionService, RATING_MAX, ENTITY_TYPES, TagFetchService, isSearchResult, UserSrv, UriToolbox, $state, $window, $dialogs) {
-        $scope.entry = entry;
-        $scope.tags = new Array();
-        $scope.ratingReadOnly = false;
-        $scope.ENTITY_TYPES = ENTITY_TYPES;
-        $scope.isSearchResult = isSearchResult;
-        $scope.locations = [];
-        var tagsLoaded = false;
-        /**
-         * TRANSLATION INJECTION
-         */
-        $scope.t = function(identifier) {
-            return i18nService.t(identifier);
-        };
-        var getLocations = function() {
-            new SSCollsEntityIsInGet(function(result) {
-                //TODO dtheiler: replace this when differentiation between shared and public is possible in KnowBrain
-                angular.forEach(result.colls, function(coll, key) {
-                    coll.space = sSColl.getCollSpace(coll.circleTypes);
-                    if (coll.space === "followSpace" || coll.space === "sharedSpace") {
-                        coll.space = "shared";
-                    }
-                    if (coll.space === "privateSpace") {
-                        coll.space = "private";
-                    }
-                });
-                $scope.locations = result.colls;
-                $scope.$apply();
-            }, function(error) {
-                console.log(error);
-            }, UserSrv.getUser(), UserSrv.getKey(), entry.id);
-        };
-        this.init = function() {
-            //set tags
-            angular.forEach(entry.tags, function(tag, key) {
-                $scope.tags.push(tag);
-            });
-            if (entry.overallRating !== null && entry.overallRating.score != null) $scope.entryRating = entry.overallRating.score;
-            if (isSearchResult) {
-                getLocations();
-            }
-        };
-        this.init();
-        $scope.rateEntry = function(rating) {
-            if (rating != $scope.entryRating && rating <= RATING_MAX && rating > 0 && !$scope.ratingReadOnly) {
-                $scope.ratingReadOnly = true;
-                var promise = $scope.entry.saveRating(rating);
-                promise.then(function(result) {
-                    $scope.entryRating = result.overallRating.score;
-                    $scope.ratingReadOnly = false;
-                });
-            }
-        };
-        $scope.tagAdded = function(tag) {
-            // Passed variable is an object with structure { text : 'tagtext'}
-            entry.addTag(tag.text).then(function(result) {
-                CurrentCollectionService.getCurrentCollection().getCumulatedTags();
-            }, function(error) {
-                console.log(error);
-            });
-        };
-        $scope.tagRemoved = function(tag) {
-            // Passed variable is an object with structure { text : 'tagtext'}
-            entry.removeTag(tag.text).then(function(result) {
-                CurrentCollectionService.getCurrentCollection().getCumulatedTags();
-            }, function(error) {
-                console.log(error);
-            });
-        };
-        $scope.close = function() {
-            $modalInstance.close();
-        };
-        $scope.deleteEntity = function() {
-            var toDelete = new Array();
-            var toDeleteKeys = new Array();
-            var entries = CurrentCollectionService.getCurrentCollection().entries;
-            angular.forEach(entries, function(collEntry, key) {
-                if (collEntry.id == $scope.entry.id) {
-                    toDelete.push(collEntry.id);
-                    toDeleteKeys.push(key);
+    $scope.t = function(identifier) {
+        return i18nService.t(identifier);
+    };
+    var getLocations = function() {
+        new SSCollsEntityIsInGet(function(result) {
+            //TODO dtheiler: replace this when differentiation between shared and public is possible in KnowBrain
+            angular.forEach(result.colls, function(coll, key) {
+                coll.space = sSColl.getCollSpace(coll.circleTypes);
+                if (coll.space === "followSpace" || coll.space === "sharedSpace") {
+                    coll.space = "shared";
+                }
+                if (coll.space === "privateSpace") {
+                    coll.space = "private";
                 }
             });
-            var promise = CurrentCollectionService.getCurrentCollection().deleteEntries(toDelete, toDeleteKeys);
+            $scope.locations = result.colls;
+            $scope.$apply();
+        }, function(error) {
+            console.log(error);
+        }, UserSrv.getUser(), UserSrv.getKey(), entry.id);
+    };
+    this.init = function() {
+        //set tags
+        angular.forEach(entry.tags, function(tag, key) {
+            $scope.tags.push(tag);
+        });
+        if (entry.overallRating !== null && entry.overallRating.score != null) $scope.entryRating = entry.overallRating.score;
+        if (isSearchResult) {
+            getLocations();
+        }
+    };
+    this.init();
+    $scope.rateEntry = function(rating) {
+        if (rating != $scope.entryRating && rating <= RATING_MAX && rating > 0 && !$scope.ratingReadOnly) {
+            $scope.ratingReadOnly = true;
+            var promise = $scope.entry.saveRating(rating);
             promise.then(function(result) {
-                $scope.close();
-            }, function(error) {
-                console.log(error);
+                $scope.entryRating = result.overallRating.score;
+                $scope.ratingReadOnly = false;
             });
-        };
-        $scope.downloadEntity = function() {
-            if ($scope.entry.type != ENTITY_TYPES.file) return;
-            $scope.entry.downloading = true;
-            var promise = $scope.entry.downloadFile();
-            promise.finally(function() {
-                $scope.entry.downloading = false;
-            });
-        };
-        $scope.openLink = function() {
-            if ($scope.entry.type != ENTITY_TYPES.link) return;
-            $window.open(entry.id);
-        };
-        $scope.queryTags = function($queryString) {
-            var defer = $q.defer();
-            var promise = TagFetchService.fetchAllPublicTags();
-            promise.then(function(result) {
-                defer.resolve(search(result, $queryString));
-            });
-            return defer.promise;
-        };
-        var search = function(tagsArray, query) {
-            var items;
-            items = tagsArray.filter(function(x) {
-                return x.toLowerCase().indexOf(query.toLowerCase()) > -1;
-            });
-            return items;
-        };
-        $scope.goToCollection = function(location) {
-            if (entry.type == ENTITY_TYPES.link) {
-                entry.uriPathnameHash = UriToolbox.extractUriHostPartWithoutProtocol(entry.id);
-            } else {
-                entry.uriPathnameHash = UriToolbox.extractUriPathnameHash(entry.id);
+        }
+    };
+    $scope.tagAdded = function(tag) {
+        // Passed variable is an object with structure { text : 'tagtext'}
+        entry.addTag(tag.text).then(function(result) {
+            CurrentCollectionService.getCurrentCollection().getCumulatedTags();
+        }, function(error) {
+            console.log(error);
+        });
+    };
+    $scope.tagRemoved = function(tag) {
+        // Passed variable is an object with structure { text : 'tagtext'}
+        entry.removeTag(tag.text).then(function(result) {
+            CurrentCollectionService.getCurrentCollection().getCumulatedTags();
+        }, function(error) {
+            console.log(error);
+        });
+    };
+    $scope.close = function() {
+        $modalInstance.close();
+    };
+    $scope.deleteEntity = function() {
+        var toDelete = new Array();
+        var toDeleteKeys = new Array();
+        var entries = CurrentCollectionService.getCurrentCollection().entries;
+        angular.forEach(entries, function(collEntry, key) {
+            if (collEntry.id == $scope.entry.id) {
+                toDelete.push(collEntry.id);
+                toDeleteKeys.push(key);
             }
+        });
+        var promise = CurrentCollectionService.getCurrentCollection().deleteEntries(toDelete, toDeleteKeys);
+        promise.then(function(result) {
             $scope.close();
-            $state.transitionTo('app.collection.content', {
-                coll: UriToolbox.extractUriPathnameHash(location.id)
-            });
-        };
-        $scope.shareEntity = function() {
-            $dialogs.shareEntity($scope.entry);
-        };
-    }]).controller('attachmentDetailController', ['$scope', '$modalInstance', 'attachment', '$q', 'i18nService', 'CurrentCollectionService', 'RATING_MAX', 'ENTITY_TYPES', 'UriToolbox', '$state', '$window', '$dialogs', function($scope, $modalInstance, attachment, $q, i18nService, CurrentCollectionService, RATING_MAX, ENTITY_TYPES, UriToolbox, $state, $window, $dialogs) {
-        $scope.attachment = attachment;
-        $scope.ENTITY_TYPES = ENTITY_TYPES;
-        $scope.fileType = null;
-        if (attachment.mimeType != undefined) {
-            switch (attachment.mimeType.toLowerCase()) {
-                case "png":
-                case "jpg":
-                case "jpeg":
-                case "gif":
-                    $scope.fileType = 'image';
+        }, function(error) {
+            console.log(error);
+        });
+    };
+    $scope.downloadEntity = function() {
+        if ($scope.entry.type != ENTITY_TYPES.file) return;
+        $scope.entry.downloading = true;
+        var promise = $scope.entry.downloadFile();
+        promise.finally(function() {
+            $scope.entry.downloading = false;
+        });
+    };
+    $scope.openLink = function() {
+        if ($scope.entry.type != ENTITY_TYPES.link) return;
+        $window.open(entry.id);
+    };
+    $scope.queryTags = function($queryString) {
+        var defer = $q.defer();
+        var promise = TagFetchService.fetchAllPublicTags();
+        promise.then(function(result) {
+            defer.resolve(search(result, $queryString));
+        });
+        return defer.promise;
+    };
+    var search = function(tagsArray, query) {
+        var items;
+        items = tagsArray.filter(function(x) {
+            return x.toLowerCase().indexOf(query.toLowerCase()) > -1;
+        });
+        return items;
+    };
+    $scope.goToCollection = function(location) {
+        if (entry.type == ENTITY_TYPES.link) {
+            entry.uriPathnameHash = UriToolbox.extractUriHostPartWithoutProtocol(entry.id);
+        } else {
+            entry.uriPathnameHash = UriToolbox.extractUriPathnameHash(entry.id);
+        }
+        $scope.close();
+        $state.transitionTo('app.collection.content', {
+            coll: UriToolbox.extractUriPathnameHash(location.id)
+        });
+    };
+    $scope.shareEntity = function() {
+        $dialogs.shareEntity($scope.entry);
+    };
+}]).controller('attachmentDetailController', ['$scope', '$modalInstance', 'attachment', '$q', 'i18nService', 'CurrentCollectionService', 'RATING_MAX', 'ENTITY_TYPES', 'UriToolbox', '$state', '$window', '$dialogs', function($scope, $modalInstance, attachment, $q, i18nService, CurrentCollectionService, RATING_MAX, ENTITY_TYPES, UriToolbox, $state, $window, $dialogs) {
+    $scope.attachment = attachment;
+    $scope.ENTITY_TYPES = ENTITY_TYPES;
+    $scope.fileType = null;
+    if (attachment.mimeType != undefined) {
+        switch (attachment.mimeType.toLowerCase()) {
+            case "png":
+            case "jpg":
+            case "jpeg":
+            case "gif":
+                $scope.fileType = 'image';
+                break;
+            case "html":
+            case "c":
+            case "js":
+            case "h":
+            case "cpp":
+            case "m":
+            case "css":
+            case "htm":
+                $scope.fileType = 'code';
+                break;
+            case "pdf":
+                $scope.fileType = 'pdf';
+                break;
+        }
+    };
+    /**
+     * TRANSLATION INJECTION
+     */
+    $scope.t = function(identifier) {
+        return i18nService.t(identifier);
+    };
+    $scope.close = function() {
+        $modalInstance.close();
+    };
+    $scope.downloadAttachment = function() {
+        if ($scope.attachment.type != ENTITY_TYPES.file) return;
+        $scope.attachment.downloading = true;
+        var promise = $scope.attachment.downloadFile();
+        promise.finally(function() {
+            $scope.attachment.downloading = false;
+        });
+    };
+    $scope.openLink = function() {
+        if ($scope.attachment.type != ENTITY_TYPES.link) return;
+        $window.open(attachment.id);
+    };
+    if ($scope.attachment.type === ENTITY_TYPES.file || $scope.fileType === 'code') {
+        var promise = $scope.attachment.getFile().then(function(result) {
+            var oFReader = new FileReader();
+            switch ($scope.fileType) {
+                case "image":
+                    oFReader.readAsDataURL(result);
                     break;
-                case "html":
-                case "c":
-                case "js":
-                case "h":
-                case "cpp":
-                case "m":
-                case "css":
-                case "htm":
-                    $scope.fileType = 'code';
-                    break;
-                case "pdf":
-                    $scope.fileType = 'pdf';
-                    break;
+                case "code":
+                    oFReader.readAsText(result);
             }
-        };
-        /**
-         * TRANSLATION INJECTION
-         */
-        $scope.t = function(identifier) {
-            return i18nService.t(identifier);
-        };
-        $scope.close = function() {
-            $modalInstance.close();
-        };
-        $scope.downloadAttachment = function() {
-            if ($scope.attachment.type != ENTITY_TYPES.file) return;
-            $scope.attachment.downloading = true;
-            var promise = $scope.attachment.downloadFile();
-            promise.finally(function() {
-                $scope.attachment.downloading = false;
-            });
-        };
-        $scope.openLink = function() {
-            if ($scope.attachment.type != ENTITY_TYPES.link) return;
-            $window.open(attachment.id);
-        };
-        if ($scope.attachment.type === ENTITY_TYPES.file || $scope.fileType === 'code') {
-            var promise = $scope.attachment.getFile().then(function(result) {
-                var oFReader = new FileReader();
+            oFReader.onload = function(oFREvent) {
                 switch ($scope.fileType) {
                     case "image":
-                        oFReader.readAsDataURL(result);
+                        document.getElementById("attachment-preview-image").src = oFREvent.target.result;
                         break;
                     case "code":
-                        oFReader.readAsText(result);
+                        document.getElementById("attachment-preview-code").innerHTML = oFREvent.target.result;
+                        break;
                 }
-                oFReader.onload = function(oFREvent) {
-                    switch ($scope.fileType) {
-                        case "image":
-                            document.getElementById("attachment-preview-image").src = oFREvent.target.result;
-                            break;
-                        case "code":
-                            document.getElementById("attachment-preview-code").innerHTML = oFREvent.target.result;
-                            break;
-                    }
-                };
-            });
-        }
-    }]).controller("addResourceWizzardController", ['$scope', '$modalInstance', 'i18nService', function($scope, $modalInstance, i18nService) {
-        /* STEPS */
-        $scope.resourceTypes = ['choose', 'collection', 'upload', 'link'];
+            };
+        });
+    }
+}]).controller("addResourceWizzardController", ['$scope', '$modalInstance', 'i18nService', function($scope, $modalInstance, i18nService) {
+    /* STEPS */
+    $scope.resourceTypes = ['choose', 'collection', 'upload', 'link'];
+    $scope.currentResourceType = 0;
+    /* TITLE */
+    $scope.wizzardTitles = [i18nService.t('upload_wizzard_title'), i18nService.t('create_collection'), i18nService.t('upload_resource'), i18nService.t('add_link')];
+    /* PATHS */
+    $scope.addLinkTplPath = MODULES_PREFIX + "/dialog/wizzard-create-link.tpl.html";
+    $scope.addCollectionTplPath = MODULES_PREFIX + "/dialog/wizzard-create-collection.tpl.html";
+    $scope.uploadResourceTplPath = MODULES_PREFIX + "/dialog/wizzard-upload-resource.tpl.html";
+    $scope.chooseResourceTypeTplPath = MODULES_PREFIX + "/dialog/wizzard-choose-resource-type.tpl.html";
+    /**
+     * TRANSLATION INJECTION
+     */
+    $scope.t = function(identifier) {
+        return i18nService.t(identifier);
+    };
+    /**
+     * METHODS
+     */
+    $scope.closeWizzard = function() {
+        $modalInstance.close(true);
+    };
+    $scope.getCurrentResourceType = function() {
+        return $scope.resourceTypes[$scope.currentResourceType];
+    };
+    $scope.getCurrentWizzardTitle = function() {
+        return $scope.wizzardTitles[$scope.currentResourceType];
+    };
+    $scope.chooseResourceType = function(type) {
+        $scope.currentResourceType = type;
+    };
+    $scope.backToChoose = function() {
         $scope.currentResourceType = 0;
-        /* TITLE */
-        $scope.wizzardTitles = [i18nService.t('upload_wizzard_title'), i18nService.t('create_collection'), i18nService.t('upload_resource'), i18nService.t('add_link')];
-        /* PATHS */
-        $scope.addLinkTplPath = MODULES_PREFIX + "/dialog/wizzard-create-link.tpl.html";
-        $scope.addCollectionTplPath = MODULES_PREFIX + "/dialog/wizzard-create-collection.tpl.html";
-        $scope.uploadResourceTplPath = MODULES_PREFIX + "/dialog/wizzard-upload-resource.tpl.html";
-        $scope.chooseResourceTypeTplPath = MODULES_PREFIX + "/dialog/wizzard-choose-resource-type.tpl.html";
-        /**
-         * TRANSLATION INJECTION
-         */
-        $scope.t = function(identifier) {
-            return i18nService.t(identifier);
-        };
-        /**
-         * METHODS
-         */
-        $scope.closeWizzard = function() {
-            $modalInstance.close(true);
-        };
-        $scope.getCurrentResourceType = function() {
-            return $scope.resourceTypes[$scope.currentResourceType];
-        };
-        $scope.getCurrentWizzardTitle = function() {
-            return $scope.wizzardTitles[$scope.currentResourceType];
-        };
-        $scope.chooseResourceType = function(type) {
-            $scope.currentResourceType = type;
-        };
-        $scope.backToChoose = function() {
-            $scope.currentResourceType = 0;
-        };
-    }])
+    };
+}])
 
 
- .controller("ChooseFromDropboxController", function ($scope, $q, $location, $rootScope, $state, i18nService, CollectionFetchService, CurrentCollectionService, EntityFetchService, $modal, EntityModel, ENTITY_TYPES, SPACE_ENUM, RATING_MAX, $dialogs, $modalInstance) {
+.controller("ChooseFromDropboxController", function($scope, $q, $location, $rootScope, $state, i18nService, CollectionFetchService, CurrentCollectionService, EntityFetchService, $modal, EntityModel, ENTITY_TYPES, SPACE_ENUM, RATING_MAX, $dialogs, $modalInstance) {
 
-        var self = this;
-        var selectedCounter = 0;
+    var self = this;
+    var selectedCounter = 0;
 
-        $scope.entityTypes = ENTITY_TYPES;
-        $scope.spaceEnum = SPACE_ENUM;
-        $scope.selectedResources = [];
-
-
-        /**
-         * TRANSLATION INJECTION
-         */
-        $scope.t = function (identifier) {
-            return i18nService.t(identifier);
-        };
-
-        /**
-         * METHODS
-         */
-
-        $scope.transitionToHome = function () {
-        };
+    $scope.entityTypes = ENTITY_TYPES;
+    $scope.spaceEnum = SPACE_ENUM;
+    $scope.selectedResources = [];
 
 
-        $scope.loadCurrentCollection = function(coll){
+    /**
+     * TRANSLATION INJECTION
+     */
+    $scope.t = function(identifier) {
+        return i18nService.t(identifier);
+    };
 
-            $rootScope.activateLoadingIndicator();
+    /**
+     * METHODS
+     */
 
-            var defer = $q.defer();
+    $scope.transitionToHome = function() {};
 
-            if (coll === 'root') {
-                $scope.loadRootCollection(defer);
-            } else {
-                self.loadCollectionByUri(coll, defer);
-            }
 
-            return defer.promise;
-        };
-        
+    $scope.loadCurrentCollection = function(coll) {
 
-        $scope.loadRootCollection = function (defer) {
+        $rootScope.activateLoadingIndicator();
 
-            var promise = CollectionFetchService.getRootCollection();
+        var defer = $q.defer();
 
-            promise.then(function (model) {
-                $rootScope.deactivateLoadingIndicator();
-                self.renderCollectionContent(model);
-                defer.resolve();
-            }, function (error) {
-                console.log(error);
-            });
-        };
-
-        $scope.loadCollectionByUri = function (coll, defer) {
-
-            var promise = CollectionFetchService.getCollectionByUri(coll);
-
-            promise.then(function (model) {
-                $rootScope.deactivateLoadingIndicator();
-                self.renderCollectionContent(model);
-                defer.resolve();
-            }, function (error) {
-                console.log(error);
-            });
-
-        };
-
-        this.renderCollectionContent = function (collection) {
-            $scope.collectionRating = collection.overallRating.score;
-            CurrentCollectionService.setCurrentCollection(collection);
-            $scope.currentCollection = CurrentCollectionService.getCurrentCollection();
-            
-            var selectedResourcesIDs = [];
-            $scope.selectedResources.forEach(function (entry) {
-                selectedResourcesIDs.push(entry.id);
-            });
-            $scope.currentCollection.entries.forEach(function(entry) {
-                entry.isSelected = $.inArray(entry.id, selectedResourcesIDs) !== -1;
-            });
-        };
-
-        $scope.selectResource = function (entry) {
-
-            if (entry.isSelected) {
-                $scope.deselectResource($scope.selectedResources.indexOf(entry));
-            } else {
-                entry.isSelected = true;
-                selectedCounter++;
-                $scope.selectedResources.push(entry);
-            }
-
-            if (selectedCounter <= 0) {
-                $scope.resourcesSelected = false;
-            } else {
-                $scope.resourcesSelected = true;
-            }
-        };
-        
-        $scope.deselectResource = function (index) {
-            var entry = $scope.selectedResources[index];
-            if (entry.isSelected) {
-                entry.isSelected = false;
-                selectedCounter--;
-                
-            }
-            $scope.selectedResources.splice(index, 1);
-        };
-
-        var resetSelectCounter = function () {
-            selectedCounter = 0;
-            $scope.resourcesSelected = false;
-        };
-
-        $scope.handleEntryClick = function (entry) {
-            if (entry.type === 'coll') {
-                $scope.loadCollectionByUri(entry.uriPathnameHash);
-            } else {
-                $scope.selectResource(entry);
-            }
-        };
-
-        $scope.clickEventloadRootCollection = function () {
-            $rootScope.activateLoadingIndicator();
-            var defer = $q.defer();
+        if (coll === 'root') {
             $scope.loadRootCollection(defer);
+        } else {
+            self.loadCollectionByUri(coll, defer);
         }
 
-        $scope.openCollection = function (uriPathnameHash) {
-            $scope.loadCollectionByUri(uriPathnameHash);
-        };
-
-        $scope.loadCurrentEntity = function (event, entryUri, parentCollectionUri) {
-
-            event.then(function () {
-
-                var entry = CurrentCollectionService.getCurrentCollection().getEntryByUriPathnameHash(entryUri);
-
-                if (entry != null) {
-
-                    var promise = EntityFetchService.getEntityByUri(entry.id, true, true, true);
-
-                    promise.then(
-                            function (entity) {
-                                entity.init({parentColl: CurrentCollectionService.getCurrentCollection()});
-                                self.openEntryDetailView(entity, $scope);
-                            },
-                            function (error) {
-                                console.log(error);
-                            }
-                    );
-
-                } else {
-                    //TODO
-                    //404 error page
-                }
-
-            });
-        };
-
-        this.openEntryDetailView = function (entry, scope) {
-            var dialog = $dialogs.entryDetail(entry);
-
-            dialog.result.finally(function (btn) {
-                $state.transitionTo('app.collection.content', {coll: CurrentCollectionService.getCurrentCollection().uriPathnameHash});
-            });
-        };
-
-        $scope.closeModal = function () {
-            
-            $scope.modal.close(true);
-        };
+        return defer.promise;
+    };
 
 
-        $scope.resetAttachedResources = function () {
-            $scope.currentCollection.entries.forEach(function(entry) {
-                entry.isSelected = false;
-            });
-            $scope.selectedResources.forEach(function(entry) {entry.isSelected = false;});
-            $scope.selectedResources = [];
-            resetSelectCounter();
-        };
+    $scope.loadRootCollection = function(defer) {
 
-        $scope.doneClicked = function () {
-            $modalInstance.close($scope.selectedResources);
-        };
+        var promise = CollectionFetchService.getRootCollection();
 
+        promise.then(function(model) {
+            $rootScope.deactivateLoadingIndicator();
+            self.renderCollectionContent(model);
+            defer.resolve();
+        }, function(error) {
+            console.log(error);
+        });
+    };
 
-        $scope.loadCurrentCollection('root');
+    $scope.loadCollectionByUri = function(coll, defer) {
 
-    })
+        var promise = CollectionFetchService.getCollectionByUri(coll);
 
+        promise.then(function(model) {
+            $rootScope.deactivateLoadingIndicator();
+            self.renderCollectionContent(model);
+            defer.resolve();
+        }, function(error) {
+            console.log(error);
+        });
 
+    };
 
+    this.renderCollectionContent = function(collection) {
+        $scope.collectionRating = collection.overallRating.score;
+        CurrentCollectionService.setCurrentCollection(collection);
+        $scope.currentCollection = CurrentCollectionService.getCurrentCollection();
 
+        var selectedResourcesIDs = [];
+        $scope.selectedResources.forEach(function(entry) {
+            selectedResourcesIDs.push(entry.id);
+        });
+        $scope.currentCollection.entries.forEach(function(entry) {
+            entry.isSelected = $.inArray(entry.id, selectedResourcesIDs) !== -1;
+        });
+    };
 
+    $scope.selectResource = function(entry) {
 
+        if (entry.isSelected) {
+            $scope.deselectResource($scope.selectedResources.indexOf(entry));
+        } else {
+            entry.isSelected = true;
+            selectedCounter++;
+            $scope.selectedResources.push(entry);
+        }
 
-.controller("UploadResourcesController", function($q, $scope, $modalInstance, $http, $location, $state, i18nService, CurrentCollectionService, UriToolbox, UserService, EntityModel, ENTITY_TYPES) {
-        var self = this;
-        /**
-         * TRANSLATION INJECTION
-         */
-        $scope.t = function(identifier) {
-                return i18nService.t(identifier);
-            }
-            /**
-             * METHODS
-             */
-        $scope.filesArray = [];
-        $scope.showUploadWidget = function() {
-            if ($scope.filesArray.length > 0) {
-                return true;
+        if (selectedCounter <= 0) {
+            $scope.resourcesSelected = false;
+        } else {
+            $scope.resourcesSelected = true;
+        }
+    };
+
+    $scope.deselectResource = function(index) {
+        var entry = $scope.selectedResources[index];
+        if (entry.isSelected) {
+            entry.isSelected = false;
+            selectedCounter--;
+
+        }
+        $scope.selectedResources.splice(index, 1);
+    };
+
+    var resetSelectCounter = function() {
+        selectedCounter = 0;
+        $scope.resourcesSelected = false;
+    };
+
+    $scope.handleEntryClick = function(entry) {
+        if (entry.type === 'coll') {
+            $scope.loadCollectionByUri(entry.uriPathnameHash);
+        } else {
+            $scope.selectResource(entry);
+        }
+    };
+
+    $scope.clickEventloadRootCollection = function() {
+        $rootScope.activateLoadingIndicator();
+        var defer = $q.defer();
+        $scope.loadRootCollection(defer);
+    }
+
+    $scope.openCollection = function(uriPathnameHash) {
+        $scope.loadCollectionByUri(uriPathnameHash);
+    };
+
+    $scope.loadCurrentEntity = function(event, entryUri, parentCollectionUri) {
+
+        event.then(function() {
+
+            var entry = CurrentCollectionService.getCurrentCollection().getEntryByUriPathnameHash(entryUri);
+
+            if (entry != null) {
+
+                var promise = EntityFetchService.getEntityByUri(entry.id, true, true, true);
+
+                promise.then(
+                    function(entity) {
+                        entity.init({
+                            parentColl: CurrentCollectionService.getCurrentCollection()
+                        });
+                        self.openEntryDetailView(entity, $scope);
+                    },
+                    function(error) {
+                        console.log(error);
+                    }
+                );
+
             } else {
-                return false;
+                //TODO
+                //404 error page
             }
-        }
-        $scope.resetUploader = function() {
-            $scope.filesArray = [];
-        }
-        $scope.appendFileListToUploadList = function(fileList) {
-            angular.forEach(fileList, function(file, key) {
-                file.isFile = true;
-                $scope.appendFileToUploadList(file);
-            });
-            $scope.$apply();
-        };
-        $scope.appendFileToUploadList = function(file) {
-            file.uploaded = false;
-            file.uploading = false;
-            $scope.filesArray.unshift(file);
-            $scope.$apply();
-        };
-        $scope.getFileSizeString = function(size) {
-            var mb = ((size / 1024) / 1024);
-            if (mb < 0.01) {
-                mb = (size / 1024);
-                return mb.toFixed(2) + " KB";
-            }
-            return mb.toFixed(2) + " MB";
-        };
-        $scope.removeFromUploadList = function(index) {
-            $scope.filesArray.splice(index, 1);
-        };
-        $scope.uploadAllFiles = function() {
-            var currColl = CurrentCollectionService.getCurrentCollection();
-            var entries = [];
-            var labels = [];
-            var uploadCounter = 0;
-            var fileCount = $scope.filesArray.length;
-            var newEntrieObjects = [];
-            var defer = $q.defer();
-            angular.forEach($scope.filesArray, function(file, key) {
-                if (file.isFile && !file.uploaded) {
-                    file.uploading = true;
 
-                    if (currColl != null) {
-                        currColl.uploadFile(file).then(function(entry) {
+        });
+    };
+
+    this.openEntryDetailView = function(entry, scope) {
+        var dialog = $dialogs.entryDetail(entry);
+
+        dialog.result.finally(function(btn) {
+            $state.transitionTo('app.collection.content', {
+                coll: CurrentCollectionService.getCurrentCollection().uriPathnameHash
+            });
+        });
+    };
+
+    $scope.closeModal = function() {
+
+        $scope.modal.close(true);
+    };
+
+
+    $scope.resetAttachedResources = function() {
+        $scope.currentCollection.entries.forEach(function(entry) {
+            entry.isSelected = false;
+        });
+        $scope.selectedResources.forEach(function(entry) {
+            entry.isSelected = false;
+        });
+        $scope.selectedResources = [];
+        resetSelectCounter();
+    };
+
+    $scope.doneClicked = function() {
+        $modalInstance.close($scope.selectedResources);
+    };
+
+
+    $scope.loadCurrentCollection('root');
+
+})
+
+
+
+.controller("UploadResourcesController", function($q, $scope, $modalInstance, $http, $location, $state, i18nService, CurrentCollectionService, UriToolbox, UserService, EntityModel, ENTITY_TYPES, FileUploader) {
+    var self = this;
+    
+    $scope.uploader = new FileUploader();
+
+    /**
+     * TRANSLATION INJECTION
+     */
+    $scope.t = function(identifier) {
+            return i18nService.t(identifier);
+        }
+        /**
+         * METHODS
+         */
+    $scope.filesArray = [];
+    $scope.showUploadWidget = function() {
+        return $scope.uploader.queue.length > 0;
+    }
+
+    $scope.getFileSizeString = function(size) {
+        var mb = ((size / 1024) / 1024);
+        if (mb < 0.01) {
+            mb = (size / 1024);
+            return mb.toFixed(2) + " KB";
+        }
+        return mb.toFixed(2) + " MB";
+    };
+
+    $scope.uploader.uploadAll = function() {
+        var currColl = CurrentCollectionService.getCurrentCollection();
+        var entries = [];
+        var labels = [];
+        var uploadCounter = 0;
+        var fileCount = $scope.uploader.queue.length;
+        var newEntrieObjects = [];
+        var defer = $q.defer();
+        angular.forEach($scope.uploader.queue, function(file, key) {
+                file.uploading = true;
+
+                if (currColl != null) {
+                    currColl.uploadFile(file.file).then(function(entry) {
+                        file.uploading = false;
+                        file.uploaded = true;
+                        file.uriPathnameHash = UriToolbox.extractUriPathnameHash(entry.id);
+                        entries.push(entry.id);
+                        labels.push(entry.label);
+                        uploadCounter++;
+                        newEntrieObjects.push(entry);
+                        if (uploadCounter == fileCount) {
+                            defer.resolve();
+                        }
+                    }, function(error) {
+                        console.log(error);
+                    });
+                } else {
+                    new SSFileUpload(
+                        function(fileUri, fileName) {
+                            var entry = new EntityModel();
+
+                            entry.init({
+                                id: fileUri,
+                                label: fileName,
+                                parentColl: null,
+                                space: null,
+                                type: ENTITY_TYPES.file
+                            });
+                            entry.init({
+                                uriPathnameHash: UriToolbox.extractUriPathnameHash(fileUri)
+                            });
+
                             file.uploading = false;
                             file.uploaded = true;
-                            file.uriPathnameHash = UriToolbox.extractUriPathnameHash(entry.id);
-                            entries.push(entry.id);
-                            labels.push(entry.label);
+                            file.uriPathnameHash = UriToolbox.extractUriPathnameHash(fileUri);
+                            entries.push(entry);
                             uploadCounter++;
                             newEntrieObjects.push(entry);
                             if (uploadCounter == fileCount) {
                                 defer.resolve();
                             }
-                        }, function(error) {
-                            console.log(error);
-                        });
-                    } else {
-                        new SSFileUpload(
-                            function(fileUri,fileName){
-                                var entry = new EntityModel();
-
-                                entry.init({id:fileUri, label:fileName, parentColl: null, space: null, type: ENTITY_TYPES.file});
-                                entry.init({uriPathnameHash: UriToolbox.extractUriPathnameHash(fileUri)});
-
-                                file.uploading = false;
-                                file.uploaded = true;
-                                file.uriPathnameHash = UriToolbox.extractUriPathnameHash(fileUri);
-                                entries.push(fileUri);
-                                labels.push(fileName);
-                                uploadCounter++;
-                                newEntrieObjects.push(entry);
-                                if (uploadCounter == fileCount) {
-                                    defer.resolve();
-                                }
-                            },
-                            function(error){
-                                console.log("Error");
-                                defer.reject(error);
-                            },
-                            UserService.getUser(),
-                            UserService.getKey(),
-                            file,
-                            null
-                        );
-                    }
-                }
-            });
-            defer.promise.then(function() {
-                if (currColl != null) {
-                    currColl.addEntries(entries, labels).then(function(result) {
-                        angular.forEach(newEntrieObjects, function(newEntry, key) {
-                            currColl.entries.push(newEntry);
-                        });
-                    }, function(error) {
-                        console.log(error);
+                        },
+                        function(error) {
+                            console.log("Error");
+                            defer.reject(error);
+                        },
+                        UserService.getUser(),
+                        UserService.getKey(),
+                        file.file,
+                        null
+                    );
+            }
+        });
+        defer.promise.then(function() {
+            if (currColl != null) {
+                currColl.addEntries(entries, labels).then(function(result) {
+                    angular.forEach(newEntrieObjects, function(newEntry, key) {
+                        currColl.entries.push(newEntry);
                     });
-                } else {
-                    $modalInstance.close(entries);
-                }
-            });
-        };
-        $scope.openEntry = function(indexOfFileArray) {
-            if ($scope.filesArray[indexOfFileArray].uploaded) {
-                var hash = $scope.filesArray[indexOfFileArray].uriPathnameHash;
-                $state.transitionTo('app.collection.entry', {
-                    coll: CurrentCollectionService.getCurrentCollection().uriPathnameHash,
-                    entry: hash
+                }, function(error) {
+                    console.log(error);
                 });
+            } else {
+                $modalInstance.close(entries);
             }
-        };
-        /**
-         * FILE DROP-ZONE EVENTS
-         */
-        var dropZone = $('.upload-drop-container');
-        dropZone.bind('dragover', function(e) {
-            e.stopPropagation();
-            e.preventDefault();
-            e.originalEvent.dataTransfer.effectAllowed = 'copy';
         });
-        dropZone.bind('dragenter', function(e) {
-            e.stopPropagation();
-            e.preventDefault();
-            e.originalEvent.dataTransfer.effectAllowed = 'copy';
-        });
-        dropZone.bind('drop', function(e) {
-            e.stopPropagation();
-            e.preventDefault();
-            angular.forEach(e.originalEvent.dataTransfer.files, function(file, key) {
-                try {
-                    var entry = e.originalEvent.dataTransfer.items[key].webkitGetAsEntry() || e.originalEvent.dataTransfer.items[key].getAsEntry();
-                    if (entry.isFile) {
-                        file.isFile = true;
-                        file.uploading = false;
-                        file.uploaded = false;
-                        $scope.appendFileToUploadList(file);
-                    } else if (entry.isDirectory) {
-                        file.isFile = false;
-                        $scope.appendFileToUploadList(file);
-                    }
-                } catch (error) {
-                    console.log("Problem while drag & drop. probably no file-api. ERROR: " + error);
-                }
+    };
+})
+
+.controller("CreateLinkController", function($scope, $modalInstance, $http, $location, i18nService, GroupFetchService, targetEntity, EntityModel) {
+    $scope.createLink = function(link) {
+        if (link.label == undefined || link.url == undefined) {
+            return;
+        }
+
+        if (targetEntity.type === 'circle') {
+            var promise = GroupFetchService.addEntitiesToGroup([link.url], targetEntity.id);
+            promise.then(function(result) {
+                var entry = new EntityModel();
+                entry.init({ id: link.url,
+                            label: link.label
+                            });
+                $modalInstance.close(entry);
+            }, function(error) {
+                console.log(error);
             });
+        } else if (targetEntity.type === 'coll') {
+            var promise = coll.createLink(link.label, link.url);
+            promise.then(function(result) {
+                $modalInstance.close(result);
+            }, function(error) {
+                console.log(error);
+            });
+        }
+    };
+
+})
+
+.controller("AddResourceController", ['$scope', '$http', '$location', 'i18nService', 'CurrentCollectionService', 'SPACE_ENUM', function($scope, $http, $location, i18nService, CurrentCollectionService, SPACE_ENUM) {
+
+    $scope.newColl = {
+        shared: false,
+        private: true
+    };
+    $scope.currentCollection = CurrentCollectionService.getCurrentCollection();
+    $scope.SPACE_ENUM = SPACE_ENUM;
+
+    $scope.createCollection = function(coll, closeWizzardFnc) {
+
+        if (coll.label == undefined) {
+            return;
+        }
+
+        var promise = CurrentCollectionService.getCurrentCollection().createCollection(coll.label);
+        promise.then(function(result) {
+            //nothing to do
+        }, function(error) {
+            console.log(error);
         });
-    })
-    // end ConfirmDialogCtrl / dialogs.controllers
-    .controller("baseModalController", ['$controller', '$scope', '$rootScope', '$modalInstance', 'i18nService', 'states', 'ctrlFunction', function($controller, $scope, $rootScope, $modalInstance, i18nService, states, ctrlFunction) {
-        $scope.baseCtrl = $controller(ctrlFunction, {
-            $scope: $scope
+
+        closeWizzardFnc();
+    };
+
+    //checkbox -> radiobutton hack ... damn angular
+    $scope.privateClicked = function() {
+        if ($scope.newColl.private) {
+            $scope.newColl.shared = true;
+        } else {
+            $scope.newColl.shared = false;
+        }
+    };
+
+    $scope.sharedClicked = function() {
+        if ($scope.newColl.shared) {
+            $scope.newColl.private = true;
+        } else {
+            $scope.newColl.private = false;
+        }
+    };
+
+    $scope.createLink = function(link, closeWizzardFnc) {
+        if (link.label == undefined || link.url == undefined) {
+            return;
+        }
+
+
+        var promise = CurrentCollectionService.getCurrentCollection().createLink(link.label, link.url);
+        promise.then(function(result) {
+            //nothing to do
+        }, function(error) {
+            console.log(error);
         });
-        $scope.stateStack = [];
-        $scope.states = states;
-        $scope.close = function() {
-            $modalInstance.dismiss();
-        };
-        $scope.confirm = function(result) {
-            $modalInstance.close(result);
-        };
-        $scope.enterState = function(state) {
-            $scope.stateStack.push(state);
-            $scope.currentState = state;
-        };
-        $scope.leaveState = function() {
+
+        closeWizzardFnc();
+
+    };
+
+}])
+
+
+// end ConfirmDialogCtrl / dialogs.controllers
+.controller("baseModalController", ['$controller', '$scope', '$rootScope', '$modalInstance', 'i18nService', 'states', 'ctrlFunction', function($controller, $scope, $rootScope, $modalInstance, i18nService, states, ctrlFunction) {
+    $scope.baseCtrl = $controller(ctrlFunction, {
+        $scope: $scope
+    });
+    $scope.stateStack = [];
+    $scope.states = states;
+    $scope.close = function() {
+        $modalInstance.dismiss();
+    };
+    $scope.confirm = function(result) {
+        $modalInstance.close(result);
+    };
+    $scope.enterState = function(state) {
+        $scope.stateStack.push(state);
+        $scope.currentState = state;
+    };
+    $scope.leaveState = function() {
+        $scope.stateStack.pop();
+        if ($scope.stateStack.length < 1) {
+            $scope.close();
+        }
+        $scope.currentState = $scope.stateStack[$scope.stateStack.length - 1];
+    };
+    $scope.gotoBaseState = function() {
+        while ($scope.stateStack.length > 1) {
             $scope.stateStack.pop();
-            if ($scope.stateStack.length < 1) {
-                $scope.close();
-            }
-            $scope.currentState = $scope.stateStack[$scope.stateStack.length - 1];
-        };
-        $scope.gotoBaseState = function() {
-            while ($scope.stateStack.length > 1) {
-                $scope.stateStack.pop();
-            }
-            $scope.currentState = $scope.stateStack[$scope.stateStack.length - 1];
-        };
-        var initialState = Object.keys(states)[0];
-        $scope.enterState(initialState);
-    }]);
+        }
+        $scope.currentState = $scope.stateStack[$scope.stateStack.length - 1];
+    };
+    var initialState = Object.keys(states)[0];
+    $scope.enterState(initialState);
+}]);
+
+
 
 //== Services ================================================================//
 angular.module('dialogs.services', ['ui.bootstrap.modal', 'dialogs.controllers'])
@@ -893,6 +932,20 @@ angular.module('dialogs.services', ['ui.bootstrap.modal', 'dialogs.controllers']
                     controller: 'ChooseFromDropboxController',
                     keyboard: true,
                     backdrop: true
+                });
+            },
+            createLink: function(targetEntity) {
+                return $modal.open({
+                    templateUrl: MODULES_PREFIX + '/dialog/wizzard-create-link.tpl.html',
+                    controller: 'CreateLinkController',
+                    keyboard: true,
+                    backdrop: true,
+                    windowClass: 'modal-small',
+                    resolve: {
+                        targetEntity: function() {
+                            return targetEntity;
+                        }
+                    }
                 });
             }
         };

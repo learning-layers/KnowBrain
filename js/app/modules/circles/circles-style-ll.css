@@ -86,10 +86,6 @@
 
 /* CIRCLE */
 
-#circles-list {
-    margin-top: 150px;
-}
-
 #members-container {
     height: 72px;
     background-color: #F7F7F7;
@@ -280,7 +276,7 @@
 
 
 .new-circle-name-label {
-    width: display:   block;
+    display: block;
 }
 
 .new-circle-desc-frame {
@@ -394,7 +390,6 @@
   -webkit-transition:all ease-in-out 0.2s;
   transition:all ease-in-out 0.2s;
   opacity:1;
-  line-height: 40px;
 }
  
 .animate-show.ng-hide-add,
@@ -404,7 +399,6 @@
  
 .animate-show.ng-hide {
   opacity:0;
-  line-height: 40px;
 }
 
 .action-button {

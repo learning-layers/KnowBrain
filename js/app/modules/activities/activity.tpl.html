@@ -1,207 +1,76 @@
-<div class="row" style="background-color:#F8F8F8; padding:15px; border-radius: 20px;">
-<div class="col-md-12 column">
-<div class="row">
-	<div class="col-md-1 column">
-		<img src="images/small_profile_pic_dummy.png"
-			style="text-align: middle; margin: 3px;">
-		<div style="font-size: 9px; width: 100px;">
-			<p style="margin: 0">{{activity.date}}</p>
-			<p style="margin: 0">{{activity.time}}</p>
-		</div>
-	</div>
-	<div class="col-md-9 column" style="float:left;">
-		<div style="margin-bottom:5px;">
-			<span><a ng-href="#/social/{{activity.user}}/activities">{{activity.user}}</a></span>
-			<span ng-switch="activity.type">
-				<!----------TAG---------->
-				<!-- tagEntity -->
-				<!-- removeTag -->
-				
-				<!----------RATING---------->
-				<!-- rateEntity -->
-				
-				<span ng-switch-when="rateEntity">
-					<span> rated resource </span>
-					<a href="">{{activity.entities[0]}}</a>
-				</span>
-				
-				<!----------LOCATION---------->
-				<!-- addLocation -->
- 
- 					<!----------FILE---------->
- 					<!-- downloadFile -->
- 					
- 					<span ng-switch-when="downloadFile">
-					<span> downloaded resource </span>
-					<a href="">{{activity.entities[0]}}</a>
-				</span>
-
-				<!----------COLL---------->
- 					<!-- removeCollEntry -->
- 					
- 					<span ng-switch-when="removeCollEntry">
-					<span> removed resource </span>
-					<a href="">{{activity.entities[1]}}</a>
-					<span> from collection </span>
-					<a href="">{{activity.entities[0]}}</a>
-				</span>
-				
-				<!-- addCollEntry -->
-				
-				<span ng-switch-when="addCollEntry">
-					<span ng-switch="activity.entities.length > 2">
-						<span ng-switch-when="true"> added resources </span>
-						<span ng-switch-when="false"> added resource </span>
-					</span>
-					<span ng-repeat="entity in activity.entities">
-						<span ng-if="!$first">
-							<a href="">{{entity}}</a>
-							<span ng-if="$index < activity.entities.length-2">, </span>
-							<span ng-if="$index == activity.entities.length-2"> and </span>
-						</span>
-					</span>
-					<span>
-						<span> to collection </span>
-						<a href="">{{activity.entities[0]}}</a>
-					</span>
-				</span>
-				
-
-				<!----------CIRCLE---------->
-				<!-- createCircle -->
-				
-				<span ng-switch-when="createCircle">
-					<span> created group </span>
-					<a href="#/group/{{activity.entities[0]}}/activities">{{activity.entities[0]}}</a>
-					<span> with </span>
-					<span ng-repeat="user in activity.users">
-						<a ng-href="#/social/{{user}}/activities">{{user}}</a>
-						<span ng-if="$index < activity.users.length-2">, </span>
-						<span ng-if="$index == activity.users.length-2"> and </span>
-					</span>
-					<span ng-switch="activity.users.length > 1">
-						<span ng-switch-when="true"> as members. </span>
-						<span ng-switch-when="false"> as member. </span>
-					</span>
-				</span>
-				
-				<!-- addUsersToCircle -->
-				<span ng-switch-when="addUsersToCircle">
-					<span ng-switch="activity.entities.length > 2">
-						<span ng-switch-when="true"> added users </span>
-						<span ng-switch-when="false"> added user </span>
-					</span>
-					<span ng-repeat="user in activity.users">
-						<a ng-href="#/social/{{user}}/activities">{{user}}</a>
-						<span ng-if="$index < activity.users.length-2">, </span>
-						<span ng-if="$index == activity.users.length-2"> and </span>
-					</span>
-
-					<span> to group </span>
-					<a href="#/group/{{activity.entities[0]}}/activities">{{activity.entities[0]}}</a>
-				</span>
-				
-				<!-- addEntitiesToCircle -->
-				<span ng-switch-when="addEntitiesToCircle">
-					<span ng-switch="activity.entities.length > 2">
-						<span ng-switch-when="true"> added resources </span>
-						<span ng-switch-when="false"> added resource </span>
-					</span>
-					<span ng-repeat="entity in activity.entities">
-						<span ng-if="!$first">
-							<a href="">{{entity}}</a>
-							<span ng-if="$index < activity.entities.length-2">, </span>
-							<span ng-if="$index == activity.entities.length-2"> and </span>
-						</span>
-					</span>
-					
-					<span> to group </span>
-					<a href="#/group/{{activity.entities[0]}}/activities">{{activity.entities[0]}}</a>
-				</span>
-				
-				<!----------LEARNING EPISODES---------->
-				<!-- createLearnEp -->
-				<!-- updateLearnEpVersionCircle -->
-				<!-- updateLearnEpVersionEntity -->
-				<!-- removeLearnEpVersionCircle -->
-				<!-- removeLearnEpVersionEntity -->
-				<!-- setCurrentLearnEpVersion -->
-				<!-- createLearnEpVersion -->
-				<!-- addEntityToLearnEpVersion -->
-				<!-- addCircleToLearnEpVersion -->
-				<!-- addEntitiesToCircle -->
-
-				<!----------ENTITY---------->
-				<!-- setEntityPublic -->
-				
-				<span ng-switch-when="setEntityPublic">
-					<span> set resource </span>
-					<a href="">{{activity.entities[0]}}</a>
-					<span> public.</span>
-				</span>
-				
-				<!-- updateEntity -->
-				
-				
-				<!-- copyEntityForUsers -->
-				<!-- shareEntityWithUsers -->
-				
-				<span ng-switch-when="shareEntityWithUsers">  
-					<span ng-switch="activity.entities.length > 1">
-						<span ng-switch-when="true"> shared resources </span>
-						<span ng-switch-when="false"> shared resource </span>
-					</span>
-					<span ng-repeat="entity in activity.entities">
-						<a href="">{{entity}}</a>
-						<span ng-if="$index < activity.entities.length-2">, </span>
-						<span ng-if="$index == activity.entities.length-2"> and </span>
-					</span>
-					<span ng-if="activity.type == 'shareEntityWithUsers'">with</span>
-					<span ng-repeat="user in activity.users">
-						<a ng-href="#/social/{{user}}/activities">{{user}}</a>
-						<span ng-if="$index < activity.users.length-2">, </span>
-						<span ng-if="$index == activity.users.length-2"> and </span>
-					</span>
-				</span>
-				
-				<!----------DISC---------->
-				<!-- discussEntity -->
-				
-				<span ng-switch-when="discussEntity">
-					<span> commented on entity </span>
-					<span><a ng-click="showEntity(activity.entities[1])">{{activity.entities[0]}}</a></span>
-				</span>
-				
-				<!-- addDiscEntry -->
-				
-				<span ng-switch-when="addDiscEntry">
-					<span> added an entry to discussion </span>
-					<span><a href="">{{activity.entities[0]}}</a></span>
-				</span>
-				
-				<!-- removeDisc -->
-
-			</span>
-		</div>
-	</div>
-</div>
-<div class="row">
-	<div class="col-md-12 column">
-		<a class="glyphicon glyphicon-thumbs-up"></a><span> 1 person likes this</span>
-		<a class="glyphicon glyphicon-share" style="margin-left:10px; margin-bottom:20px"></a><span> Share</span>
-	</div>
-</div>
-<div class="row">
-	<div class="col-md-12 column">
-	<textarea style="resize: none; height: 70%;"
-				ng-model="comment" placeholder="Comment on post"></textarea>
-		
-	</div>
-</div>
-<div class="row">
-<div class="col-md-12 column">
-	<div class="btn btn-primary pull-right">Post</div>	
-	</div>
-</div>
-</div>
+<div class="card">
+    <div class="card-heading image">
+        <img src="http://lorempixel.com/46/46/" alt=""/>
+        <div class="card-heading-header">
+            <h3>{{activity.users[0].label}}</h3>
+            <span>{{activity.date}} {{activity.time}}</span>
+        </div>
+    </div>
+    <div class="card-body">
+        <p>
+        <span ng-switch="activity.type">
+        <span ng-switch-when="rateEntity">
+        <span>Resource was rated </span>
+        </span>
+        <span ng-switch-when="removeCollEntry">
+        <span>Resource was removed</span>
+        </span>
+        <!-- addCollEntry -->
+        <span ng-switch-when="addCollEntry">
+        <span ng-switch="activity.entities.length > 2">
+        <span ng-switch-when="true">Resources were added</span>
+        <span ng-switch-when="false">Resource was added</span>
+        </span>
+        </span>
+        <!-- addEntitiesToCircle -->
+        <span ng-switch-when="addEntitiesToCircle">
+        <span ng-switch="activity.entities.length > 2">
+        <span ng-switch-when="true">Resources were added</span>
+        <span ng-switch-when="false">Resource was added</span>
+        </span>
+        </span>
+        <!-- removeDisc -->
+        </span>
+        </p>
+    </div>
+    <div class="card-media" ng-show="activity.entities.length > 0">
+		<table class="table vertical-aligned-table">
+            <tbody>
+                <tr ng-repeat="entry in activity.entities">
+                    <td class="col-md-1">
+                        <div ng-switch="entry.type">
+                            <div class="list-entitity-clickable" ng-click="handleEntryClick(entry); $event.stopPropagation();">
+                                <img ng-switch-when="group" src="images/group_pic_dummy.jpg" class="collection-entry-profile-pic"/>
+                                <img ng-switch-when="priv" src="images/group_pic_dummy.jpg" class="collection-entry-profile-pic"/>
+                                <div ng-switch-when="coll" class="list-entity-icon icon-folder">
+                                </div>
+                                <div ng-switch-when="file" class="list-entity-icon" ng-class="{'icon-file' : entry.fileType == null, 'icon-file-image' : entry.fileType == 'image', 'icon-file-pdf' : entry.mimeType == 'application/pdf', 'icon-file-audio' : entry.fileType == 'audio'}">
+                                </div>
+                                <div ng-switch-when="entity" class="list-entity-icon glyphicon glyphicon-link">
+                                </div>
+                                <div ng-switch-when="qa" class="list-entity-icon icon-question-mark">
+                                </div>
+                                <div ng-switch-default class="list-entity-icon glyphicon glyphicon-link">
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="col-md-11">
+                        <div class="col-md-12">
+                            <span class="list-entitity-clickable" ng-click="handleEntryClick(entry); $event.stopPropagation();">{{entry.label.length != 0 ? entry.label : entry.id}}
+                            </span>
+                        </div>
+                        <div class="col-md-12" ng-show="entry.tags.length > 0">
+                            <div class="qa-tag" ng-repeat="tag in entry.tags"><a ng-click="selectTag(tag); $event.stopPropagation();">{{tag}}</a>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="card-actions">
+        <button class="btn btn-default">+1</button>
+        <button class="btn btn-default">Share</button>
+    </div>
 </div>

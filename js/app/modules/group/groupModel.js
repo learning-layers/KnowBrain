@@ -1,4 +1,4 @@
-angular.module('module.group').service("GroupFetchService", ['$q','UserService', 'EntityModel', 'ENTITY_TYPES', function($q, UserSrv, EntityModel, ENTITY_TYPES){
+angular.module('module.group').service("GroupFetchService", ['$q','UserService', 'EntityModel', 'ENTITY_TYPES', 'Activity', function($q, UserSrv, EntityModel, ENTITY_TYPES, Activity){
     
     this.getGroup = function(groupId) {
         var defer = $q.defer();
@@ -18,8 +18,8 @@ angular.module('module.group').service("GroupFetchService", ['$q','UserService',
                     entity.init({author:result.circle.entities[i].author});
 
                     if(entity.type == ENTITY_TYPES.file) {
-                        entity.mimeType = result.mimeType;
-                        entity.fileExtension = result.fileExt;
+                        entity.mimeType = result.circle.entities[i].mimeType;
+                        entity.fileExtension = result.circle.entities[i].fileExt;
                         if (result.circle.entities[i].mimeType.indexOf('/') > 0) {
                             entity.fileType = result.circle.entities[i].mimeType.substr(0, result.circle.entities[i].mimeType.indexOf('/'));
                         } else {
@@ -81,6 +81,30 @@ angular.module('module.group').service("GroupFetchService", ['$q','UserService',
 
         return defer.promise;        
     };
+
+    this.editCircle = function(label, description, circle) {
+        var defer = $q.defer();
+        var self = this;
+
+        new SSEntityUpdate(
+        function(result){
+          circle.label = label;
+          circle.description = description;
+          defer.resolve(circle); 
+        },
+        function(error){
+          defer.reject(error); 
+        },
+        UserSrv.getUser(),
+        UserSrv.getKey(),
+        circle.id, // entity, 
+        label, //label, 
+        description, //description, 
+        null, //comments
+        null); //read
+
+        return defer.promise;        
+    };
     
     this.addMembersToGroup = function(users, group) {
         var defer = $q.defer();
@@ -136,6 +160,64 @@ angular.module('module.group').service("GroupFetchService", ['$q','UserService',
             UserSrv.getKey(),
             group,
             entities
+        );
+        
+        return defer.promise;
+    };
+
+    this.getActivities = function(circle) {
+        var defer = $q.defer();
+        var self = this;
+        
+        new SSActivitiesGet(
+            function(result) {
+                var activities = [];
+                for(var i = 0; i < result.activities.length; i++) {
+                    var act = result.activities[i];
+            
+
+                    var entities = [];
+                    for (var j=0; j < act.entities.length; j++) {
+                        var entity = new EntityModel();
+                        entity.init({id:act.entities[j].id});
+                        entity.init({type:act.entities[j].type});
+                        entity.init({label:act.entities[j].label});
+                        entity.init({tags:act.entities[j].tags});
+                        entity.init({overallRating:act.entities[j].overallRating});
+                        entity.init({creationTime:act.entities[j].creationTime});
+                        entity.init({author:act.entities[j].author});
+
+                        if(entity.type == ENTITY_TYPES.file) {
+                            entity.mimeType = result.mimeType;
+                            entity.fileExtension = result.fileExt;
+                            if (act.entities[j].mimeType.indexOf('/') > 0) {
+                                entity.fileType = act.entities[j].mimeType.substr(0, act.entities[j].mimeType.indexOf('/'));
+                            } else {
+                                entity.fileType = act.entities[j].mimeType;
+                            }
+                        }
+                        entities.push(entity);
+                    }
+
+                    var activity = new Activity(act.author, act.activityType, act.creationTime, entities, act.users);
+                    activities.push(activity);
+                }
+
+
+                defer.resolve(activities);
+            },
+            function(error) {
+                console.log(error);
+            },
+            UserSrv.getUser(),
+            UserSrv.getKey(),
+            null,
+            null,
+            null,
+            [circle],
+            null,
+            null,
+            false
         );
         
         return defer.promise;

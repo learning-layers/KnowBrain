@@ -1,17 +1,18 @@
-<div class="container">
-    <div class="col-md-2 column">
+<div class="row">
+    <div class="col-md-3">
         <div id="circles-list">
-            <h4>Circles</h4>
-            <ul class="list-group">
-                <a class="list-group-item" ng-class="{ 'active': item.id == circle.id }" ng-click="showCircle(item.id)" ng-repeat="item in circles">
+            <ul class="nav nav-list affix-top">
+                <li ng-class="{ 'active': item.id == circle.id }" ng-click="showCircle(item.id)" ng-repeat="item in circles">
+                <a href="">
                 <div>{{item.label}}</div>
                 </a>
+                </li>
             </ul>
         </div>
     </div>
-    <div class="col-md-10 column">
+    <div class="col-md-9">
         <div class="row">
-        <h1>{{circle.label}}</h1>
+        <h1 class="highlight" ng-click="editCircle()">{{circle.label}}</h1>
         {{circle.description}}
         </div>
         <div class="row">
@@ -32,3 +33,4 @@
         <div ui-view autoscroll="false">
         </div>
     </div>
+</div>

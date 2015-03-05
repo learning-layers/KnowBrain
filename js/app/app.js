@@ -53,7 +53,8 @@ angular.module('knowbrain', [
   'module.entity',
   'module.activities',
   'angularSlideables',
-  'ng-context-menu'
+  'ng-context-menu',
+  'angularFileUpload'
 
   ]).config(['$stateProvider', '$urlRouterProvider', '$locationProvider', '$tooltipProvider',function ($stateProvider, $urlRouterProvider, $locationProvider, $tooltipProvider) {
 
