@@ -21,6 +21,15 @@ entityModule.directive('ngEntitySmall', function() {
       };
 });
 
+entityModule.directive('ngEntityListItem', function() {
+    return {
+        restrict:"A",
+        replace: true,
+        transclude:true,
+        templateUrl: MODULES_PREFIX + "/entity/entityListItem.tpl.html"
+      };
+});
+
 entityModule.directive('ngAddEntity', function() {
     return {
         restrict:"E",

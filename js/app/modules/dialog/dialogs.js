@@ -83,7 +83,7 @@ angular.module('dialogs.controllers', ['ui.bootstrap.modal', 'module.i18n', 'mod
     $scope.ENTITY_TYPES = ENTITY_TYPES;
     $scope.isSearchResult = isSearchResult;
     $scope.locations = [];
-    var tagsLoaded = false;
+
     /**
      * TRANSLATION INJECTION
      */
@@ -112,7 +112,7 @@ angular.module('dialogs.controllers', ['ui.bootstrap.modal', 'module.i18n', 'mod
         //set tags
         angular.forEach(entry.tags, function(tag, key) {
             $scope.tags.push(tag);
-        });
+        })
         if (entry.overallRating !== null && entry.overallRating.score != null) $scope.entryRating = entry.overallRating.score;
         if (isSearchResult) {
             getLocations();
@@ -150,15 +150,13 @@ angular.module('dialogs.controllers', ['ui.bootstrap.modal', 'module.i18n', 'mod
     };
     $scope.deleteEntity = function() {
         var toDelete = new Array();
-        var toDeleteKeys = new Array();
         var entries = CurrentCollectionService.getCurrentCollection().entries;
         angular.forEach(entries, function(collEntry, key) {
             if (collEntry.id == $scope.entry.id) {
                 toDelete.push(collEntry.id);
-                toDeleteKeys.push(key);
             }
         });
-        var promise = CurrentCollectionService.getCurrentCollection().deleteEntries(toDelete, toDeleteKeys);
+        var promise = CurrentCollectionService.getCurrentCollection().deleteEntries(toDelete);
         promise.then(function(result) {
             $scope.close();
         }, function(error) {
@@ -276,7 +274,7 @@ angular.module('dialogs.controllers', ['ui.bootstrap.modal', 'module.i18n', 'mod
             };
         });
     }
-}]).controller("addResourceWizzardController", ['$scope', '$modalInstance', 'i18nService', function($scope, $modalInstance, i18nService) {
+}]).controller("addResourceWizzardController", function($scope, i18nService) {
     /* STEPS */
     $scope.resourceTypes = ['choose', 'collection', 'upload', 'link'];
     $scope.currentResourceType = 0;
@@ -311,7 +309,7 @@ angular.module('dialogs.controllers', ['ui.bootstrap.modal', 'module.i18n', 'mod
     $scope.backToChoose = function() {
         $scope.currentResourceType = 0;
     };
-}])
+})
 
 
 .controller("ChooseFromDropboxController", function($scope, $q, $location, $rootScope, $state, i18nService, CollectionFetchService, CurrentCollectionService, EntityFetchService, $modal, EntityModel, ENTITY_TYPES, SPACE_ENUM, RATING_MAX, $dialogs, $modalInstance) {
@@ -485,9 +483,8 @@ angular.module('dialogs.controllers', ['ui.bootstrap.modal', 'module.i18n', 'mod
         });
     };
 
-    $scope.closeModal = function() {
-
-        $scope.modal.close(true);
+    $scope.close = function() {
+        $modalInstance.close();
     };
 
 
@@ -513,7 +510,7 @@ angular.module('dialogs.controllers', ['ui.bootstrap.modal', 'module.i18n', 'mod
 
 
 
-.controller("UploadResourcesController", function($q, $scope, $modalInstance, $http, $location, $state, i18nService, CurrentCollectionService, UriToolbox, UserService, EntityModel, ENTITY_TYPES, FileUploader) {
+.controller("UploadResourcesController", function($q, $scope, $modalInstance, $http, $location, $state, i18nService, CurrentCollectionService, UriToolbox, UserService, EntityModel, ENTITY_TYPES, FileUploader, saveInCollection) {
     var self = this;
     
     $scope.uploader = new FileUploader();
@@ -541,8 +538,11 @@ angular.module('dialogs.controllers', ['ui.bootstrap.modal', 'module.i18n', 'mod
         return mb.toFixed(2) + " MB";
     };
 
+    $scope.close = function() {
+        $modalInstance.dismiss();
+    };
+
     $scope.uploader.uploadAll = function() {
-        var currColl = CurrentCollectionService.getCurrentCollection();
         var entries = [];
         var labels = [];
         var uploadCounter = 0;
@@ -552,7 +552,8 @@ angular.module('dialogs.controllers', ['ui.bootstrap.modal', 'module.i18n', 'mod
         angular.forEach($scope.uploader.queue, function(file, key) {
                 file.uploading = true;
 
-                if (currColl != null) {
+                if (saveInCollection == true) {
+                    var currColl = CurrentCollectionService.getCurrentCollection();
                     currColl.uploadFile(file.file).then(function(entry) {
                         file.uploading = false;
                         file.uploaded = true;
@@ -605,7 +606,8 @@ angular.module('dialogs.controllers', ['ui.bootstrap.modal', 'module.i18n', 'mod
             }
         });
         defer.promise.then(function() {
-            if (currColl != null) {
+            if (saveInCollection == null) {
+                var currColl = CurrentCollectionService.getCurrentCollection();
                 currColl.addEntries(entries, labels).then(function(result) {
                     angular.forEach(newEntrieObjects, function(newEntry, key) {
                         currColl.entries.push(newEntry);
@@ -638,7 +640,7 @@ angular.module('dialogs.controllers', ['ui.bootstrap.modal', 'module.i18n', 'mod
                 console.log(error);
             });
         } else if (targetEntity.type === 'coll') {
-            var promise = coll.createLink(link.label, link.url);
+            var promise = targetEntity.createLink(link.label, link.url);
             promise.then(function(result) {
                 $modalInstance.close(result);
             }, function(error) {
@@ -647,10 +649,15 @@ angular.module('dialogs.controllers', ['ui.bootstrap.modal', 'module.i18n', 'mod
         }
     };
 
+    $scope.close = function() {
+        $modalInstance.close();
+    };
 })
 
-.controller("AddResourceController", ['$scope', '$http', '$location', 'i18nService', 'CurrentCollectionService', 'SPACE_ENUM', function($scope, $http, $location, i18nService, CurrentCollectionService, SPACE_ENUM) {
-
+.controller("CreateCollectionController", function($scope, $modalInstance, $http, $location, i18nService, CurrentCollectionService, SPACE_ENUM) {
+    $scope.t = function(identifier) {
+            return i18nService.t(identifier);
+        }
     $scope.newColl = {
         shared: false,
         private: true
@@ -658,6 +665,10 @@ angular.module('dialogs.controllers', ['ui.bootstrap.modal', 'module.i18n', 'mod
     $scope.currentCollection = CurrentCollectionService.getCurrentCollection();
     $scope.SPACE_ENUM = SPACE_ENUM;
 
+    $scope.close = function() {
+        $modalInstance.close();
+    };
+    
     $scope.createCollection = function(coll, closeWizzardFnc) {
 
         if (coll.label == undefined) {
@@ -666,12 +677,10 @@ angular.module('dialogs.controllers', ['ui.bootstrap.modal', 'module.i18n', 'mod
 
         var promise = CurrentCollectionService.getCurrentCollection().createCollection(coll.label);
         promise.then(function(result) {
-            //nothing to do
+            $modalInstance.close(result);
         }, function(error) {
             console.log(error);
         });
-
-        closeWizzardFnc();
     };
 
     //checkbox -> radiobutton hack ... damn angular
@@ -690,29 +699,11 @@ angular.module('dialogs.controllers', ['ui.bootstrap.modal', 'module.i18n', 'mod
             $scope.newColl.private = false;
         }
     };
-
-    $scope.createLink = function(link, closeWizzardFnc) {
-        if (link.label == undefined || link.url == undefined) {
-            return;
-        }
-
-
-        var promise = CurrentCollectionService.getCurrentCollection().createLink(link.label, link.url);
-        promise.then(function(result) {
-            //nothing to do
-        }, function(error) {
-            console.log(error);
-        });
-
-        closeWizzardFnc();
-
-    };
-
-}])
+})
 
 
 // end ConfirmDialogCtrl / dialogs.controllers
-.controller("baseModalController", ['$controller', '$scope', '$rootScope', '$modalInstance', 'i18nService', 'states', 'ctrlFunction', function($controller, $scope, $rootScope, $modalInstance, i18nService, states, ctrlFunction) {
+.controller("baseModalController", ['$controller', '$scope', '$rootScope', 'i18nService', 'states', 'ctrlFunction', function($controller, $scope, $rootScope, $modalInstance, i18nService, states, ctrlFunction) {
     $scope.baseCtrl = $controller(ctrlFunction, {
         $scope: $scope
     });
@@ -918,12 +909,17 @@ angular.module('dialogs.services', ['ui.bootstrap.modal', 'dialogs.controllers']
                     }
                 });
             },
-            uploadResources: function() {
+            uploadResources: function(saveInCollection) {
                 return $modal.open({
                     templateUrl: MODULES_PREFIX + '/dialog/wizzard-upload-resource.tpl.html',
                     controller: 'UploadResourcesController',
                     keyboard: true,
-                    backdrop: true
+                    backdrop: true,
+                    resolve: {
+                        saveInCollection: function() {
+                            return saveInCollection;
+                        }
+                    }
                 });
             },
             chooseFromDropbox: function() {
@@ -946,6 +942,15 @@ angular.module('dialogs.services', ['ui.bootstrap.modal', 'dialogs.controllers']
                             return targetEntity;
                         }
                     }
+                });
+            },
+            createCollection: function(targetEntity) {
+                return $modal.open({
+                    templateUrl: MODULES_PREFIX + '/dialog/wizzard-create-collection.tpl.html',
+                    controller: 'CreateCollectionController',
+                    keyboard: true,
+                    backdrop: true,
+                    windowClass: 'modal-small'
                 });
             }
         };

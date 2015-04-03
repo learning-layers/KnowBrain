@@ -18,29 +18,60 @@
 - See the License for the specific language governing permissions and
 - limitations under the License.
 -->
-
 <div ng-controller="CollectionController">
+    <div class="row" style="margin-top: 10px;">
+        <!-- sort bar -->
 
-	<div class="btn-group" id="contextMenu" ng-show="resourcesSelected">
-		<button type="button" class="btn btn-default">
-			<span class="glyphicon glyphicon-transfer" tooltip-placement="bottom"
-				tooltip="{{t('move_resource')}}"></span>
-		</button>
-		<!--  <button type="button" class="btn btn-default" >
-      <span class="glyphicon glyphicon-share" tooltip-placement="bottom" tooltip="{{t('share_resource')}}"></span>
-    </button> -->
-		<button type="button" class="btn btn-default"
-			ng-click="deleteCollectionEntries()">
-			<span class="glyphicon glyphicon-trash" tooltip-placement="bottom"
-				tooltip="{{t('delete_resource')}}"></span>
-		</button>
-	</div>
+        <div class="col-md-10">
+            <div class="well" style="padding : 1px;">
+                <div style="height:34px; overflow:hidden;">
+                    <div class="sort-order-bar animate-show row" style="margin-left : 10px; margin-top: 7px;" ng-show="selectedEntities.length == 0">
+                        <div class="col-md-1 col-xs-2">
+                            <a ng-class="{'sort-order-filter-active' : predicate == 'fileType'}" ng-click="reverse = predicate != 'fileType' ? false : !reverse; predicate = 'fileType';">Type<span ng-show="predicate == 'fileType'">{{reverse ? '&#9650;' : '&#9660;'}}</span></a>
+                        </div>
+                        <div class="col-md-6 col-xs-10">
+                            <a ng-class="{'sort-order-filter-active' : predicate == 'label'}" ng-click="reverse = predicate != 'label' ? false : !reverse; predicate = 'label';">Title <span ng-show="predicate == 'label'">{{reverse ? '&#9650;' : '&#9660;'}}</span></a>
+                        </div>
+                        <div class="col-md-2 hidden-xs">
+                            <a ng-class="{'sort-order-filter-active' : predicate == 'creationTime'}" ng-click=" reverse = predicate != 'creationTime' ? false : !reverse; predicate = 'creationTime';">Date <span ng-show="predicate == 'creationTime'">{{reverse ? '&#9650;' : '&#9660;'}}</span></a>
+                        </div>
+                        <div class="col-md-3 hidden-xs">
+                            <a ng-class="{'sort-order-filter-active' : predicate == 'author.label'}" ng-click=" reverse = predicate != 'author.label' ? false : !reverse; predicate = 'author.label';">Author <span ng-show="predicate == 'author.label'">{{reverse ? '&#9650;' : '&#9660;'}}</span></a>
+                        </div>
+                    </div>
+                    <div class="animate-show row" ng-hide="selectedEntities.length == 0" style="line-height:34px;">
+                        <div class="col-md-12">
+                            <a ng-repeat="action in actions" ng-click="clickedAction($index)" style="float:left; display:table; margin-left: 15px;"><span class="action-button" ng-class="action.cssClass"></span>&nbsp;{{action.title}}</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-	<ng-add-entity></ng-add-entity>
-
-
-  <div id="collectionContent">
-  	<ng-entity ng-repeat="entry in currentCollection.entries" ></ng-entity>
-  </div>
-  <div class="clearfix"></div>
+        <div class="col-md-2">
+            <div class="btn-group" role="group" aria-label="...">
+                <button type="button" class="btn btn-default" ng-class="{active : isGridViewMode == true}" ng-click="isGridViewMode = true; isListViewMode = false;">
+                <span class="glyphicon glyphicon-th" aria-hidden="true"></span>
+                </button>
+                <button type="button" class="btn btn-default" ng-class="{active : isListViewMode == true}" ng-click="isGridViewMode = false; isListViewMode = true;">
+                <span class="glyphicon glyphicon-th-list" aria-hidden="true"></span>
+                </button>
+            </div>
+        </div>
+    </div>
+    <div id="collectionContent" nv-file-drop uploader="uploader" style="overflow: hidden;">
+    <div ng-show="isGridViewMode">
+        <ng-entity ng-repeat="entry in currentCollection.entries | orderBy: predicate : reverse" ></ng-entity>
+    </div>
+        <div ng-show="isListViewMode">
+        <table class="table vertical-aligned-table">
+            <tbody>
+                <tr ng-entity-list-item ng-repeat="entry in currentCollection.entries | orderBy: predicate : reverse"  ng-click="selectResource(entry)" context-menu data-target="menu-{{ $index }}" >
+                    
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    </div>
+    <div class="clearfix"></div>
 </div>

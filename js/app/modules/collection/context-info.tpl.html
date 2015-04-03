@@ -18,45 +18,46 @@
 - See the License for the specific language governing permissions and
 - limitations under the License.
 -->
-
 <span class="glyphicon ajax-loader-grey-big"  id="context-info-loading-indicator" ng-show="ajaxLoading"></span>
-
-<div ng-controller="CollectionController" ng-show="!ajaxLoading"> 
-
-  <h3 style="margin-top:0px; padding-top:0px; margin-bottom:20px; width:290px;" ng-show="!currentCollection.isRoot">
-  <edit-in-place model="currentCollection.label" save-method="currentCollection.saveLabel(newLabel)"></edit-in-place>
-
-  <div class="clearfix"></div>
-  </h3>
-
-  <h3 ng-show="currentCollection.isRoot" style="margin-top:0px; padding-top:0px; margin-bottom:20px;">{{t('root_collection')}}</h3>
+<div ng-controller="CollectionController" ng-show="!ajaxLoading">
+    <h3 style="margin-top:0px; padding-top:0px; margin-bottom:10px; width:290px;" ng-show="!currentCollection.isRoot">
+    <edit-in-place model="currentCollection.label" save-method="currentCollection.saveLabel(newLabel)"></edit-in-place>
+    <div class="clearfix"></div>
+    </h3>
+    <h3 ng-show="currentCollection.isRoot" style="margin-top:0px; padding-top:0px; margin-bottom:10px;">{{t('root_collection')}}</h3>
 
 
-  <span ng-show="!currentCollection.isRoot">
-    <h5>Collection space:</h5>
+    <div class="btn-group" role="group" aria-label="..." style="margin-bottom: 10px;">
+        <button type="button" class="btn btn-default" ng-click="addCollection()">
+        <span class="icon-btn icon-add-collection" aria-hidden="true"></span>
+        </button>
+        <button type="button" class="btn btn-default" ng-click="addEntity()">
+        <span class="icon-btn icon-add-file" aria-hidden="true"></span>
+        </button>
+        <button type="button" class="btn btn-default" ng-click="addLink()">
+        <span class="icon-btn icon-add-link" aria-hidden="true"></span>
+        </button>
+    </div>
+
+    
+    <div ng-show="!currentCollection.isRoot">
     <button type="button" ng-class="{'btn-danger btn btn-xs disabled': (currentCollection.space == spaceEnum.shared), 'btn-success btn btn-xs disabled': (currentCollection.space == spaceEnum.private)}">{{t(currentCollection.space)}}</button>
     <button type="button" ng-click="shareCollection()" ng-show="currentCollection.space != spaceEnum.shared" class="btn btn-xs btn-default"><span class="glyphicon glyphicon-share"></span>&nbsp;{{t('share')}}</button>
-  </span>
+    </div>
+    <span ng-show="!currentCollection.isRoot">
+    <div style="font-size:15px;"><rating ng-controller="CollectionController" readOnly="ratingReadOnly" value="collectionRating" max="5" on-leave="leaveCurrentCollectionRating(collectionRating); collectionRating = currentCollection.ratingOverall.score;" state-on="'star-rating-cursor glyphicon glyphicon-star'" state-off="'star-rating-cursor glyphicon glyphicon-star-empty'"></rating><span>({{currentCollection.overallRating.frequ}})</span></div>
+    </span>
+    <span class="glyphicon ajax-loader-grey-big"  id="context-info-loading-indicator" ng-show="cumulatedTagsLoading"></span>
+    <div id="cumulated-tag-cloud" ng-show="!cumulatedTagsLoading">
 
-  <span ng-show="!currentCollection.isRoot">
-  <h5>Rating:</h5 > 
-  <div style="font-size:15px;"><rating ng-controller="CollectionController" readOnly="ratingReadOnly" value="collectionRating" max="5" on-leave="leaveCurrentCollectionRating(collectionRating); collectionRating = currentCollection.ratingOverall.score;" state-on="'star-rating-cursor glyphicon glyphicon-star'" state-off="'star-rating-cursor glyphicon glyphicon-star-empty'"></rating><span>({{currentCollection.overallRating.frequ}})</span></div>
-  </span>
+        <span id="cumulated-tag-cloud-no-tags" ng-hide="currentCollection.cumulatedTags.length">{{t('no_cumulated_tags')}}</span>
+        <div ng-show="currentCollection.cumulatedTags.length" class="cumulated-tag-cloud-tag" style="font-size:{{value.fontSize+8}}px; display: inline-block;" ng-repeat="(key, value) in currentCollection.cumulatedTags" ng-click="tagSearchClicked(value.label)">
+            {{value.label}}
+        </div>
+    </div>
 
-  <h5>{{t('tagCloud')}}</h5> 
-  <span class="glyphicon ajax-loader-grey-big"  id="context-info-loading-indicator" ng-show="cumulatedTagsLoading"></span>
-  <div id="cumulated-tag-cloud" ng-show="!cumulatedTagsLoading">
-   
-    <span id="cumulated-tag-cloud-no-tags" ng-hide="currentCollection.cumulatedTags.length">{{t('no_cumulated_tags')}}</span>
-
-     <div ng-show="currentCollection.cumulatedTags.length" class="cumulated-tag-cloud-tag" style="font-size:{{value.fontSize+8}}px; display: inline-block;" ng-repeat="(key, value) in currentCollection.cumulatedTags" ng-click="tagSearchClicked(value.label)">
-      {{value.label}}
-     </div>
-  </div>
-  
-  <span ng-show="!currentCollection.isRoot">
-  <h5>Discussion:</h5>
-  <comments-util model="currentCollection">
-  </span>
+    <span ng-show="!currentCollection.isRoot">
+    <h5>Discussion:</h5>
+    <comments-util model="currentCollection">
+    </span>
 </div>
-

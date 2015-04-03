@@ -32,7 +32,7 @@ angular.module('module.models').constant('ENTITY_TYPES', {collection:'coll', fil
 angular.module('module.models').constant('SHARING_OPTIONS', {private:'private', friends:'friends', public:'public', custom:'custom'});
 angular.module('module.models').constant('RATING_MAX', 5);
 
-angular.module('module.models').factory('BaseModel', ['$q', '$rootScope', 'UserService', 'FetchServiceHelper', "SPACE_ENUM", function($q, $rootScope, UserSrv, FetchServiceHelper, SPACE_ENUM){
+angular.module('module.models').factory('BaseModel', ['$q', '$rootScope', 'UserService', 'FetchServiceHelper', "SPACE_ENUM", 'Tag', function($q, $rootScope, UserSrv, FetchServiceHelper, SPACE_ENUM, Tag){
 
   function Model(){};
 
@@ -372,7 +372,7 @@ angular.module('module.models').factory('CollectionModel', ['$q', '$rootScope','
     return defer.promise;
   };
 
-  Collection.prototype.deleteEntries = function(collEntries, collEntryKeys){
+  Collection.prototype.deleteEntries = function(collEntries) {
 
     var defer = $q.defer();
     var self = this;
@@ -381,8 +381,13 @@ angular.module('module.models').factory('CollectionModel', ['$q', '$rootScope','
       function(result){
         
         if(result.worked){
-          for (var i = collEntryKeys.length -1; i >= 0; i--){
-            self.entries.splice(collEntryKeys[i],1);  
+          for (var i = collEntries.length -1; i >= 0; i--){
+            $.each(self.entries, function(j) {
+                if (self.entries[j].id === collEntries[i].id) {
+                   self.entries.splice(j, 1);
+                  return false;
+                 }
+            });
           }         
         }
        $rootScope.$apply();
@@ -478,18 +483,15 @@ angular.module('module.models').factory('EntityModel', ['$q', '$rootScope','User
 
       return function(fileAsBlob){
 
-        var a = document.createElement("a");
+        var filename;
 
         if(jSGlobals.endsWith(self.label, "." + self.fileExtension)){
-          a.download    = self.label;
+          filename    = self.label;
         }else{
-          a.download    = self.label + "." + self.fileExtension;  
+          filename    = self.label + "." + self.fileExtension;  
         }
 
-        a.href        = window.URL.createObjectURL(fileAsBlob);
-        a.textContent = jSGlobals.download;
-
-        a.click();
+        saveAs(fileAsBlob, filename);
         defer.resolve();
       };
     }
@@ -562,8 +564,25 @@ angular.module('module.models').factory('EntityModel', ['$q', '$rootScope','User
       }
   }
 
+  Entity.prototype.iconClass = function() {
+    if (this.type == 'file') {
+      if (this.fileType == 'image') {
+        return 'icon-file-image';
+      } else if (this.fileType == 'audio') {
+        return 'icon-file-audio';
+      } else if (this.mimeType == 'application/pdf') {
+        return 'icon-file-pdf';
+      }
+    }
+    return 'icon-file';
+  }
+
   Entity.prototype.getFormattedCreationTime = function () {
-    return (new Date(this.creationTime)).toLocaleDateString();
+    if (this.creationTime > 0) {
+      return (new Date(this.creationTime)).toLocaleDateString();
+    } else {
+      return (new Date()).toLocaleDateString();
+    }
   };
 
   return (Entity);

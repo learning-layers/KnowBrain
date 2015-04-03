@@ -62,6 +62,9 @@ angular.module('module.collection').config(function ($stateProvider) {
             },
             "breadcrumbs": {
                 templateUrl: MODULES_PREFIX + '/collection/breadcrumbs.tpl.html'
+            },
+            "resources-sort-bar": {
+                templateUrl: MODULES_PREFIX + '/collection/resources-sort-bar.tpl.html'
             }
         }
     })
@@ -122,16 +125,72 @@ angular.module('module.collection').service('CurrentCollectionService', [functio
 /**
  * CONTROLLER
  */
-angular.module('module.collection').controller("CollectionController", [
-    '$scope', '$q', '$location', '$rootScope', '$state', 'i18nService', 'CollectionFetchService', 'CurrentCollectionService', 'EntityFetchService', '$modal', 'EntityModel', 'ENTITY_TYPES', 'SPACE_ENUM', 'RATING_MAX', '$dialogs',
-    function ($scope, $q, $location, $rootScope, $state, i18nService, CollectionFetchService, CurrentCollectionService, EntityFetchService, $modal, EntityModel, ENTITY_TYPES, SPACE_ENUM, RATING_MAX, $dialogs) {
+angular.module('module.collection').controller("CollectionController", function ($scope, $q, $location, $rootScope, $state, i18nService, CollectionFetchService, CurrentCollectionService, EntityFetchService, $modal, EntityModel, ENTITY_TYPES, SPACE_ENUM, RATING_MAX, $dialogs, FileUploader) {
 
-        var self = this;
-        var selectedCounter = 0;
+    var self = this;
+    
+    $scope.isGridViewMode = true;
+    $scope.isListViewMode = false;
 
+    $scope.uploader = new FileUploader();
+    $scope.uploader.onAfterAddingAll = function(item) {
+        $scope.uploader.uploadAll();
+    };
+
+    $scope.uploader.uploadAll = function() {
+        var entries = [];
+        var labels = [];
+        var uploadCounter = 0;
+        var fileCount = $scope.uploader.queue.length;
+        var newEntrieObjects = [];
+        var defer = $q.defer();
+        angular.forEach($scope.uploader.queue, function(file, key) {
+            file.uploading = true;
+            var currColl = CurrentCollectionService.getCurrentCollection();
+            currColl.uploadFile(file.file).then(function(entry) {
+                file.uploading = false;
+                file.uploaded = true;
+                file.uriPathnameHash = UriToolbox.extractUriPathnameHash(entry.id);
+                entries.push(entry.id);
+                labels.push(entry.label);
+                uploadCounter++;
+                newEntrieObjects.push(entry);
+                if (uploadCounter == fileCount) {
+                    defer.resolve();
+                }
+            }, function(error) {
+                console.log(error);
+            });
+        });
+        defer.promise.then(function() {
+                var currColl = CurrentCollectionService.getCurrentCollection();
+                currColl.addEntries(entries, labels).then(function(result) {
+                    angular.forEach(newEntrieObjects, function(newEntry, key) {
+                        currColl.entries.push(newEntry);
+                    });
+                }, function(error) {
+                    console.log(error);
+                });
+        });
+    };
+    
+
+    $scope.predicate = 'creationTime';
+    $scope.reverse = false;
         $scope.entityTypes = ENTITY_TYPES;
         $scope.spaceEnum = SPACE_ENUM;
         $scope.cumulatedTagsLoading;
+    $scope.selectedEntities = [];
+    $scope.actions = [{
+        title: 'Download',
+        cssClass: 'glyphicon glyphicon-download-alt'
+    }, {
+        title: 'Move',
+        cssClass: 'glyphicon glyphicon-floppy-open'
+    }, {
+        title: 'Delete',
+        cssClass: 'glyphicon glyphicon-trash'
+    }];
 
         /**
          * This events are used to adjust body 
@@ -220,26 +279,14 @@ angular.module('module.collection').controller("CollectionController", [
             $rootScope.$broadcast("currCollLoaded");
         };
 
-        $scope.selectResource = function (entry) {
-
-            if (entry.isSelected) {
-                entry.isSelected = false;
-                selectedCounter--;
+        $scope.selectResource = function (entity) {
+            if (entity.isSelected) {
+                entity.isSelected = false;
+                $scope.selectedEntities.splice($scope.selectedEntities.indexOf(entity), 1);
             } else {
-                entry.isSelected = true;
-                selectedCounter++;
+                entity.isSelected = true;
+                $scope.selectedEntities.push(entity);
             }
-
-            if (selectedCounter <= 0) {
-                $scope.resourcesSelected = false;
-            } else {
-                $scope.resourcesSelected = true;
-            }
-        };
-
-        var resetSelectCounter = function () {
-            selectedCounter = 0;
-            $scope.resourcesSelected = false;
         };
 
         $scope.handleEntryClick = function (entry) {
@@ -316,28 +363,42 @@ angular.module('module.collection').controller("CollectionController", [
             }
         };
 
-        $scope.deleteCollectionEntries = function () {
+        $scope.removeEntities = function(entities) {
+            var entityIds = [];
+            for (var i = 0; i < entities.length; i++) {
+                entityIds.push(entities[i].id);
+            }
 
-            var toDelete = new Array();
-            var toDeleteKeys = new Array();
-
-            var entries = CurrentCollectionService.getCurrentCollection().entries;
-
-            angular.forEach(entries, function (entry, key) {
-                if (entry.isSelected) {
-                    toDelete.push(entry.id);
-                    toDeleteKeys.push(key);
-                }
-            });
-
-            var promise = CurrentCollectionService.getCurrentCollection().deleteEntries(toDelete, toDeleteKeys);
+            var promise = CurrentCollectionService.getCurrentCollection().deleteEntries(entityIds);
             promise.then(function (result) {
-                resetSelectCounter()
             });
         };
 
-        $scope.openAddResourceWizzard = function () {
-            $dialogs.addResourceWizzard();
+        $scope.addEntity = function() {
+            $dialogs.uploadResources(true).result.then(function(uploadedEntities) {
+                var entityIds = [];
+                for (var i = uploadedEntities.length - 1; i >= 0; i--) {
+                    entityIds.push(uploadedEntities[i].id);
+                }
+            }, function() {
+                //$log.info('Modal dismissed at: ' + new Date());
+            });
+        };
+
+        $scope.addLink = function() {
+            $dialogs.createLink(CurrentCollectionService.getCurrentCollection()).result.then(function(link) {
+
+            }, function() {
+                //$log.info('Modal dismissed at: ' + new Date());
+            });
+        };
+
+        $scope.addCollection = function() {
+            $dialogs.createCollection().result.then(function(link) {
+
+            }, function() {
+                //$log.info('Modal dismissed at: ' + new Date());
+            });
         };
 
         $scope.setCollPublic = function () {
@@ -359,7 +420,12 @@ angular.module('module.collection').controller("CollectionController", [
             $state.go('app.search.tag', {tag: tag});
         };
 
-    }]);
+        $scope.clickedAction = function(index) {
+        if (index == 2) {
+            $scope.removeEntities($scope.selectedEntities);
+        }
+    };
+});
 
 
 

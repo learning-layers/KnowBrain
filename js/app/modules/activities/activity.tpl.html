@@ -44,7 +44,7 @@
                                 <img ng-switch-when="priv" src="images/group_pic_dummy.jpg" class="collection-entry-profile-pic"/>
                                 <div ng-switch-when="coll" class="list-entity-icon icon-folder">
                                 </div>
-                                <div ng-switch-when="file" class="list-entity-icon" ng-class="{'icon-file' : entry.fileType == null, 'icon-file-image' : entry.fileType == 'image', 'icon-file-pdf' : entry.mimeType == 'application/pdf', 'icon-file-audio' : entry.fileType == 'audio'}">
+                                <div ng-switch-when="file" class="list-entity-icon" ng-class="entry.iconClass()">
                                 </div>
                                 <div ng-switch-when="entity" class="list-entity-icon glyphicon glyphicon-link">
                                 </div>
@@ -61,7 +61,7 @@
                             </span>
                         </div>
                         <div class="col-md-12" ng-show="entry.tags.length > 0">
-                            <div class="qa-tag" ng-repeat="tag in entry.tags"><a ng-click="selectTag(tag); $event.stopPropagation();">{{tag}}</a>
+                            <div class="qa-tag" ng-repeat="tag in entry.tags"><a ng-click="selectTag(tag); $event.stopPropagation();">{{tag.label}}</a>
                             </div>
                         </div>
                     </td>

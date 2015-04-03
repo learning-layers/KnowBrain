@@ -289,7 +289,7 @@ angular.module('module.circles').controller("CircleResourcesController", functio
 
     $scope.filterFunction = function(element) {
         var matchesSearch = true;
-        if ($scope.searchResourcesString != null && !element.label.match($scope.searchResourcesString)) {
+        if ($scope.searchResourcesString != null && element.label.toLowerCase().indexOf($scope.searchResourcesString.toLowerCase()) == -1) {
             matchesSearch = false;
         }
 
@@ -308,7 +308,7 @@ angular.module('module.circles').controller("CircleResourcesController", functio
     };
 
     $scope.addEntity = function() {
-        $dialogs.uploadResources().result.then(function(uploadedEntities) {
+        $dialogs.uploadResources(false).result.then(function(uploadedEntities) {
             var entityIds = [];
             for (var i = uploadedEntities.length - 1; i >= 0; i--) {
                 entityIds.push(uploadedEntities[i].id);
@@ -324,15 +324,18 @@ angular.module('module.circles').controller("CircleResourcesController", functio
 
     $scope.chooseEntity = function() {
         $dialogs.chooseFromDropbox().result.then(function(chosenEntities) {
-            var entityIds = [];
-            for (var i = 0; i < chosenEntities.length; i++) {
-                entityIds.push(chosenEntities[i].id);
-            }
+            if (chosenEntities != undefined) {
+                var entityIds = [];
+                for (var i = 0; i < chosenEntities.length; i++) {
+                    entityIds.push(chosenEntities[i].id);
+                }
 
-            var promise = GroupFetchService.addEntitiesToGroup(entityIds, $scope.circle.id);
-            promise.then(function(result) {
-                addEntitiesToCircle(chosenEntities);
-            });
+                var promise = GroupFetchService.addEntitiesToGroup(entityIds, $scope.circle.id);
+                promise.then(function(result) {
+                    addEntitiesToCircle(chosenEntities);
+                });
+            }
+            
         }, function() {
             //$log.info('Modal dismissed at: ' + new Date());
         });

@@ -61,179 +61,176 @@
             </div>
         </div>
     </form>
-    <div class="row clearfix list-header-box">
-        <div class="row clearfix">
-            <div class="col-md-4 column">
-                <div class="lead">{{selectedThreadListType}} threads ({{selectedThreadList().length}})</div>
-            </div>
-            <div class="col-md-4 column">
-                <ul class="nav nav-pills">
-                    <li ng-class="(selectedThreadListType == THREAD_LIST_TYPE.all) ? 'active' : ''">
-                        <a ng-click="changeSelectedThreadListType(THREAD_LIST_TYPE.all)">All</a>
-                    </li>
-                    <li ng-class="(selectedThreadListType == THREAD_LIST_TYPE.own) ? 'active' : ''">
-                        <a ng-click="changeSelectedThreadListType(THREAD_LIST_TYPE.own)">
-                        <span id="my-own-badge" class="badge">{{myOwnThreadList.length}}</span> My own
-                        </a>
-                    </li>
-                    <li ng-class="(selectedThreadListType == THREAD_LIST_TYPE.group) ? 'active' : ''">
-                        <a ng-click="changeSelectedThreadListType(THREAD_LIST_TYPE.group)">
-                        <span id="my-group-badge" class="badge">{{myGroupThreadList.length}}</span> My group
-                        </a>
-                    </li>
-                </ul>
-            </div>
-            <div class="col-md-4 column">
-                <div ng-show="searchTags.length > 0 && !showingAdvancedSearch">
-                    <div class="qa-tag" ng-repeat="tag in searchTags track by $index">{{tag.label}} <a ng-click="removeSearchTag($index)"><span class="glyphicon glyphicon-remove"></span></a></div>
+    <section>
+        <div class="well list-header-box">
+            <div class="row clearfix">
+                <div class="col-md-4 column">
+                    <div class="lead">{{selectedThreadListType}} threads ({{selectedThreadList().length}})</div>
+                </div>
+                <div class="col-md-8 column">
+                    <ul class="nav nav-pills">
+                        <li ng-class="(selectedThreadListType == THREAD_LIST_TYPE.all) ? 'active' : ''">
+                            <a ng-click="changeSelectedThreadListType(THREAD_LIST_TYPE.all)">All</a>
+                        </li>
+                        <li ng-class="(selectedThreadListType == THREAD_LIST_TYPE.own) ? 'active' : ''">
+                            <a ng-click="changeSelectedThreadListType(THREAD_LIST_TYPE.own)">
+                            <span id="my-own-badge" class="badge">{{myOwnThreadList.length}}</span> My own
+                            </a>
+                        </li>
+                        <li ng-class="(selectedThreadListType == THREAD_LIST_TYPE.group) ? 'active' : ''">
+                            <a ng-click="changeSelectedThreadListType(THREAD_LIST_TYPE.group)">
+                            <span id="my-group-badge" class="badge">{{myGroupThreadList.length}}</span> My group
+                            </a>
+                        </li>
+                    </ul>
                 </div>
             </div>
-        </div>
-        <form name="searchForm" ng-submit="searchThreads()">
-            <div class="row">
-                <div class="col-md-9 column">
-                    <div class="input-group">
-                        <input id="thread-search-field" type="search" class="form-control" placeholder="search" ng-model="searchThreadsString">
-                        <span id="searchclear" class="glyphicon glyphicon-remove-circle" ng-click="clearSearch()" ng-show="searchThreadsString.length > 0"></span>
-                        <span class="input-group-btn">
-                        <button type="submit" class="btn btn-default">
-                        <span class="glyphicon glyphicon-search"></span>
+            <form name="searchForm" ng-submit="searchThreads()">
+                <div class="row">
+                    <div class="col-md-9 column">
+                        <div class="input-group">
+                            <input id="thread-search-field" type="search" class="form-control" placeholder="search" ng-model="searchThreadsString">
+                            <span id="searchclear" class="glyphicon glyphicon-remove-circle" ng-click="clearSearch()" ng-show="searchThreadsString.length > 0"></span>
+                            <span class="input-group-btn">
+                            <button type="submit" class="btn btn-default">
+                            <span class="glyphicon glyphicon-search"></span>
+                            </button>
+                            </span>
+                        </div>
+                    </div>
+                    <div class="col-md-3 column">
+                        <button id="advanced-search-button" class="btn btn-default" type="button" data-toggle="button" slide-toggle="#advanced-search" ng-click="showingAdvancedSearch = !showingAdvancedSearch">
+                        advanced search
                         </button>
-                        </span>
                     </div>
                 </div>
-                <div class="col-md-3 column">
-                    <button id="advanced-search-button" class="btn btn-default" type="button" data-toggle="button" slide-toggle="#advanced-search" ng-click="showingAdvancedSearch = !showingAdvancedSearch">
-                    advanced search
-                    </button>
-                </div>
-            </div>
-            <div id="advanced-search" class="slideable" duration="0.3s">
-                <div class="row">
-                    <div class="col-md-2 column">
-                        <span style="height: 44px; line-height: 44px;">Tagged as:</span>
-                    </div>
-                    <div class="col-md-7 column">
-                        <tags-input ng-model="searchTags" on-tag-added="reloadThreads()" on-tag-removed="reloadThreads()" class="bootstrap" display-property="label" placeholder="Tags"></tags-input>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-md-12 column">
-                        <input type="checkbox" ng-model="searchAnswers"> Search in answers
-                    </div>
-                </div>
-            </div>
-        </form>
-    </div>
-    <div class="row clearfix" ng-repeat="thread in selectedThreadList() | orderBy: 'creationTime' : true" ng-switch="thread.type.label">
-        <div ng-switch-when="question">
-            <div class="col-md-1 column hidden-sm hidden-xs">
-                <div class="icon-large icon-question-large"></div>
-            </div>
-            <div class="col-md-11 column">
-                <div class="row">
-                    <div class="col-md-12 column">
-                        <a class="lead" ng-click="openThread(thread)">
-                        {{thread.title}}
-                        </a>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-md-12 column">
-                        <div class="qa-tag" ng-repeat="tag in thread.tags"><a ng-click="onTagClicked(tag)">{{tag.label}}</a></div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-md-4 column">
-                        <div class="icon-user-small icon-small">
+                <div id="advanced-search" class="slideable" duration="0.3s">
+                    <div class="row">
+                        <div class="col-md-2 column">
+                            <span style="height: 44px; line-height: 44px;">Tagged as:</span>
                         </div>
-                        <div class="icon-attached">
-                            <div>{{thread.author.name}}</div>
-                            <span class="text-muted" data-livestamp="{{thread.creationTime.toISOString()}}" ng-mouseenter="thread_date_hover = true" ng-mouseleave="thread_date_hover = false" ng-hide="thread_date_hover === true"></span>
-                            <span class="text-muted" ng-mouseenter="thread_date_hover = true" ng-mouseleave="thread_date_hover = false" ng-hide="thread_date_hover !== true">{{thread.getFormattedCreationTime()}}</span>
+                        <div class="col-md-7 column">
+                            <tags-input ng-model="searchTags" on-tag-added="reloadThreads()" on-tag-removed="reloadThreads()" class="bootstrap" display-property="label" placeholder="Tags"></tags-input>
                         </div>
                     </div>
-                    <div class="col-md-8 column" ng-show="thread.attachments.length > 0">
-                        <div class="icon-small" ng-class="{'icon-file-small' : thread.attachments[0].type === 'file',
-                            'icon-entity-small' : thread.attachments[0].type === 'coll',
-                            'icon-link-small' : thread.attachments[0].type === 'entity'}">
+                    <div class="row">
+                        <div class="col-md-12 column">
+                            <input type="checkbox" ng-model="searchAnswers"> Search in answers
                         </div>
-                        <div class="icon-attached">
-                            <div><a ng-click="showAttachment(thread.attachments[0])">{{thread.attachments[0].name !== undefined && thread.attachments[0].name.length !== 0 ? thread.attachments[0].name : thread.attachments[0].id}}</a></div>
-                            <div class="text-muted">{{thread.attachments[0].type}}</div>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="row clearfix" ng-repeat="thread in selectedThreadList() | orderBy: 'creationTime' : true" ng-switch="thread.type.label">
+            <div ng-switch-when="question">
+                <div class="col-md-1 column hidden-sm hidden-xs">
+                    <div class="icon-large icon-question-large"></div>
+                </div>
+                <div class="col-md-11 column">
+                    <div class="row">
+                        <div class="col-md-12 column">
+                            <a class="lead" ng-click="openThread(thread)">
+                            {{thread.title}}
+                            </a>
                         </div>
-                        <div ng-switch="thread.attachments.length" ng-show="thread.attachments.length > 1">
-                            <div ng-switch-when="2">
-                                <div class="icon-small" ng-class="{'icon-file-small' : thread.attachments[1].type === 'file',
-                                    'icon-entity-small' : thread.attachments[1].type === 'coll',
-                                    'icon-link-small' : thread.attachments[1].type === 'entity'}">
-                                </div>
-                                <div class="icon-attached" ng-show="thread.attachments.length === 2">
-                                    <div><a ng-click="showAttachment(thread.attachments[1])">{{thread.attachments[1].name !== undefined && thread.attachments[1].name.length !== 0 ? thread.attachments[1].name : thread.attachments[1].id}}</a></div>
-                                    <div class="text-muted">{{thread.attachments[1].type}}</div>
-                                </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12 column">
+                            <div class="qa-tag" ng-repeat="tag in thread.tags"><a ng-click="onTagClicked(tag)">{{tag.label}}</a></div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4 column">
+                            <div class="icon-user-small icon-small">
                             </div>
-                            <div ng-switch-default>
-                                <div class="icon-small icon-file-small" ng-show="thread.attachments.length > 2">
+                            <div class="icon-attached">
+                                <div>{{thread.author.name}}</div>
+                                <span class="text-muted" data-livestamp="{{thread.creationTime.toISOString()}}" ng-mouseenter="thread_date_hover = true" ng-mouseleave="thread_date_hover = false" ng-hide="thread_date_hover === true"></span>
+                                <span class="text-muted" ng-mouseenter="thread_date_hover = true" ng-mouseleave="thread_date_hover = false" ng-hide="thread_date_hover !== true">{{thread.getFormattedCreationTime()}}</span>
+                            </div>
+                        </div>
+                        <div class="col-md-8 column" ng-show="thread.attachments.length > 0">
+                            <div class="icon-small" ng-class="{'icon-file-small' : thread.attachments[0].type === 'file',
+                                'icon-entity-small' : thread.attachments[0].type === 'coll',
+                                'icon-link-small' : thread.attachments[0].type === 'entity'}">
+                            </div>
+                            <div class="icon-attached">
+                                <div><a ng-click="showAttachment(thread.attachments[0])">{{thread.attachments[0].name !== undefined && thread.attachments[0].name.length !== 0 ? thread.attachments[0].name : thread.attachments[0].id}}</a></div>
+                                <div class="text-muted">{{thread.attachments[0].type}}</div>
+                            </div>
+                            <div ng-switch="thread.attachments.length" ng-show="thread.attachments.length > 1">
+                                <div ng-switch-when="2">
+                                    <div class="icon-small" ng-class="{'icon-file-small' : thread.attachments[1].type === 'file',
+                                        'icon-entity-small' : thread.attachments[1].type === 'coll',
+                                        'icon-link-small' : thread.attachments[1].type === 'entity'}">
+                                    </div>
+                                    <div class="icon-attached" ng-show="thread.attachments.length === 2">
+                                        <div><a ng-click="showAttachment(thread.attachments[1])">{{thread.attachments[1].name !== undefined && thread.attachments[1].name.length !== 0 ? thread.attachments[1].name : thread.attachments[1].id}}</a></div>
+                                        <div class="text-muted">{{thread.attachments[1].type}}</div>
+                                    </div>
                                 </div>
-                                <div class="icon-attached" ng-show="thread.attachments.length > 2">
-                                    <div><a >{{thread.attachments.length - 1}} more</a></div>
+                                <div ng-switch-default>
+                                    <div class="icon-small icon-file-small" ng-show="thread.attachments.length > 2">
+                                    </div>
+                                    <div class="icon-attached" ng-show="thread.attachments.length > 2">
+                                        <div><a >{{thread.attachments.length - 1}} more</a></div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
+                        <div class="col-md-6 column">
+                            <!-- <tags-input ng-model="tags" custom-class="bootstrap" placeholder="."></tags-input> -->
+                        </div>
                     </div>
-                    <div class="col-md-6 column">
+                </div>
+            </div>
+            <div ng-switch-when="answer">
+                <div class="col-md-1 column hidden-sm hidden-xs">
+                    <div class="icon-large icon-answer-large"></div>
+                    <div class="row">
+                        <div class="col-md-6 column">
+                            <div class="icon-very-small icon-up"></div>
+                        </div>
+                        <div class="col-md-6 column">
+                            <div class="icon-very-small icon-down">
+                            </div>
+                        </div>
+                        <div class="col-md-6 column">
+                            <div class="icon-attached likes text-muted">{{thread.likes.likes}}</div>
+                        </div>
+                        <div class="col-md-6 column">
+                            <div class="icon-attached dislikes text-muted">{{thread.likes.dislikes}}</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-11 column">
+                    <div class="row">
+                        <div class="col-md-12 column">
+                            <a class="lead" ng-click="openThread(thread)">
+                            {{thread.title}}
+                            </a>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12 column">
+                            <div class="qa-tag" ng-repeat="tag in thread.tags"><a ng-click="onTagClicked(tag)">{{tag.label}}</a></div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4 column">
+                            <div class="icon-user-small icon-small">
+                            </div>
+                            <div class="icon-attached">
+                                <div>{{thread.author.name}}</div>
+                                <span class="text-muted" data-livestamp="{{thread.creationTime.toISOString()}}" ng-mouseenter="thread_date_hover = true" ng-mouseleave="thread_date_hover = false" ng-hide="thread_date_hover === true"></span>
+                                <span class="text-muted" ng-mouseenter="thread_date_hover = true" ng-mouseleave="thread_date_hover = false" ng-hide="thread_date_hover !== true">{{thread.getFormattedCreationTime()}}</span>
+                            </div>
+                        </div>
                         <!-- <tags-input ng-model="tags" custom-class="bootstrap" placeholder="."></tags-input> -->
                     </div>
                 </div>
             </div>
-        </div>
-        <div ng-switch-when="answer">
-            <div class="col-md-1 column hidden-sm hidden-xs">
-                <div class="icon-large icon-answer-large"></div>
-                <div class="row">
-                    <div class="col-md-6 column">
-                        <div class="icon-very-small icon-up"></div>
-                    </div>
-                    <div class="col-md-6 column">
-                        <div class="icon-very-small icon-down">
-                        </div>
-                    </div>
-                    <div class="col-md-6 column">
-                        <div class="icon-attached likes text-muted">{{thread.likes.likes}}</div>
-                    </div>
-                    <div class="col-md-6 column">
-                        <div class="icon-attached dislikes text-muted">{{thread.likes.dislikes}}</div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-11 column">
-                <div class="row">
-                    <div class="col-md-12 column">
-                        <a class="lead" ng-click="openThread(thread)">
-                        {{thread.title}}
-                        </a>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-md-12 column">
-                        <div class="qa-tag" ng-repeat="tag in thread.tags"><a ng-click="onTagClicked(tag)">{{tag.label}}</a></div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-md-4 column">
-                        <div class="icon-user-small icon-small">
-                        </div>
-                        <div class="icon-attached">
-                            <div>{{thread.author.name}}</div>
-                            <span class="text-muted" data-livestamp="{{thread.creationTime.toISOString()}}" ng-mouseenter="thread_date_hover = true" ng-mouseleave="thread_date_hover = false" ng-hide="thread_date_hover === true"></span>
-                            <span class="text-muted" ng-mouseenter="thread_date_hover = true" ng-mouseleave="thread_date_hover = false" ng-hide="thread_date_hover !== true">{{thread.getFormattedCreationTime()}}</span>
-                        </div>
-                    </div>
-                    <!-- <tags-input ng-model="tags" custom-class="bootstrap" placeholder="."></tags-input> -->
-                </div>
-            </div>
-        </div>
+        </section>
     </div>
 </div>
 </div> <!-- /container -->

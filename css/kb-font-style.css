@@ -1,10 +1,10 @@
 @font-face {
 	font-family: 'icomoon';
-	src:url('fonts/icomoon.eot?6avmpf');
-	src:url('fonts/icomoon.eot?#iefix6avmpf') format('embedded-opentype'),
-		url('fonts/icomoon.woff?6avmpf') format('woff'),
-		url('fonts/icomoon.ttf?6avmpf') format('truetype'),
-		url('fonts/icomoon.svg?6avmpf#icomoon') format('svg');
+	src:url('fonts/icomoon.eot?-aks78k');
+	src:url('fonts/icomoon.eot?#iefix-aks78k') format('embedded-opentype'),
+		url('fonts/icomoon.woff?-aks78k') format('woff'),
+		url('fonts/icomoon.ttf?-aks78k') format('truetype'),
+		url('fonts/icomoon.svg?-aks78k#icomoon') format('svg');
 	font-weight: normal;
 	font-style: normal;
 }
@@ -21,6 +21,14 @@
 	/* Better Font Rendering =========== */
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
+}
+
+.icon-add-file:before {
+	content: "\e613";
+}
+
+.icon-edit:before {
+	content: "\e614";
 }
 
 .icon-question-mark:before {
@@ -99,3 +107,14 @@
 	content: "\e600";
 }
 
+.icon-add-link:before {
+	content: "\e615";
+}
+
+.icon-add-collection:before {
+	content: "\e616";
+}
+
+.icon-btn {
+	line-height: 1;
+}
