@@ -551,10 +551,12 @@ angular.module('dialogs.controllers', ['ui.bootstrap.modal', 'module.i18n', 'mod
         var defer = $q.defer();
         angular.forEach($scope.uploader.queue, function(file, key) {
                 file.uploading = true;
+                file._file.isFile = true;
+                file._file.$$hashKey = file.$$hashKey;
 
                 if (saveInCollection == true) {
                     var currColl = CurrentCollectionService.getCurrentCollection();
-                    currColl.uploadFile(file.file).then(function(entry) {
+                    currColl.uploadFile(file._file).then(function(entry) {
                         file.uploading = false;
                         file.uploaded = true;
                         file.uriPathnameHash = UriToolbox.extractUriPathnameHash(entry.id);
@@ -600,7 +602,7 @@ angular.module('dialogs.controllers', ['ui.bootstrap.modal', 'module.i18n', 'mod
                         },
                         UserService.getUser(),
                         UserService.getKey(),
-                        file.file,
+                        file._file,
                         null
                     );
             }

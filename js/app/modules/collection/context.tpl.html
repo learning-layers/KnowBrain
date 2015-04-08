@@ -59,7 +59,7 @@
             </div>
         </div>
     </div>
-    <div id="collectionContent" nv-file-drop uploader="uploader" style="overflow: hidden;">
+    <div id="collectionContent" class="well" nv-file-drop uploader="uploader" style="overflow: hidden; padding: 0px 10px 0px 10px;">
     <div ng-show="isGridViewMode">
         <ng-entity ng-repeat="entry in currentCollection.entries | orderBy: predicate : reverse" ></ng-entity>
     </div>
