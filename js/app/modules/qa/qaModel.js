@@ -347,7 +347,7 @@ angular.module('module.qa').service("qaService", ['$q', '$rootScope', 'UserServi
     this.addNewComment = function (answer) {
       var defer = $q.defer();
       
-      new SSEntityUpdate(
+      new SSEntityCommentsAdd(
         function (result) {
           defer.resolve(answer)
       },
@@ -355,13 +355,9 @@ angular.module('module.qa').service("qaService", ['$q', '$rootScope', 'UserServi
         console.log(error);
         defer.reject(error);
       },
-      UserSrv.getUser(),
       UserSrv.getKey(),
       answer.id,
-      null,//label, 
-      null,//description, 
-      [answer.comments[answer.comments.length - 1]], //comments
-      null); //read
+      [answer.comments[answer.comments.length - 1]]); //comments
       
       return defer.promise;
     };

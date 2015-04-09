@@ -95,13 +95,10 @@ angular.module('module.group').service("GroupFetchService", ['$q','UserService',
         function(error){
           defer.reject(error); 
         },
-        UserSrv.getUser(),
         UserSrv.getKey(),
-        circle.id, // entity, 
-        label, //label, 
-        description, //description, 
-        null, //comments
-        null); //read
+        circle.id,    //entity, 
+        label,        //label, 
+        description); //description
 
         return defer.promise;        
     };
