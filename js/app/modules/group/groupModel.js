@@ -46,16 +46,15 @@ angular.module('module.group').service("GroupFetchService", ['$q','UserService',
         var defer = $q.defer();
         var self = this;
 
-        new SSEntityUserCirclesGet(
+        new SSCirclesGet(
             function(result){
                 defer.resolve(result);
             },
             function(error){
                 console.log(error);
             },
-            UserSrv.getUser(),
-            UserSrv.getKey(),
-            user
+            UserSrv.getKey()
+//            user // TODO pmarton: user always undefined here
         );
        return defer.promise;
     };
