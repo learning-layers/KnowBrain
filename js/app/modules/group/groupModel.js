@@ -4,7 +4,7 @@ angular.module('module.group').service("GroupFetchService", ['$q','UserService',
         var defer = $q.defer();
         var self = this;
 
-        new SSEntityCircleGet(
+        new SSCircleGet(
             function(result) {
                 var entities = [];
                 for (var i=0; i < result.circle.entities.length; i++) {
@@ -34,9 +34,9 @@ angular.module('module.group').service("GroupFetchService", ['$q','UserService',
             function(error){
                 console.log(error);
             },
-            UserSrv.getUser(),
             UserSrv.getKey(),
-            groupId
+            groupId,
+            null //entityTypesToIncludeOnly
         );
        return defer.promise;
     };
