@@ -4,7 +4,7 @@ angular.module('module.group').service("GroupFetchService", ['$q','UserService',
         var defer = $q.defer();
         var self = this;
 
-        new SSEntityCircleGet(
+        new SSCircleGet(
             function(result) {
                 var entities = [];
                 for (var i=0; i < result.circle.entities.length; i++) {
@@ -34,9 +34,9 @@ angular.module('module.group').service("GroupFetchService", ['$q','UserService',
             function(error){
                 console.log(error);
             },
-            UserSrv.getUser(),
             UserSrv.getKey(),
-            groupId
+            groupId,
+            null //entityTypesToIncludeOnly
         );
        return defer.promise;
     };
@@ -45,17 +45,16 @@ angular.module('module.group').service("GroupFetchService", ['$q','UserService',
     this.getUserGroups = function(user) {
         var defer = $q.defer();
         var self = this;
-		var test = UserSrv.getUser();
-        new SSEntityUserCirclesGet(
+
+        new SSCirclesGet(
             function(result){
                 defer.resolve(result);
             },
             function(error){
                 console.log(error);
             },
-            UserSrv.getUser(),
-            UserSrv.getKey(),
-            user
+            UserSrv.getKey()
+//            user // TODO pmarton: user always undefined here
         );
        return defer.promise;
     };
@@ -95,13 +94,10 @@ angular.module('module.group').service("GroupFetchService", ['$q','UserService',
         function(error){
           defer.reject(error); 
         },
-        UserSrv.getUser(),
         UserSrv.getKey(),
-        circle.id, // entity, 
-        label, //label, 
-        description, //description, 
-        null, //comments
-        null); //read
+        circle.id,    //entity, 
+        label,        //label, 
+        description); //description
 
         return defer.promise;        
     };

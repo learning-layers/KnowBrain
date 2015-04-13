@@ -60,7 +60,7 @@ angular.module('module.models').factory('BaseModel', ['$q', '$rootScope', 'UserS
       var defer = $q.defer();
       var self = this;
 
-      new SSEntityUpdate(
+      new SSEntityLabelUpdate(
         function(result){
           self.label = newLabel;
           defer.resolve(result); 
@@ -70,13 +70,9 @@ angular.module('module.models').factory('BaseModel', ['$q', '$rootScope', 'UserS
           defer.reject(error); 
           $rootScope.$apply();
         },
-        UserSrv.getUser(),
         UserSrv.getKey(),
         self.id, // entity, 
-        newLabel, //label, 
-        null, //description, 
-        null, //comments
-        null); //read
+        newLabel); //label
      
       return defer.promise;
     },
