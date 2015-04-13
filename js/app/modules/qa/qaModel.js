@@ -287,17 +287,17 @@ angular.module('module.qa').service("qaService", ['$q', '$rootScope', 'UserServi
                         console.log(error);
                         defer.reject(error);
                     },
-                    UserSrv.getUser(),
                     UserSrv.getKey(),
-                    thread.id,
-                    thread.entityId,
-                    null,
-                    true,
-                    thread.type.enum,
-                    thread.title,
-                    thread.description,
-                    null,
-                    attachmentIdList
+                    thread.id, //disc
+                    thread.entityId, //entity
+                    null, //entry
+                    true, //addNewDisc
+                    thread.type.enum, //type
+                    thread.title, //label
+                    thread.description, //description 
+                    null, //users
+                    attachmentIdList, //entities
+                    null //circles
                     );
 
             return defer.promise;
@@ -328,17 +328,17 @@ angular.module('module.qa').service("qaService", ['$q', '$rootScope', 'UserServi
                         console.log(error);
                         defer.reject(error);
                     },
-                    UserSrv.getUser(),
                     UserSrv.getKey(),
-                    answer.threadId,
-                    null,
-                    answer.content,
-                    false,
-                    null,
-                    null,
-                    null,
-                    null,
-                    attachmentIdList
+                    answer.threadId, //disc
+                    null, //entity
+                    answer.content, //entry
+                    false, //addNewDisc
+                    null, //type
+                    null, //label
+                    null, //description
+                    null, //users
+                    attachmentIdList, //entities
+                    null //circles
                     );
 
             return defer.promise;
@@ -365,7 +365,7 @@ angular.module('module.qa').service("qaService", ['$q', '$rootScope', 'UserServi
     this.setLikeStatus = function (answer, status) {
       var defer = $q.defer();
       
-      new SSLikeSet(
+      new SSLikeUpdate(
         function (result) {
             defer.resolve(answer)
         },
@@ -373,7 +373,6 @@ angular.module('module.qa').service("qaService", ['$q', '$rootScope', 'UserServi
             console.log(error);
             defer.reject(error);
         },
-        UserSrv.getUser(),
         UserSrv.getKey(),
         answer.id,
         status);
@@ -433,10 +432,9 @@ angular.module('module.qa').service("qaService", ['$q', '$rootScope', 'UserServi
                             console.log(error);
                             deferTag.reject(error);
                         },
-                        UserSrv.getUser(),
                         UserSrv.getKey(),
-                        object.id,
-                        value.label,
+                        object.id, //entity
+                        value.label, //label
                         value.space, //space
                         null);  //creationTime
 
@@ -460,7 +458,7 @@ angular.module('module.qa').service("qaService", ['$q', '$rootScope', 'UserServi
             //    defer.resolve(object);
             //}, 10);
 
-            new SSTagsGet(
+            new SSTagsGetPOST(
                     function (result) {
                         angular.forEach(result.tags, function (value, key) {
                             var tag = new Tag(value.id, value.entity, value.label);
@@ -474,22 +472,20 @@ angular.module('module.qa').service("qaService", ['$q', '$rootScope', 'UserServi
                         console.log(error);
                         defer.reject(error);
                     },
-                    UserSrv.getUser(),
                     UserSrv.getKey(),
-                    null,
-                    [object.id],
-                    null,
-                    null,
-                    null
+                    null, //forUser
+                    [object.id], //entities
+                    null, //labels
+                    null, //space
+                    null //startime
                     );
-
             return defer.promise;
         };
 
         this.getEntitiesForTag = function (tag) {
             var defer = $q.defer();
 
-            new SSTagEntitiesForTagsGet(
+            new SSEntitiesForTagsGet(
                     function (result) {
 
                         var promiseList = [];
@@ -516,15 +512,14 @@ angular.module('module.qa').service("qaService", ['$q', '$rootScope', 'UserServi
                         console.log(error);
                         defer.reject(error);
                     },
-                    UserSrv.getUser(),
                     UserSrv.getKey(),
-                    null,
-                    [tag.label],
-                    null,
-                    null
+                    null, //forUser
+                    [tag.label], //labels
+                    null, //space
+                    null //startTime
                     );
 
-            return defer.promise;
+          return defer.promise;
         };
 
         var getThreadEntryDetails = function (thread, entries) {
@@ -574,7 +569,7 @@ angular.module('module.qa').service("qaService", ['$q', '$rootScope', 'UserServi
     var getThreadWithEntries = function (id) {
       var deferThread = $q.defer();
       
-      new SSDiscWithEntriesGet(
+      new SSDiscGet(
         function (result) {
           
           var thread = new Thread(result.disc.id, result.disc.author, getThreadTypeByEnum(result.disc.type), result.disc.label, result.disc.description, result.disc.entity, result.disc.creationTime, result.disc.circleTypes, {likes : 10, dislikes : 5, like : null});
@@ -593,7 +588,6 @@ angular.module('module.qa').service("qaService", ['$q', '$rootScope', 'UserServi
         console.log(error);
         deferThread.reject(error);
       },
-      UserSrv.getUser(),
       UserSrv.getKey(),
       id, //disc
       true); //includeComments
@@ -607,7 +601,7 @@ angular.module('module.qa').service("qaService", ['$q', '$rootScope', 'UserServi
         this.getAllThreads = function () {
             var deferThreadList = $q.defer();
 
-            new SSDiscsAllGet(
+            new SSDiscsGet(
                     function (result) {
 
                         var promiseList = [];
@@ -642,7 +636,6 @@ angular.module('module.qa').service("qaService", ['$q', '$rootScope', 'UserServi
                         console.log(error);
                         deferThreadList.reject(error);
                     },
-                    UserSrv.getUser(),
                     UserSrv.getKey()
                     );
 
@@ -696,7 +689,6 @@ angular.module('module.qa').service("qaService", ['$q', '$rootScope', 'UserServi
                         console.log(error);
                         deferThreadList.reject(error);
                     },
-                    UserSrv.getUser(),
                     UserSrv.getKey(),
                     false,                       //includeTextualContent
                     keywordsToSearchFor,         //wordsToSearchFor
@@ -715,8 +707,14 @@ angular.module('module.qa').service("qaService", ['$q', '$rootScope', 'UserServi
                     false,                      //includeRecommendedResults
                     false,                      //provideEntries
                     null,                       //pagesID
-                    null                        //pageNumber
+                    null,                       //pageNumber
+                    null,                       //minRating,
+                    null,                       //maxRating,
+                    null,                       //localSearchOp,
+                    null                        //globalSearchOp 
                     );
+
+
 
             return deferThreadList.promise;
         };
@@ -824,7 +822,6 @@ angular.module('module.qa').service("qaService", ['$q', '$rootScope', 'UserServi
                         console.log(error);
                         deferThreadList.reject(error);
                     },
-                    UserSrv.getUser(),
                     UserSrv.getKey(),
                     false,                      //includeTextualContent
                     null,                       //wordsToSearchFor
@@ -843,7 +840,11 @@ angular.module('module.qa').service("qaService", ['$q', '$rootScope', 'UserServi
                     true,                       //includeRecommendedResults
                     false,                      //provideEntries
                     null,                       //pagesID
-                    null                        //pageNumber
+                    null,                       //pageNumber
+                    null,                       //minRating,
+                    null,                       //maxRating,
+                    null,                       //localSearchOp,
+                    null                        //globalSearchOp 
                     );
 
             return deferThreadList.promise;

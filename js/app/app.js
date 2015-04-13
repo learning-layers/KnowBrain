@@ -133,7 +133,7 @@ angular.module('knowbrain').service('messagingService', ['$q', '$rootScope','Use
     this.getChats = function () {
         var defer = $q.defer();
 				
-        new SSDiscsAllGet(
+        new SSDiscsGet(
             function (result) {
                 var chatList = [];
 
@@ -149,7 +149,6 @@ angular.module('knowbrain').service('messagingService', ['$q', '$rootScope','Use
 		        console.log(error);
 		        defer.reject(error);
             },
-            UserSrv.getUser(),
             UserSrv.getKey()
         );
 

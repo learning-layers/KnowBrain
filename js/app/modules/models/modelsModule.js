@@ -119,10 +119,9 @@ angular.module('module.models').factory('BaseModel', ['$q', '$rootScope', 'UserS
         defer.reject(error); 
         $rootScope.$apply();
       }, 
-      UserSrv.getUser(),
       UserSrv.getKey(),
-      self.id, 
-      tagString, 
+      self.id,  //entity
+      tagString,  //label
       self.space, //space
       null);  //creationTime
       
@@ -141,11 +140,10 @@ angular.module('module.models').factory('BaseModel', ['$q', '$rootScope', 'UserS
           defer.reject(error); 
           $rootScope.$apply();
         }, 
-        UserSrv.getUser(),
         UserSrv.getKey(),
-        self.id, 
-        tagString, 
-        self.space
+        self.id,  //entity
+        tagString,  //label
+        self.space //space
         );
       return defer.promise;
     },
@@ -184,17 +182,18 @@ angular.module('module.models').factory('BaseModel', ['$q', '$rootScope', 'UserS
           $rootScope.$apply();
         },
         function(error){ console.log(error); },
-      UserSrv.getUser(),
         UserSrv.getKey(),
-      entity,
-      self.id,
-      entry,
-      addNewDisc,
-      type,
-      label,
-      "some explanation",
-      new Array(), //users
-      new Array()); //entities
+      entity, //disc
+      self.id, //entity
+      entry, //entry
+      addNewDisc, //addNewDisc
+      type, //type
+      label, //label
+      "some explanation", //description
+      null, //users
+      null, //entities
+      null //circles
+      ); 
 
       return defer.promise;
     },
@@ -868,10 +867,9 @@ return defer.promise;
       var defer = $q.defer();
       var self = this;
       
-      new SSDiscWithEntriesGet(
+      new SSDiscGet(
         function(result){ defer.resolve(result); }, 
       function(error){ console.log(error); }, 
-      UserSrv.getUser(),
       UserSrv.getKey(), 
       discUri, //disc
       false); //includeComments
@@ -894,7 +892,7 @@ angular.module('module.models').service("TagFetchService", ['$q', '$rootScope','
     var defer = $q.defer();
     var self = this;
 
-    new SSTagFrequsGet(
+    new SSTagFrequsGetPOST(
       function(result){
         var tagArray = new Array();
         angular.forEach(result.tagFrequs, function(value, key){
@@ -906,7 +904,6 @@ angular.module('module.models').service("TagFetchService", ['$q', '$rootScope','
       function(error){
         console.log(error);
       },
-      UserSrv.getUser(),
       UserSrv.getKey(), 
       null,
       null, 

@@ -194,7 +194,6 @@ angular.module('module.search').controller("SearchController", [
       $rootScope.$apply();
     },  
     function(error){ console.log(error); }, 
-    UserSrv.getUser(),
     UserSrv.getKey(),
     false, //includeTextualContent,
     null, //wordsToSearchFor,
@@ -211,8 +210,15 @@ angular.module('module.search').controller("SearchController", [
     null, //entitiesToSearchWithin,
     false, //extendToParents,
     false, //includeRecommendedResults,
-    false); //provideEntries,
-    
+    false, //provideEntries,
+    null,                       //pagesID
+    null,                       //pageNumber
+    null,                       //minRating,
+    null,                       //maxRating,
+    null,                       //localSearchOp,
+    null                        //globalSearchOp 
+    );
+  
     return defer.promise;
   };
   
@@ -234,7 +240,6 @@ angular.module('module.search').controller("SearchController", [
       $rootScope.$apply();
     },  
     function(error){ console.log(error); }, 
-    UserSrv.getUser(),
     UserSrv.getKey(),
     true, //includeTextualContent,
     keywordsArray, //wordsToSearchFor,
@@ -251,8 +256,15 @@ angular.module('module.search').controller("SearchController", [
     null, //entitiesToSearchWithin,
     false, //extendToParents,
     false, //includeRecommendedResults,
-    false); //provideEntries,
-    
+    false, //provideEntries,
+    null,                       //pagesID
+    null,                       //pageNumber
+    null,                       //minRating,
+    null,                       //maxRating,
+    null,                       //localSearchOp,
+    null                        //globalSearchOp 
+    );
+  
     return defer.promise;
   };
 

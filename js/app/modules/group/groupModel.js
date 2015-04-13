@@ -63,14 +63,13 @@ angular.module('module.group').service("GroupFetchService", ['$q','UserService',
         var defer = $q.defer();
         var self = this;
 
-        new SSEntityCircleCreate(
+        new SSCircleCreate(
             function(result){
                 defer.resolve(result);
             },
             function(error){
                 console.log(error);
             },
-            UserSrv.getUser(),
             UserSrv.getKey(),
             groupName,
             entities,
@@ -106,14 +105,13 @@ angular.module('module.group').service("GroupFetchService", ['$q','UserService',
         var defer = $q.defer();
         var self = this;
         
-        new SSEntityUsersToCircleAdd(
+        new SSCircleUsersAdd(
             function(result) {
                 defer.resolve(result);
             },
             function(error) {
                 console.log(error);
             },
-            UserSrv.getUser(),
             UserSrv.getKey(),
             group,
             users
@@ -125,14 +123,13 @@ angular.module('module.group').service("GroupFetchService", ['$q','UserService',
         var defer = $q.defer();
         var self = this;
         
-        new SSEntityEntitiesToCircleAdd(
+        new SSCircleEntitiesAdd(
             function(result) {
                 defer.resolve(result);
             },
             function(error) {
                 console.log(error);
             },
-            UserSrv.getUser(),
             UserSrv.getKey(),
             group,
             entities
@@ -152,7 +149,6 @@ angular.module('module.group').service("GroupFetchService", ['$q','UserService',
             function(error) {
                 console.log(error);
             },
-            UserSrv.getUser(),
             UserSrv.getKey(),
             group,
             entities

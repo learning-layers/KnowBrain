@@ -109,7 +109,6 @@ angular.module('module.chat').service("chatService", ['$q', '$rootScope','UserSe
         console.log(error);
         defer.reject(error);
 			},
-			UserSrv.getUser(),
 			UserSrv.getKey(),
 			null,//disc, 
 			null,//entity, 
@@ -119,16 +118,9 @@ angular.module('module.chat').service("chatService", ['$q', '$rootScope','UserSe
 			currentTime.toLocaleDateString() + ' ' + currentTime.toLocaleTimeString(), //label, 
 			sharedUserIdList.toString(),//description,
 			allOtherUserList,//users,
-			null//entities
+			null, //entities
+      null //circles
 			);
-
-
-
-
-
-
-
-
 
         return defer.promise;
       };
@@ -144,7 +136,6 @@ angular.module('module.chat').service("chatService", ['$q', '$rootScope','UserSe
         console.log(error);
         defer.reject(error);
 			},
-			UserSrv.getUser(),
 			UserSrv.getKey(),
 			chatId,//disc, 
 			null,//entity, 
@@ -154,7 +145,8 @@ angular.module('module.chat').service("chatService", ['$q', '$rootScope','UserSe
 			null,//label, 
 			null,//description,
 			null,//users,
-			null//entities
+			null,//entities
+      null //circles
         );
       
       return defer.promise;
@@ -165,7 +157,7 @@ angular.module('module.chat').service("chatService", ['$q', '$rootScope','UserSe
     this.getMessages = function (chatId) {
       var defer = $q.defer();
       
-      new SSDiscWithEntriesGet(
+      new SSDiscGet(
         function (result) {
           defer.resolve(result);
 			},
@@ -173,7 +165,6 @@ angular.module('module.chat').service("chatService", ['$q', '$rootScope','UserSe
         console.log(error);
         defer.reject(error);
       },
-      UserSrv.getUser(),
       UserSrv.getKey(),
       chatId, //disc
       false); //includeComments
