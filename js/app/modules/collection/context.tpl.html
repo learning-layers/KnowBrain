@@ -59,12 +59,12 @@
             </div>
         </div>
     </div>
-    <div id="collectionContent" class="well" nv-file-drop uploader="uploader" style="overflow: hidden; padding: 0px 10px 0px 10px;">
+    <div id="collectionContent" class="well" nv-file-drop nv-file-over over-class="collection-content-file-over" uploader="uploader" style="overflow: hidden; padding: 0px 10px 0px 10px;">
     <div ng-show="isGridViewMode">
         <ng-entity ng-repeat="entry in currentCollection.entries | orderBy: predicate : reverse" ></ng-entity>
     </div>
         <div ng-show="isListViewMode">
-        <table class="table vertical-aligned-table">
+        <table class="table vertical-aligned-table" style="margin-bottom:0px; color:#444;">
             <tbody>
                 <tr ng-entity-list-item ng-repeat="entry in currentCollection.entries | orderBy: predicate : reverse"  ng-click="selectResource(entry)" context-menu data-target="menu-{{ $index }}" >
                     

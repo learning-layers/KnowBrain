@@ -29,8 +29,8 @@
                 <textarea class="form-control"  ng-model="newCommentText" style="font-size:12px; padding-left:5px;" rows="3"
                 placeholder="{{t('enter_comment')}}"
                 ></textarea>
-                <button ng-click="addComment()" class="btn btn-default btn-xs" style="margin-top:3px; position:relative; float:right;">
-                {{t('ok')}}
+                <button ng-click="addComment()" class="btn btn-success btn-xs" ng-class="{'disabled' : newCommentText.length == 0}" style="margin-top:3px; position:relative; float:right;">
+                Add comment
                 </button>
             </form>
         </div>

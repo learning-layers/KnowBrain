@@ -52,9 +52,9 @@ angular.module('module.circles').config(function($stateProvider) {
 /**
  * CONTROLLER
  */
-angular.module('module.circles').controller("CirclesController", function($scope, $state, $modal, $controller, $dialogs, GroupFetchService, UriToolbox) {
+angular.module('module.circles').controller("CirclesController", function($scope, $state, $modal, $controller, $dialogs, UserService, GroupFetchService, UriToolbox) {
     $scope.circles = [];
-    var promise = GroupFetchService.getUserGroups($scope.profileId);
+    var promise = GroupFetchService.getUserGroups(null);
     promise.then(function(result) {
         $scope.circles = result.circles;
     });

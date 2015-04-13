@@ -400,13 +400,13 @@ input[name="searchInput"] {
 }
 
 #context-info {
-    background-color: #f7f7f7;
+    background-color: #f4f4f4;
     border-left: 1px solid #E8E8E8;
     border-top: 1px solid #E8E8E8;
-    padding-top: 10px;
-    padding-left: 15px;
+    /* padding-top: 10px; */
+    /* padding-left: 15px; */
     padding-bottom: 15px;
-    padding-right: 10px;
+    /* padding-right: 10px; */
     overflow-y: auto;
     overflow-x: hidden;
     position: fixed;
@@ -650,6 +650,10 @@ input[name="searchInput"] {
 
 /* COLLECTION */
 
+
+.collection-content-file-over {
+    border: 2px dashed #f6a551;
+}
 
 
 /* COLLECTION RESOURCE VIEW */
@@ -928,7 +932,7 @@ tags-input .tags .tag-item .remove-button {
 /* CUMULATED-TAG-CLOUD */
 
 #cumulated-tag-cloud {
-
+	margin-bottom: 5px;
 }
 
 .cumulated-tag-cloud-tag {
@@ -986,6 +990,10 @@ tags-input .tags .tag-item .remove-button {
 
 .img-rounded {
     border-radius:6px;
+}
+
+.well-file-over {
+    border: 3px dashed #f6a551;
 }
 
 /* Main Navbar Custom */
