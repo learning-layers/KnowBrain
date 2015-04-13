@@ -651,6 +651,10 @@ input[name="searchInput"] {
 /* COLLECTION */
 
 
+.collection-content-file-over {
+    border: 2px dashed #f6a551;
+}
+
 
 /* COLLECTION RESOURCE VIEW */
 .star-rating-cursor {
@@ -986,6 +990,10 @@ tags-input .tags .tag-item .remove-button {
 
 .img-rounded {
     border-radius:6px;
+}
+
+.well-file-over {
+    border: 3px dashed #f6a551;
 }
 
 /* Main Navbar Custom */

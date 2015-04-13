@@ -551,8 +551,6 @@ angular.module('dialogs.controllers', ['ui.bootstrap.modal', 'module.i18n', 'mod
         var defer = $q.defer();
         angular.forEach($scope.uploader.queue, function(file, key) {
                 file.uploading = true;
-                file._file.isFile = true;
-                file._file.$$hashKey = file.$$hashKey;
 
                 if (saveInCollection == true) {
                     var currColl = CurrentCollectionService.getCurrentCollection();
@@ -608,7 +606,7 @@ angular.module('dialogs.controllers', ['ui.bootstrap.modal', 'module.i18n', 'mod
             }
         });
         defer.promise.then(function() {
-            if (saveInCollection == null) {
+            if (saveInCollection == true) {
                 var currColl = CurrentCollectionService.getCurrentCollection();
                 currColl.addEntries(entries, labels).then(function(result) {
                     angular.forEach(newEntrieObjects, function(newEntry, key) {

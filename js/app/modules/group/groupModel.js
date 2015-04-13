@@ -45,7 +45,7 @@ angular.module('module.group').service("GroupFetchService", ['$q','UserService',
     this.getUserGroups = function(user) {
         var defer = $q.defer();
         var self = this;
-
+		var test = UserSrv.getUser();
         new SSEntityUserCirclesGet(
             function(result){
                 defer.resolve(result);

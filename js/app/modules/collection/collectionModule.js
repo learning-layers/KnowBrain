@@ -125,7 +125,7 @@ angular.module('module.collection').service('CurrentCollectionService', [functio
 /**
  * CONTROLLER
  */
-angular.module('module.collection').controller("CollectionController", function ($scope, $q, $location, $rootScope, $state, i18nService, CollectionFetchService, CurrentCollectionService, EntityFetchService, $modal, EntityModel, ENTITY_TYPES, SPACE_ENUM, RATING_MAX, $dialogs, FileUploader) {
+angular.module('module.collection').controller("CollectionController", function ($scope, $q, $location, $rootScope, $state, i18nService, CollectionFetchService, UriToolbox, CurrentCollectionService, EntityFetchService, $modal, EntityModel, ENTITY_TYPES, SPACE_ENUM, RATING_MAX, $dialogs, FileUploader) {
 
     var self = this;
     
@@ -163,14 +163,15 @@ angular.module('module.collection').controller("CollectionController", function 
             });
         });
         defer.promise.then(function() {
-                var currColl = CurrentCollectionService.getCurrentCollection();
-                currColl.addEntries(entries, labels).then(function(result) {
-                    angular.forEach(newEntrieObjects, function(newEntry, key) {
-                        currColl.entries.push(newEntry);
-                    });
-                }, function(error) {
-                    console.log(error);
+            $scope.uploader.clearQueue();
+            var currColl = CurrentCollectionService.getCurrentCollection();
+            currColl.addEntries(entries, labels).then(function(result) {
+                angular.forEach(newEntrieObjects, function(newEntry, key) {
+                    currColl.entries.push(newEntry);
                 });
+            }, function(error) {
+                console.log(error);
+            });
         });
     };
     
@@ -371,6 +372,14 @@ angular.module('module.collection').controller("CollectionController", function 
 
             var promise = CurrentCollectionService.getCurrentCollection().deleteEntries(entityIds);
             promise.then(function (result) {
+                for (var i = 0; i < entities.length; i++) {
+                $.each($scope.currentCollection.entries, function(j) {
+                    if ($scope.currentCollection.entries[j].id === entities[i].id) {
+                        $scope.currentCollection.entries.splice(j, 1);
+                        return false;
+                    }
+                });
+            }
             });
         };
 

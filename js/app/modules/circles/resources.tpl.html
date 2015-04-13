@@ -95,10 +95,10 @@
     </div>
 
     <!-- grid or list-->
-    <div ng-show="isGridViewMode">
+    <section ng-show="isGridViewMode" style="overflow: hidden;">
         <ng-entity ng-repeat="entry in entities | orderBy: predicate : reverse | filter : filterFunction"  context-menu data-target="menu-{{ $index }}"></ng-entity>
-    </div>
-    <div ng-show="isListViewMode">
+    </section>
+    <section ng-show="isListViewMode" style="overflow: hidden;">
         <table class="table vertical-aligned-table">
             <tbody>
                 <tr ng-entity-list-item ng-repeat="entry in entities | orderBy: predicate : reverse | filter : filterFunction"  ng-click="selectResource(entry)" context-menu data-target="menu-{{ $index }}" >
@@ -106,5 +106,5 @@
                 </tr>
             </tbody>
         </table>
-    </div>
+    </section>
 </div>
