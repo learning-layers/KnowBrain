@@ -43,7 +43,7 @@ angular.module('module.chat').service("chatService", ['$q', '$rootScope','UserSe
         var defer = $q.defer();
         var self = this;
 
-        new SSUserAll(
+        new SSUsersGet(
             function (result) {
                 defer.resolve(result);
             },
@@ -51,7 +51,6 @@ angular.module('module.chat').service("chatService", ['$q', '$rootScope','UserSe
                 console.log(error);
                 defer.reject(error);
             },
-            UserSrv.getUser(),
             UserSrv.getKey()
         );
 
