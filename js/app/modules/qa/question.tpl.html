@@ -192,7 +192,7 @@
                         <tags-input ng-model="newAnswer.tags" on-tag-added="onTagAdded($tag, newAnswer)" on-tag-removed="onTagRemoved($tag, newAnswer)" class="bootstrap" display-property="label" placeholder="Add tags"></tags-input>
                     </div>
                     <div class="col-md-5 column">
-                        <button ng-click="postNewAnswer()" type="button" style="width:100%;" class="btn btn-success btn-lg stretch">Post your answer</button>
+                        <button ng-click="postNewAnswer()" ng-class="{'disabled' : (newAnswer.content.length == 0 || newAnswer.content == null)}" type="button" style="width:100%;" class="btn btn-success btn-lg stretch">Post your answer</button>
                     </div>
                 </div>
             </div>
