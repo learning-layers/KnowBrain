@@ -98,7 +98,6 @@ angular.module('module.models').factory('BaseModel', ['$q', '$rootScope', 'UserS
           console.log(error);
           $rootScope.$apply();
         },
-        UserSrv.getUser(),
         UserSrv.getKey(),
         self.id,
         rating
@@ -931,14 +930,13 @@ angular.module('module.models').service('UserFetchService', ['$q', '$rootScope',
         var defer = $q.defer();
         var self = this;
 
-        new SSUserAll(
+        new SSUsersGet(
             function(result){
                 defer.resolve(result);
             },
             function(error){
                 console.log(error);
             },
-            UserSrv.getUser(),
             UserSrv.getKey()
         );
 
@@ -956,7 +954,6 @@ angular.module('module.models').service('UserFetchService', ['$q', '$rootScope',
             function(error){
                 console.log(error);
             },
-            UserSrv.getUser(),
             UserSrv.getKey(),
             friendId
         );
@@ -976,7 +973,6 @@ angular.module('module.models').service('UserFetchService', ['$q', '$rootScope',
             function(error){
                 console.log(error);
             },
-            UserSrv.getUser(),
             UserSrv.getKey()
         );
 
