@@ -65,16 +65,19 @@ angular.module('module.social').controller("SocialController", ['$scope', '$stat
     var promise = UserFetchService.getFriends();
     promise.then(function(result) {
         for (var i = 0; i < result.friends.length; i++) {
+            if (result.friends[i].id == $scope.profileId) {
+                $scope.isFriend = true;
+            }
         }
-        $scope.isFriend = true;
     });
     
     $scope.addAsFriend = function() {
-        var promise = UserFetchService.addFriend($scope.userId);
+        var promise = UserFetchService.addFriend($scope.profileId);
         promise.then(function(result) {
             $scope.isFriend = true;
         });
     }
+
 }]);
 
 

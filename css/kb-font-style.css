@@ -23,6 +23,10 @@
 	-moz-osx-font-smoothing: grayscale;
 }
 
+.icon-tag:before {
+	content: "\e617";
+}
+
 .icon-add-file:before {
 	content: "\e613";
 }

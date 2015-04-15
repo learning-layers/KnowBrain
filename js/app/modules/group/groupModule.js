@@ -526,9 +526,6 @@ angular.module('module.group').controller("EntitiesController", ['$scope', '$q',
 
 angular.module('module.group').controller("GroupActivitiesController", ['$scope', 'Activity', 'ActivityFetchService', function($scope, Activity, ActivityFetchService){
 
-    var promise = ActivityFetchService.getActivities(null, null, null, [$scope.groupId], null, null);
-    
-    $scope.activities = [];
     
     promise.then(function(result) {
         

@@ -209,7 +209,7 @@ angular.module('module.group').service("GroupFetchService", ['$q','UserService',
             [circle],
             null,
             null,
-            false
+            true
         );
         
         return defer.promise;

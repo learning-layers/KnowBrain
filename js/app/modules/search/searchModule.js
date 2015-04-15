@@ -333,5 +333,12 @@ $scope.toggleTagSearchResults = function(){
     $scope.tagSearchResults = new Array();
  };
 
+ 
+    $scope.$on('ngRepeatFinished', function(ngRepeatFinishedEvent) {
+        $(function() {
+            $('[data-toggle="tooltip"]').tooltip();
+        })
+    });
+
 }]);
 

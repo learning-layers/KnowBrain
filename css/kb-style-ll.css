@@ -974,7 +974,7 @@ tags-input .tags .tag-item {
 .searchResultBoxHeading {
     cursor: pointer;
     font-size: 16px;
-    color: #2a6496;
+    color: #f6a551;
 }
 
 .searchResultBoxHeading:hover {
@@ -984,7 +984,7 @@ tags-input .tags .tag-item {
 .searchResultBoxHeading span{
     position:relative;
     float:left; 
-    color:#2a6496; 
+    color:#f6a551; 
     font-size:16px; 
     margin-top:2px; 
     margin-right:5px;
