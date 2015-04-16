@@ -99,7 +99,7 @@
                                 <button class="removeTag" ng-click="removeShareTag(entity)">x</button>
                             </span> 
                             <input id="shareInput" ng-click="activateDropdown($event)"
-                                   ng-model="userFilter.label" ng-blur="blurInput()" placeholder="+ Add friend or group" />
+                                   ng-model="userFilter.label" ng-blur="blurInput()" placeholder="+ Add friend or circle" />
                         </div>
                         <ul id="shareWithDropdownContent" class="dropdown-menu">
                             <li ng-repeat="circle in allCircles| filter: userFilter" ng-show="userFilter.label"><a

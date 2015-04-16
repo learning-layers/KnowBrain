@@ -208,7 +208,7 @@ body {
 }
 
 a {
-    /* color: #4d90fe; */
+    color: #4d90fe;
     text-decoration: none;
 }
 
@@ -2179,16 +2179,6 @@ button.close {
     border-radius: 6px
 }
 
-.nav .dropdown-toggle .caret {
-    margin-top: 6px;
-    border-top-color: #4d90fe;
-    border-bottom-color: #4d90fe
-}
-
-.nav .dropdown-toggle:hover .caret, .nav .dropdown-toggle:focus .caret {
-    border-top-color: #0161fd;
-    border-bottom-color: #0161fd
-}
 
 .nav-tabs .dropdown-toggle .caret {
     margin-top: 8px
