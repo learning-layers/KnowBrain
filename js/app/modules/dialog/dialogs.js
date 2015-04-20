@@ -274,42 +274,7 @@ angular.module('dialogs.controllers', ['ui.bootstrap.modal', 'module.i18n', 'mod
             };
         });
     }
-}]).controller("addResourceWizzardController", function($scope, i18nService) {
-    /* STEPS */
-    $scope.resourceTypes = ['choose', 'collection', 'upload', 'link'];
-    $scope.currentResourceType = 0;
-    /* TITLE */
-    $scope.wizzardTitles = [i18nService.t('upload_wizzard_title'), i18nService.t('create_collection'), i18nService.t('upload_resource'), i18nService.t('add_link')];
-    /* PATHS */
-    $scope.addLinkTplPath = MODULES_PREFIX + "/dialog/wizzard-create-link.tpl.html";
-    $scope.addCollectionTplPath = MODULES_PREFIX + "/dialog/wizzard-create-collection.tpl.html";
-    $scope.uploadResourceTplPath = MODULES_PREFIX + "/dialog/wizzard-upload-resource.tpl.html";
-    $scope.chooseResourceTypeTplPath = MODULES_PREFIX + "/dialog/wizzard-choose-resource-type.tpl.html";
-    /**
-     * TRANSLATION INJECTION
-     */
-    $scope.t = function(identifier) {
-        return i18nService.t(identifier);
-    };
-    /**
-     * METHODS
-     */
-    $scope.closeWizzard = function() {
-        $modalInstance.close(true);
-    };
-    $scope.getCurrentResourceType = function() {
-        return $scope.resourceTypes[$scope.currentResourceType];
-    };
-    $scope.getCurrentWizzardTitle = function() {
-        return $scope.wizzardTitles[$scope.currentResourceType];
-    };
-    $scope.chooseResourceType = function(type) {
-        $scope.currentResourceType = type;
-    };
-    $scope.backToChoose = function() {
-        $scope.currentResourceType = 0;
-    };
-})
+}])
 
 
 .controller("ChooseFromDropboxController", function($scope, $q, $location, $rootScope, $state, i18nService, CollectionFetchService, CurrentCollectionService, EntityFetchService, $modal, EntityModel, ENTITY_TYPES, SPACE_ENUM, RATING_MAX, $dialogs, $modalInstance) {
@@ -868,14 +833,6 @@ angular.module('dialogs.services', ['ui.bootstrap.modal', 'dialogs.controllers']
                             return attachment;
                         }
                     }
-                });
-            },
-            addResourceWizzard: function() {
-                return $modal.open({
-                    templateUrl: MODULES_PREFIX + '/dialog/addResourceWizzard.tpl.html',
-                    controller: 'addResourceWizzardController',
-                    keyboard: true,
-                    backdrop: true
                 });
             },
             shareEntity: function(entity) {

@@ -40,7 +40,6 @@
 				<div class="row clearfix"
 					id="friends-container">
 					<div class="col-md-12 column" style="padding: 20px;">
-						<ng-user ng-hide="user.id == user+'/'" ng-repeat="user in friends | filter: userFilter" ng-click="selectUser(user)"><a></a></ng-user>
 						<ng-user ng-hide="user.id == user+'/'" ng-click="selectUser(user)" ng-repeat="user in allUsers | filter: userFilter"></ng-user>
 					</div>
 				</div>

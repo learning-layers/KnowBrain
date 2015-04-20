@@ -1,126 +1,67 @@
-<div class="container" role="main" ui-view>
-    <form name="form" novalidate>
-        <div class="row clearfix qa-header">
-            <div class="col-md-8 column">
-                <div class="row">
-                    <div class="col-md-12 column">
-                        <input type="text" class="form-control" placeholder="Enter title of your {{newThread.type.label}}" ng-model="newThread.title" required></input>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-md-12 column">
-                        <textarea class="form-control" rows="5" placeholder="Enter explanation of your {{newThread.type.label}}" ng-model="newThread.description"></textarea>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-md-7 column">
-                        <tags-input ng-model="newThread.tags" on-tag-added="onTagAdded($tag, newThread)" class="bootstrap" display-property="label" placeholder="Add tags"></tags-input>
-                    </div>
-                    <div class="col-md-5 column">
-                        <button type="button" class="btn btn-success btn-lg stretch" ng-click="invokePostNewThread()" ng-disabled="form.$invalid">Post your {{newThread.type.label}} now</button>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="kb-fluid-container pull-left add-attachment-box" ng-click="openAddAttachments(newThread)">Add attachments
-                    <div class="glyphicon glyphicon-plus-sign add-attachment-icon"></div>
-                </div>
-                <div ng-repeat="attachment in newThread.attachments">
-                    <div class="col-xs-10" style="margin-bottom: 10px; padding-left: 4px;" >
-                        <div ng-class="{'icon-file-small icon-small' : attachment.type === 'file',
-                            'icon-entity-small icon-small' : attachment.type === 'coll',
-                            'icon-link-small icon-small' : attachment.type === 'entity'}" >
-                        </div>
-                        <a>{{attachment.label}}</a>
-                    </div>
-                    <div class="col-xs-2" style="padding-right:2px;">
-                        <div class="btn btn-group-xs" style="padding:0px; float: right;">
-                            <button class="btn btn-danger" ng-click="removeAttachment(attachment)">
-                            <i class="glyphicon glyphicon-trash"></i>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-                <div ng-repeat="attachedFile in newThread.attachedFiles">
-                    <div class="col-xs-10" style="margin-bottom: 10px; padding-left: 4px;" >
-                        <div class="icon-file-small icon-small" >
-                        </div>
-                        <div class="icon-attached" ng-repeat-end>
-                            <div><a href="#">{{attachedFile.name}}</a></div>
-                            <div>{{attachedFile.type}}</div>
-                        </div>
-                    </div>
-                    <div class="col-xs-2" style="padding-right:2px;">
-                        <div class="btn btn-group-xs" style="padding:0px; float: right;">
-                            <button class="btn btn-danger" ng-click="removeAttachedFiles(attachedFile)">
-                            <i class="glyphicon glyphicon-trash"></i>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </form>
+<div class="container" ui-view>
+    <div class="btn-group" role="group" aria-label="...">
+        <button type="button" class="btn btn-default" ng-click="askQuestion()">
+        Ask question
+        </button>
+    </div>
     <section>
-        <div class="well list-header-box">
-            <div class="row clearfix">
-                <div class="col-md-4 column">
-                    <div class="lead">{{selectedThreadListType}} threads ({{selectedThreadList().length}})</div>
+        <div class="row clearfix">
+            <div class="col-md-4 column">
+                <div class="lead">{{selectedThreadListType}} threads ({{selectedThreadList().length}})</div>
+            </div>
+            <div class="col-md-8 column">
+                <ul class="nav nav-pills">
+                    <li ng-class="(selectedThreadListType == THREAD_LIST_TYPE.all) ? 'active' : ''">
+                        <a ng-click="changeSelectedThreadListType(THREAD_LIST_TYPE.all)">All</a>
+                    </li>
+                    <li ng-class="(selectedThreadListType == THREAD_LIST_TYPE.own) ? 'active' : ''">
+                        <a ng-click="changeSelectedThreadListType(THREAD_LIST_TYPE.own)">
+                        <span id="my-own-badge" class="badge">{{myOwnThreadList.length}}</span> My own
+                        </a>
+                    </li>
+                    <li ng-class="(selectedThreadListType == THREAD_LIST_TYPE.group) ? 'active' : ''">
+                        <a ng-click="changeSelectedThreadListType(THREAD_LIST_TYPE.group)">
+                        <span id="my-group-badge" class="badge">{{myGroupThreadList.length}}</span> My group
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <form name="searchForm" ng-submit="searchThreads()">
+            <div class="row">
+                <div class="col-md-9 column">
+                    <div class="input-group">
+                        <input id="thread-search-field" type="search" class="form-control" placeholder="search" ng-model="searchThreadsString">
+                        <span id="searchclear" class="glyphicon glyphicon-remove-circle" ng-click="clearSearch()" ng-show="searchThreadsString.length > 0"></span>
+                        <span class="input-group-btn">
+                        <button type="submit" class="btn btn-default">
+                        <span class="glyphicon glyphicon-search"></span>
+                        </button>
+                        </span>
+                    </div>
                 </div>
-                <div class="col-md-8 column">
-                    <ul class="nav nav-pills">
-                        <li ng-class="(selectedThreadListType == THREAD_LIST_TYPE.all) ? 'active' : ''">
-                            <a ng-click="changeSelectedThreadListType(THREAD_LIST_TYPE.all)">All</a>
-                        </li>
-                        <li ng-class="(selectedThreadListType == THREAD_LIST_TYPE.own) ? 'active' : ''">
-                            <a ng-click="changeSelectedThreadListType(THREAD_LIST_TYPE.own)">
-                            <span id="my-own-badge" class="badge">{{myOwnThreadList.length}}</span> My own
-                            </a>
-                        </li>
-                        <li ng-class="(selectedThreadListType == THREAD_LIST_TYPE.group) ? 'active' : ''">
-                            <a ng-click="changeSelectedThreadListType(THREAD_LIST_TYPE.group)">
-                            <span id="my-group-badge" class="badge">{{myGroupThreadList.length}}</span> My group
-                            </a>
-                        </li>
-                    </ul>
+                <div class="col-md-3 column">
+                    <button id="advanced-search-button" class="btn btn-default" type="button" data-toggle="button" slide-toggle="#advanced-search" ng-click="showingAdvancedSearch = !showingAdvancedSearch">
+                    advanced search
+                    </button>
                 </div>
             </div>
-            <form name="searchForm" ng-submit="searchThreads()">
+            <div id="advanced-search" class="slideable" duration="0.3s">
                 <div class="row">
-                    <div class="col-md-9 column">
-                        <div class="input-group">
-                            <input id="thread-search-field" type="search" class="form-control" placeholder="search" ng-model="searchThreadsString">
-                            <span id="searchclear" class="glyphicon glyphicon-remove-circle" ng-click="clearSearch()" ng-show="searchThreadsString.length > 0"></span>
-                            <span class="input-group-btn">
-                            <button type="submit" class="btn btn-default">
-                            <span class="glyphicon glyphicon-search"></span>
-                            </button>
-                            </span>
-                        </div>
+                    <div class="col-md-2 column">
+                        <span style="height: 44px; line-height: 44px;">Tagged as:</span>
                     </div>
-                    <div class="col-md-3 column">
-                        <button id="advanced-search-button" class="btn btn-default" type="button" data-toggle="button" slide-toggle="#advanced-search" ng-click="showingAdvancedSearch = !showingAdvancedSearch">
-                        advanced search
-                        </button>
+                    <div class="col-md-7 column">
+                        <tags-input ng-model="searchTags" on-tag-added="reloadThreads()" on-tag-removed="reloadThreads()" class="bootstrap" display-property="label" placeholder="Tags"></tags-input>
                     </div>
                 </div>
-                <div id="advanced-search" class="slideable" duration="0.3s">
-                    <div class="row">
-                        <div class="col-md-2 column">
-                            <span style="height: 44px; line-height: 44px;">Tagged as:</span>
-                        </div>
-                        <div class="col-md-7 column">
-                            <tags-input ng-model="searchTags" on-tag-added="reloadThreads()" on-tag-removed="reloadThreads()" class="bootstrap" display-property="label" placeholder="Tags"></tags-input>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-12 column">
-                            <input type="checkbox" ng-model="searchAnswers"> Search in answers
-                        </div>
+                <div class="row">
+                    <div class="col-md-12 column">
+                        <input type="checkbox" ng-model="searchAnswers"> Search in answers
                     </div>
                 </div>
-            </form>
-        </div>
+            </div>
+        </form>
         <div class="row clearfix" ng-repeat="thread in selectedThreadList() | orderBy: 'creationTime' : true" ng-switch="thread.type.label">
             <div ng-switch-when="question">
                 <div class="col-md-1 column hidden-sm hidden-xs">
@@ -230,7 +171,6 @@
                     </div>
                 </div>
             </div>
-        </section>
-    </div>
+        </div>
+    </section>
 </div>
-</div> <!-- /container -->

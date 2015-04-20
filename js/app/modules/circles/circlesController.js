@@ -438,21 +438,13 @@ angular.module('module.circles').controller("CircleResourcesController", functio
 
 angular.module('module.circles').controller("addMembersController", function($q, $scope, $rootScope, $modalInstance, UserFetchService, UserService, excludeUsers) {
     $scope.allUsers = [];
-    $scope.friends = [];
     $scope.selectedUsers = [];
-    var friendsPromise = UserFetchService.getFriends();
-    friendsPromise.then(function(result) {
-        for (var i = 0; i < result.friends.length; i++) {
-            result.friends[i].isFriend = true;
-            $scope.friends.push(result.friends[i]);
-        }
-        var allUsersPromise = UserFetchService.getAllUsers();
-        allUsersPromise.then(function(result) {
-            $scope.allUsers = result.users;
-            $scope.allUsers = $scope.allUsers.filter(function(item) {
-                return !excludeUsers.some(function(test) {
-                    return test.label === item.label; // TODO:use id
-                });
+    var allUsersPromise = UserFetchService.getAllUsers();
+    allUsersPromise.then(function(result) {
+        $scope.allUsers = result.users;
+        $scope.allUsers = $scope.allUsers.filter(function(item) {
+            return !excludeUsers.some(function(test) {
+                return test.label === item.label; // TODO:use id
             });
         });
     });
