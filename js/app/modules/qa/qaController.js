@@ -184,13 +184,12 @@ angular.module('module.qa').controller("qaController", ['$scope', '$state', '$q'
     loadThreadList();
 }]);
 
-angular.module('module.qa').controller("AskQuestionController", ['$scope', '$state', '$q', '$modal', '$dialogs', '$filter', 'UserService', 'sharedService', 'UriToolbox', 'qaService', 'Thread', 'THREAD_TYPE', 'THREAD_LIST_TYPE', 'Tag', 'SearchToolbox', function($scope, $state, $q, $modal, $dialogs, $filter, UserSrv, sharedService, UriToolbox, qaService, Thread, THREAD_TYPE, THREAD_LIST_TYPE, Tag, SearchToolbox) {
+angular.module('module.qa').controller("AskQuestionController", function($scope, $state, $q, $modal, $dialogs, $filter, UriToolbox, qaService, Thread, THREAD_TYPE, THREAD_LIST_TYPE, Tag, SearchToolbox, FileUploader) {
     $scope.THREAD_TYPE = THREAD_TYPE;
     $scope.newThread = new Thread(null, null, THREAD_TYPE.question, null, null, null, null);
+    $scope.newThread.attachments = [];
     $scope.THREAD_LIST_TYPE = THREAD_LIST_TYPE;
-    $scope.searchTags = [];
-    $scope.searchAnswers = true;
-    $scope.showingAdvancedSearch = false;
+    $scope.uploader = new FileUploader();
 
     $scope.onTagAdded = function($tag, object) {
         $tag.space = 'privateSpace';
@@ -199,14 +198,6 @@ angular.module('module.qa').controller("AskQuestionController", ['$scope', '$sta
         $.each($scope.newThread.attachments, function(i) {
             if ($scope.newThread.attachments[i].id === attachment.id) {
                 $scope.newThread.attachments.splice(i, 1);
-                return false;
-            }
-        });
-    };
-    $scope.removeAttachedFiles = function(attachedFile) {
-        $.each($scope.newThread.attachedFiles, function(i) {
-            if ($scope.newThread.attachedFiles[i].id === attachedFile.id) {
-                $scope.newThread.attachedFiles.splice(i, 1);
                 return false;
             }
         });
@@ -246,33 +237,32 @@ angular.module('module.qa').controller("AskQuestionController", ['$scope', '$sta
         }
     };
     var postNewThread = function() {
-        return qaService.uploadAttachments($scope.newThread).then(qaService.addNewThread).then(function(result) {
-            $scope.threadList.push(result);
-            updateThreadLists();
+        return qaService.uploadFiles($scope.uploader.queue, $scope.newThread).then(qaService.addNewThread).then(function(result) {
             $scope.newThread = new Thread(null, null, THREAD_TYPE.question, null, null, null, null);
             return result;
         });
     };
-    $scope.openAddAttachments = function(object) {
-        var modalInstance = $modal.open({
-            templateUrl: MODULES_PREFIX + '/qa/modalAddAttachments.tpl.html',
-            controller: 'ModalAddAttachmentsController',
-            size: 'lg',
-            resolve: {}
-        });
-        modalInstance.result.then(function(fileList) {
-            fileList.forEach(function(entry) {
-                if (entry.id !== null && entry.id !== undefined) {
-                    object.attachments.push(entry);
-                } else {
-                    object.attachedFiles.push(entry);
-                }
-            });
+
+    $scope.chooseEntity = function() {
+        $dialogs.chooseFromDropbox().result.then(function(chosenEntities) {
+            if (chosenEntities != undefined) {
+                chosenEntities.forEach(function(entry) {
+                    $scope.newThread.attachments.push(entry);
+                });
+            }
         }, function() {
             //$log.info('Modal dismissed at: ' + new Date());
         });
     };
-}]);
+
+    $scope.attachLink = function() {
+        $dialogs.createLink($scope.newThread).result.then(function(link) {
+            $scope.newThread.attachments.push(link);
+        }, function() {
+            //$log.info('Modal dismissed at: ' + new Date());
+        });
+    };
+});
 
 angular.module('module.qa').controller('ModalSimilarThreadsController', ['$scope', '$modalInstance', '$state', 'qaService', 'UriToolbox', 'thread', 'similarThreadList', 'THREAD_LIST_TYPE', function($scope, $modalInstance, $state, qaService, UriToolbox, thread, similarThreadList, THREAD_LIST_TYPE) {
     $scope.THREAD_LIST_TYPE = THREAD_LIST_TYPE;

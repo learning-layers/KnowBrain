@@ -380,18 +380,17 @@ angular.module('module.qa').service("qaService", ['$q', '$rootScope', 'UserServi
       return defer.promise;
     };
 
-        this.uploadAttachments = function (object) {
+        this.uploadFiles = function (files, object) {
             var defer = $q.defer();
 
             var promiseList = [];
 
-            angular.forEach(object.attachedFiles, function (attachment, key) {
+            angular.forEach(files, function (attachment, key) {
                 var deferFile = $q.defer();
 
                 new SSFileUpload(
                         function (file_id) {
-                            attachment = new Attachment(file_id, file_id, 'file');
-                            deferFile.resolve(attachment);
+                            deferFile.resolve(new Attachment(file_id, file_id, 'file'));
                         },
                         function (error) {
                             console.log(error);
@@ -399,7 +398,7 @@ angular.module('module.qa').service("qaService", ['$q', '$rootScope', 'UserServi
                         },
                         UserSrv.getUser(),
                         UserSrv.getKey(),
-                        attachment
+                        attachment.file
                         );
 
                 promiseList.push(deferFile.promise);
@@ -408,7 +407,6 @@ angular.module('module.qa').service("qaService", ['$q', '$rootScope', 'UserServi
             $q.all(promiseList)
                     .then(function (result) {
                         object.attachments = object.attachments.concat(result);
-                        object.attachedFiles = [];
                         defer.resolve(object);
                     });
 

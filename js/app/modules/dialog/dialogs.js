@@ -611,6 +611,10 @@ angular.module('dialogs.controllers', ['ui.bootstrap.modal', 'module.i18n', 'mod
             }, function(error) {
                 console.log(error);
             });
+        } else {
+            var entry = new EntityModel();
+            entry.init({id: link.url, label: link.label});
+            $modalInstance.close(entry);
         }
     };
 

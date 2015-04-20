@@ -26,9 +26,13 @@
                 </div>
             </div>
             <div class="col-md-4">
-                <div class="kb-fluid-container pull-left add-attachment-box" ng-click="openAddAttachments(newThread)">Add attachments
+                <div class="kb-fluid-container pull-left add-attachment-box dropdown-toggle" data-toggle="dropdown" nv-file-drop nv-file-over over-class="collection-content-file-over" uploader="uploader">Add attachments
                     <div class="glyphicon glyphicon-plus-sign add-attachment-icon"></div>
                 </div>
+                <ul class="dropdown-menu" role="menu">
+                    <li><a ng-click="chooseEntity()">Dropbox</a></li>
+                    <li><a ng-click="attachLink()">Link</a></li>
+                </ul>
                 <div ng-repeat="attachment in newThread.attachments">
                     <div class="col-xs-10" style="margin-bottom: 10px; padding-left: 4px;" >
                         <div ng-class="{'icon-file-small icon-small' : attachment.type === 'file',
@@ -45,18 +49,18 @@
                         </div>
                     </div>
                 </div>
-                <div ng-repeat="attachedFile in newThread.attachedFiles">
+                <div ng-repeat="file in uploader.queue">
                     <div class="col-xs-10" style="margin-bottom: 10px; padding-left: 4px;" >
                         <div class="icon-file-small icon-small" >
                         </div>
                         <div class="icon-attached" ng-repeat-end>
-                            <div><a href="#">{{attachedFile.name}}</a></div>
-                            <div>{{attachedFile.type}}</div>
+                            <div><a href="#">{{file.file.name}}</a></div>
+                            <div>{{file.file.type}}</div>
                         </div>
                     </div>
                     <div class="col-xs-2" style="padding-right:2px;">
                         <div class="btn btn-group-xs" style="padding:0px; float: right;">
-                            <button class="btn btn-danger" ng-click="removeAttachedFiles(attachedFile)">
+                            <button class="btn btn-danger" ng-click="uploader.removeFromQueue(file)">
                             <i class="glyphicon glyphicon-trash"></i>
                             </button>
                         </div>
