@@ -35,7 +35,7 @@ angular.module('module.social').config(function($stateProvider) {
 
     $stateProvider
         .state('app.social', {
-             url:'/social/*profileId',
+            url:'/social/*profileId',
             controller: 'SocialController',
             templateUrl: MODULES_PREFIX + '/social/social.tpl.html'
         });

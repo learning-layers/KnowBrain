@@ -19,8 +19,20 @@
 
 .collection-entry-selected{
   cursor: pointer;
-  background-color: #fbd3a9;
+  background-color: #f2f2f2;
   border-radius: 5px;
+    border: 1px solid #d8d8d8;
+    border-top-width: 0;
+    border-bottom-width: 2px;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+    -webkit-box-shadow: none;
+    -moz-box-shadow: none;
+    box-shadow: none;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box
 }
 
 .collection-entry-preview-box {

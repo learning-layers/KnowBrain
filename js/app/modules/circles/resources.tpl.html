@@ -95,7 +95,7 @@
     </div>
 
     <!-- grid or list-->
-    <section ng-show="isGridViewMode" style="overflow: hidden; padding: 0px 10px 0px 10px;">
+    <section ng-show="isGridViewMode" style="overflow: hidden; padding: 0px 10px 18px 10px;">
         <ng-entity ng-repeat="entry in entities | orderBy: predicate : reverse | filter : filterFunction"  context-menu data-target="menu-{{ $index }}"></ng-entity>
     </section>
     <section ng-show="isListViewMode" style="overflow: hidden; padding: 0px 10px 0px 10px;">

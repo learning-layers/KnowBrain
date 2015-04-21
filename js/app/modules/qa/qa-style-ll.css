@@ -69,6 +69,11 @@ a:hover {
     color:  #f6a551;
 }
 
+.add-attachment-box-file-over {
+    border:  2px dashed #f6a551;
+    color:  #f6a551;
+}
+
 .add-attachment-box div {
     width: 100%;
 }

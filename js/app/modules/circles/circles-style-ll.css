@@ -350,7 +350,7 @@
 }
 
 .list-item-selected {
-    background-color: #fbd3a9;
+    background-color: rgba(251, 211, 169, 0.29);
 }
 
 .list-entity-icon {
@@ -407,9 +407,9 @@
 }
 
 .action-button {
-    width: 22px;
-    height: 22px;
-    font-size: 22px;
+    width: 18px;
+    height: 18px;
+    font-size: 18px;
     display:table-cell;
     vertical-align:middle;
 }

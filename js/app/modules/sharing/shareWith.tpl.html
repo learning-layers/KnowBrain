@@ -39,7 +39,7 @@
 		    </div>
 		    <div class="row clearfix" style="height: 150px;" id="friendsContainer">
 				<div class="col-md-12 column" style="padding: 20px;">
-					<ng-entity-small ng-repeat="entry in allUsers | filter: userFilter"></ng-entity-small>
+					<ng-user ng-repeat="user in allUsers | filter: userFilter" ng-click="selectUser(user)"></ng-user>
 		        </div>
 		    </div>
 		    
@@ -47,9 +47,7 @@
 		    <div class="row clearfix">
 		        <div class="col-md-12 column" style="text-align: right">
 		            <div class="btn-group">
-		                <button class="btn btn-default" type="button" ng-click="ok()">OK
-		                </button>
-		                <button class="btn btn-default" type="button" ng-click="close()">Cancel
+		                <button class="btn btn-success" type="button" ng-click="ok()">OK
 		                </button>
 		            </div>
 		        </div>

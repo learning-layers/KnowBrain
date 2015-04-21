@@ -180,17 +180,18 @@ sharingModule.controller("ShareWithController", ['$scope','$modalInstance', 'i18
 
     $scope.allUsers = allUsers;
 
-    $scope.selectResource = function(entry) {
+    $scope.selectUser = function(entry) {
         if(entry.isSelected) {
             entry.isSelected = false;
         }
         else {
             entry.isSelected = true;
         }
-        if(!arrayContains(sharedUsers, entry)) {
+        if(arrayContains(sharedUsers, entry)) {
+            removeFromArray(sharedUsers, entry);
+        } else {
             sharedUsers.push(entry);
         }
-
     };
 
     $scope.ok = function () {
@@ -216,14 +217,6 @@ sharingModule.controller("ShareWithController", ['$scope','$modalInstance', 'i18
         $modalInstance.dismiss('cancel');
     };
     
-    $scope.entityUnselected = function(entity) {
-        if(!entity.isSelected) {
-            return true;
-        } 
-        else {
-            return false;
-        } 
-    };
     var arrayContains = function(array, entity) {
         for(var i=0; i < array.length; i++) {
             if(array[i].label == entity.label) {
@@ -234,7 +227,6 @@ sharingModule.controller("ShareWithController", ['$scope','$modalInstance', 'i18
     };
     
     var removeFromArray = function(array, entity) {
-
         for(var i = 0; i < array.length; i++) {
             if(array[i].label == entity.label) {
                 array.splice(i,1);

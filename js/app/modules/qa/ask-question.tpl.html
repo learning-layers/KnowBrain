@@ -26,7 +26,7 @@
                 </div>
             </div>
             <div class="col-md-4">
-                <div class="kb-fluid-container pull-left add-attachment-box dropdown-toggle" data-toggle="dropdown" nv-file-drop nv-file-over over-class="collection-content-file-over" uploader="uploader">Add attachments
+                <div class="kb-fluid-container pull-left add-attachment-box" data-toggle="dropdown" nv-file-drop nv-file-over over-class="add-attachment-box-file-over" uploader="uploader">Drop files here
                     <div class="glyphicon glyphicon-plus-sign add-attachment-icon"></div>
                 </div>
                 <ul class="dropdown-menu" role="menu">
@@ -35,9 +35,7 @@
                 </ul>
                 <div ng-repeat="attachment in newThread.attachments">
                     <div class="col-xs-10" style="margin-bottom: 10px; padding-left: 4px;" >
-                        <div ng-class="{'icon-file-small icon-small' : attachment.type === 'file',
-                            'icon-entity-small icon-small' : attachment.type === 'coll',
-                            'icon-link-small icon-small' : attachment.type === 'entity'}" >
+                        <div class="icon-file-small icon-small">
                         </div>
                         <a>{{attachment.label}}</a>
                     </div>
@@ -51,7 +49,7 @@
                 </div>
                 <div ng-repeat="file in uploader.queue">
                     <div class="col-xs-10" style="margin-bottom: 10px; padding-left: 4px;" >
-                        <div class="icon-file-small icon-small" >
+                        <div class="icon-file-small icon-small">
                         </div>
                         <div class="icon-attached" ng-repeat-end>
                             <div><a href="#">{{file.file.name}}</a></div>
