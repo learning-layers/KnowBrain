@@ -210,11 +210,9 @@ angular.module('module.circles').controller("CircleActivitiesController", functi
     };
 });
 
-angular.module('module.circles').controller("CircleResourcesController", function($scope, $state, $q, $dialogs, GroupFetchService, UserFetchService, EntityFetchService, CollectionFetchService, UriToolbox, ENTITY_TYPES) {
+angular.module('module.circles').controller("CircleResourcesController", function($scope, $state, $q, $dialogs, cookiesSrv, GroupFetchService, UserFetchService, EntityFetchService, CollectionFetchService, UriToolbox, ENTITY_TYPES, SETTINGS_CONSTANTS) {
 
     $scope.entities = [];
-    $scope.isGridViewMode = true;
-    $scope.isListViewMode = false;
     $scope.predicate = 'creationTime';
     $scope.reverse = false;
     $scope.selectedTag = null;
@@ -231,6 +229,14 @@ angular.module('module.circles').controller("CircleResourcesController", functio
         title: 'Delete',
         cssClass: 'glyphicon glyphicon-trash'
     }];
+
+    var collectionViewMode = cookiesSrv.getCookie(SETTINGS_CONSTANTS.collectionViewModeCookieName);
+    $scope.collectionViewMode = collectionViewMode != undefined ? collectionViewMode : 'grid';
+
+    $scope.setCollectionViewMode = function(mode) {
+        cookiesSrv.setCookie(SETTINGS_CONSTANTS.collectionViewModeCookieName, mode);
+        $scope.collectionViewMode = mode;
+    };
 
     var promise = GroupFetchService.getGroup("http://sss.eu/" + $scope.circleId);
 

@@ -41,7 +41,7 @@
             <div class="col-md-6 column"></div>
             <div class="col-md-6 column">
                 <div class="btn-circle" style="float: right">
-                    <button class="btn btn-success" type="button"
+                    <button class="btn btn-success" type="button" ng-disabled="circle.label.length == 0"
                     ng-click="save()">{{editingCircle ? 'Save changes' : 'Create Circle'}}</button>
                 </div>
             </div>

@@ -116,15 +116,17 @@ angular.module('module.qa').controller("qaController", ['$scope', '$state', '$q'
     };
     var loadThreadList = function() {
         return qaService.getAllThreads().then(function(result) {
-            $scope.threadList = result;
-            $scope.tagThreadList = result;
-            $scope.myOwnThreadList = result.filter(function(val) {
+            $scope.threadList = result.filter(function(val) {
+                return val.type.enum == "qa" || val.type.enum == "chat";
+            });
+            $scope.tagThreadList = $scope.threadList;
+            $scope.myOwnThreadList = $scope.threadList.filter(function(val) {
                 return $.inArray('priv', val.circleTypes) >= 0;
             });
-            $scope.myGroupThreadList = result.filter(function(val) {
+            $scope.myGroupThreadList = $scope.threadList.filter(function(val) {
                 return $.inArray('group', val.circleTypes) >= 0;
             });
-            return result;
+            return $scope.threadList;
         });
     };
     $scope.searchThreads = function() {
@@ -239,7 +241,9 @@ angular.module('module.qa').controller("AskQuestionController", function($scope,
     var postNewThread = function() {
         return qaService.uploadFiles($scope.uploader.queue, $scope.newThread).then(qaService.addNewThread).then(function(result) {
             $scope.newThread = new Thread(null, null, THREAD_TYPE.question, null, null, null, null);
-            return result;
+            $state.go('app.qa.qa', {
+                id: UriToolbox.extractUriPathnameHash(result.id)
+            });
         });
     };
 
@@ -299,10 +303,11 @@ angular.module('module.qa').controller('ModalSimilarThreadsController', ['$scope
         $modalInstance.close(true);
     };
 }]);
-angular.module('module.qa').controller("questionController", ['$scope', '$state', '$stateParams', '$q', '$filter', 'UserService', 'qaService', 'ThreadEntry', 'THREAD_ENTRY_TYPE', 'UriToolbox', function($scope, $state, $stateParams, $q, $filter, UserSrv, qaService, ThreadEntry, THREAD_ENTRY_TYPE, UriToolbox) {
+angular.module('module.qa').controller("questionController", function($scope, $state, $stateParams, $dialogs, $q, $filter, qaService, ThreadEntry, THREAD_ENTRY_TYPE, UriToolbox, FileUploader) {
     $scope.question = null;
     $scope.similarThreadList = null;
     $scope.sortBy = 'date';
+    $scope.uploader = new FileUploader();
     $scope.newAnswer = new ThreadEntry(null, null, THREAD_ENTRY_TYPE.qaEntry, null, null, null);
     // used for sorting
     $scope.predicate = '+position';
@@ -321,15 +326,34 @@ angular.module('module.qa').controller("questionController", ['$scope', '$state'
     $scope.onTagAdded = function($tag, object) {
         $tag.space = 'privateSpace';
     };
+    $scope.chooseEntity = function() {
+        $dialogs.chooseFromDropbox().result.then(function(chosenEntities) {
+            if (chosenEntities != undefined) {
+                chosenEntities.forEach(function(entry) {
+                    $scope.newAnswer.attachments.push(entry);
+                });
+            }
+        }, function() {
+            //$log.info('Modal dismissed at: ' + new Date());
+        });
+    };
+    $scope.attachLink = function() {
+        $dialogs.createLink($scope.newAnswer).result.then(function(link) {
+            $scope.newAnswer.attachments.push(link);
+        }, function() {
+            //$log.info('Modal dismissed at: ' + new Date());
+        });
+    };
     $scope.postNewAnswer = function() {
         $scope.newAnswer.threadId = $scope.question.id;
-        return qaService.uploadAttachments($scope.newAnswer).then(qaService.addNewAnswer).then(function(result) {
+        return qaService.uploadFiles($scope.uploader.queue, $scope.newAnswer).then(qaService.addNewAnswer).then(function(result) {
             $scope.question.entries.push(result);
             $scope.newAnswer = new ThreadEntry(null, null, THREAD_ENTRY_TYPE.qaEntry, null, null, null, {
                 likes: 0,
                 dislikes: 0,
                 like: null
             });
+            $scope.uploader.clearQueue();
             return result;
         });
     };
@@ -358,7 +382,7 @@ angular.module('module.qa').controller("questionController", ['$scope', '$state'
     }
     loadThreadWithEntries("http://sss.eu/" + $stateParams.id) //UserSrv.getUserSpace() + "entities/"  + $stateParams.id
         .then(loadSimilarThreadList);
-}]);
+});
 /**
  * Filters
  */

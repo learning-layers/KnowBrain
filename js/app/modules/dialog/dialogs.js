@@ -577,6 +577,7 @@ angular.module('dialogs.controllers', ['ui.bootstrap.modal', 'module.i18n', 'mod
                     angular.forEach(newEntrieObjects, function(newEntry, key) {
                         currColl.entries.push(newEntry);
                     });
+                    $modalInstance.close(entries);
                 }, function(error) {
                     console.log(error);
                 });

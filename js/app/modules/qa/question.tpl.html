@@ -1,244 +1,248 @@
 <section>
-<div class="row clearfix qa-header">
-    <div class="col-md-12 column">
-        <div class="row">
-            <div class="col-md-1 column hidden-sm hidden-xs">
-                <div class="icon-question-medium icon-medium">
-                </div>
-            </div>
-            <div class="col-md-6 column">
-                <div class="lead">{{question.title}}</div>
-                <div class="divider" style="border-bottom: 1px solid #eeeeee;"></div>
-                <div class="description" ng-bind-html="question.description | checkNewlines"></div>
-            </div>
-            <div class="col-md-5 column">
-                <div class="row">
-                    <div class="col-md-12 column">
-                        <div class="icon-user-medium icon-medium">
-                        </div>
-                        <div class="icon-attached">
-                            <div>{{question.author.name}}</div>
-                            <span class="text-muted" data-livestamp="{{question.creationTime.toISOString()}}" ng-mouseenter="question_date_hover = true" ng-mouseleave="question_date_hover = false" ng-hide="question_date_hover === true"></span>
-                            <span class="text-muted" ng-mouseenter="question_date_hover = true" ng-mouseleave="question_date_hover = false" ng-hide="question_date_hover !== true">{{question.getFormattedCreationTime()}}</span>
-                        </div>
+    <div class="row clearfix qa-header">
+        <div class="col-md-12 column">
+            <div class="row">
+                <div class="col-md-1 column hidden-sm hidden-xs">
+                    <div class="icon-question-medium icon-medium">
                     </div>
                 </div>
-            </div>
-        </div>
-        <div class="row clearfix">
-            <div class="col-md-1 column hidden-sm hidden-xs">
-                &nbsp;
-            </div>
-            <div class="col-md-8 column">
-                <div class="qa-tag" ng-repeat="tag in question.tags">{{tag.label}}</div>
-            </div>
-        </div>
-        <div class="row clearfix" ng-show="question.attachments.length">
-            <div class="col-md-1 column hidden-sm hidden-xs">
-                &nbsp;
-            </div>
-            <div class="col-md-11 column">
-                <div class="icon-small" ng-class="{'icon-file-small' : attachment.type === 'file',
-                    'icon-entity-small' : attachment.type === 'coll',
-                    'icon-link-small' : attachment.type === 'entity'}" ng-repeat-start="attachment in question.attachments">
+                <div class="col-md-8 column">
+                    <div class="lead">{{question.title}}</div>
+                    <div class="divider" style="border-bottom: 1px solid #eeeeee;"></div>
+                    <div class="description" ng-bind-html="question.description | checkNewlines"></div>
                 </div>
-                <div class="icon-attached" ng-repeat-end>
-                    <div><a ng-click="showAttachment(attachment)">{{attachment.name.length !== 0 ? attachment.name : attachment.id}}</a></div>
-                    <div class="text-muted">{{attachment.type}}</div>
-                </div>
-            </div>
-        </div>
-        <div class="row clearfix">
-            <div class="col-md-1 column hidden-sm hidden-xs">
-                &nbsp;
-            </div>
-            <div class="col-md-11 column">
-                <button type="button" ng-click="shareThread(question)" class="btn btn-xs btn-default"><span class="glyphicon glyphicon-share"></span>&nbsp;share</button>
-            </div>
-        </div>
-    </div>
-</div>
-</section>
-<section>
-<div class="row clearfix">
-    <div class="col-md-12 column">
-        <div class="lead underline">Answers ({{question.entries.length}}) sorted by
-            <div class="btn-group">
-                <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
-                {{sortBy === 'date' ? 'Date' : 'Likes'}} <span class="caret"></span>
-                </button>
-                <ul class="dropdown-menu" role="menu">
-                    <li><a ng-click="sortBy = 'date'">Date</a></li>
-                    <li><a ng-click="sortBy = 'likes'">Likes</a></li>
-                </ul>
-            </div>
-        </div>
-        <!-- answer begin -->
-        <div class="answer underline" ng-repeat="answer in question.entries | orderBy : (sortBy === 'date' ? 'creationTime' : 'likes.likes') : true">
-            <div class="row clearfix">
-                <div class="col-md-10 column">
-                    <div class="icon-user-medium icon-medium">
-                    </div>
-                    <div class="icon-attached">
-                        <div class="text-muted" >{{answer.author.name}}</div>
-                        <span class="text-muted" data-livestamp="{{answer.creationTime.toISOString()}}" ng-mouseenter="answer_date_hover = true" ng-mouseleave="answer_date_hover = false" ng-hide="answer_date_hover === true"></span>
-                        <span class="text-muted" ng-mouseenter="answer_date_hover = true" ng-mouseleave="answer_date_hover = false" ng-hide="answer_date_hover !== true">{{answer.getFormattedCreationTime()}}</span>
-                    </div>
-                </div>
-                <div class="col-md-2 column">
-                    <div class="col-md-6 column">
-                        <a>
-                        <div
-                            class="icon-small"
-                            ng-class="up_hover === true ? (answer.likes.like === 0 ? 'icon-up-small' : 'icon-up-neutral-small') :
-                            (answer.likes.like === 1 ? 'icon-up-small' : 'icon-up-neutral-small')"
-                            ng-mouseenter="up_hover = true"
-                            ng-mouseleave="up_hover = false"
-                            ng-click="onLikeClicked(answer)">
+                <div class="col-md-3 column">
+                    <div class="row">
+                        <div class="col-md-12 column">
+                            <a class="user-medium-pic" ng-href="#/social/{{question.author.id}}">
+                            </a>
+                            <div class="icon-attached">
+                                <div>{{question.author.name}}</div>
+                                <span class="text-muted" data-livestamp="{{question.creationTime.toISOString()}}" ng-mouseenter="question_date_hover = true" ng-mouseleave="question_date_hover = false" ng-hide="question_date_hover === true"></span>
+                                <span class="text-muted" ng-mouseenter="question_date_hover = true" ng-mouseleave="question_date_hover = false" ng-hide="question_date_hover !== true">{{question.getFormattedCreationTime()}}</span>
+                            </div>
                         </div>
-                        </a>
-                        <div class="icon-attached likes text-muted">{{answer.likes.likes}}</div>
-                    </div>
-                    <div class="col-md-6 column">
-                        <a>
-                        <div
-                            class="icon-small"
-                            ng-class="down_hover === true ? (answer.likes.like === false ? 'icon-down-neutral-small' : 'icon-down-small') :
-                            (answer.likes.like === -1 ? 'icon-down-small' : 'icon-down-neutral-small')"
-                            ng-mouseenter="down_hover = true"
-                            ng-mouseleave="down_hover = false"
-                            ng-click="onDisLikeClicked(answer)">
-                        </div>
-                        </a>
-                        <div class="icon-attached dislikes text-muted">{{answer.likes.dislikes}}</div>
                     </div>
                 </div>
             </div>
             <div class="row clearfix">
-                <div class="col-md-1 column">
-                    <!--                <div class="icon-answered-medium icon-medium">
-                    </div> -->
-                </div>
-                <div class="col-md-11 column">
-                    <div ng-bind-html="answer.content | checkNewlines"></div>
-                </div>
-            </div>
-            <div class="row clearfix" ng-show="answer.tags.length">
                 <div class="col-md-1 column hidden-sm hidden-xs">
                     &nbsp;
                 </div>
-                <div class="col-md-11 column">
-                    <div class="qa-tag" ng-repeat="tag in answer.tags">{{tag.label}}</div>
+                <div class="col-md-8 column">
+                    <div class="qa-tag" ng-repeat="tag in question.tags">{{tag.label}}</div>
                 </div>
             </div>
-            <div class="row clearfix" ng-show="answer.attachments.length">
+            <div class="row clearfix" ng-show="question.attachments.length">
                 <div class="col-md-1 column hidden-sm hidden-xs">
                     &nbsp;
                 </div>
                 <div class="col-md-11 column">
                     <div class="icon-small" ng-class="{'icon-file-small' : attachment.type === 'file',
                         'icon-entity-small' : attachment.type === 'coll',
-                        'icon-link-small' : attachment.type === 'entity'}" ng-repeat-start="attachment in answer.attachments">
+                        'icon-link-small' : attachment.type === 'entity'}" ng-repeat-start="attachment in question.attachments">
                     </div>
                     <div class="icon-attached" ng-repeat-end>
-                        <div><a ng-click="showAttachment(attachment)">{{attachment.name !== undefined && attachment.name.length !== 0 ? attachment.name : attachment.id}}</a></div>
+                        <div><a ng-click="showAttachment(attachment)">{{attachment.name.length !== 0 ? attachment.name : attachment.id}}</a></div>
                         <div class="text-muted">{{attachment.type}}</div>
                     </div>
                 </div>
             </div>
-            <!--<div class="row clearfix">
-                                                <div class="col-md-1 column hidden-sm hidden-xs">
-                                                            &nbsp;
-                                                </div>
-                                                <div class="col-md-11 column">
-                                                            <div><a href="#">mark as accepted answer</a></div>
-                                                </div>
-            </div>-->
-            <!-- comment begin -->
-            <div class="row clearfix" ng-repeat="comment in answer.comments">
-                <div class="col-md-2 column hidden-sm hidden-xs">
-                    &nbsp;
-                </div>
-                <div class="col-md-8 column answer-comment">
-                    <div>{{comment}}</div>
-                </div>
-            </div>
-            <!-- comment end -->
             <div class="row clearfix">
-                <div class="col-md-2 column hidden-sm hidden-xs">
+                <div class="col-md-1 column hidden-sm hidden-xs">
                     &nbsp;
                 </div>
-                <div class="col-md-8 column">
-                    <textarea ng-model="answer.newComment" class="form-control" rows="1" placeholder="Add a comment" ng-enter="addComment(answer)"></textarea>
+                <div class="col-md-11 column">
+                    <button type="button" ng-click="shareThread(question)" class="btn btn-xs btn-default"><span class="glyphicon glyphicon-share"></span>&nbsp;share</button>
                 </div>
             </div>
         </div>
-        <!-- answer end -->
     </div>
-</div>
 </section>
 <section>
-<div class="row clearfix">
-    <div class="col-md-10 column">
-        <div class="lead">Reply</div>
-        <div class="row">
-            <div class="col-md-8 column">
-                <div class="row">
-                    <div class="col-md-12 column">
-                        <textarea ng-model="newAnswer.content" class="form-control" rows="5" placeholder="Add your answer"></textarea>
+    <div class="row clearfix">
+        <div class="col-md-12 column">
+            <div class="lead underline">Answers ({{question.entries.length}}) sorted by
+                <div class="btn-group">
+                    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                    {{sortBy === 'date' ? 'Date' : 'Likes'}} <span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu" role="menu">
+                        <li><a ng-click="sortBy = 'date'">Date</a></li>
+                        <li><a ng-click="sortBy = 'likes'">Likes</a></li>
+                    </ul>
+                </div>
+            </div>
+            <!-- answer begin -->
+            <div class="answer underline" ng-repeat="answer in question.entries | orderBy : (sortBy === 'date' ? 'creationTime' : 'likes.likes') : true">
+                <div class="row clearfix">
+                    <div class="col-md-10 column">
+                        <div class="icon-user-medium icon-medium">
+                        </div>
+                        <div class="icon-attached">
+                            <div class="text-muted" >{{answer.author.name}}</div>
+                            <span class="text-muted" data-livestamp="{{answer.creationTime.toISOString()}}" ng-mouseenter="answer_date_hover = true" ng-mouseleave="answer_date_hover = false" ng-hide="answer_date_hover === true"></span>
+                            <span class="text-muted" ng-mouseenter="answer_date_hover = true" ng-mouseleave="answer_date_hover = false" ng-hide="answer_date_hover !== true">{{answer.getFormattedCreationTime()}}</span>
+                        </div>
+                    </div>
+                    <div class="col-md-2 column">
+                        <div class="col-md-6 column">
+                            <a>
+                            <div
+                                class="icon-small"
+                                ng-class="up_hover === true ? (answer.likes.like === 0 ? 'icon-up-small' : 'icon-up-neutral-small') :
+                                (answer.likes.like === 1 ? 'icon-up-small' : 'icon-up-neutral-small')"
+                                ng-mouseenter="up_hover = true"
+                                ng-mouseleave="up_hover = false"
+                                ng-click="onLikeClicked(answer)">
+                            </div>
+                            </a>
+                            <div class="icon-attached likes text-muted">{{answer.likes.likes}}</div>
+                        </div>
+                        <div class="col-md-6 column">
+                            <a>
+                            <div
+                                class="icon-small"
+                                ng-class="down_hover === true ? (answer.likes.like === false ? 'icon-down-neutral-small' : 'icon-down-small') :
+                                (answer.likes.like === -1 ? 'icon-down-small' : 'icon-down-neutral-small')"
+                                ng-mouseenter="down_hover = true"
+                                ng-mouseleave="down_hover = false"
+                                ng-click="onDisLikeClicked(answer)">
+                            </div>
+                            </a>
+                            <div class="icon-attached dislikes text-muted">{{answer.likes.dislikes}}</div>
+                        </div>
                     </div>
                 </div>
-                <div class="row">
-                    <div class="col-md-7 column">
-                        <tags-input ng-model="newAnswer.tags" on-tag-added="onTagAdded($tag, newAnswer)" on-tag-removed="onTagRemoved($tag, newAnswer)" class="bootstrap" display-property="label" placeholder="Add tags"></tags-input>
+                <div class="row clearfix">
+                    <div class="col-md-1 column">
+                        <!--                <div class="icon-answered-medium icon-medium">
+                        </div> -->
                     </div>
-                    <div class="col-md-5 column">
-                        <button ng-click="postNewAnswer()" ng-class="{'disabled' : (newAnswer.content.length == 0 || newAnswer.content == null)}" type="button" style="width:100%;" class="btn btn-success btn-lg stretch">Post your answer</button>
+                    <div class="col-md-11 column">
+                        <div ng-bind-html="answer.content | checkNewlines"></div>
+                    </div>
+                </div>
+                <div class="row clearfix" ng-show="answer.tags.length">
+                    <div class="col-md-1 column hidden-sm hidden-xs">
+                        &nbsp;
+                    </div>
+                    <div class="col-md-11 column">
+                        <div class="qa-tag" ng-repeat="tag in answer.tags">{{tag.label}}</div>
+                    </div>
+                </div>
+                <div class="row clearfix" ng-show="answer.attachments.length">
+                    <div class="col-md-1 column hidden-sm hidden-xs">
+                        &nbsp;
+                    </div>
+                    <div class="col-md-11 column">
+                        <div class="icon-small" ng-class="{'icon-file-small' : attachment.type === 'file',
+                            'icon-entity-small' : attachment.type === 'coll',
+                            'icon-link-small' : attachment.type === 'entity'}" ng-repeat-start="attachment in answer.attachments">
+                        </div>
+                        <div class="icon-attached" ng-repeat-end>
+                            <div><a ng-click="showAttachment(attachment)">{{attachment.name !== undefined && attachment.name.length !== 0 ? attachment.name : attachment.id}}</a></div>
+                            <div class="text-muted">{{attachment.type}}</div>
+                        </div>
+                    </div>
+                </div>
+                <!--<div class="row clearfix">
+                                                                                                            <div class="col-md-1 column hidden-sm hidden-xs">
+                                                                                                                                    &nbsp;
+                                                                                                            </div>
+                                                                                                            <div class="col-md-11 column">
+                                                                                                                                    <div><a href="#">mark as accepted answer</a></div>
+                                                                                                            </div>
+                </div>-->
+                <!-- comment begin -->
+                <div class="row clearfix" ng-repeat="comment in answer.comments">
+                    <div class="col-md-2 column hidden-sm hidden-xs">
+                        &nbsp;
+                    </div>
+                    <div class="col-md-8 column answer-comment">
+                        <div>{{comment}}</div>
+                    </div>
+                </div>
+                <!-- comment end -->
+                <div class="row clearfix">
+                    <div class="col-md-2 column hidden-sm hidden-xs">
+                        &nbsp;
+                    </div>
+                    <div class="col-md-8 column">
+                        <textarea ng-model="answer.newComment" class="form-control" rows="1" placeholder="Add a comment" ng-enter="addComment(answer)"></textarea>
                     </div>
                 </div>
             </div>
-            <div class="col-md-4 column">
-                <div class="kb-fluid-container pull-left add-attachment-box" ng-click="openAddAttachments(newAnswer)">Add attachments
-                    <div class="glyphicon glyphicon-plus-sign add-attachment-icon" ></div>
+            <!-- answer end -->
+        </div>
+    </div>
+</section>
+<section style="margin-bottom: 20px;">
+    <div class="row clearfix">
+        <div class="col-md-10 column">
+            <div class="lead">Reply</div>
+            <div class="row">
+                <div class="col-md-8 column">
+                    <div class="row">
+                        <div class="col-md-12 column">
+                            <textarea ng-model="newAnswer.content" class="form-control" rows="5" placeholder="Add your answer"></textarea>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-7 column">
+                            <tags-input ng-model="newAnswer.tags" on-tag-added="onTagAdded($tag, newAnswer)" on-tag-removed="onTagRemoved($tag, newAnswer)" class="bootstrap" display-property="label" placeholder="Add tags"></tags-input>
+                        </div>
+                        <div class="col-md-5 column">
+                            <button ng-click="postNewAnswer()" ng-class="{'disabled' : (newAnswer.content.length == 0 || newAnswer.content == null)}" type="button" style="width:100%;" class="btn btn-success btn-lg stretch">Post your answer</button>
+                        </div>
+                    </div>
                 </div>
-                <div ng-repeat="attachment in newAnswer.attachments">
-                    <div class="col-xs-10" style="margin-bottom: 10px; padding-left: 4px;" >
-                        <div ng-class="{'icon-file-small icon-small' : attachment.type === 'file',
-                            'icon-entity-small icon-small' : attachment.type === 'coll',
-                            'icon-link-small icon-small' : attachment.type === 'entity'}" >
-                        </div>
-                        <a>{{attachment.label}}</a>
+                <div class="col-md-4 column">
+                    <div class="kb-fluid-container pull-left add-attachment-box" data-toggle="dropdown" nv-file-drop nv-file-over over-class="add-attachment-box-file-over" uploader="uploader">Add attachments
+                        <div class="glyphicon glyphicon-plus-sign add-attachment-icon" ></div>
                     </div>
-                    <div class="col-xs-2" style="padding-right:2px;">
-                        <div class="btn btn-group-xs" style="padding:0px; float: right;">
-                            <button class="btn btn-danger" ng-click="removeAttachment(attachment)">
-                            <i class="glyphicon glyphicon-trash"></i>
-                            </button>
+                    <ul class="dropdown-menu" role="menu">
+                        <li><a ng-click="chooseEntity()">Dropbox</a></li>
+                        <li><a ng-click="attachLink()">Link</a></li>
+                    </ul>
+                    <div ng-repeat="attachment in newAnswer.attachments">
+                        <div class="col-xs-10" style="margin-bottom: 10px; padding-left: 4px;" >
+                            <div ng-class="{'icon-file-small icon-small' : attachment.type === 'file',
+                                'icon-entity-small icon-small' : attachment.type === 'coll',
+                                'icon-link-small icon-small' : attachment.type === 'entity'}" >
+                            </div>
+                            <a>{{attachment.label}}</a>
+                        </div>
+                        <div class="col-xs-2" style="padding-right:2px;">
+                            <div class="btn btn-group-xs" style="padding:0px; float: right;">
+                                <button class="btn btn-danger" ng-click="removeAttachment(attachment)">
+                                <i class="glyphicon glyphicon-trash"></i>
+                                </button>
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div ng-repeat="attachedFile in newAnswer.attachedFiles">
-                    <div class="col-xs-10" style="margin-bottom: 10px; padding-left: 4px;" >
-                        <div class="icon-file-small icon-small" >
+                    <div ng-repeat="file in uploader.queue">
+                        <div class="col-xs-10" style="margin-bottom: 10px; padding-left: 4px;" >
+                            <div class="icon-file-small icon-small" >
+                            </div>
+                            <div class="icon-attached" ng-repeat-end>
+                                <div><a >{{file.file.name}}</a></div>
+                                <div>{{file.file.type}}</div>
+                            </div>
                         </div>
-                        <div class="icon-attached" ng-repeat-end>
-                            <div><a >{{attachedFile.name}}</a></div>
-                            <div>{{attachedFile.type}}</div>
-                        </div>
-                    </div>
-                    <div class="col-xs-2" style="padding-right:2px;">
-                        <div class="btn btn-group-xs" style="padding:0px; float: right;">
-                            <button class="btn btn-danger" ng-click="removeAttachedFiles(attachedFile)">
-                            <i class="glyphicon glyphicon-trash"></i>
-                            </button>
+                        <div class="col-xs-2" style="padding-right:2px;">
+                            <div class="btn btn-group-xs" style="padding:0px; float: right;">
+                                <button class="btn btn-danger" ng-click="uploader.removeFromQueue(file)">
+                                <i class="glyphicon glyphicon-trash"></i>
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
+        <div class="col-md-2 column hidden-sm hidden-xs">
+            &nbsp;
+        </div>
     </div>
-    <div class="col-md-2 column hidden-sm hidden-xs">
-        &nbsp;
-    </div>
-</div>
 </section>

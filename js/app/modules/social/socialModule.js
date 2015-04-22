@@ -28,6 +28,13 @@
 angular.module('module.social',['module.entity', 'module.activities']);
 
 /**
+* Constants
+*/
+angular.module('module.social').constant('SETTINGS_CONSTANTS', { 
+    collectionViewModeCookieName: 'kbCollViewMode'
+});
+
+/**
 * CONFIG
 */
 angular.module('module.social').config(function($stateProvider) {

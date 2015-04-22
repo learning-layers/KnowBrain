@@ -125,12 +125,17 @@ angular.module('module.collection').service('CurrentCollectionService', [functio
 /**
  * CONTROLLER
  */
-angular.module('module.collection').controller("CollectionController", function ($scope, $q, $location, $rootScope, $state, i18nService, CollectionFetchService, UriToolbox, CurrentCollectionService, EntityFetchService, $modal, EntityModel, ENTITY_TYPES, SPACE_ENUM, RATING_MAX, $dialogs, FileUploader) {
+angular.module('module.collection').controller("CollectionController", function ($scope, $q, $location, $rootScope, $state, i18nService, cookiesSrv, CollectionFetchService, UriToolbox, CurrentCollectionService, EntityFetchService, $modal, EntityModel, ENTITY_TYPES, SETTINGS_CONSTANTS, SPACE_ENUM, RATING_MAX, $dialogs, FileUploader) {
 
     var self = this;
-    
-    $scope.isGridViewMode = true;
-    $scope.isListViewMode = false;
+     
+    var collectionViewMode = cookiesSrv.getCookie(SETTINGS_CONSTANTS.collectionViewModeCookieName);
+    $scope.collectionViewMode = collectionViewMode != undefined ? collectionViewMode : 'grid';
+
+    $scope.setCollectionViewMode = function(mode) {
+        cookiesSrv.setCookie(SETTINGS_CONSTANTS.collectionViewModeCookieName, mode);
+        $scope.collectionViewMode = mode;
+    };
 
     $scope.uploader = new FileUploader();
     $scope.uploader.onAfterAddingAll = function(item) {
@@ -385,10 +390,6 @@ angular.module('module.collection').controller("CollectionController", function 
 
         $scope.addEntity = function() {
             $dialogs.uploadResources(true).result.then(function(uploadedEntities) {
-                var entityIds = [];
-                for (var i = uploadedEntities.length - 1; i >= 0; i--) {
-                    entityIds.push(uploadedEntities[i].id);
-                }
             }, function() {
                 //$log.info('Modal dismissed at: ' + new Date());
             });

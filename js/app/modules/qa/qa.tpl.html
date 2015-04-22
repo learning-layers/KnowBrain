@@ -21,7 +21,7 @@
                     </li>
                     <li ng-class="(selectedThreadListType == THREAD_LIST_TYPE.group) ? 'active' : ''">
                         <a ng-click="changeSelectedThreadListType(THREAD_LIST_TYPE.group)">
-                        <span id="my-group-badge" class="badge">{{myGroupThreadList.length}}</span> My group
+                        <span id="my-group-badge" class="badge">{{myGroupThreadList.length}}</span> My circles
                         </a>
                     </li>
                 </ul>
@@ -62,7 +62,7 @@
                 </div>
             </div>
         </form>
-        <div class="row clearfix" ng-repeat="thread in selectedThreadList() | orderBy: 'creationTime' : true" ng-switch="thread.type.label">
+        <div class="row clearfix" ng-repeat="thread in selectedThreadList() | orderBy: 'creationTime' : true" ng-switch="thread.type.label" ng-style="!$last ? {'border-bottom': '1px solid #eee'} : ''">
             <div ng-switch-when="question">
                 <div class="col-md-1 column hidden-sm hidden-xs">
                     <div class="icon-large icon-question-large"></div>
