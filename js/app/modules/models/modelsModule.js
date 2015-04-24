@@ -479,10 +479,12 @@ angular.module('module.models').factory('EntityModel', ['$q', '$rootScope','User
 
         var filename;
 
-        if(jSGlobals.endsWith(self.label, "." + self.fileExtension)){
+        if (jSGlobals.endsWith(self.label, "." + self.fileExtension)){
           filename    = self.label;
-        }else{
+        } else if (self.fileExtension != null) {
           filename    = self.label + "." + self.fileExtension;  
+        } else {
+          filename    = self.label;  
         }
 
         saveAs(fileAsBlob, filename);

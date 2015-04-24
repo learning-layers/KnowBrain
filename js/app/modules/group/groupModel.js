@@ -36,7 +36,7 @@ angular.module('module.group').service("GroupFetchService", ['$q','UserService',
             },
             UserSrv.getKey(),
             groupId,
-            null //entityTypesToIncludeOnly
+            ['entity', 'coll', 'disc', 'qa', 'chat', 'file'] //entityTypesToIncludeOnly
         );
        return defer.promise;
     };

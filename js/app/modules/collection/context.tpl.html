@@ -18,7 +18,8 @@
 - See the License for the specific language governing permissions and
 - limitations under the License.
 -->
-<div ng-controller="CollectionController">
+<div ng-controller="CollectionController" click-anywhere-but-here="deselectAllEntities()">
+
     <div class="row" style="margin-top: 10px;">
         <!-- sort bar -->
         <div class="col-md-10">
@@ -57,13 +58,28 @@
             </div>
         </div>
     </div>
-
     <div class="add-attachment-box" ng-show="currentCollection.entries.length == 0" nv-file-drop nv-file-over over-class="add-attachment-box-file-over" uploader="uploader" style="background-color: #fff;">Drop files here
         <div class="glyphicon glyphicon-plus-sign add-attachment-icon"></div>
     </div>
+    <div ng-repeat="entity in currentCollection.entries | orderBy: predicate : reverse" class="dropdown position-fixed" id="menu-{{ $index }}" style="z-index:10;">
+        <ul class="dropdown-menu" role="menu">
+            <li ng-hide="entity.type != 'file'">
+                <a class="pointer" role="menuitem" tabindex="1"
+                ng-click="downloadEntity(entity)">
+                Download
+                </a>
+            </li>
+            <li>
+                <a class="pointer" role="menuitem" tabindex="2"
+                ng-click="removeEntities([entity])">
+                Delete
+                </a>
+            </li>
+        </ul>
+    </div>
     <div id="collectionContent" ng-show="currentCollection.entries.length > 0" class="well" nv-file-drop nv-file-over over-class="collection-content-file-over" uploader="uploader" style="overflow: hidden; padding: 0px 10px 18px 10px;">
         <div ng-show="collectionViewMode == 'grid'">
-            <ng-entity ng-repeat="entry in currentCollection.entries | orderBy: predicate : reverse" ></ng-entity>
+            <ng-entity ng-repeat="entry in currentCollection.entries | orderBy: predicate : reverse" context-menu data-target="menu-{{ $index }}"></ng-entity>
         </div>
         <div ng-show="collectionViewMode == 'list'">
             <table class="table vertical-aligned-table" style="margin-bottom:0px; color:#444;">

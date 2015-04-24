@@ -238,13 +238,16 @@ angular.module('module.circles').controller("CircleResourcesController", functio
         $scope.collectionViewMode = mode;
     };
 
-    var promise = GroupFetchService.getGroup("http://sss.eu/" + $scope.circleId);
+    $scope.loadRootCollection = function() {
+        var promise = GroupFetchService.getGroup("http://sss.eu/" + $scope.circleId);
+        promise.then(function(result) {
+            var circle = result.circle;
+            addEntitiesToCircle(circle.entities);
+        });
+        $scope.currentCollection = null;
+    };
 
-    promise.then(function(result) {
-
-        var circle = result.circle;
-        addEntitiesToCircle(circle.entities);
-    });
+    $scope.loadRootCollection();
 
     var addEntitiesToCircle = function(entities) {
         for (var i = 0; i < entities.length; i++) {
@@ -368,7 +371,7 @@ angular.module('module.circles').controller("CircleResourcesController", functio
     };
 
     $scope.handleEntryClick = function(entry) {
-        if (entry.isCollection()) {
+        if (entry.type == 'coll') {
             $scope.loadCollectionByUri(UriToolbox.extractUriPathnameHash(entry.id));
         } else {
             if (entry.type == "qa") {

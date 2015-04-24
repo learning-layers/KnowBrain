@@ -18,22 +18,21 @@
 - See the License for the specific language governing permissions and
 - limitations under the License.
 -->
-
 <!-- Encoding: UTF-8 -->
 <div class="container" ng-controller="AuthController">
-  <form name="auth" class="form-signin">
-    <h2 class="form-signin-heading">{{t('login_text')}}</h2>
-    <input ng-model="auth.label" type="text" class="form-control" placeholder="{{t('user')}}" required>
-    <input ng-model="auth.password" type="password" class="form-control" placeholder="{{t('password')}}" required>
-    <div class="alert alert-danger" ng-show="auth.$error.incorrect">{{t('incorrect_login')}}</div>
-    <div class="alert alert-danger" ng-show="auth.$error.serverProblem">{{t('login_server_problem')}}</div>
-    <label class="checkbox">
-      <input ng-model="auth.remember"  type="checkbox" value="remember-me">{{t('remember_me')}}
-    </label>
-    <button ng-show="!ajaxLoading" class="btn btn-lg btn-primary btn-block" ng-click="login(auth)">{{t('login')}}</button>
-    <button ng-show="ajaxLoading" class="btn btn-lg btn-primary btn-block"><span class="glyphicon ajax-loader-white"></span></button>
-  </form>
-</div> 
+    <form name="auth" class="form-signin">
 
-
-
+        <section>
+            <h2 class="form-signin-heading">{{t('login_text')}}</h2>
+            <input ng-model="auth.label" type="text" class="form-control" placeholder="{{t('user')}}" required>
+            <input ng-model="auth.password" type="password" class="form-control" placeholder="{{t('password')}}" required>
+            <div class="alert alert-danger" ng-show="auth.$error.incorrect">{{t('incorrect_login')}}</div>
+            <div class="alert alert-danger" ng-show="auth.$error.serverProblem">{{t('login_server_problem')}}</div>
+            <label class="checkbox">
+                <input ng-model="auth.remember"  type="checkbox" value="remember-me">{{t('remember_me')}}
+            </label>
+            <button ng-show="!ajaxLoading" class="btn btn-lg btn-success btn-block" ng-click="login(auth)" ng-disabled="auth.$invalid">{{t('login')}}</button>
+            <button ng-show="ajaxLoading" class="btn btn-lg btn-success btn-block"><span class="glyphicon ajax-loader-white"></span></button>
+        </section>
+    </form>
+</div>

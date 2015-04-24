@@ -3,34 +3,36 @@
         <div id="circles-list">
             <ul class="nav nav-list affix-top">
                 <li ng-class="{ 'active': item.id == circle.id }" ng-click="showCircle(item.id)" ng-repeat="item in circles">
-                <a href="">
-                <div>{{item.label}}</div>
-                </a>
+                    <a href="">
+                    <div>{{item.label}}</div>
+                    </a>
                 </li>
             </ul>
         </div>
     </div>
     <div class="col-md-9">
-        <div class="row" style="margin-left:0px; margin-right:0px;">
-        <h1 class="highlight" ng-click="editCircle()">{{circle.label}}</h1>
-        {{circle.description}}
-        </div>
-        <div class="row" style="margin-left:0px; margin-right:0px;">
-            <div id="members-container">
-                <a ng-click="addMember()">
-                <div id="add-member-container" class="user-small-container">
-                    <div id="add-member-pic" class="icon-user-in-circle"></div>
-                    <div id="add-member-label">Add</div>
-                </div>
-                </a>
-                <ng-user-small ng-repeat="user in circle.users"></ng-user-small>
+        <section style="margin-top: 0px;">
+            <div class="row" style="margin-left:0px; margin-right:0px;">
+                <h1 class="highlight" ng-click="editCircle()">{{circle.label}}</h1>
+                {{circle.description}}
             </div>
-        </div>
+            <div class="row" style="margin-left:0px; margin-right:0px;">
+                <div id="members-container">
+                    <a ng-click="addMember()">
+                    <div id="add-member-container" class="user-small-container">
+                        <div id="add-member-pic" class="icon-user-in-circle"></div>
+                        <div id="add-member-label">Add</div>
+                    </div>
+                    </a>
+                    <ng-user-small ng-repeat="user in circle.users"></ng-user-small>
+                </div>
+            </div>
             <ul class="nav nav-tabs">
                 <li role="presentation" ng-class="{'active' : tab == 0}" ng-click="setTab(0)"><a>Activities</a></li>
                 <li role="presentation" ng-class="{'active' : tab == 1}" ng-click="setTab(1)"><a>Resources</a></li>
             </ul>
             <div ui-view autoscroll="false">
             </div>
+        </section>
     </div>
 </div>

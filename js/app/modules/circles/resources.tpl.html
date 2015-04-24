@@ -1,3 +1,23 @@
+<div id="path">
+    <span class="glyphicon ajax-loader-white" ng-show="ajaxLoading"></span>
+    <a href="" ng-click="loadRootCollection()" class="breadcrumbs-inactive" ng-show="!ajaxLoading">
+    <span class="glyphicon glyphicon-home glyphicon-home-kb"></span>
+    </a>
+    <span ng-repeat="entry in currentCollection.collHierarchy" ng-show="!ajaxLoading && !$first" on-Finish-Ng-Repeat-Load>
+    <span class="glyphicon path-glyph-chevron glyphicon-chevron-right"></span>&nbsp;
+    <a href="" ng-click="handleEntryClick(entry)" class="breadcrumbs-inactive">
+    <span class="glyphicon glyphicon-folder-close"></span>
+    <span class="breadcrumb-parent-folders">&nbsp;{{entry.label}}</span>
+    </a>
+    </span>
+    <span ng-show="!ajaxLoading && !currentCollection.isRoot && currentCollection != null">
+    <span class="glyphicon path-glyph-chevron glyphicon-chevron-right"></span>&nbsp;
+    <span class="breadcrumbs-active">
+    <span class="glyphicon glyphicon-folder-open"></span>
+    <span>&nbsp;{{currentCollection.label}}</span>
+    </span>
+    </span>
+</div>
 <div id="resources-toolbar">
     <div class="row">
         <div class="col-md-2">
@@ -70,7 +90,7 @@
 </div>
 <div click-anywhere-but-here="deselectAllEntities()">
     <!-- sort bar -->
-    <div class="well" style="padding : 1px;">
+    <div class="well" style="padding : 1px; background-color: #f6f6f6;">
         <div style="height:40px; overflow:hidden;">
             <div class="sort-order-bar animate-show row" style="margin-left : 10px;" ng-show="selectedEntities.length == 0">
                 <div class="col-md-1 col-xs-2">
@@ -93,18 +113,16 @@
             </div>
         </div>
     </div>
-
     <!-- grid or list-->
-    <section ng-show="collectionViewMode == 'grid'" style="overflow: hidden; padding: 0px 10px 18px 10px;">
-        <ng-entity ng-repeat="entry in entities | orderBy: predicate : reverse | filter : filterFunction"  context-menu data-target="menu-{{ $index }}"></ng-entity>
-    </section>
-    <section ng-show="collectionViewMode == 'list'" style="overflow: hidden; padding: 0px 10px 0px 10px;">
+    <div ng-show="collectionViewMode == 'grid'" style="overflow: hidden; padding: 0px 10px 18px 10px;">
+        <ng-entity ng-repeat="entry in entities | orderBy: predicate : reverse | filter : filterFunction" context-menu data-target="menu-{{ $index }}"></ng-entity>
+    </div>
+    <div ng-show="collectionViewMode == 'list'" style="overflow: hidden; padding: 0px 10px 0px 10px;">
         <table class="table vertical-aligned-table" style="margin-bottom:0px; color:#444;">
             <tbody>
                 <tr ng-entity-list-item ng-repeat="entry in entities | orderBy: predicate : reverse | filter : filterFunction"  ng-click="selectResource(entry)" context-menu data-target="menu-{{ $index }}" >
-                    
                 </tr>
             </tbody>
         </table>
-    </section>
+    </div>
 </div>
