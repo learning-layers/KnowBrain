@@ -738,7 +738,7 @@ angular.module('module.models').service("EntityFetchService", ['$q', '$rootScope
       entity.init({tags:result.tags});
       entity.init({overallRating:result.overallRating});
       entity.init({creationTime:result.creationTime});
-      entity.init({author:result.author});
+      entity.init({author:result.author.id});
 
       if(entity.type == ENTITY_TYPES.file){
 
@@ -830,7 +830,7 @@ angular.module('module.models').service("FetchServiceHelper", ['$q', '$rootScope
         model.init({tags:result.tags});
         model.init({overallRating:result.overallRating});
         model.init({creationTime:result.creationTime});
-        model.init({author:result.author});
+        model.init({author:result.author.id});
 
         if(result.discs.length > 0){
           var discUri = result.discs[0];

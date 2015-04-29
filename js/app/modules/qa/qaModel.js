@@ -274,7 +274,7 @@ angular.module('module.qa').service("qaService", ['$q', '$rootScope', 'UserServi
             new SSDiscEntryAdd(
                     function (result) {
                         thread.id = result.disc;
-                        thread.authorId = UserSrv.getUser();
+                        thread.authorId = UserSrv.getUser().id;
                         thread.creationTime = new Date();
 
                         addTags(thread)
@@ -315,7 +315,7 @@ angular.module('module.qa').service("qaService", ['$q', '$rootScope', 'UserServi
             new SSDiscEntryAdd(
                     function (result) {
                         answer.id = result.entry;
-                        answer.authorId = UserSrv.getUser();
+                        answer.authorId = UserSrv.getUser().id;
                         answer.creationTime = new Date();
 
                         addTags(answer)
@@ -526,7 +526,7 @@ angular.module('module.qa').service("qaService", ['$q', '$rootScope', 'UserServi
             var promiseListEntryAuthor = [];
 
             angular.forEach(entries, function (value, key) {
-                var entry = new ThreadEntry(value.id, value.author, getThreadEntryTypeByEnum(value.type), value.content, value.pos, value.creationTime, value.likes);
+                var entry = new ThreadEntry(value.id, value.author.id, getThreadEntryTypeByEnum(value.type), value.content, value.pos, value.creationTime, value.likes);
 
                 if (value.comments != null) {
                     entry.comments = value.comments;
@@ -570,7 +570,7 @@ angular.module('module.qa').service("qaService", ['$q', '$rootScope', 'UserServi
       new SSDiscGet(
         function (result) {
           
-          var thread = new Thread(result.disc.id, result.disc.author, getThreadTypeByEnum(result.disc.type), result.disc.label, result.disc.description, result.disc.entity, result.disc.creationTime, result.disc.circleTypes, {likes : 10, dislikes : 5, like : null});
+          var thread = new Thread(result.disc.id, result.disc.author.id, getThreadTypeByEnum(result.disc.type), result.disc.label, result.disc.description, result.disc.entity, result.disc.creationTime, result.disc.circleTypes, {likes : 10, dislikes : 5, like : null});
         var entries = result.disc.entries;
         
         getAttachmentDetailsSync(thread, result.disc.attachedEntities);
@@ -606,7 +606,7 @@ angular.module('module.qa').service("qaService", ['$q', '$rootScope', 'UserServi
 
                         angular.forEach(result.discs, function (value, key) {
                             var type = getThreadTypeByEnum(value.type);
-                            var thread = new Thread(value.id, value.author, type, value.label, value.description, value.entity, value.creationTime, value.circleTypes, value.likes);
+                            var thread = new Thread(value.id, value.author.id, type, value.label, value.description, value.entity, value.creationTime, value.circleTypes, value.likes);
 
                             getAttachmentDetailsSync(thread, value.attachedEntities);
 
@@ -659,7 +659,7 @@ angular.module('module.qa').service("qaService", ['$q', '$rootScope', 'UserServi
 
                         angular.forEach(result.entities, function (value, key) {
                             var type = getThreadTypeByEnum(value.type);
-                            var thread = new Thread(value.id, value.author, type, value.label, value.description, value.entity, value.creationTime, value.circleTypes, value.likes);
+                            var thread = new Thread(value.id, value.author.id, type, value.label, value.description, value.entity, value.creationTime, value.circleTypes, value.likes);
 
                             getAttachmentDetailsSync(thread, value.attachedEntities);
 
@@ -792,7 +792,7 @@ angular.module('module.qa').service("qaService", ['$q', '$rootScope', 'UserServi
                         angular.forEach(result.entities, function (value, key) {
                             var type = getThreadTypeByEnum(value.type);
                             var similar_thread = new Thread(value.id,
-                                    value.author,
+                                    value.author.id,
                                     type,
                                     value.label,
                                     value.description,
