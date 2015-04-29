@@ -420,8 +420,8 @@ div.thread-statistic-box {
     margin-right: auto;
     display:inline-block;
     vertical-align: middle;
-    width: 60px;
-    height: 60px;
+    width: 50px;
+    height: 50px;
     background-image: url(http://lorempixel.com/400/200/);
     background-size: cover;
     border-radius: 50%;

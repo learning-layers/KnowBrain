@@ -398,7 +398,7 @@ angular.module('module.qa').service("qaService", ['$q', '$rootScope', 'UserServi
                         },
                         UserSrv.getUser(),
                         UserSrv.getKey(),
-                        attachment.file
+                        attachment._file
                         );
 
                 promiseList.push(deferFile.promise);
