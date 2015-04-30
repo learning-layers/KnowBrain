@@ -76,7 +76,7 @@ angular.module('dialogs.controllers', ['ui.bootstrap.modal', 'module.i18n', 'mod
     $scope.yes = function() {
         $modalInstance.close('yes');
     }; // end yes
-}]).controller('entryDetailController', ['$scope', '$modalInstance', 'entry', '$q', 'i18nService', 'CurrentCollectionService', 'RATING_MAX', 'ENTITY_TYPES', 'TagFetchService', 'isSearchResult', 'UserService', 'UriToolbox', '$state', '$window', '$dialogs', function($scope, $modalInstance, entry, $q, i18nService, CurrentCollectionService, RATING_MAX, ENTITY_TYPES, TagFetchService, isSearchResult, UserSrv, UriToolbox, $state, $window, $dialogs) {
+}]).controller('entryDetailController', ['$scope', '$modalInstance', 'entry', '$q', 'i18nService', 'CurrentCollectionService', 'FetchServiceHelper', 'RATING_MAX', 'ENTITY_TYPES', 'TagFetchService', 'isSearchResult', 'UserService', 'UriToolbox', '$state', '$window', '$dialogs', function($scope, $modalInstance, entry, $q, i18nService, CurrentCollectionService, FetchServiceHelper, RATING_MAX, ENTITY_TYPES, TagFetchService, isSearchResult, UserSrv, UriToolbox, $state, $window, $dialogs) {
     $scope.entry = entry;
     $scope.tags = new Array();
     $scope.ratingReadOnly = false;
@@ -109,14 +109,19 @@ angular.module('dialogs.controllers', ['ui.bootstrap.modal', 'module.i18n', 'mod
         }, UserSrv.getUser(), UserSrv.getKey(), entry.id);
     };
     this.init = function() {
-        //set tags
-        angular.forEach(entry.tags, function(tag, key) {
-            $scope.tags.push(tag);
-        })
-        if (entry.overallRating !== null && entry.overallRating.score != null) $scope.entryRating = entry.overallRating.score;
-        if (isSearchResult) {
-            getLocations();
-        }
+        var promise = FetchServiceHelper.getEntityDescribtion(entry, true, true, true);
+        promise.then(function(result) {
+            //set tags
+            angular.forEach(entry.tags, function(tag, key) {
+                $scope.tags.push(tag);
+            })
+            if (entry.overallRating !== null && entry.overallRating.score != null) $scope.entryRating = entry.overallRating.score;
+            if (isSearchResult) {
+                getLocations();
+            }
+        }, function(error) {
+            console.log(error);
+        });
     };
     this.init();
     $scope.rateEntry = function(rating) {
@@ -204,6 +209,11 @@ angular.module('dialogs.controllers', ['ui.bootstrap.modal', 'module.i18n', 'mod
     $scope.shareEntity = function() {
         $dialogs.shareEntity($scope.entry);
     };
+    $scope.saveDescription = function() {
+        if (this.editingDescription) 
+            $scope.entry.setDescription(entry.description);
+    };
+
 }]).controller('attachmentDetailController', ['$scope', '$modalInstance', 'attachment', '$q', 'i18nService', 'CurrentCollectionService', 'RATING_MAX', 'ENTITY_TYPES', 'UriToolbox', '$state', '$window', '$dialogs', function($scope, $modalInstance, attachment, $q, i18nService, CurrentCollectionService, RATING_MAX, ENTITY_TYPES, UriToolbox, $state, $window, $dialogs) {
     $scope.attachment = attachment;
     $scope.ENTITY_TYPES = ENTITY_TYPES;

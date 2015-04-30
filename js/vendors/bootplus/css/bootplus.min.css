@@ -696,7 +696,7 @@ a.text-success:hover, a.text-success:focus {
 }
 
 h1, h2, h3, h4, h5, h6 {
-    margin: 10px 0;
+    margin: 4px 0;
     font-family: inherit;
     font-weight: 300;
     line-height: 20px;
