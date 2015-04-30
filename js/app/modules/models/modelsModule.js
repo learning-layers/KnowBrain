@@ -569,10 +569,7 @@ angular.module('module.models').service("EntityFetchService", ['$q', '$rootScope
                 creationTime: result.creationTime
             });
             entity.init({
-                author: result.author
-            });
-            entity.init({
-                author: result.author
+                author: result.author.id
             });
             if (entity.type == ENTITY_TYPES.file) {
                 entity.mimeType = result.mimeType;
@@ -650,7 +647,7 @@ angular.module('module.models').service("FetchServiceHelper", ['$q', '$rootScope
                 creationTime: result.creationTime
             });
             model.init({
-                author: result.author
+                author: result.author.id
             });
             model.init({
                 description: result.description
