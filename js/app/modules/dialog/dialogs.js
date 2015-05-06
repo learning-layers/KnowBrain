@@ -111,6 +111,7 @@ angular.module('dialogs.controllers', ['ui.bootstrap.modal', 'module.i18n', 'mod
     this.init = function() {
         var promise = FetchServiceHelper.getEntityDescribtion(entry, true, true, true);
         promise.then(function(result) {
+            $scope.editedDescription = entry.description;
             //set tags
             angular.forEach(entry.tags, function(tag, key) {
                 $scope.tags.push(tag);
@@ -209,9 +210,15 @@ angular.module('dialogs.controllers', ['ui.bootstrap.modal', 'module.i18n', 'mod
     $scope.shareEntity = function() {
         $dialogs.shareEntity($scope.entry);
     };
-    $scope.saveDescription = function() {
-        if (this.editingDescription) 
-            $scope.entry.setDescription(entry.description);
+    $scope.saveDescription = function(description) {
+        if (this.editingDescription) {
+            var promise = $scope.entry.setDescription(description);
+            promise.then(function(result) {
+                $scope.entry.description = description;
+            }, function(error) {
+                console.log(error);
+            });
+        }
     };
 
 }]).controller('attachmentDetailController', ['$scope', '$modalInstance', 'attachment', '$q', 'i18nService', 'CurrentCollectionService', 'RATING_MAX', 'ENTITY_TYPES', 'UriToolbox', '$state', '$window', '$dialogs', function($scope, $modalInstance, attachment, $q, i18nService, CurrentCollectionService, RATING_MAX, ENTITY_TYPES, UriToolbox, $state, $window, $dialogs) {

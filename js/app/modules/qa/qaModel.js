@@ -38,7 +38,7 @@ angular.module('module.qa').constant('THREAD_ENTRY_TYPE', {answer: {enum: 'qaEnt
 angular.module('module.qa').factory('Thread', ['UriToolbox', function (UriToolbox) {
 
         // Constructor
-        function Thread(id, author_id, type, title, description, entity_id, creationTime, circleTypes, likes) {
+        function Thread(id, author, type, title, description, entity_id, creationTime, circleTypes, likes) {
             // Public properties
             this.id = id;
             this.type = type;
@@ -47,8 +47,7 @@ angular.module('module.qa').factory('Thread', ['UriToolbox', function (UriToolbo
             this.entityId = entity_id;
             this.entries = new Array();
             this.creationTime = new Date(creationTime);
-            this.authorId = author_id;
-            this.author = null;
+            this.author = author;
             this.tags = new Array();
             this.attachments = new Array();
             this.attachedFiles = new Array();
@@ -70,7 +69,7 @@ angular.module('module.qa').factory('Thread', ['UriToolbox', function (UriToolbo
 angular.module('module.qa').factory('ThreadEntry', function () {
 
     // Constructor
-    function ThreadEntry(id, author_id, type, content, position, creationTime, likes) {
+    function ThreadEntry(id, author, type, content, position, creationTime, likes) {
         // Public properties
         this.id = id;
         this.threadId = null;
@@ -78,8 +77,7 @@ angular.module('module.qa').factory('ThreadEntry', function () {
         this.content = content;
         this.position = position;
         this.creationTime = new Date(creationTime);
-        this.authorId = author_id;
-        this.author = null;
+        this.author = author;
         this.tags = new Array();
         this.attachments = new Array();
         this.comments = new Array();
@@ -116,9 +114,11 @@ angular.module('module.qa').factory('Tag', function () {
 angular.module('module.qa').factory('Author', function () {
 
     // Constructor
-    function Author(name) {
+    function Author(id, name, email) {
         // Public properties
+        this.id = id;
         this.name = name;
+        this.email = email;
     }
 
     return Author;
@@ -227,7 +227,7 @@ angular.module('module.qa').service("qaService", ['$q', '$rootScope', 'UserServi
 
             new SSEntityGet(
                     function (result) {
-                        var author = new Author(result.entity.label);
+                        var author = new Author(result.entity.id,result.entity.label, result.entity.email);
                         object.author = author;
                         defer.resolve(object);
                     },
@@ -237,7 +237,7 @@ angular.module('module.qa').service("qaService", ['$q', '$rootScope', 'UserServi
                     },
                     UserSrv.getUser(),
                     UserSrv.getKey(),
-                    object.authorId
+                    object.author.id
                     );
 
             return defer.promise;
@@ -274,7 +274,7 @@ angular.module('module.qa').service("qaService", ['$q', '$rootScope', 'UserServi
             new SSDiscEntryAdd(
                     function (result) {
                         thread.id = result.disc;
-                        thread.authorId = UserSrv.getUser();
+                        thread.author = {id: UserSrv.getUser()};
                         thread.creationTime = new Date();
 
                         addTags(thread)
@@ -315,7 +315,7 @@ angular.module('module.qa').service("qaService", ['$q', '$rootScope', 'UserServi
             new SSDiscEntryAdd(
                     function (result) {
                         answer.id = result.entry;
-                        answer.authorId = UserSrv.getUser();
+                        answer.author = {id: UserSrv.getUser()};
                         answer.creationTime = new Date();
 
                         addTags(answer)

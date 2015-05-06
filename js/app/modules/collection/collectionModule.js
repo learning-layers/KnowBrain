@@ -330,16 +330,6 @@ angular.module('module.collection').controller("CollectionController", function(
             //$log.info('Modal dismissed at: ' + new Date());
         });
     };
-    $scope.addLink = function() {
-        $dialogs.createLink(CurrentCollectionService.getCurrentCollection()).result.then(function(link) {}, function() {
-            //$log.info('Modal dismissed at: ' + new Date());
-        });
-    };
-    $scope.addCollection = function() {
-        $dialogs.createCollection().result.then(function(link) {}, function() {
-            //$log.info('Modal dismissed at: ' + new Date());
-        });
-    };
     $scope.setCollPublic = function() {
         CurrentCollectionService.getCurrentCollection().setCollPublic();
     };

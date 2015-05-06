@@ -178,3 +178,10 @@ angular.module('knowbrain').controller('MainController', ['$scope', 'sharedServi
             });
     }
 }]);
+
+angular.module('knowbrain').filter("nl2br", function($filter) {
+ return function(data) {
+   if (!data) return data;
+   return data.replace("\n", "<br />");
+ };
+});

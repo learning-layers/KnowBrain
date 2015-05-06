@@ -38,20 +38,6 @@
             <button type="button" class="btn btn-default" ng-show="entry.type == ENTITY_TYPES.link" ng-click="openLink()">
             <span class="glyphicon glyphicon-globe" tooltip-placement="top" tooltip="{{t('follow_link')}}"></span>
             </button>
-            <!--  <div class="btn-group">
-                                                        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" >
-                                                        <span class="glyphicon glyphicon-cloud-download" tooltip-placement="top" tooltip="{{t('download_resource')}}"></span> <span class="caret"></span>
-                                                        </button>
-                                                        <ul class="dropdown-menu" role="menu">
-                                                                    <li style="padding-left:10px;"><span>{{t('download_as')}}</span></li>
-                                                                    <li class="divider"></li>
-                                                                    <li><a href="#">{{t('read_only')}}</a></li>
-                                                                    <li><a href="#">{{t('write')}}</a></li>
-                                                        </ul>
-                                        </div>
-            -->
-            <!-- <button type="button" class="btn btn-default disabled"><span class="glyphicon glyphicon-cloud-upload" tooltip-placement="top" tooltip="{{t('update_resource')}}"></span></button>
-            <button type="button" class="btn btn-default"><span class="glyphicon glyphicon-share" tooltip-placement="top" tooltip="{{t('share_resource')}}"></span></button> -->
             <button type="button" class="btn btn-default" ng-click="deleteEntity()" ng-hide="isSearchResult"><span class="glyphicon glyphicon-trash" tooltip-placement="top" tooltip="{{t('delete_resource')}}"></span></button>
             <button type="button" class="btn btn-default" ng-click="shareEntity()" ng-hide="isSearchResult"><span class="glyphicon glyphicon-share" tooltip-placement="top" tooltip="{{t('share_resource')}}"></span></button>
         </div>
@@ -77,9 +63,12 @@
             <div class="clearfix"></div>
             <h5>Description:</h5>
             <div>
-                <div ng-show="entry.description == null && !editingDescription">No description</div>
-                <textarea class="form-control" ng-show="editingDescription" ng-model="entry.description" style="font-size:12px; padding-left:5px;" rows="5" placeholder="Enter description"></textarea>
-                <button ng-click="saveDescription(); editingDescription = true;" class="btn btn-xs" ng-class="editingDescription ? 'btn-success' : 'btn-default'" style="margin-top:3px; position:relative; float:right;">
+                <div ng-show="entry.description.length == 0 && !editingDescription">No description</div>
+                <div ng-show="entry.description.length > 0 && !editingDescription" ng-bind-html="entry.description | nl2br"></div>
+                <textarea class="form-control" ng-show="editingDescription" ng-model="editedDescription" style="font-size:12px; padding-left:5px;" rows="5" placeholder="Enter description">
+                    {{entry.description}}
+                </textarea>
+                <button ng-click="saveDescription(editedDescription); editingDescription = !editingDescription;" class="btn btn-xs" ng-class="editingDescription ? 'btn-success' : 'btn-default'" style="margin-top:3px; position:relative; float:right;">
                 {{editingDescription ? 'Save' : 'Edit'}}
                 </button>
                 <button ng-click="editingDescription = false;" ng-show="editingDescription" class="btn btn-default btn-xs" style="margin-top:3px; position:relative; float:right;">

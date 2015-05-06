@@ -204,13 +204,16 @@
   color: #a2a2a2;
   cursor: pointer;
   text-align: center;
-  padding-top: 12px;
   font-weight: bold;
-  width: 120px;
+  width: 150px;
   height: 110px;
   margin-right: 5px;
   margin-top: 20px;
   z-index: 100;
+}
+
+.add-info {
+  height: 110px;
 }
 
 #upload-box:hover {
@@ -220,7 +223,24 @@
 
 #upload-box div {
   width: 100%;
-  margin-top: 8px; 
+}
+
+.add-entity-actions-container, #upload-box:hover>div {
+    display: none;
+}
+
+#upload-box:hover>.add-entity-actions-container {
+    display: block;
+}
+
+.btn-add-entity {
+  margin: 0px;
+  background-color: transparent;
+  font-size: 13px;
+}
+
+.btn-add-entity div {
+  font-size: 20px;
 }
 
 #upload-link {
