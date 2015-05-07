@@ -170,71 +170,58 @@
     </div>
 </section>
 <section style="margin-bottom: 20px;">
-    <div class="row clearfix">
-        <div class="col-md-10 column">
-            <div class="lead">Reply</div>
+    <div class="lead">Reply</div>
+    <div class="row">
+        <div class="col-md-8 column">
             <div class="row">
-                <div class="col-md-8 column">
-                    <div class="row">
-                        <div class="col-md-12 column">
-                            <textarea ng-model="newAnswer.content" class="form-control" rows="5" placeholder="Add your answer"></textarea>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-7 column">
-                            <tags-input ng-model="newAnswer.tags" on-tag-added="onTagAdded($tag, newAnswer)" on-tag-removed="onTagRemoved($tag, newAnswer)" class="bootstrap" display-property="label" placeholder="Add tags"></tags-input>
-                        </div>
-                        <div class="col-md-5 column">
-                            <button ng-click="postNewAnswer()" ng-class="{'disabled' : (newAnswer.content.length == 0 || newAnswer.content == null)}" type="button" style="width:100%;" class="btn btn-success btn-lg stretch">Post your answer</button>
-                        </div>
-                    </div>
+                <div class="col-md-12 column">
+                    <textarea ng-model="newAnswer.content" class="form-control" rows="5" placeholder="Add your answer"></textarea>
                 </div>
-                <div class="col-md-4 column">
-                    <div class="kb-fluid-container pull-left add-attachment-box" data-toggle="dropdown" nv-file-drop nv-file-over over-class="add-attachment-box-file-over" uploader="uploader">Add attachments
-                        <div class="glyphicon glyphicon-plus-sign add-attachment-icon" ></div>
-                    </div>
-                    <ul class="dropdown-menu" role="menu">
-                        <li><a ng-click="chooseEntity()">Dropbox</a></li>
-                        <li><a ng-click="attachLink()">Link</a></li>
-                    </ul>
-                    <div ng-repeat="attachment in newAnswer.attachments">
-                        <div class="col-xs-10" style="margin-bottom: 10px; padding-left: 4px;" >
-                            <div ng-class="{'icon-file-small icon-small' : attachment.type === 'file',
-                                'icon-entity-small icon-small' : attachment.type === 'coll',
-                                'icon-link-small icon-small' : attachment.type === 'entity'}" >
-                            </div>
-                            <a>{{attachment.label}}</a>
-                        </div>
-                        <div class="col-xs-2" style="padding-right:2px;">
-                            <div class="btn btn-group-xs" style="padding:0px; float: right;">
-                                <button class="btn btn-danger" ng-click="removeAttachment(attachment)">
-                                <i class="glyphicon glyphicon-trash"></i>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                    <div ng-repeat="file in uploader.queue">
-                        <div class="col-xs-10" style="margin-bottom: 10px; padding-left: 4px;" >
-                            <div class="icon-file-small icon-small" >
-                            </div>
-                            <div class="icon-attached" ng-repeat-end>
-                                <div><a >{{file.file.name}}</a></div>
-                                <div>{{file.file.type}}</div>
-                            </div>
-                        </div>
-                        <div class="col-xs-2" style="padding-right:2px;">
-                            <div class="btn btn-group-xs" style="padding:0px; float: right;">
-                                <button class="btn btn-danger" ng-click="uploader.removeFromQueue(file)">
-                                <i class="glyphicon glyphicon-trash"></i>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
+            </div>
+            <div class="row">
+                <div class="col-md-7 column">
+                    <tags-input ng-model="newAnswer.tags" on-tag-added="onTagAdded($tag, newAnswer)" on-tag-removed="onTagRemoved($tag, newAnswer)" class="bootstrap" display-property="label" placeholder="Add tags"></tags-input>
+                </div>
+                <div class="col-md-5 column">
+                    <button ng-click="postNewAnswer()" ng-class="{'disabled' : (newAnswer.content.length == 0 || newAnswer.content == null)}" type="button" style="width:100%;" class="btn btn-success btn-lg stretch">Post your answer</button>
                 </div>
             </div>
         </div>
-        <div class="col-md-2 column hidden-sm hidden-xs">
-            &nbsp;
+        <div class="col-md-4 column">
+            <kb-add-entity destination='newAnswer' after-add-link="afterAddLink" after-choose-entity="afterChooseEntity" after-add-entity='afterAddEntity'></kb-add-entity>
+            <div ng-repeat="attachment in newAnswer.attachments">
+                <div class="col-xs-10" style="margin-bottom: 10px; padding-left: 4px;" >
+                    <div ng-class="{'icon-file-small icon-small' : attachment.type === 'file',
+                        'icon-entity-small icon-small' : attachment.type === 'coll',
+                        'icon-link-small icon-small' : attachment.type === 'entity'}" >
+                    </div>
+                    <a>{{attachment.label}}</a>
+                </div>
+                <div class="col-xs-2" style="padding-right:2px;">
+                    <div class="btn btn-group-xs" style="padding:0px; float: right;">
+                        <button class="btn btn-danger" ng-click="removeAttachment(attachment)">
+                        <i class="glyphicon glyphicon-trash"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div ng-repeat="file in uploader.queue">
+                <div class="col-xs-10" style="margin-bottom: 10px; padding-left: 4px;" >
+                    <div class="icon-file-small icon-small" >
+                    </div>
+                    <div class="icon-attached" ng-repeat-end>
+                        <div><a >{{file.file.name}}</a></div>
+                        <div>{{file.file.type}}</div>
+                    </div>
+                </div>
+                <div class="col-xs-2" style="padding-right:2px;">
+                    <div class="btn btn-group-xs" style="padding:0px; float: right;">
+                        <button class="btn btn-danger" ng-click="uploader.removeFromQueue(file)">
+                        <i class="glyphicon glyphicon-trash"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </section>

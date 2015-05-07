@@ -492,7 +492,7 @@ angular.module('dialogs.controllers', ['ui.bootstrap.modal', 'module.i18n', 'mod
 
 
 
-.controller("UploadResourcesController", function($q, $scope, $modalInstance, $http, $location, $state, i18nService, CurrentCollectionService, UriToolbox, UserService, EntityModel, ENTITY_TYPES, FileUploader, saveInCollection) {
+.controller("UploadResourcesController", function($q, $scope, $modalInstance, $http, $location, $state, i18nService, CurrentCollectionService, UriToolbox, UserService, EntityModel, ENTITY_TYPES, FileUploader, saveInCollection, uploadFiles) {
     var self = this;
     
     $scope.uploader = new FileUploader();
@@ -525,6 +525,14 @@ angular.module('dialogs.controllers', ['ui.bootstrap.modal', 'module.i18n', 'mod
     };
 
     $scope.uploader.uploadAll = function() {
+        if (!uploadFiles) {
+            var files = [];
+            angular.forEach($scope.uploader.queue, function(file, key) {
+                files.push(file._file);
+            });
+            $modalInstance.close(files);
+            return;
+        }
         var entries = [];
         var labels = [];
         var uploadCounter = 0;
@@ -888,7 +896,7 @@ angular.module('dialogs.services', ['ui.bootstrap.modal', 'dialogs.controllers']
                     }
                 });
             },
-            uploadResources: function(saveInCollection) {
+            uploadResources: function(saveInCollection, uploadFiles) {
                 return $modal.open({
                     templateUrl: MODULES_PREFIX + '/dialog/wizzard-upload-resource.tpl.html',
                     controller: 'UploadResourcesController',
@@ -897,6 +905,9 @@ angular.module('dialogs.services', ['ui.bootstrap.modal', 'dialogs.controllers']
                     resolve: {
                         saveInCollection: function() {
                             return saveInCollection;
+                        },
+                        uploadFiles: function() {
+                            return uploadFiles;
                         }
                     }
                 });

@@ -26,13 +26,7 @@
                 </div>
             </div>
             <div class="col-md-4">
-                <div class="kb-fluid-container pull-left add-attachment-box" data-toggle="dropdown" nv-file-drop nv-file-over over-class="add-attachment-box-file-over" uploader="uploader">Drop files here
-                    <div class="glyphicon glyphicon-plus-sign add-attachment-icon"></div>
-                </div>
-                <ul class="dropdown-menu" role="menu">
-                    <li><a ng-click="chooseEntity()">Dropbox</a></li>
-                    <li><a ng-click="attachLink()">Link</a></li>
-                </ul>
+            <kb-add-entity destination='newThread' after-add-link="afterAddLink" after-choose-entity="afterChooseEntity" after-add-entity='afterAddEntity'></kb-add-entity>
                 <div ng-repeat="attachment in newThread.attachments">
                     <div class="col-xs-10" style="margin-bottom: 10px; padding-left: 4px;" >
                         <div class="icon-file-small icon-small">

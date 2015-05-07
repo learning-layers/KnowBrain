@@ -50,7 +50,7 @@ a:hover {
     width: 100%;
 }
 
-.add-attachment-box {
+#upload-box.add-attachment-box {
     border: 2px dashed #DBDBDB;
     color: #DBDBDB;
     cursor: pointer;

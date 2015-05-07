@@ -247,24 +247,20 @@ angular.module('module.qa').controller("AskQuestionController", function($scope,
         });
     };
 
-    $scope.chooseEntity = function() {
-        $dialogs.chooseFromDropbox().result.then(function(chosenEntities) {
-            if (chosenEntities != undefined) {
-                chosenEntities.forEach(function(entry) {
-                    $scope.newThread.attachments.push(entry);
-                });
-            }
-        }, function() {
-            //$log.info('Modal dismissed at: ' + new Date());
-        });
+    $scope.afterAddEntity = function(uploadedEntities) {
+        $scope.uploader.addToQueue(uploadedEntities);
     };
 
-    $scope.attachLink = function() {
-        $dialogs.createLink($scope.newThread).result.then(function(link) {
-            $scope.newThread.attachments.push(link);
-        }, function() {
-            //$log.info('Modal dismissed at: ' + new Date());
-        });
+    $scope.afterChooseEntity = function(chosenEntities) {
+        if (chosenEntities != undefined) {
+            chosenEntities.forEach(function(entry) {
+                $scope.newThread.attachments.push(entry);
+            });
+        }
+    };
+
+    $scope.afterAddLink = function(link) {
+        $scope.newThread.attachments.push(link);
     };
 });
 
@@ -308,7 +304,7 @@ angular.module('module.qa').controller("questionController", function($scope, $s
     $scope.similarThreadList = null;
     $scope.sortBy = 'date';
     $scope.uploader = new FileUploader();
-    $scope.newAnswer = new ThreadEntry(null, null, THREAD_ENTRY_TYPE.qaEntry, null, null, null);
+    $scope.newAnswer = new ThreadEntry(null, null, THREAD_ENTRY_TYPE.answer, null, null, null);
     // used for sorting
     $scope.predicate = '+position';
     var loadThreadWithEntries = function(id) {
@@ -326,24 +322,23 @@ angular.module('module.qa').controller("questionController", function($scope, $s
     $scope.onTagAdded = function($tag, object) {
         $tag.space = 'privateSpace';
     };
-    $scope.chooseEntity = function() {
-        $dialogs.chooseFromDropbox().result.then(function(chosenEntities) {
-            if (chosenEntities != undefined) {
-                chosenEntities.forEach(function(entry) {
-                    $scope.newAnswer.attachments.push(entry);
-                });
-            }
-        }, function() {
-            //$log.info('Modal dismissed at: ' + new Date());
-        });
+
+    $scope.afterAddEntity = function(uploadedEntities) {
+        $scope.uploader.addToQueue(uploadedEntities);
     };
-    $scope.attachLink = function() {
-        $dialogs.createLink($scope.newAnswer).result.then(function(link) {
-            $scope.newAnswer.attachments.push(link);
-        }, function() {
-            //$log.info('Modal dismissed at: ' + new Date());
-        });
+
+    $scope.afterChooseEntity = function(chosenEntities) {
+        if (chosenEntities != undefined) {
+            chosenEntities.forEach(function(entry) {
+                $scope.newAnswer.attachments.push(entry);
+            });
+        }
     };
+
+    $scope.afterAddLink = function(link) {
+        $scope.newAnswer.attachments.push(link);
+    };
+
     $scope.postNewAnswer = function() {
         $scope.newAnswer.threadId = $scope.question.id;
         return qaService.uploadFiles($scope.uploader.queue, $scope.newAnswer).then(qaService.addNewAnswer).then(function(result) {

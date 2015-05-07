@@ -237,6 +237,11 @@
   margin: 0px;
   background-color: transparent;
   font-size: 13px;
+  border: none;
+}
+
+.btn-add-entity:focus {
+  outline: 0 !important;
 }
 
 .btn-add-entity div {

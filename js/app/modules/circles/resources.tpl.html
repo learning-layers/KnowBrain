@@ -33,7 +33,7 @@
                 </ul>
             </div>
         </div>
-        <div class="col-md-6">
+        <div class="col-md-8">
             <div class="input-group">
                 <input id="circle-resources-search-field" type="search" class="form-control" placeholder="search" ng-model="searchResourcesString">
                 <span id="searchclear" class="glyphicon glyphicon-remove-circle" ng-click="searchResourcesString = ''" ng-show="searchResourcesString.length > 0"></span>
@@ -44,7 +44,7 @@
                 </span>
             </div>
         </div>
-        <div class="col-md-4">
+        <div class="col-md-2">
             <div class="btn-group" role="group" aria-label="...">
                 <button type="button" class="btn btn-default" ng-class="{active : collectionViewMode == 'grid'}" ng-click="setCollectionViewMode('grid')">
                 <span class="glyphicon glyphicon-th" aria-hidden="true"></span>
@@ -52,16 +52,6 @@
                 <button type="button" class="btn btn-default" ng-class="{active : collectionViewMode == 'list'}" ng-click="setCollectionViewMode('list')">
                 <span class="glyphicon glyphicon-th-list" aria-hidden="true"></span>
                 </button>
-            </div>
-            <div class="btn-group">
-                <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
-                Add <span class="caret"></span>
-                </button>
-                <ul class="dropdown-menu" role="menu">
-                    <li><a ng-click="addEntity()">Upload</a></li>
-                    <li><a ng-click="chooseEntity()">Dropbox</a></li>
-                    <li><a ng-click="addLink()">Link</a></li>
-                </ul>
             </div>
         </div>
     </div>

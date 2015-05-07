@@ -1,4 +1,4 @@
-<div ng-show="!ajaxLoading" id="upload-box" class="kb-fluid-container pull-left">
+<div ng-show="!ajaxLoading" id="upload-box" class="kb-fluid-container pull-left" ng-class="{'add-attachment-box' : (destination.type.label == 'question' || destination.type.enum == 'qaEntry')}">
     <div class="add-info">
         Add
         <div id="upload-link" class="glyphicon glyphicon-plus-sign" ></div>
