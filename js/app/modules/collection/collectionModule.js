@@ -222,6 +222,7 @@ angular.module('module.collection').controller("CollectionController", function(
     this.loadCollectionByUri = function(coll, defer) {
         var promise = CollectionFetchService.getCollectionByUri(coll);
         promise.then(function(model) {
+            $scope.editedDescription = model.description;
             $rootScope.deactivateLoadingIndicator()
             self.renderCollectionContent(model);
             defer.resolve();
@@ -379,6 +380,16 @@ angular.module('module.collection').controller("CollectionController", function(
             case 2:
                 $scope.removeEntities($scope.selectedEntities);
                 break;
+        }
+    };
+    $scope.saveDescription = function(description) {
+        if (this.editingDescription) {
+            var promise = CurrentCollectionService.getCurrentCollection().setDescription(description);
+            promise.then(function(result) {
+                CurrentCollectionService.getCurrentCollection().description = description;
+            }, function(error) {
+                console.log(error);
+            });
         }
     };
 });

@@ -86,7 +86,7 @@ sharingModule.controller("SharingController", ['$scope','$modalInstance', '$dial
         };
 
         $scope.share = function () {
-            if (arrayContains($scope.sharedEntities, {label:"public"})) {
+            if ($scope.sharingType === 0) {
                 SharingModel.shareEntityPublic($scope.entity);
             } else if ($scope.sharingType === 1) {
                 SharingModel.shareEntityCustom($scope.entity, $scope.allFriends, "");

@@ -24,27 +24,30 @@
         <div style="margin-left:10px; margin-right:10px;">
             <h3 style="margin-top:0px; padding-top:0px; width:290px;" ng-show="!currentCollection.isRoot">
             <edit-in-place model="currentCollection.label" save-method="currentCollection.saveLabel(newLabel)"></edit-in-place>
-            
             </h3>
             <div class="clearfix"></div>
             <button type="button" ng-show="!currentCollection.isRoot" ng-class="{'btn-danger btn btn-xs disabled': (currentCollection.space == spaceEnum.shared), 'btn-success btn btn-xs disabled': (currentCollection.space == spaceEnum.private)}">{{t(currentCollection.space)}}</button>
             <h3 ng-show="currentCollection.isRoot" style="margin-top:0px; padding-top:0px; margin-bottom:10px;">{{t('root_collection')}}</h3>
-            <div class="btn-group" role="group" aria-label="..." style="margin-bottom: 10px;">
-                <button type="button" class="btn btn-default" ng-click="addCollection()">
-                <span class="icon-btn icon-add-collection" aria-hidden="true"></span>
-                </button>
-                <button type="button" class="btn btn-default" ng-click="addEntity()">
-                <span class="icon-btn icon-add-file" aria-hidden="true"></span>
-                </button>
-                <button type="button" class="btn btn-default" ng-click="addLink()">
-                <span class="icon-btn icon-add-link" aria-hidden="true"></span>
-                </button>
-                <button type="button" ng-show="!currentCollection.isRoot" ng-click="shareCollection()" ng-show="currentCollection.space != spaceEnum.shared" class="btn btn-default"><span class="glyphicon glyphicon-share"></span></button>
+            <button type="button" ng-show="!currentCollection.isRoot" ng-click="shareCollection()" ng-show="currentCollection.space != spaceEnum.shared" class="btn btn-default"><span class="glyphicon glyphicon-share"></span></button>
+            <div ng-show="!currentCollection.isRoot" style="border-top: 1px solid #E8E8E8; margin-top:5px;">
+                <h5>Description:</h5>
+                <div>
+                    <div ng-show="currentCollection.description.length == 0 && !editingDescription">No description</div>
+                    <div ng-show="currentCollection.description.length > 0 && !editingDescription" ng-bind-html="currentCollection.description | nl2br"></div>
+                    <textarea class="form-control" ng-show="editingDescription" ng-model="editedDescription" style="font-size:12px; padding-left:5px;" rows="5" placeholder="Enter description">
+                    {{currentCollection.description}}
+                    </textarea>
+                    <button ng-click="editingDescription = false;" ng-show="editingDescription" class="btn btn-default btn-xs" style="margin-top:3px; position:relative;">
+                    Cancel
+                    </button>
+                    <button ng-click="saveDescription(editedDescription); editingDescription = !editingDescription;" class="btn btn-xs" ng-class="editingDescription ? 'btn-success' : 'btn-default'" style="margin-top:3px; position:relative;">
+                    {{editingDescription ? 'Save' : 'Edit'}}
+                    </button>
+                </div>
             </div>
-                
-            <span ng-show="!currentCollection.isRoot">
-            <div style="font-size:15px;"><rating ng-controller="CollectionController" readOnly="ratingReadOnly" value="collectionRating" max="5" on-leave="leaveCurrentCollectionRating(collectionRating); collectionRating = currentCollection.ratingOverall.score;" state-on="'star-rating-cursor glyphicon glyphicon-star'" state-off="'star-rating-cursor glyphicon glyphicon-star-empty'"></rating><span>({{currentCollection.overallRating.frequ}})</span></div>
-            </span>
+            <div ng-show="!currentCollection.isRoot" style="border-top: 1px solid #E8E8E8; margin-top: 14px;">
+                <div style="font-size:15px; margin-top: 4px;"><rating ng-controller="CollectionController" readOnly="ratingReadOnly" value="collectionRating" max="5" on-leave="leaveCurrentCollectionRating(collectionRating); collectionRating = currentCollection.ratingOverall.score;" state-on="'star-rating-cursor glyphicon glyphicon-star'" state-off="'star-rating-cursor glyphicon glyphicon-star-empty'"></rating><span>({{currentCollection.overallRating.frequ}})</span></div>
+            </div>
             <span class="glyphicon ajax-loader-grey-big"  id="context-info-loading-indicator" ng-show="cumulatedTagsLoading"></span>
             <div id="cumulated-tag-cloud" ng-show="!cumulatedTagsLoading">
                 <span id="cumulated-tag-cloud-no-tags" ng-hide="currentCollection.cumulatedTags.length">{{t('no_cumulated_tags')}}</span>

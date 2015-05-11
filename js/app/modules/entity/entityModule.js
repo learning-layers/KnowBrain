@@ -27,7 +27,9 @@ entityModule.directive('kbAddEntity', function($dialogs) {
     return {
         restrict: "E",
         transclude: true,
-        templateUrl: MODULES_PREFIX + "/entity/addEntity.tpl.html",
+        templateUrl:  function(elem, attr) {
+            return MODULES_PREFIX + "/entity/addEntity" + (attr.containerType === 'list' ? 'List' : '') + ".tpl.html";
+        },
         scope: {
             destination: '=destination',
             afterAddLink: '&',
@@ -35,9 +37,8 @@ entityModule.directive('kbAddEntity', function($dialogs) {
             afterAddEntity: '&'
         },
         link: function(scope, element, attr) {
-            var destination = scope.$eval(attr.destination);
             scope.$watch('destination', function(destination) {
-
+                if (destination == undefined) {return;}
                 scope.availableActions = [{title: 'Link', id: 1, cssClass: 'icon-add-link'}, 
                                           {title: 'Upload', id: 2, cssClass: 'icon-add-file'}];
 
@@ -75,13 +76,6 @@ entityModule.directive('kbAddEntity', function($dialogs) {
                 };
             });
         }
-    };
-});
-entityModule.directive('ngAddEntitySmall', function() {
-    return {
-        restrict: "E",
-        transclude: true,
-        templateUrl: MODULES_PREFIX + "/entity/addEntitySmall.tpl.html"
     };
 });
 entityModule.directive('ngUserSmall', function() {

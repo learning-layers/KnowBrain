@@ -1,0 +1,9 @@
+<div ng-show="!ajaxLoading" id="upload-box" class="kb-fluid-container pull-left actions-box-list">
+        <div id="upload-link" class="glyphicon glyphicon-plus-sign" ></div>
+    <div class="add-entity-actions-container">
+    	<button ng-repeat="action in availableActions | orderBy: id" class="btn btn-add-entity" ng-click="clickedAction(action)"><div ng-class="action.cssClass"></div>{{action.title}}</button>
+    </div>
+</div>
+<div ng-show="ajaxLoading" id="upload-box-loading" class="kb-fluid-container pull-left">
+    <div class="ajax-loader-light-grey" ></div>
+</div>

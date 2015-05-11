@@ -1,65 +1,68 @@
 <div class="container">
-<section>
-    <form name="form" novalidate>
-        <div class="row clearfix qa-header">
-            <div class="col-md-8 column">
-                <div class="row">
-                    <div class="col-md-12 column">
-                        <input type="text" class="form-control" placeholder="Enter title of your {{newThread.type.label}}" ng-model="newThread.title" required></input>
+    <section>
+        <form name="form" novalidate>
+            <div class="row clearfix qa-header">
+                <div class="col-md-8 column">
+                    <div class="row">
+                        <div class="col-md-12 column">
+                            <input type="text" class="form-control" placeholder="Enter title of your {{newThread.type.label}}" ng-model="newThread.title" required></input>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12 column">
+                            <text-angular ta-toolbar="[['h1','h2','h3'],['bold','italics','underline'], ['ul', 'ol'], ['justifyLeft', 'justifyCenter', 'justifyRight', 'indent', 'outdent'], ['undo', 'redo']]" ng-model="newThread.description"></text-angular>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-7 column">
+                            <tags-input ng-model="newThread.tags" on-tag-added="onTagAdded($tag, newThread)" class="bootstrap" display-property="label" placeholder="Add tags">
+                            <auto-complete source="queryTags($query)"
+                            min-length="1"
+                            max-results-to-show="15"
+                            >
+                            </auto-complete>
+                            </tags-input>
+                        </div>
+                        <div class="col-md-5 column">
+                            <button type="button" class="btn btn-success btn-lg stretch" ng-click="invokePostNewThread()" ng-disabled="form.$invalid || newThread.description.length == 0">Post your {{newThread.type.label}} now</button>
+                        </div>
                     </div>
                 </div>
-                <div class="row">
-                    <div class="col-md-12 column">
-
-
-                    
-                    <text-angular ta-toolbar="[['h1','h2','h3'],['bold','italics','underline'], ['ul', 'ol'], ['justifyLeft', 'justifyCenter', 'justifyRight', 'indent', 'outdent'], ['undo', 'redo']]" ng-model="newThread.description"></text-angular>
+                <div class="col-md-4">
+                    <kb-add-entity destination='newThread' after-add-link="afterAddLink" after-choose-entity="afterChooseEntity" after-add-entity='afterAddEntity'></kb-add-entity>
+                    <div ng-repeat="attachment in newThread.attachments">
+                        <div class="col-xs-10" style="margin-bottom: 10px; padding-left: 4px;" >
+                            <div class="icon-file-small icon-small">
+                            </div>
+                            <a>{{attachment.label}}</a>
+                        </div>
+                        <div class="col-xs-2" style="padding-right:2px;">
+                            <div class="btn btn-group-xs" style="padding:0px; float: right;">
+                                <button class="btn btn-danger" ng-click="removeAttachment(attachment)">
+                                <i class="glyphicon glyphicon-trash"></i>
+                                </button>
+                            </div>
+                        </div>
                     </div>
-                </div>
-                <div class="row">
-                    <div class="col-md-7 column">
-                        <tags-input ng-model="newThread.tags" on-tag-added="onTagAdded($tag, newThread)" class="bootstrap" display-property="label" placeholder="Add tags"></tags-input>
-                    </div>
-                    <div class="col-md-5 column">
-                        <button type="button" class="btn btn-success btn-lg stretch" ng-click="invokePostNewThread()" ng-disabled="form.$invalid">Post your {{newThread.type.label}} now</button>
+                    <div ng-repeat="file in uploader.queue">
+                        <div class="col-xs-10" style="margin-bottom: 10px; padding-left: 4px;" >
+                            <div class="icon-file-small icon-small">
+                            </div>
+                            <div class="icon-attached" ng-repeat-end>
+                                <div><a href="#">{{file.file.name}}</a></div>
+                                <div>{{file.file.type}}</div>
+                            </div>
+                        </div>
+                        <div class="col-xs-2" style="padding-right:2px;">
+                            <div class="btn btn-group-xs" style="padding:0px; float: right;">
+                                <button class="btn btn-danger" ng-click="uploader.removeFromQueue(file)">
+                                <i class="glyphicon glyphicon-trash"></i>
+                                </button>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
-            <div class="col-md-4">
-            <kb-add-entity destination='newThread' after-add-link="afterAddLink" after-choose-entity="afterChooseEntity" after-add-entity='afterAddEntity'></kb-add-entity>
-                <div ng-repeat="attachment in newThread.attachments">
-                    <div class="col-xs-10" style="margin-bottom: 10px; padding-left: 4px;" >
-                        <div class="icon-file-small icon-small">
-                        </div>
-                        <a>{{attachment.label}}</a>
-                    </div>
-                    <div class="col-xs-2" style="padding-right:2px;">
-                        <div class="btn btn-group-xs" style="padding:0px; float: right;">
-                            <button class="btn btn-danger" ng-click="removeAttachment(attachment)">
-                            <i class="glyphicon glyphicon-trash"></i>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-                <div ng-repeat="file in uploader.queue">
-                    <div class="col-xs-10" style="margin-bottom: 10px; padding-left: 4px;" >
-                        <div class="icon-file-small icon-small">
-                        </div>
-                        <div class="icon-attached" ng-repeat-end>
-                            <div><a href="#">{{file.file.name}}</a></div>
-                            <div>{{file.file.type}}</div>
-                        </div>
-                    </div>
-                    <div class="col-xs-2" style="padding-right:2px;">
-                        <div class="btn btn-group-xs" style="padding:0px; float: right;">
-                            <button class="btn btn-danger" ng-click="uploader.removeFromQueue(file)">
-                            <i class="glyphicon glyphicon-trash"></i>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </form>
-</section>
+        </form>
+    </section>
 </div>

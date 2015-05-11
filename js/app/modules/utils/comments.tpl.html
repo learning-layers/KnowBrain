@@ -20,9 +20,9 @@
     - limitations under the License.
     -->
     <div class="discussionEntry">
-        <a class="pull-left user-small-container">
+        <a class="pull-left user-small-container" ng-href="#/social/{{value.author.id}}">
         <div class="user-small-pic"></div>
-        <div class="user-small-label">{{value.author}}</div>
+        <div class="user-small-label">{{value.author.label}}</div>
         </a>
         <div class="pull-left discussionBody">
             <form>
@@ -37,9 +37,9 @@
         <div class="clearfix"></div>
     </div>
     <div class="discussionEntry" ng-repeat="(key, value) in model.disc.entries" ng-show="model != null">
-        <a class="pull-left user-small-container">
+        <a class="pull-left user-small-container" ng-href="#/social/{{value.author.id}}">
         <div class="user-small-pic"></div>
-        <div class="user-small-label">{{value.author}}</div>
+        <div class="user-small-label">{{value.author.label}}</div>
         </a>
         <div class="pull-left discussionBody">
             <span>{{value.content}}</span>

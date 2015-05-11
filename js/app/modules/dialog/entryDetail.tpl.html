@@ -29,17 +29,19 @@
     <div class="entry-detail-preview col-xs-7">
         <div class="entry-detail-preview-icon glyphicon" class="glyphicon" ng-class="{'glyphicon-file': (entry.type == ENTITY_TYPES.file), 'glyphicon-link' : (entry.type == ENTITY_TYPES.link)}"></div>
         <div class="entry-detail-preview-actions btn-group">
-            <button type="button" class="btn btn-default" ng-show="(entry.type == ENTITY_TYPES.file) && !entry.downloading" ng-click="downloadEntity()">
-            <span class="glyphicon glyphicon-cloud-download" tooltip-placement="top" tooltip="{{t('download')}}"></span>
+            <button type="button" class="btn btn-default" ng-show="(entry.type == ENTITY_TYPES.file) && !entry.downloading" ng-click="downloadEntity()" tooltip-placement="top" tooltip="Download" container="body">
+            <span class="glyphicon glyphicon-cloud-download"></span>
             </button>
-            <button type="button" class="btn btn-default entry-detail-download-indicator" ng-show="(entry.type == ENTITY_TYPES.file) && entry.downloading" >
-            <span class="glyphicon ajax-loader-light-grey-xs"  tooltip-placement="top" tooltip="{{t('downloading')}}"></span>
+            <button type="button" class="btn btn-default entry-detail-download-indicator" ng-show="(entry.type == ENTITY_TYPES.file) && entry.downloading" tooltip-placement="top" tooltip="Downloading">
+            <span class="glyphicon ajax-loader-light-grey-xs"></span>
             </button>
-            <button type="button" class="btn btn-default" ng-show="entry.type == ENTITY_TYPES.link" ng-click="openLink()">
-            <span class="glyphicon glyphicon-globe" tooltip-placement="top" tooltip="{{t('follow_link')}}"></span>
+            <button type="button" class="btn btn-default" ng-show="entry.type == ENTITY_TYPES.link" ng-click="openLink()" tooltip-placement="top" tooltip="{{t('follow_link')}}">
+            <span class="glyphicon glyphicon-globe"></span>
             </button>
-            <button type="button" class="btn btn-default" ng-click="deleteEntity()" ng-hide="isSearchResult"><span class="glyphicon glyphicon-trash" tooltip-placement="top" tooltip="{{t('delete_resource')}}"></span></button>
-            <button type="button" class="btn btn-default" ng-click="shareEntity()" ng-hide="isSearchResult"><span class="glyphicon glyphicon-share" tooltip-placement="top" tooltip="{{t('share_resource')}}"></span></button>
+            <button type="button" class="btn btn-default" ng-click="deleteEntity()" ng-hide="isSearchResult" tooltip-placement="top" tooltip="Delete">
+            <span class="glyphicon glyphicon-trash"></span></button>
+            <button type="button" class="btn btn-default" ng-click="shareEntity()" ng-hide="isSearchResult" tooltip-placement="top" tooltip="Share">
+            <span class="glyphicon glyphicon-share"></span></button>
         </div>
     </div>
     <div class="entry-detail-info col-xs-5">
@@ -66,37 +68,41 @@
                 <div ng-show="entry.description.length == 0 && !editingDescription">No description</div>
                 <div ng-show="entry.description.length > 0 && !editingDescription" ng-bind-html="entry.description | nl2br"></div>
                 <textarea class="form-control" ng-show="editingDescription" ng-model="editedDescription" style="font-size:12px; padding-left:5px;" rows="5" placeholder="Enter description">
-                    {{entry.description}}
+                {{entry.description}}
                 </textarea>
-                <button ng-click="saveDescription(editedDescription); editingDescription = !editingDescription;" class="btn btn-xs" ng-class="editingDescription ? 'btn-success' : 'btn-default'" style="margin-top:3px; position:relative; float:right;">
-                {{editingDescription ? 'Save' : 'Edit'}}
-                </button>
-                <button ng-click="editingDescription = false;" ng-show="editingDescription" class="btn btn-default btn-xs" style="margin-top:3px; position:relative; float:right;">
+                <button ng-click="editingDescription = false;" ng-show="editingDescription" class="btn btn-default btn-xs" style="margin-top:3px; position:relative;">
                 Cancel
                 </button>
+                <button ng-click="saveDescription(editedDescription); editingDescription = !editingDescription;" class="btn btn-xs" ng-class="editingDescription ? 'btn-success' : 'btn-default'" style="margin-top:3px; position:relative;">
+                {{editingDescription ? 'Save' : 'Edit'}}
+                </button>
             </div>
-            <h5>Rating:</h5>
-            <div class="entry-detail-info-rating">
-                <rating ui-if="ifVal" value="entry.overallRating.score" readOnly="ratingReadOnly" max="5" ng-click="rateEntry(entry.overallRating.score);" state-on="'star-rating-cursor glyphicon glyphicon-star'" state-off="'star-rating-cursor glyphicon glyphicon-star-empty'"></rating>
-                ({{entry.overallRating.frequ}})
+            <div style="border-top: 1px solid #E8E8E8; margin-top: 14px;">
+                <h5>Rating:</h5>
+                <div class="entry-detail-info-rating">
+                    <rating ui-if="ifVal" value="entry.overallRating.score" readOnly="ratingReadOnly" max="5" ng-click="rateEntry(entry.overallRating.score);" state-on="'star-rating-cursor glyphicon glyphicon-star'" state-off="'star-rating-cursor glyphicon glyphicon-star-empty'"></rating>
+                    ({{entry.overallRating.frequ}})
+                </div>
             </div>
-            <h5>Tags:</h5>
-            <tags-input ng-model="tags" custom-class="bootstrap" placeholder="{{t('add_a_tag')}}" on-tag-added="tagAdded($tag)"
-            on-tag-removed="tagRemoved($tag)"
-            add-on-comma="true"
-            add-on-space="false"
-            add-on-blur="false"
-            add-on-enter="true"
-            allowed-tags-pattern="^[a-zA-Z0-9_-]*$"
-            >
-            <auto-complete source="queryTags($query)"
-            min-length="1"
-            max-results-to-show="15"
-            >
-            </auto-complete>
-            </tags-input>
-            <div class="entry-detail-info-tag-allowed-chars">
-                <span class="glyphicon glyphicon-info-sign"></span>&nbsp;{{t('allowed_chars')}} a-z A-Z 0-9 _ -
+            <div style="border-top: 1px solid #E8E8E8; margin-top: 10px;">
+                <h5>Tags:</h5>
+                <tags-input ng-model="tags" custom-class="bootstrap" placeholder="{{t('add_a_tag')}}" on-tag-added="tagAdded($tag)"
+                on-tag-removed="tagRemoved($tag)"
+                add-on-comma="true"
+                add-on-space="false"
+                add-on-blur="false"
+                add-on-enter="true"
+                allowed-tags-pattern="^[a-zA-Z0-9_-]*$"
+                >
+                <auto-complete source="queryTags($query)"
+                min-length="1"
+                max-results-to-show="15"
+                >
+                </auto-complete>
+                </tags-input>
+                <div class="entry-detail-info-tag-allowed-chars">
+                    <span class="glyphicon glyphicon-info-sign"></span>&nbsp;{{t('allowed_chars')}} a-z A-Z 0-9 _ -
+                </div>
             </div>
             <h5>Discussion:</h5>
             <comments-util model="entry">

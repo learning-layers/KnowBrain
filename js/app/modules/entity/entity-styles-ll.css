@@ -19,7 +19,7 @@
 
 .collection-entry-selected{
   cursor: pointer;
-  background-color: #f2f2f2;
+  background-color: #f8f8f8;
   border-radius: 5px;
     border: 1px solid #d8d8d8;
     border-top-width: 0;
@@ -82,11 +82,6 @@
   cursor: pointer;
   text-decoration: underline;
   color: #f6a551;
-}
-
-
-.tooltip {
-    position: fixed;
 }
 
 .collection-entry-checkbox-wrapper {
@@ -246,6 +241,12 @@
 
 .btn-add-entity div {
   font-size: 20px;
+}
+
+#upload-box.actions-box-list {
+    width: 100%;
+    height: 50px;
+    margin-bottom: 10px;
 }
 
 #upload-link {

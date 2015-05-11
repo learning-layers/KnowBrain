@@ -105,12 +105,13 @@
     </div>
     <!-- grid or list-->
     <div ng-show="collectionViewMode == 'grid'" style="overflow: hidden; padding: 0px 10px 18px 10px;">
-        <kb-add-entity destination='circle' after-add-link="afterAddLink" after-choose-entity="afterChooseEntity" after-add-entity='afterAddEntity'></kb-add-entity>
+        <kb-add-entity container-type="grid" destination='circle' after-add-link="afterAddLink" after-choose-entity="afterChooseEntity" after-add-entity='afterAddEntity'></kb-add-entity>
         <ng-entity ng-repeat="entry in entities | orderBy: predicate : reverse | filter : filterFunction" context-menu data-target="menu-{{ $index }}"></ng-entity>
     </div>
     <div ng-show="collectionViewMode == 'list'" style="overflow: hidden; padding: 0px 10px 0px 10px;">
         <table class="table vertical-aligned-table" style="margin-bottom:0px; color:#444;">
             <tbody>
+                <kb-add-entity container-type="list" destination='circle' after-add-link="afterAddLink" after-choose-entity="afterChooseEntity" after-add-entity='afterAddEntity'></kb-add-entity>
                 <tr ng-entity-list-item ng-repeat="entry in entities | orderBy: predicate : reverse | filter : filterFunction"  ng-click="selectResource(entry)" context-menu data-target="menu-{{ $index }}" >
                 </tr>
             </tbody>

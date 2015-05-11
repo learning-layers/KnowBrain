@@ -82,13 +82,15 @@
                     </div>
                     <div class="row">
                         <div class="col-md-4 column">
-                            <div class="icon-user-small icon-small">
-                            </div>
-                            <div class="icon-attached">
-                                <div>{{thread.author.name}}</div>
-                                <span class="text-muted" data-livestamp="{{thread.creationTime.toISOString()}}" ng-mouseenter="thread_date_hover = true" ng-mouseleave="thread_date_hover = false" ng-hide="thread_date_hover === true"></span>
-                                <span class="text-muted" ng-mouseenter="thread_date_hover = true" ng-mouseleave="thread_date_hover = false" ng-hide="thread_date_hover !== true">{{thread.getFormattedCreationTime()}}</span>
-                            </div>
+                            <a ng-href="#/social/{{thread.author.id}}">
+                                <div class="icon-user-small icon-small">
+                                </div>
+                                <div class="icon-attached">
+                                    <div>{{thread.author.name}}</div>
+                                    <span class="text-muted" data-livestamp="{{thread.creationTime.toISOString()}}" ng-mouseenter="thread_date_hover = true" ng-mouseleave="thread_date_hover = false" ng-hide="thread_date_hover === true"></span>
+                                    <span class="text-muted" ng-mouseenter="thread_date_hover = true" ng-mouseleave="thread_date_hover = false" ng-hide="thread_date_hover !== true">{{thread.getFormattedCreationTime()}}</span>
+                                </div>
+                            </a>
                         </div>
                         <div class="col-md-8 column" ng-show="thread.attachments.length > 0">
                             <div class="icon-small" ng-class="{'icon-file-small' : thread.attachments[0].type === 'file',

@@ -193,13 +193,12 @@ input[name="searchInput"] {
     border-color: #ddd
 }
 
-
-
-
-
-
 .tooltip {
     z-index: 2000;
+}
+
+.collection-entry-tags-box > .tooltip {
+    position: fixed;
 }
 
 .padding-zero {
@@ -844,6 +843,10 @@ input[name="searchInput"] {
 }
 
 /* tag input */
+
+tags-input .autocomplete .suggestion-item.selected, tags-input .autocomplete .suggestion-item.selected em {
+    background-color: #f6a551;
+}
 
 .bootstrap .tags {
     border: 1px solid #ccc;

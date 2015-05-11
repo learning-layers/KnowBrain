@@ -186,7 +186,7 @@ angular.module('module.qa').controller("qaController", ['$scope', '$state', '$q'
     loadThreadList();
 }]);
 
-angular.module('module.qa').controller("AskQuestionController", function($scope, $state, $q, $modal, $dialogs, $filter, UriToolbox, qaService, Thread, THREAD_TYPE, THREAD_LIST_TYPE, Tag, SearchToolbox, FileUploader) {
+angular.module('module.qa').controller("AskQuestionController", function($scope, $state, $q, $modal, $dialogs, $filter, UriToolbox, qaService, Thread, THREAD_TYPE, THREAD_LIST_TYPE, Tag, SearchToolbox, FileUploader, TagFetchService) {
     $scope.THREAD_TYPE = THREAD_TYPE;
     $scope.newThread = new Thread(null, null, THREAD_TYPE.question, null, null, null, null);
     $scope.newThread.attachments = [];
@@ -261,6 +261,21 @@ angular.module('module.qa').controller("AskQuestionController", function($scope,
 
     $scope.afterAddLink = function(link) {
         $scope.newThread.attachments.push(link);
+    };
+    var search = function(tagsArray, query) {
+        var items;
+        items = tagsArray.filter(function(x) {
+            return x.toLowerCase().indexOf(query.toLowerCase()) > -1;
+        });
+        return items;
+    };
+    $scope.queryTags = function($queryString) {
+        var defer = $q.defer();
+        var promise = TagFetchService.fetchAllPublicTags();
+        promise.then(function(result) {
+            defer.resolve(search(result, $queryString));
+        });
+        return defer.promise;
     };
 });
 
@@ -343,7 +358,7 @@ angular.module('module.qa').controller("questionController", function($scope, $s
         $scope.newAnswer.threadId = $scope.question.id;
         return qaService.uploadFiles($scope.uploader.queue, $scope.newAnswer).then(qaService.addNewAnswer).then(function(result) {
             $scope.question.entries.push(result);
-            $scope.newAnswer = new ThreadEntry(null, null, THREAD_ENTRY_TYPE.qaEntry, null, null, null, {
+            $scope.newAnswer = new ThreadEntry(null, null, THREAD_ENTRY_TYPE.answer, null, null, null, {
                 likes: 0,
                 dislikes: 0,
                 like: null

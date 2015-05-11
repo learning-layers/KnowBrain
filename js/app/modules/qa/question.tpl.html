@@ -77,6 +77,7 @@
             <div class="answer underline" ng-repeat="answer in question.entries | orderBy : (sortBy === 'date' ? 'creationTime' : 'likes.likes') : true">
                 <div class="row clearfix">
                     <div class="col-md-10 column">
+                        <a ng-href="#/social/{{answer.author.id}}">
                         <div class="icon-user-medium icon-medium">
                         </div>
                         <div class="icon-attached">
@@ -84,6 +85,7 @@
                             <span class="text-muted" data-livestamp="{{answer.creationTime.toISOString()}}" ng-mouseenter="answer_date_hover = true" ng-mouseleave="answer_date_hover = false" ng-hide="answer_date_hover === true"></span>
                             <span class="text-muted" ng-mouseenter="answer_date_hover = true" ng-mouseleave="answer_date_hover = false" ng-hide="answer_date_hover !== true">{{answer.getFormattedCreationTime()}}</span>
                         </div>
+                        </a>
                     </div>
                     <div class="col-md-2 column">
                         <div class="col-md-6 column">
@@ -175,7 +177,7 @@
         <div class="col-md-8 column">
             <div class="row">
                 <div class="col-md-12 column">
-                    <textarea ng-model="newAnswer.content" class="form-control" rows="5" placeholder="Add your answer"></textarea>
+                    <text-angular ta-toolbar="[['h1','h2','h3'],['bold','italics','underline'], ['ul', 'ol'], ['justifyLeft', 'justifyCenter', 'justifyRight', 'indent', 'outdent'], ['undo', 'redo']]" ng-model="newAnswer.content"></text-angular>
                 </div>
             </div>
             <div class="row">

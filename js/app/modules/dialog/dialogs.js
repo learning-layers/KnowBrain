@@ -114,7 +114,7 @@ angular.module('dialogs.controllers', ['ui.bootstrap.modal', 'module.i18n', 'mod
             $scope.editedDescription = entry.description;
             //set tags
             angular.forEach(entry.tags, function(tag, key) {
-                $scope.tags.push(tag);
+                $scope.tags.push({text: tag});
             })
             if (entry.overallRating !== null && entry.overallRating.score != null) $scope.entryRating = entry.overallRating.score;
             if (isSearchResult) {
