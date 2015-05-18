@@ -36,11 +36,11 @@
         </p>
     </div>
     <div class="card-media" ng-show="activity.entities.length > 0">
-        <table class="table vertical-aligned-table">
+        <table class="table vertical-aligned-table" style="table-layout: fixed;">
             <tbody>
                 <tr ng-repeat="entry in activity.entities">
                     <div class="row">
-                        <td class="col-md-1">
+                        <td style="width:40px;">
                             <div ng-switch="entry.type">
                                 <div class="list-entitity-clickable" ng-click="handleEntryClick(entry); $event.stopPropagation();">
                                     <img ng-switch-when="group" src="images/group_pic_dummy.jpg" class="collection-entry-profile-pic"/>
@@ -58,8 +58,8 @@
                                 </div>
                             </div>
                         </td>
-                        <td class="col-md-11">
-                            <div class="col-md-12">
+                        <td style="display: block;">
+                            <div class="col-md-12" style="text-overflow:ellipsis; overflow:hidden;">
                                 <span class="list-entitity-clickable" ng-click="handleEntryClick(entry); $event.stopPropagation();">{{entry.label.length != 0 ? entry.label : entry.id}}
                                 </span>
                             </div>

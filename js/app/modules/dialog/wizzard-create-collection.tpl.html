@@ -21,25 +21,13 @@
     <div class="modal-body">
         <form role="form" class="form-horizontal">
             <div class="form-group">
-                <label class="col-md-3 control-label">{{t('collection_label')}}</label>
-                <div class="col-md-9">
                     <input type="text" class="form-control" placeholder="{{t('label_placeholder')}}" ng-model="newColl.label" required>
-                </div>
             </div>
             <div class="form-group" ng-show="currentCollection.space == SPACE_ENUM.private">
-                <label class="col-md-3 control-label">{{t('collection_is')}}</label>
-                <div class="col-md-9">
-                    <label>
                         <input type="checkbox" ng-model="newColl.private" ng-click="privateClicked()">
                         {{t('private')}} <span class="form-attribute-info">({{t('private_info')}})</span>
-                    </label>
-                </div>
-                <div class="col-md-9">
-                    <label>
                         <input type="checkbox" ng-model="newColl.shared" ng-click="sharedClicked()">
                         {{t('shared')}} <span class="form-attribute-info">({{t('shared_info')}})</span>
-                    </label>
-                </div>
             </div>
             <div class="form-group" ng-show="currentCollection.space == SPACE_ENUM.shared">
                 <div class="col-md-9"><span class="glyphicon glyphicon-info-sign"></span>
@@ -49,7 +37,7 @@
         </form>
         <div class="modal-footer">
             <div>
-                <button class="btn btn-success" ng-click="createCollection(newColl,closeWizzard)">{{t('create')}}</button>
+                <button class="btn btn-success" ng-click="createCollection(newColl,closeWizzard)">Create</button>
             </div>
         </div>
     </div>
