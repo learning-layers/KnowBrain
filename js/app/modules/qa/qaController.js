@@ -169,7 +169,7 @@ angular.module('module.qa').controller("qaController", ['$scope', '$state', '$q'
         }
     }
     $scope.shareThread = function(thread) {
-        $dialogs.shareEntity(thread);
+        $dialogs.shareEntities([thread]);
     }
     $scope.showAttachment = function(attachment) {
             if (attachment.type === 'entity') {

@@ -43,9 +43,10 @@ sharingModule.config(function ($stateProvider) {
 /**
  * CONTROLLER
  */
-sharingModule.controller("SharingController", ['$scope','$modalInstance', '$dialogs', '$q', 'i18nService', 'UserService', 'UserFetchService', 'SharingModel', 'ENTITY_TYPES', 'SHARING_OPTIONS', 'entity', 'GroupFetchService',function ($scope, $modalInstance, $dialogs, $q, i18nService, UserService, UserFetchService, SharingModel, ENTITY_TYPES, SHARING_OPTIONS, entity, GroupFetchService) {
+sharingModule.controller("SharingController", ['$scope','$modalInstance', '$dialogs', '$q', 'i18nService', 'UserService', 'UserFetchService', 'SharingModel', 'ENTITY_TYPES', 'SHARING_OPTIONS', 'entities', 'GroupFetchService',function ($scope, $modalInstance, $dialogs, $q, i18nService, UserService, UserFetchService, SharingModel, ENTITY_TYPES, SHARING_OPTIONS, entities, GroupFetchService) {
     
-        $scope.entity = entity;
+        $scope.entity = entities[0];
+        $scope.entities = entities;
         $scope.entityTypes = ENTITY_TYPES;
         $scope.sharingOptions = SHARING_OPTIONS;
 
@@ -87,11 +88,17 @@ sharingModule.controller("SharingController", ['$scope','$modalInstance', '$dial
 
         $scope.share = function () {
             if ($scope.sharingType === 0) {
-                SharingModel.shareEntityPublic($scope.entity);
+                angular.forEach($scope.entities, function(entity, key){
+                    SharingModel.shareEntityPublic(entity);
+                });
             } else if ($scope.sharingType === 1) {
-                SharingModel.shareEntityCustom($scope.entity, $scope.allFriends, "");
+                angular.forEach($scope.entities, function(entity, key){
+                    SharingModel.shareEntityCustom(entity, $scope.allFriends, "");
+                });
             } else {
-                SharingModel.shareEntityCustom($scope.entity, $scope.sharedEntities, "");
+                angular.forEach($scope.entities, function(entity, key){
+                    SharingModel.shareEntityCustom(entity, $scope.sharedEntities, "");
+                });
             }
 
             

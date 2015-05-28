@@ -208,7 +208,7 @@ angular.module('dialogs.controllers', ['ui.bootstrap.modal', 'module.i18n', 'mod
         });
     };
     $scope.shareEntity = function() {
-        $dialogs.shareEntity($scope.entry);
+        $dialogs.shareEntities([$scope.entry]);
     };
     $scope.saveDescription = function(description) {
         if (this.editingDescription) {
@@ -865,16 +865,16 @@ angular.module('dialogs.services', ['ui.bootstrap.modal', 'dialogs.controllers']
                     }
                 });
             },
-            shareEntity: function(entity) {
+            shareEntities: function(entities) {
                 return $modal.open({
-                    templateUrl: MODULES_PREFIX + '/sharing/shareEntity.tpl.html',
+                    templateUrl: MODULES_PREFIX + '/sharing/shareEntities.tpl.html',
                     controller: 'SharingController',
                     keyboard: true,
                     backdrop: true,
                     windowClass: 'modal-small',
                     resolve: {
-                        entity: function() {
-                            return entity;
+                        entities: function() {
+                            return entities;
                         }
                     }
                 });

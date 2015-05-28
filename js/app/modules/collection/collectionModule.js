@@ -164,6 +164,9 @@ angular.module('module.collection').controller("CollectionController", function(
         title: 'Move',
         cssClass: 'glyphicon glyphicon-floppy-open'
     }, {
+        title: 'Share',
+        cssClass: 'glyphicon glyphicon-share'
+    }, {
         title: 'Delete',
         cssClass: 'glyphicon glyphicon-trash'
     }];
@@ -335,7 +338,7 @@ angular.module('module.collection').controller("CollectionController", function(
         CurrentCollectionService.getCurrentCollection().setCollPublic();
     };
     $scope.shareCollection = function() {
-        $dialogs.shareEntity(CurrentCollectionService.getCurrentCollection());
+        $dialogs.shareEntities([CurrentCollectionService.getCurrentCollection()]);
     }
     this.getCumulatedTagsOfCurrentCollection = function() {
         var promise = CurrentCollectionService.getCurrentCollection().getCumulatedTags();
@@ -354,13 +357,16 @@ angular.module('module.collection').controller("CollectionController", function(
         }
         $scope.selectedEntities = [];
     };
-     $scope.downloadEntity = function(entity) {
+    $scope.downloadEntity = function(entity) {
         //$scope.entry.downloading = true;
 
         var promise = entity.downloadFile();
         promise.finally(function() {
             //$scope.entry.downloading = false;
         });
+    };
+    $scope.shareEntities = function(entities) {
+        $dialogs.shareEntities(entities);
     };
     var downloadEntities = function(entities) {
         var defer = $q.defer();
@@ -378,6 +384,9 @@ angular.module('module.collection').controller("CollectionController", function(
                 downloadEntities($scope.selectedEntities);
                 break;
             case 2:
+                $scope.shareEntities($scope.selectedEntities);
+                break;
+            case 3:
                 $scope.removeEntities($scope.selectedEntities);
                 break;
         }
