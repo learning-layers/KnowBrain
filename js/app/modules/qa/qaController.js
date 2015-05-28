@@ -351,7 +351,9 @@ angular.module('module.qa').controller("questionController", function($scope, $s
     };
 
     $scope.afterAddLink = function(link) {
-        $scope.newAnswer.attachments.push(link);
+        if (link != undefined) {
+            $scope.newAnswer.attachments.push(link);
+        }
     };
 
     $scope.postNewAnswer = function() {
