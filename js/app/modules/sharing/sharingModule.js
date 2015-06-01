@@ -43,14 +43,19 @@ sharingModule.config(function ($stateProvider) {
 /**
  * CONTROLLER
  */
-sharingModule.controller("SharingController", ['$scope','$modalInstance', '$dialogs', '$q', 'i18nService', 'UserService', 'UserFetchService', 'SharingModel', 'ENTITY_TYPES', 'SHARING_OPTIONS', 'entities', 'GroupFetchService',function ($scope, $modalInstance, $dialogs, $q, i18nService, UserService, UserFetchService, SharingModel, ENTITY_TYPES, SHARING_OPTIONS, entities, GroupFetchService) {
+sharingModule.controller("SharingController", ['$scope','$modalInstance', '$dialogs', '$q', 'i18nService', 'UserService', 'UserFetchService', 'SharingModel', 'ENTITY_TYPES', 'entities', 'GroupFetchService',function ($scope, $modalInstance, $dialogs, $q, i18nService, UserService, UserFetchService, SharingModel, ENTITY_TYPES, entities, GroupFetchService) {
     
         $scope.entity = entities[0];
         $scope.entities = entities;
         $scope.entityTypes = ENTITY_TYPES;
-        $scope.sharingOptions = SHARING_OPTIONS;
 
-        $scope.shareWith = SHARING_OPTIONS.private;
+        $scope.sharingOptions = [{label : 'Public', order : 0, cssClass : 'glyphicon-globe'},
+                                {label : 'Friends', order : 1, cssClass : 'glyphicon-user'},
+                                {label : 'Circles', order : 2, cssClass : 'glyphicon-copyright-mark'},
+                                {label : 'Circles and friends', order : 3, cssClass : 'glyphicon-leaf'},
+                                {label : 'Custom', order : 4, cssClass : 'glyphicon-cog'}];
+
+        $scope.shareWith = $scope.sharingOptions[0];
         $scope.sharedEntities = [];
         
         $scope.allFriends = [];
@@ -62,9 +67,14 @@ sharingModule.controller("SharingController", ['$scope','$modalInstance', '$dial
         });
         
         
-        var promise = UserFetchService.getFriends();
-        promise.then(function(result) {
+        var friendsPromise = UserFetchService.getFriends();
+        friendsPromise.then(function(result) {
             $scope.allFriends = result.friends;
+        });
+
+        var usersPromise = UserFetchService.getAllUsers();
+        usersPromise.then(function(result) {
+            $scope.allUsers = result.users;
         });
         
         $scope.shareInput;
@@ -87,13 +97,28 @@ sharingModule.controller("SharingController", ['$scope','$modalInstance', '$dial
         };
 
         $scope.share = function () {
-            if ($scope.sharingType === 0) {
+            if ($scope.shareWith.order === 0) {  //public
                 angular.forEach($scope.entities, function(entity, key){
                     SharingModel.shareEntityPublic(entity);
                 });
-            } else if ($scope.sharingType === 1) {
+            } else if ($scope.shareWith.order === 1) { //friends
                 angular.forEach($scope.entities, function(entity, key){
                     SharingModel.shareEntityCustom(entity, $scope.allFriends, "");
+                });
+            } else if ($scope.shareWith.order === 2) { //Circles
+                angular.forEach($scope.entities, function(entity, key){
+                    SharingModel.shareEntityCustom(entity, $scope.allCircles, "");
+                });
+            } else if ($scope.shareWith.order === 3) { //Friends and circles
+                var circlesAndFriends = [];
+                angular.forEach($scope.allCircles, function(circle, key){
+                    circlesAndFriends.push(circle);
+                });
+                angular.forEach($scope.allFriends, function(friend, key){
+                    circlesAndFriends.push(friend);
+                });
+                angular.forEach($scope.entities, function(entity, key){
+                    SharingModel.shareEntityCustom(entity, circlesAndFriends, "");
                 });
             } else {
                 angular.forEach($scope.entities, function(entity, key){
@@ -105,11 +130,15 @@ sharingModule.controller("SharingController", ['$scope','$modalInstance', '$dial
             $modalInstance.close();
         };
 
-        $scope.choosePersonsHandler = function () {
+        $scope.chooseFriendsHandler = function () {
                $dialogs.shareWith($scope.allFriends, $scope.sharedEntities);
         };
+
+        $scope.chooseUsersHandler = function () {
+               $dialogs.shareWith($scope.allUsers, $scope.sharedEntities);
+        };
         
-        $scope.chooseGroupsHandler = function () {
+        $scope.chooseCirclesHandler = function () {
                $dialogs.shareWith($scope.allCircles, $scope.sharedEntities);
         };
         
@@ -126,11 +155,8 @@ sharingModule.controller("SharingController", ['$scope','$modalInstance', '$dial
             e.stopPropagation();
         };
         
-        
-        $scope.sharingType = 0;
-        
-        $scope.setSharingType = function(sharingType) {
-            $scope.sharingType = sharingType;
+        $scope.setSharingOption = function(option) {
+            $scope.shareWith = option;
         };
         
         $scope.addShareTag = function(tag) {

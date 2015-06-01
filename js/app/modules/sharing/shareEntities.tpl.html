@@ -69,13 +69,12 @@
                     <div class="btn-group" style="text-align: left">
                         <div class="btn-group">
                             <button class="btn btn-default dropdown-toggle" data-toggle="dropdown">
-                                <em class="glyphicon" ng-class="{'glyphicon-globe':(sharingType == 0), 'glyphicon-user':(sharingType == 1), 'glyphicon-cog':(sharingType == 2)}" id="shareWithIcon"></em> 
-                                {{sharingType == 0 ? "public" : (sharingType == 1 ? "friends" : "custom")}} <span class="caret"></span>
+                                <em class="glyphicon {{shareWith.cssClass}}" id="shareWithIcon"></em> 
+                                {{shareWith.label}} <span class="caret"></span>
                             </button>
                             <ul class="dropdown-menu" role="menu">
-                                <li><a href="" ng-click="setSharingType(0)"> <span style="margin-right: 3px" class="glyphicon glyphicon-globe"></span>public</a></li>
-                                <li><a href="" ng-click="setSharingType(1)"> <span style="margin-right: 3px" class="glyphicon glyphicon-user"></span>friends</a></li>
-                                <li><a href="" ng-click="setSharingType(2)"> <span style="margin-right: 3px" class="glyphicon glyphicon-cog"></span>custom</a></li>
+
+                                <li ng-repeat="option in sharingOptions | orderBy:'order'"><a href="" ng-click="setSharingOption(option)"> <span style="margin-right: 3px" class="glyphicon {{option.cssClass}}"></span>{{option.label}}</a></li>
                             </ul>
                         </div>
                         <button class="btn btn-success" type="button" ng-click="share()">
@@ -85,7 +84,7 @@
                 </div>
             </div>
 
-            <div class="row clearfix" ng-show="sharingType == 2">
+            <div class="row clearfix" ng-show="shareWith.label == 'Custom'">
                 <div class="col-md-12 column">
                     <p>Share With<p/>
                     <div class="dropdown form-control" id="shareWithDropdown">
@@ -106,7 +105,7 @@
                                 <button class="removeTag" ng-click="removeShareTag(entity)">x</button>
                             </span> 
                             <input id="shareInput" ng-click="activateDropdown($event)"
-                                   ng-model="userFilter.label" ng-blur="blurInput()" placeholder="+ Add friend or circle" />
+                                   ng-model="userFilter.label" ng-blur="blurInput()" placeholder="+ Add user or circle" />
                         </div>
                         <ul id="shareWithDropdownContent" class="dropdown-menu">
                             <li ng-repeat="circle in allCircles| filter: userFilter" ng-show="userFilter.label"><a
@@ -116,7 +115,7 @@
                             <li role="presentation" class="divider"
                                 ng-show="userFilter.label && (allCircles.length > 0)"></li>
                             <li
-                                ng-repeat="user in allFriends|  filter: userFilter  | orderBy: 'label'"
+                                ng-repeat="user in allUsers |  filter: userFilter  | orderBy: 'label'"
                                 ng-show="userFilter.label"><a href=""
                                                           ng-click="addShareTag(user)" href="#">{{}}<img
                                         src="images/small_profile_pic_dummy.png"
@@ -124,13 +123,19 @@
                         </ul>
                     </div>
                     <div style=" margin-top: 5px">
-                        <a href="" ng-click="choosePersonsHandler()">
+                        <a href="" ng-click="chooseFriendsHandler()">
                             <span style="margin-right: 3px" class="glyphicon glyphicon-user"></span>
                             Choose friends
                         </a>
                     </div>
                     <div style=" margin-top: 5px">
-                        <a href="" ng-click="chooseGroupsHandler()">
+                        <a href="" ng-click="chooseUsersHandler()">
+                            <span style="margin-right: 3px" class="glyphicon glyphicon-user"></span>
+                            Choose users
+                        </a>
+                    </div>
+                    <div style=" margin-top: 5px">
+                        <a href="" ng-click="chooseCirclesHandler()">
                             <span style="margin-right: 3px" class="glyphicon glyphicon-user"></span>
                             Choose circles
                         </a>

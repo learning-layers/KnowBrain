@@ -34,12 +34,6 @@ angular.module('module.models').constant('ENTITY_TYPES', {
     file: 'file',
     link: 'entity'
 });
-angular.module('module.models').constant('SHARING_OPTIONS', {
-    private: 'private',
-    friends: 'friends',
-    public: 'public',
-    custom: 'custom'
-});
 angular.module('module.models').constant('RATING_MAX', 5);
 angular.module('module.models').factory('BaseModel', ['$q', '$rootScope', 'UserService', 'FetchServiceHelper', "SPACE_ENUM", 'Tag', function($q, $rootScope, UserSrv, FetchServiceHelper, SPACE_ENUM, Tag) {
     function Model() {};
@@ -359,7 +353,7 @@ angular.module('module.models').factory('CollectionModel', ['$q', '$rootScope', 
     };
     return (Collection);
 }]);
-angular.module('module.models').factory('EntityModel', ['$q', '$rootScope', 'UserService', 'BaseModel', 'UriToolbox', 'SPACE_ENUM', 'ENTITY_TYPES', 'SHARING_OPTIONS', function($q, $rootScope, UserSrv, BaseModel, UriToolbox, SPACE_ENUM, ENTITY_TYPES, SHARING_OPTIONS) {
+angular.module('module.models').factory('EntityModel', ['$q', '$rootScope', 'UserService', 'BaseModel', 'UriToolbox', 'SPACE_ENUM', 'ENTITY_TYPES', function($q, $rootScope, UserSrv, BaseModel, UriToolbox, SPACE_ENUM, ENTITY_TYPES) {
     function Entity() {
         this.parentColl = null;
         this.author = null;
