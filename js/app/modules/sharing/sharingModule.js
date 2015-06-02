@@ -44,8 +44,6 @@ sharingModule.config(function ($stateProvider) {
  * CONTROLLER
  */
 sharingModule.controller("SharingController", ['$scope','$modalInstance', '$dialogs', '$q', 'i18nService', 'UserService', 'UserFetchService', 'SharingModel', 'ENTITY_TYPES', 'entities', 'GroupFetchService',function ($scope, $modalInstance, $dialogs, $q, i18nService, UserService, UserFetchService, SharingModel, ENTITY_TYPES, entities, GroupFetchService) {
-    
-        $scope.entity = entities[0];
         $scope.entities = entities;
         $scope.entityTypes = ENTITY_TYPES;
 

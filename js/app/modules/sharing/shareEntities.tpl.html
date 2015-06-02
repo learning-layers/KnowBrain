@@ -53,7 +53,7 @@
                 </div>
                                 </div> 
                             </div></td>
-                        <td align="left"><div class="share-entity-preview-box-label">{{(entity.type.enum === 'qa') ? entity.title : entity.label}}
+                        <td align="left"><div class="share-entity-preview-box-label">{{entity != undefined ? ((entity.type.enum === 'qa') ? entity.title : entity.label) : entities.length + ' Entities'}}
                             </div></td> 
                     </tr>
                 </table>
