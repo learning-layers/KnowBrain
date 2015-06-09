@@ -30,6 +30,16 @@ html {
 
 body { 
     height: 100%;
+    padding-top: 90px;
+}
+
+#collection-header {
+    position: fixed;
+    background-color: white;
+    z-index: 1000;
+    width: calc(100% - 410px);
+    top: 73px;
+    background-color: #ececec;
 }
 
 input[type="text"], textarea {
