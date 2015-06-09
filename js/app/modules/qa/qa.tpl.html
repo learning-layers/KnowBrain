@@ -65,7 +65,7 @@
         <div class="row clearfix" ng-repeat="thread in selectedThreadList() | orderBy: 'creationTime' : true" ng-switch="thread.type.label" ng-style="!$last ? {'border-bottom': '1px solid #eee'} : ''">
             <div ng-switch-when="question">
                 <div class="col-md-1 column hidden-sm hidden-xs">
-                    <div class="icon-large icon-question-large"></div>
+                    <div class="icon-large icon-question-medium"></div>
                 </div>
                 <div class="col-md-11 column">
                     <div class="row">
