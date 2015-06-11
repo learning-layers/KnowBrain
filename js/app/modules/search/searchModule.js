@@ -163,6 +163,8 @@ angular.module('module.search').controller("SearchController", ['$scope', '$root
                 null, //wordsToSearchFor,
                 true, //includeTags,
                 tagsArray, //tagsToSearchFor,
+                false,                      //includeAuthors
+                null,                       //authorsToSearchFor
                 false, //includeMIs,
                 null, //misToSearchFor,
                 false, //includeLabel,
@@ -201,6 +203,8 @@ angular.module('module.search').controller("SearchController", ['$scope', '$root
                 keywordsArray, //wordsToSearchFor,
                 false, //includeTags,
                 null, //tagsToSearchFor,
+                false,                      //includeAuthors
+                null,                       //authorsToSearchFor
                 false, //includeMIs,
                 null, //misToSearchFor,
                 true, //includeLabel,

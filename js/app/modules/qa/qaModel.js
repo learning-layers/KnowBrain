@@ -692,6 +692,8 @@ angular.module('module.qa').service("qaService", ['$q', '$rootScope', 'UserServi
                     keywordsToSearchFor,         //wordsToSearchFor
                     tagList.length > 0,         //includeTags
                     tagList,                    //tagsToSearchFor
+                    false,                      //includeAuthors
+                    null,                       //authorsToSearchFor
                     false,                      //includeMIs
                     null,                       //misToSearchFor
                     true,                      //includeLabel
@@ -825,6 +827,8 @@ angular.module('module.qa').service("qaService", ['$q', '$rootScope', 'UserServi
                     null,                       //wordsToSearchFor
                     true,                       //includeTags
                     tagList,                     //tagsToSearchFor
+                    false,                      //includeAuthors
+                    null,                       //authorsToSearchFor
                     false,                      //includeMIs
                     null,                       //misToSearchFor
                     true,                       //includeLabel
