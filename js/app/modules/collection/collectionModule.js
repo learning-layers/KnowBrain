@@ -161,9 +161,6 @@ angular.module('module.collection').controller("CollectionController", function(
         title: 'Download',
         cssClass: 'glyphicon glyphicon-download-alt'
     }, {
-        title: 'Move',
-        cssClass: 'glyphicon glyphicon-floppy-open'
-    }, {
         title: 'Share',
         cssClass: 'glyphicon glyphicon-share'
     }, {
@@ -383,10 +380,10 @@ angular.module('module.collection').controller("CollectionController", function(
             case 0:
                 downloadEntities($scope.selectedEntities);
                 break;
-            case 2:
+            case 1:
                 $scope.shareEntities($scope.selectedEntities);
                 break;
-            case 3:
+            case 2:
                 $scope.removeEntities($scope.selectedEntities);
                 break;
         }

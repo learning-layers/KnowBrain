@@ -442,6 +442,13 @@ angular.module('module.circles').controller("addMembersController", function($q,
             return !excludeUsers.some(function(test) {
                 return test.label === item.label; // TODO:use id
             });
+        }); 
+        $scope.allUsers.sort(function(a,b) {
+            if ( a.friend && !b.friend )
+                return -1;
+            if ( !a.friend && b.friend )
+                return 1;
+            return 0;
         });
     });
     $scope.selectUser = function(user) {
@@ -486,6 +493,13 @@ angular.module('module.circles').controller("createCircleController", function($
         var allUsersPromise = UserFetchService.getAllUsers();
         allUsersPromise.then(function(result) {
             $scope.allUsers = result.users;
+            $scope.allUsers.sort(function(a,b) {
+                if ( a.friend && !b.friend )
+                    return -1;
+                if ( !a.friend && b.friend )
+                    return 1;
+                return 0;
+            });
         });
     });
 
