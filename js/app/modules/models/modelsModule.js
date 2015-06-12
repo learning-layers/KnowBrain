@@ -168,6 +168,7 @@ angular.module('module.models').factory('BaseModel', ['$q', '$rootScope', 'UserS
                 "some explanation", //description
                 null, //users
                 null, //entities
+                null, //entityLabels
                 null //circles
             );
             return defer.promise;

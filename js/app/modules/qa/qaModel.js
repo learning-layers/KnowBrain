@@ -297,6 +297,7 @@ angular.module('module.qa').service("qaService", ['$q', '$rootScope', 'UserServi
                     thread.description, //description 
                     null, //users
                     attachmentIdList, //entities
+                    null, //entityLabels
                     null //circles
                     );
 
@@ -338,6 +339,7 @@ angular.module('module.qa').service("qaService", ['$q', '$rootScope', 'UserServi
                     null, //description
                     null, //users
                     attachmentIdList, //entities
+                    null, //entityLabels
                     null //circles
                     );
 

@@ -118,6 +118,7 @@ angular.module('module.chat').service("chatService", ['$q', '$rootScope','UserSe
 			sharedUserIdList.toString(),//description,
 			allOtherUserList,//users,
 			null, //entities
+      null, //entityLabels
       null //circles
 			);
 
@@ -145,6 +146,7 @@ angular.module('module.chat').service("chatService", ['$q', '$rootScope','UserSe
 			null,//description,
 			null,//users,
 			null,//entities
+      null, //entityLabels
       null //circles
         );
       
