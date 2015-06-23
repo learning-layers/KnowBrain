@@ -246,24 +246,24 @@ angular.module('module.models').factory('CollectionModel', ['$q', '$rootScope', 
     Collection.prototype.uploadFile = function(file) {
         var defer = $q.defer();
         var self = this;
-        new SSFileUpload(function(fileUri, fileName) {
+        new SSFileUpload(function(result, fileName) {
             var entry = new EntityModel();
             entry.init({
-                id: fileUri,
+                id: result.file,
                 label: fileName,
                 parentColl: self.id,
                 space: self.space,
                 type: ENTITY_TYPES.file
             });
             entry.init({
-                uriPathnameHash: UriToolbox.extractUriPathnameHash(fileUri)
+                uriPathnameHash: UriToolbox.extractUriPathnameHash(result.file)
             });
             defer.resolve(entry);
             $rootScope.$apply();
         }, function(error) {
             defer.reject(error);
             $rootScope.$apply();
-        }, UserSrv.getUser(), UserSrv.getKey(), file);
+        }, UserSrv.getKey(), file);
         return defer.promise;
     };
     Collection.prototype.addEntries = function(entries, labels) {
@@ -410,12 +410,12 @@ angular.module('module.models').factory('EntityModel', ['$q', '$rootScope', 'Use
         var defer = $q.defer();
         var self = this;
         if (this.type == ENTITY_TYPES.file) {
-            new SSFileUpload(function(fileUri, fileName) {
-                console.log(fileUri);
-                self.id = fileUri;
+            new SSFileUpload(function(result, fileName) {
+                console.log(result.file);
+                self.id = result.file;
                 self.label = fileName;
                 self.type = ENTITY_TYPES.file;
-                self.uriPathnameHash = UriToolbox.extractUriPathnameHash(fileUri);
+                self.uriPathnameHash = UriToolbox.extractUriPathnameHash(result.file);
                 self.uploaded = true;
                 defer.resolve(self);
                 //$rootScope.$apply();
@@ -423,7 +423,7 @@ angular.module('module.models').factory('EntityModel', ['$q', '$rootScope', 'Use
                 console.log("Error");
                 defer.reject(error);
                 //$rootScope.$apply();
-            }, UserSrv.getUser(), UserSrv.getKey(), this.fileHandle, null);
+            }, UserSrv.getKey(), this.fileHandle);
             return defer.promise;
         }
     }
@@ -596,24 +596,24 @@ angular.module('module.models').service("EntityFetchService", ['$q', '$rootScope
     this.uploadEntity = function(file) {
         var defer = $q.defer();
         var self = this;
-        new SSFileUpload(function(parentUri, fileUri, fileName) {
+        new SSFileUpload(function(result, fileName) {
             var entry = new Entity();
             entry.init({
-                id: fileUri,
+                id: result.file,
                 label: fileName,
-                parentColl: parentUri,
+                parentColl: null,
                 space: self.space,
                 type: ENTITY_TYPES.file
             });
             entry.init({
-                uriPathnameHash: UriToolbox.extractUriPathnameHash(fileUri)
+                uriPathnameHash: UriToolbox.extractUriPathnameHash(result.file)
             });
             defer.resolve(entry);
             $rootScope.$apply();
         }, function(error) {
             defer.reject(error);
             $rootScope.$apply();
-        }, UserSrv.getUser(), UserSrv.getKey(), file, this.id);
+        }, UserSrv.getKey(), file);
         return defer.promise;
     };
 }]);

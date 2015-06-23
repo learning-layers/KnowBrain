@@ -391,14 +391,13 @@ angular.module('module.qa').service("qaService", ['$q', '$rootScope', 'UserServi
                 var deferFile = $q.defer();
 
                 new SSFileUpload(
-                        function (file_id) {
-                            deferFile.resolve(new Attachment(file_id, file_id, 'file'));
+                        function (result, fileName) {
+                            deferFile.resolve(new Attachment(result.file, result.file, 'file'));
                         },
                         function (error) {
                             console.log(error);
                             deferFile.reject(error);
                         },
-                        UserSrv.getUser(),
                         UserSrv.getKey(),
                         attachment._file
                         );
