@@ -71,20 +71,20 @@ angular.module('module.activities').service('ActivityFetchService', ['$q','UserS
         var defer = $q.defer();
         var self = this;
         
-        new SSActivitiesGet(function(result){
+        new SSActivitiesGetFiltered(function(result){
                 defer.resolve(result);
             },
             function(error){
                 console.log(error);
             },
-            UserSrv.getUser(),
             UserSrv.getKey(),
             types, //types
             users, //users
             entities, //entities 
             circles, //circles
             startTime, //startTime
-            endTime //endTime
+            endTime, //endTime
+            null //includeOnlyLastActivities
         );
         
         return defer.promise;
