@@ -400,10 +400,16 @@ angular.module('module.models').factory('EntityModel', ['$q', '$rootScope', 'Use
     Entity.prototype.downloadFile = function() {
         var defer = $q.defer();
         if (this.type !== ENTITY_TYPES.file) return null;
-        new SSFileDownload(this.servHandleFileDownload(defer), function(error) {
+        
+      new SSFileDownload(
+          this.servHandleFileDownload(defer), 
+        function(error) {
             defer.reject();
             console.log(error);
-        }, UserSrv.getUser(), UserSrv.getKey(), this.id);
+        }, 
+        UserSrv.getKey(), 
+        this.id);
+        
         return defer.promise;
     };
     Entity.prototype.uploadFile = function() {

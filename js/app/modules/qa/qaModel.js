@@ -160,7 +160,6 @@ angular.module('module.qa').factory('Attachment', ['$q', 'UserService', 'ENTITY_
         new SSFileDownload(
           this.servHandleFileDownload(defer),
           function(error){ defer.reject(); console.log(error); },
-          UserSrv.getUser(),
           UserSrv.getKey(),
           this.id
           );
@@ -179,7 +178,6 @@ angular.module('module.qa').factory('Attachment', ['$q', 'UserService', 'ENTITY_
             defer.resolve(result);
           },
           function(error){ defer.reject(); console.log(error); },
-          UserSrv.getUser(),
           UserSrv.getKey(),
           this.id
           );
