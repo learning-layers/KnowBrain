@@ -347,7 +347,7 @@ angular.module('module.qa').service("qaService", ['$q', '$rootScope', 'UserServi
     this.addNewComment = function (answer) {
       var defer = $q.defer();
       
-      new SSEntityCommentsAdd(
+      new SSEntityUpdate(
         function (result) {
           defer.resolve(answer)
       },
@@ -356,8 +356,11 @@ angular.module('module.qa').service("qaService", ['$q', '$rootScope', 'UserServi
         defer.reject(error);
       },
       UserSrv.getKey(),
-      answer.id,
-      [answer.comments[answer.comments.length - 1]]); //comments
+      answer.id, //entity
+      null, //label, 
+      null, // description, 
+      [answer.comments[answer.comments.length - 1]], //comments
+      null); //read
       
       return defer.promise;
     };
@@ -455,7 +458,7 @@ angular.module('module.qa').service("qaService", ['$q', '$rootScope', 'UserServi
             //    defer.resolve(object);
             //}, 10);
 
-            new SSTagsGetPOST(
+            new SSTagsGetFiltered(
                     function (result) {
                         angular.forEach(result.tags, function (value, key) {
                             var tag = new Tag(value.id, value.entity, value.label);
@@ -482,7 +485,7 @@ angular.module('module.qa').service("qaService", ['$q', '$rootScope', 'UserServi
         this.getEntitiesForTag = function (tag) {
             var defer = $q.defer();
 
-            new SSEntitiesForTagsGet(
+            new SSEntitiesForTagsGetFiltered(
                     function (result) {
 
                         var promiseList = [];
@@ -566,7 +569,7 @@ angular.module('module.qa').service("qaService", ['$q', '$rootScope', 'UserServi
     var getThreadWithEntries = function (id) {
       var deferThread = $q.defer();
       
-      new SSDiscGet(
+      new SSDiscGetFiltered(
         function (result) {
           
           var thread = new Thread(result.disc.id, result.disc.author, getThreadTypeByEnum(result.disc.type), result.disc.label, result.disc.description, result.disc.entity, result.disc.creationTime, result.disc.circleTypes, {likes : 10, dislikes : 5, like : null});

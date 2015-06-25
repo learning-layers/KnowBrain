@@ -4,7 +4,7 @@ angular.module('module.group').service("GroupFetchService", ['$q','UserService',
         var defer = $q.defer();
         var self = this;
 
-        new SSCircleGet(
+        new SSCircleGetFiltered(
             function(result) {
                 var entities = [];
                 for (var i=0; i < result.circle.entities.length; i++) {
@@ -96,7 +96,9 @@ angular.module('module.group').service("GroupFetchService", ['$q','UserService',
         UserSrv.getKey(),
         circle.id,    //entity, 
         label,        //label, 
-        description); //description
+        description, //description
+        null, //comments
+        null); //read
 
         return defer.promise;        
     };

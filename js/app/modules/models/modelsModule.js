@@ -54,15 +54,21 @@ angular.module('module.models').factory('BaseModel', ['$q', '$rootScope', 'UserS
         saveLabel: function(newLabel) {
             var defer = $q.defer();
             var self = this;
-            new SSEntityLabelUpdate(function(result) {
+            new SSEntityUpdate(function(result) {
                     self.label = newLabel;
                     defer.resolve(result);
                     $rootScope.$apply();
                 }, function(error) {
                     defer.reject(error);
                     $rootScope.$apply();
-                }, UserSrv.getKey(), self.id, // entity, 
-                newLabel); //label
+                }, 
+                UserSrv.getKey(), 
+                self.id, // entity, 
+                newLabel, //label
+                null, //description
+                null, //comments
+                null); //read
+                
             return defer.promise;
         },
         saveRating: function(rating) {
@@ -116,15 +122,19 @@ angular.module('module.models').factory('BaseModel', ['$q', '$rootScope', 'UserS
         },
         setDescription: function(description) {
             var defer = $q.defer();
-            new SSEntityDescriptionUpdate(function(result) {
+            new SSEntityUpdate(function(result) {
                     defer.resolve(result);
                     $rootScope.$apply();
                 }, function(error) {
                     defer.reject(error);
                     $rootScope.$apply();
-                }, UserSrv.getKey(),
-                this.id, //label
-                description //space
+                }, 
+                UserSrv.getKey(),
+                this.id, //entity
+                null, //label
+                description, //description
+                null, //comments
+                null //read
             );
             return defer.promise;
         },
@@ -674,7 +684,7 @@ angular.module('module.models').service("FetchServiceHelper", ['$q', '$rootScope
     this.getDiscussionByUri = function(discUri) {
         var defer = $q.defer();
         var self = this;
-        new SSDiscGet(function(result) {
+        new SSDiscGetFiltered(function(result) {
                 defer.resolve(result);
             }, function(error) {
                 console.log(error);
@@ -693,7 +703,7 @@ angular.module('module.models').service("TagFetchService", ['$q', '$rootScope', 
     this.fetchAllPublicTags = function() {
         var defer = $q.defer();
         var self = this;
-        new SSTagFrequsGetPOST(function(result) {
+        new SSTagFrequsGetFiltered(function(result) {
             var tagArray = new Array();
             angular.forEach(result.tagFrequs, function(value, key) {
                 tagArray.push(value.label);

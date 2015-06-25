@@ -158,7 +158,7 @@ angular.module('module.chat').service("chatService", ['$q', '$rootScope','UserSe
     this.getMessages = function (chatId) {
       var defer = $q.defer();
       
-      new SSDiscGet(
+      new SSDiscGetFiltered(
         function (result) {
           defer.resolve(result);
 			},
