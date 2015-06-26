@@ -223,37 +223,51 @@ angular.module('module.qa').service("qaService", ['$q', '$rootScope', 'UserServi
             //    defer.resolve(object);
             //}, 10);
 
-            new SSEntityGet(
-                    function (result) {
-                        var author = new Author(result.entity.id,result.entity.label, result.entity.email);
-                        object.author = author;
-                        defer.resolve(object);
-                    },
-                    function (error) {
-                        console.log(error);
-                        defer.reject(error);
-                    },
-                    UserSrv.getKey(),
-                    object.author.id
-                    );
+          new SSEntitiesGetFiltered(
+            function (result) {
+              var author = new Author(result.entities[0].id, result.entities[0].label, result.entities[0].email);
+            object.author = author;
+            defer.resolve(object);
+          },
+          function (error) {
+            console.log(error);
+            defer.reject(error);
+          },
+          UserSrv.getKey(),
+          [object.author.id], //entities,
+          null, //setTags,
+          null, //setOverallRating, 
+          null, //setDiscs, 
+          null, //setUEs, 
+          null, //setThumb, 
+          null, //setFlags,
+          null //setCircles
+            );
 
             return defer.promise;
         };
 
-        var getEntityDetails = function (id) {
-            var defer = $q.defer();
-
-            new SSEntityGet(
-                    function (result) {
-                        defer.resolve(result);
-                    },
-                    function (error) {
-                        console.log(error);
-                        defer.reject(error);
-                    },
-                    UserSrv.getKey(),
-                    id
-                    );
+    var getEntityDetails = function (id) {
+      var defer = $q.defer();
+      
+      new SSEntitiesGetFiltered(
+        function (result) {
+          defer.resolve(result.entities[0]);
+      },
+      function (error) {
+        console.log(error);
+        defer.reject(error);
+      },
+      UserSrv.getKey(),
+			[id], //entities,
+      null, //setTags,
+      null, //setOverallRating, 
+      null, //setDiscs, 
+      null, //setUEs, 
+      null, //setThumb, 
+      null, //setFlags,
+      null //setCircles
+        );
 
             return defer.promise;
         };
