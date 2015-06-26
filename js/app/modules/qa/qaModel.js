@@ -233,7 +233,6 @@ angular.module('module.qa').service("qaService", ['$q', '$rootScope', 'UserServi
                         console.log(error);
                         defer.reject(error);
                     },
-                    UserSrv.getUser(),
                     UserSrv.getKey(),
                     object.author.id
                     );
@@ -252,7 +251,6 @@ angular.module('module.qa').service("qaService", ['$q', '$rootScope', 'UserServi
                         console.log(error);
                         defer.reject(error);
                     },
-                    UserSrv.getUser(),
                     UserSrv.getKey(),
                     id
                     );

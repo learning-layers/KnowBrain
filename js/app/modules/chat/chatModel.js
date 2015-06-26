@@ -69,7 +69,6 @@ angular.module('module.chat').service("chatService", ['$q', '$rootScope','UserSe
 			    console.log(error);
 			    defer.reject(error);
 			},
-			UserSrv.getUser(),
 			UserSrv.getKey(),
 			id
 			);
