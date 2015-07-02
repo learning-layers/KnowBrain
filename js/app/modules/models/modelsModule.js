@@ -339,17 +339,6 @@ angular.module('module.models').factory('CollectionModel', ['$q', '$rootScope', 
         });
         return ret;
     };
-    Collection.prototype.setCollPublic = function() {
-        var self = this;
-        new SSEntityPublicSet(function(result) {
-            if (result.worked) {
-                self.space = SPACE_ENUM.shared;
-                $rootScope.$apply();
-            }
-        }, function(error) {
-            console.log(error);
-        }, UserSrv.getUser(), UserSrv.getKey(), this.id);
-    };
     Collection.prototype.getCumulatedTags = function(model) {
         var defer = $q.defer();
         var self = this;
@@ -812,7 +801,10 @@ angular.module('module.models').service('SharingModel', ['$q', 'UserService', fu
             console.log(result);
         }, function(error) {
             console.log(error);
-        }, UserSrv.getUser(), UserSrv.getKey(), entity.id);
+        }, 
+        UserSrv.getKey(), 
+        entity.id);
+        
         return defer.promise;
     };
     this.shareEntityCustom = function(entity, shareWithArray, comment) {
