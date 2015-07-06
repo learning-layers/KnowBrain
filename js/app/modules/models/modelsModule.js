@@ -787,11 +787,11 @@ angular.module('module.models').service('SharingModel', ['$q', 'UserService', fu
     this.getEntityUsers = function(entity) {
         var defer = $q.defer();
         var self = this;
-        new SSEntityEntityUsersGet(function(result) {
+        new SSEntityUsersGet(function(result) {
             defer.resolve(result);
         }, function(error) {
             console.log(error);
-        }, UserSrv.getUser(), UserSrv.getKey(), entity.id);
+        }, UserSrv.getKey(), entity.id);
         return defer.promise;
     };
     this.shareEntityPublic = function(entity) {
