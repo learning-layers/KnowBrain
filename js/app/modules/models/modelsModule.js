@@ -796,15 +796,19 @@ angular.module('module.models').service('SharingModel', ['$q', 'UserService', fu
     };
     this.shareEntityPublic = function(entity) {
         var defer = $q.defer();
-        new SSEntityPublicSet(function(result) {
+        new SSEntityShare(function(result) {
             defer.resolve(result);
             console.log(result);
         }, function(error) {
             console.log(error);
         }, 
         UserSrv.getKey(), 
-        entity.id);
-        
+        entity.id, //entity
+        null, //users
+        null, //comment, 
+        null, //circles,
+        true); //setPublic
+      
         return defer.promise;
     };
     this.shareEntityCustom = function(entity, shareWithArray, comment) {
@@ -821,6 +825,12 @@ angular.module('module.models').service('SharingModel', ['$q', 'UserService', fu
             console.log(result);
         }, function(error) {
             console.log(error);
-        }, UserSrv.getUser(), UserSrv.getKey(), entity.id, shareWithUsers, comment, shareWithCircles);
+        }, 
+        UserSrv.getKey(), 
+        entity.id,  //entity
+        shareWithUsers,  //users
+        comment,  //comment
+        shareWithCircles, //circles
+        false); //setPublic
     };
 }]);
