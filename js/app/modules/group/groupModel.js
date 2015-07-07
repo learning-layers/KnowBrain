@@ -4,7 +4,7 @@ angular.module('module.group').service("GroupFetchService", ['$q','UserService',
         var defer = $q.defer();
         var self = this;
 
-        new SSCircleGet(
+        new SSCircleGetFiltered(
             function(result) {
                 var entities = [];
                 for (var i=0; i < result.circle.entities.length; i++) {
@@ -96,7 +96,9 @@ angular.module('module.group').service("GroupFetchService", ['$q','UserService',
         UserSrv.getKey(),
         circle.id,    //entity, 
         label,        //label, 
-        description); //description
+        description, //description
+        null, //comments
+        null); //read
 
         return defer.promise;        
     };
@@ -161,7 +163,7 @@ angular.module('module.group').service("GroupFetchService", ['$q','UserService',
         var defer = $q.defer();
         var self = this;
         
-        new SSActivitiesGet(
+        new SSActivitiesGetFiltered(
             function(result) {
                 var activities = [];
                 for(var i = 0; i < result.activities.length; i++) {
@@ -201,17 +203,16 @@ angular.module('module.group').service("GroupFetchService", ['$q','UserService',
             function(error) {
                 console.log(error);
             },
-            UserSrv.getUser(),
             UserSrv.getKey(),
-            null,
-            null,
-            null,
-            [circle],
-            null,
-            null,
-            true
+            null, //types
+            null, //users
+            null, //entities
+            [circle], //circles
+            null, //startTime
+            null, //endTime
+            true //includeOnlyLastActivities
         );
-        
+      
         return defer.promise;
     };
 

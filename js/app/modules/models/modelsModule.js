@@ -54,15 +54,21 @@ angular.module('module.models').factory('BaseModel', ['$q', '$rootScope', 'UserS
         saveLabel: function(newLabel) {
             var defer = $q.defer();
             var self = this;
-            new SSEntityLabelUpdate(function(result) {
+            new SSEntityUpdate(function(result) {
                     self.label = newLabel;
                     defer.resolve(result);
                     $rootScope.$apply();
                 }, function(error) {
                     defer.reject(error);
                     $rootScope.$apply();
-                }, UserSrv.getKey(), self.id, // entity, 
-                newLabel); //label
+                }, 
+                UserSrv.getKey(), 
+                self.id, // entity, 
+                newLabel, //label
+                null, //description
+                null, //comments
+                null); //read
+                
             return defer.promise;
         },
         saveRating: function(rating) {
@@ -116,15 +122,19 @@ angular.module('module.models').factory('BaseModel', ['$q', '$rootScope', 'UserS
         },
         setDescription: function(description) {
             var defer = $q.defer();
-            new SSEntityDescriptionUpdate(function(result) {
+            new SSEntityUpdate(function(result) {
                     defer.resolve(result);
                     $rootScope.$apply();
                 }, function(error) {
                     defer.reject(error);
                     $rootScope.$apply();
-                }, UserSrv.getKey(),
-                this.id, //label
-                description //space
+                }, 
+                UserSrv.getKey(),
+                this.id, //entity
+                null, //label
+                description, //description
+                null, //comments
+                null //read
             );
             return defer.promise;
         },
@@ -168,6 +178,7 @@ angular.module('module.models').factory('BaseModel', ['$q', '$rootScope', 'UserS
                 "some explanation", //description
                 null, //users
                 null, //entities
+                null, //entityLabels
                 null //circles
             );
             return defer.promise;
@@ -245,24 +256,24 @@ angular.module('module.models').factory('CollectionModel', ['$q', '$rootScope', 
     Collection.prototype.uploadFile = function(file) {
         var defer = $q.defer();
         var self = this;
-        new SSFileUpload(function(fileUri, fileName) {
+        new SSFileUpload(function(result, fileName) {
             var entry = new EntityModel();
             entry.init({
-                id: fileUri,
+                id: result.file,
                 label: fileName,
                 parentColl: self.id,
                 space: self.space,
                 type: ENTITY_TYPES.file
             });
             entry.init({
-                uriPathnameHash: UriToolbox.extractUriPathnameHash(fileUri)
+                uriPathnameHash: UriToolbox.extractUriPathnameHash(result.file)
             });
             defer.resolve(entry);
             $rootScope.$apply();
         }, function(error) {
             defer.reject(error);
             $rootScope.$apply();
-        }, UserSrv.getUser(), UserSrv.getKey(), file);
+        }, UserSrv.getKey(), file);
         return defer.promise;
     };
     Collection.prototype.addEntries = function(entries, labels) {
@@ -399,22 +410,28 @@ angular.module('module.models').factory('EntityModel', ['$q', '$rootScope', 'Use
     Entity.prototype.downloadFile = function() {
         var defer = $q.defer();
         if (this.type !== ENTITY_TYPES.file) return null;
-        new SSFileDownload(this.servHandleFileDownload(defer), function(error) {
+        
+      new SSFileDownload(
+          this.servHandleFileDownload(defer), 
+        function(error) {
             defer.reject();
             console.log(error);
-        }, UserSrv.getUser(), UserSrv.getKey(), this.id);
+        }, 
+        UserSrv.getKey(), 
+        this.id);
+        
         return defer.promise;
     };
     Entity.prototype.uploadFile = function() {
         var defer = $q.defer();
         var self = this;
         if (this.type == ENTITY_TYPES.file) {
-            new SSFileUpload(function(fileUri, fileName) {
-                console.log(fileUri);
-                self.id = fileUri;
+            new SSFileUpload(function(result, fileName) {
+                console.log(result.file);
+                self.id = result.file;
                 self.label = fileName;
                 self.type = ENTITY_TYPES.file;
-                self.uriPathnameHash = UriToolbox.extractUriPathnameHash(fileUri);
+                self.uriPathnameHash = UriToolbox.extractUriPathnameHash(result.file);
                 self.uploaded = true;
                 defer.resolve(self);
                 //$rootScope.$apply();
@@ -422,7 +439,7 @@ angular.module('module.models').factory('EntityModel', ['$q', '$rootScope', 'Use
                 console.log("Error");
                 defer.reject(error);
                 //$rootScope.$apply();
-            }, UserSrv.getUser(), UserSrv.getKey(), this.fileHandle, null);
+            }, UserSrv.getKey(), this.fileHandle);
             return defer.promise;
         }
     }
@@ -541,8 +558,8 @@ angular.module('module.models').service("CollectionFetchService", ['$q', '$rootS
 angular.module('module.models').service("EntityFetchService", ['$q', '$rootScope', 'UserService', 'EntityModel', 'UriToolbox', 'ENTITY_TYPES', 'FetchServiceHelper', function($q, $rootScope, UserSrv, EntityModel, UriToolbox, ENTITY_TYPES, FetchServiceHelper) {
     this.getEntityByUri = function(entityUri, getTags, getOverallRating, getDiscs) {
         var defer = $q.defer();
-        new SSEntityDescGet(function(result) {
-            var result = result.desc;
+        new SSEntitiesGetFiltered(function(result) {
+            var result = result.entities[0];
             var entity = new EntityModel();
             entity.init({
                 id: result.id
@@ -589,30 +606,40 @@ angular.module('module.models').service("EntityFetchService", ['$q', '$rootScope
         }, function(error) {
             defer.reject(error);
             $rootScope.$apply();
-        }, UserSrv.getUser(), UserSrv.getKey(), entityUri, getTags, getOverallRating, getDiscs);
+        }, 
+        UserSrv.getKey(), 
+        [entityUri], //entities
+        getTags,   //setTags
+      getOverallRating,  //setOverallRating
+      getDiscs, //setDiscs
+      null, //setUEs, 
+      null, //setThumb, 
+      null, //setFlags,
+      null); //setCircles);
+      
         return defer.promise;
     };
     this.uploadEntity = function(file) {
         var defer = $q.defer();
         var self = this;
-        new SSFileUpload(function(parentUri, fileUri, fileName) {
+        new SSFileUpload(function(result, fileName) {
             var entry = new Entity();
             entry.init({
-                id: fileUri,
+                id: result.file,
                 label: fileName,
-                parentColl: parentUri,
+                parentColl: null,
                 space: self.space,
                 type: ENTITY_TYPES.file
             });
             entry.init({
-                uriPathnameHash: UriToolbox.extractUriPathnameHash(fileUri)
+                uriPathnameHash: UriToolbox.extractUriPathnameHash(result.file)
             });
             defer.resolve(entry);
             $rootScope.$apply();
         }, function(error) {
             defer.reject(error);
             $rootScope.$apply();
-        }, UserSrv.getUser(), UserSrv.getKey(), file, this.id);
+        }, UserSrv.getKey(), file);
         return defer.promise;
     };
 }]);
@@ -620,8 +647,8 @@ angular.module('module.models').service("FetchServiceHelper", ['$q', '$rootScope
     this.getEntityDescribtion = function(model, getTags, getOverallRating, getDiscs) {
         var defer = $q.defer();
         var self = this;
-        new SSEntityDescGet(function(result) {
-            var result = result.desc;
+        new SSEntitiesGetFiltered(function(result) {
+            var result = result.entities[0];
             model.init({
                 id: result.id
             });
@@ -661,13 +688,23 @@ angular.module('module.models').service("FetchServiceHelper", ['$q', '$rootScope
         }, function(error) {
             defer.reject(error);
             self.applyHelper();
-        }, UserSrv.getUser(), UserSrv.getKey(), model.id, getTags, getOverallRating, getDiscs);
+          }, 
+        UserSrv.getKey(), 
+        [model.id],  //entities
+      getTags,  //setTags
+      getOverallRating,  //setOverallRating
+      getDiscs, //setDiscs
+      null, //setUEs, 
+      null, //setThumb, 
+      null, //setFlags,
+      null); //setCircles);
+        
         return defer.promise;
     };
     this.getDiscussionByUri = function(discUri) {
         var defer = $q.defer();
         var self = this;
-        new SSDiscGet(function(result) {
+        new SSDiscGetFiltered(function(result) {
                 defer.resolve(result);
             }, function(error) {
                 console.log(error);
@@ -686,7 +723,7 @@ angular.module('module.models').service("TagFetchService", ['$q', '$rootScope', 
     this.fetchAllPublicTags = function() {
         var defer = $q.defer();
         var self = this;
-        new SSTagFrequsGetPOST(function(result) {
+        new SSTagFrequsGetFiltered(function(result) {
             var tagArray = new Array();
             angular.forEach(result.tagFrequs, function(value, key) {
                 tagArray.push(value.label);
@@ -735,10 +772,20 @@ angular.module('module.models').service('UserFetchService', ['$q', '$rootScope',
         return defer.promise;
     };
     this.getUser = function(userId) {
-            var defer = $q.defer();
-            new SSEntityDescGet(function(result) {
-                defer.resolve(result);
-            }, function(error) {}, UserSrv.getUser(), UserSrv.getKey(), userId, null, null, null, null, null, null);
+      var defer = $q.defer();
+      new SSEntitiesGetFiltered(function(result) {
+        defer.resolve(result.entities[0]);
+      }, function(error) {}, 
+      UserSrv.getKey(), 
+      [userId], //entities
+      null,   //setTags
+      null,  //setOverallRating
+      null, //setDiscs
+      null, //setUEs, 
+      null, //setThumb, 
+      null, //setFlags,
+      null); //setCircles);
+      
             return defer.promise;
         },
         this.getUserLabel = function(uri) {

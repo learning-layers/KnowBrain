@@ -560,23 +560,23 @@ angular.module('dialogs.controllers', ['ui.bootstrap.modal', 'module.i18n', 'mod
                     });
                 } else {
                     new SSFileUpload(
-                        function(fileUri, fileName) {
+                        function(result, fileName) {
                             var entry = new EntityModel();
 
                             entry.init({
-                                id: fileUri,
+                                id: result.file,
                                 label: fileName,
                                 parentColl: null,
                                 space: null,
                                 type: ENTITY_TYPES.file
                             });
                             entry.init({
-                                uriPathnameHash: UriToolbox.extractUriPathnameHash(fileUri)
+                                uriPathnameHash: UriToolbox.extractUriPathnameHash(result.file)
                             });
 
                             file.uploading = false;
                             file.uploaded = true;
-                            file.uriPathnameHash = UriToolbox.extractUriPathnameHash(fileUri);
+                            file.uriPathnameHash = UriToolbox.extractUriPathnameHash(result.file);
                             entries.push(entry);
                             uploadCounter++;
                             newEntrieObjects.push(entry);
@@ -588,10 +588,8 @@ angular.module('dialogs.controllers', ['ui.bootstrap.modal', 'module.i18n', 'mod
                             console.log("Error");
                             defer.reject(error);
                         },
-                        UserService.getUser(),
                         UserService.getKey(),
-                        file._file,
-                        null
+                        file._file
                     );
             }
         });

@@ -160,7 +160,6 @@ angular.module('module.qa').factory('Attachment', ['$q', 'UserService', 'ENTITY_
         new SSFileDownload(
           this.servHandleFileDownload(defer),
           function(error){ defer.reject(); console.log(error); },
-          UserSrv.getUser(),
           UserSrv.getKey(),
           this.id
           );
@@ -179,7 +178,6 @@ angular.module('module.qa').factory('Attachment', ['$q', 'UserService', 'ENTITY_
             defer.resolve(result);
           },
           function(error){ defer.reject(); console.log(error); },
-          UserSrv.getUser(),
           UserSrv.getKey(),
           this.id
           );
@@ -225,39 +223,51 @@ angular.module('module.qa').service("qaService", ['$q', '$rootScope', 'UserServi
             //    defer.resolve(object);
             //}, 10);
 
-            new SSEntityGet(
-                    function (result) {
-                        var author = new Author(result.entity.id,result.entity.label, result.entity.email);
-                        object.author = author;
-                        defer.resolve(object);
-                    },
-                    function (error) {
-                        console.log(error);
-                        defer.reject(error);
-                    },
-                    UserSrv.getUser(),
-                    UserSrv.getKey(),
-                    object.author.id
-                    );
+          new SSEntitiesGetFiltered(
+            function (result) {
+              var author = new Author(result.entities[0].id, result.entities[0].label, result.entities[0].email);
+            object.author = author;
+            defer.resolve(object);
+          },
+          function (error) {
+            console.log(error);
+            defer.reject(error);
+          },
+          UserSrv.getKey(),
+          [object.author.id], //entities,
+          null, //setTags,
+          null, //setOverallRating, 
+          null, //setDiscs, 
+          null, //setUEs, 
+          null, //setThumb, 
+          null, //setFlags,
+          null //setCircles
+            );
 
             return defer.promise;
         };
 
-        var getEntityDetails = function (id) {
-            var defer = $q.defer();
-
-            new SSEntityGet(
-                    function (result) {
-                        defer.resolve(result);
-                    },
-                    function (error) {
-                        console.log(error);
-                        defer.reject(error);
-                    },
-                    UserSrv.getUser(),
-                    UserSrv.getKey(),
-                    id
-                    );
+    var getEntityDetails = function (id) {
+      var defer = $q.defer();
+      
+      new SSEntitiesGetFiltered(
+        function (result) {
+          defer.resolve(result.entities[0]);
+      },
+      function (error) {
+        console.log(error);
+        defer.reject(error);
+      },
+      UserSrv.getKey(),
+			[id], //entities,
+      null, //setTags,
+      null, //setOverallRating, 
+      null, //setDiscs, 
+      null, //setUEs, 
+      null, //setThumb, 
+      null, //setFlags,
+      null //setCircles
+        );
 
             return defer.promise;
         };
@@ -297,6 +307,7 @@ angular.module('module.qa').service("qaService", ['$q', '$rootScope', 'UserServi
                     thread.description, //description 
                     null, //users
                     attachmentIdList, //entities
+                    null, //entityLabels
                     null //circles
                     );
 
@@ -338,6 +349,7 @@ angular.module('module.qa').service("qaService", ['$q', '$rootScope', 'UserServi
                     null, //description
                     null, //users
                     attachmentIdList, //entities
+                    null, //entityLabels
                     null //circles
                     );
 
@@ -347,7 +359,7 @@ angular.module('module.qa').service("qaService", ['$q', '$rootScope', 'UserServi
     this.addNewComment = function (answer) {
       var defer = $q.defer();
       
-      new SSEntityCommentsAdd(
+      new SSEntityUpdate(
         function (result) {
           defer.resolve(answer)
       },
@@ -356,8 +368,11 @@ angular.module('module.qa').service("qaService", ['$q', '$rootScope', 'UserServi
         defer.reject(error);
       },
       UserSrv.getKey(),
-      answer.id,
-      [answer.comments[answer.comments.length - 1]]); //comments
+      answer.id, //entity
+      null, //label, 
+      null, // description, 
+      [answer.comments[answer.comments.length - 1]], //comments
+      null); //read
       
       return defer.promise;
     };
@@ -389,14 +404,13 @@ angular.module('module.qa').service("qaService", ['$q', '$rootScope', 'UserServi
                 var deferFile = $q.defer();
 
                 new SSFileUpload(
-                        function (file_id) {
-                            deferFile.resolve(new Attachment(file_id, file_id, 'file'));
+                        function (result, fileName) {
+                            deferFile.resolve(new Attachment(result.file, result.file, 'file'));
                         },
                         function (error) {
                             console.log(error);
                             deferFile.reject(error);
                         },
-                        UserSrv.getUser(),
                         UserSrv.getKey(),
                         attachment._file
                         );
@@ -456,7 +470,7 @@ angular.module('module.qa').service("qaService", ['$q', '$rootScope', 'UserServi
             //    defer.resolve(object);
             //}, 10);
 
-            new SSTagsGetPOST(
+            new SSTagsGetFiltered(
                     function (result) {
                         angular.forEach(result.tags, function (value, key) {
                             var tag = new Tag(value.id, value.entity, value.label);
@@ -483,7 +497,7 @@ angular.module('module.qa').service("qaService", ['$q', '$rootScope', 'UserServi
         this.getEntitiesForTag = function (tag) {
             var defer = $q.defer();
 
-            new SSEntitiesForTagsGet(
+            new SSEntitiesForTagsGetFiltered(
                     function (result) {
 
                         var promiseList = [];
@@ -567,7 +581,7 @@ angular.module('module.qa').service("qaService", ['$q', '$rootScope', 'UserServi
     var getThreadWithEntries = function (id) {
       var deferThread = $q.defer();
       
-      new SSDiscGet(
+      new SSDiscGetFiltered(
         function (result) {
           
           var thread = new Thread(result.disc.id, result.disc.author, getThreadTypeByEnum(result.disc.type), result.disc.label, result.disc.description, result.disc.entity, result.disc.creationTime, result.disc.circleTypes, {likes : 10, dislikes : 5, like : null});

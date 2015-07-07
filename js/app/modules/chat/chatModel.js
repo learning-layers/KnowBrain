@@ -61,17 +61,23 @@ angular.module('module.chat').service("chatService", ['$q', '$rootScope','UserSe
 
         var defer = $q.defer();
 
-        new SSEntityGet(
+        new SSEntitiesGetFiltered(
 			function (result) {
-			    defer.resolve(result);
+			    defer.resolve(result.entities[0]);
 			},
 			function (error) {
 			    console.log(error);
 			    defer.reject(error);
 			},
-			UserSrv.getUser(),
 			UserSrv.getKey(),
-			id
+			[id], //entities,
+      null, //setTags,
+      null, //setOverallRating, 
+      null, //setDiscs, 
+      null, //setUEs, 
+      null, //setThumb, 
+      null, //setFlags,
+      null //setCircles
 			);
 
         return defer.promise;
@@ -118,6 +124,7 @@ angular.module('module.chat').service("chatService", ['$q', '$rootScope','UserSe
 			sharedUserIdList.toString(),//description,
 			allOtherUserList,//users,
 			null, //entities
+      null, //entityLabels
       null //circles
 			);
 
@@ -145,6 +152,7 @@ angular.module('module.chat').service("chatService", ['$q', '$rootScope','UserSe
 			null,//description,
 			null,//users,
 			null,//entities
+      null, //entityLabels
       null //circles
         );
       
@@ -156,7 +164,7 @@ angular.module('module.chat').service("chatService", ['$q', '$rootScope','UserSe
     this.getMessages = function (chatId) {
       var defer = $q.defer();
       
-      new SSDiscGet(
+      new SSDiscGetFiltered(
         function (result) {
           defer.resolve(result);
 			},
