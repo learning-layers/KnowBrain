@@ -34,15 +34,15 @@ angular.module('module.search').config(function($stateProvider) {
         controller: 'SearchController',
         templateUrl: MODULES_PREFIX + '/search/search.tpl.html'
     });
-    $stateProvider.state('app.search.keywords', {
-        url: '/keywords=:keywords',
+    $stateProvider.state('app.search.combined', {
+        url: '/search?searchString?keywords?tags?author',
         views: {
             "context": {
                 templateUrl: MODULES_PREFIX + '/search/search-context.tpl.html',
                 controller: function($stateParams, $scope) {
                     $scope.clearSearch();
-                    $scope.performKeywordSearch($stateParams.keywords);
-                    $scope.performTagSearch($stateParams.keywords);
+                    $scope.performKeywordSearch($stateParams.keywords, $stateParams.author);
+                    $scope.performTagSearch($stateParams.tags, $stateParams.author);
                 },
             },
             "context-info": {
@@ -103,6 +103,23 @@ angular.module('module.search').controller("SearchController", ['$scope', '$root
             }
             //todo filter not allowed chars
             if ($scope.searchString != undefined || $scope.searchString != "") {
+                var tags = $scope.searchString.match(/\[(.*?)\]/g);
+                if (tags != null) {
+                    for (var i = 0; i < tags.length; i++) {
+                        var tag = tags[i];
+                        tags[i] = tag.substring(1, tag.length-1);
+                    }
+                }
+                tags = SearchToolbox.plusSeparateStringArray(tags);
+
+                var authors = $scope.searchString.match(/author.*?:(.*)/g);
+                var author;
+                if (authors != null) {
+                    author = authors[0];
+                    author = author.substring(7);
+                    author = author.split(" ")[0];
+                }
+
                 var keywords = Array();
                 angular.forEach($scope.searchString.split(","), function(string, key) {
                     angular.forEach(string.replace(/^\s+|\s+$/g, '').split(" "), function(subString, key2) {
@@ -110,17 +127,20 @@ angular.module('module.search').controller("SearchController", ['$scope', '$root
                     });
                 });
                 keywords = SearchToolbox.plusSeparateStringArray(keywords);
-                $state.transitionTo('app.search.keywords', {
-                    keywords: keywords
+                $state.go('app.search.combined', {
+                    searchString : $scope.searchString,
+                    keywords: keywords,
+                    tags: tags,
+                    author: author
                 });
             }
         };
-        $scope.performKeywordSearch = function(keywordsPlusSeparated) {
+        $scope.performKeywordSearch = function(keywordsPlusSeparated, author) {
             $scope.searchString = SearchToolbox.explodePlusSeparatedStringIntoString(keywordsPlusSeparated);
             var keywordsArray = SearchToolbox.explodeByPlus(keywordsPlusSeparated);
             if (keywordsArray.length > 0) {
                 $rootScope.activateLoadingIndicator();
-                var promise = searchByFullText(keywordsArray);
+                var promise = searchByFullText(keywordsArray, author);
                 promise.finally(function() {
                     $rootScope.deactivateLoadingIndicator();
                     $scope.showContentSearchResults = true;
@@ -128,12 +148,12 @@ angular.module('module.search').controller("SearchController", ['$scope', '$root
                 $scope.toggleContentSearchResults();
             }
         };
-        $scope.performTagSearch = function(tagsPlusSeparated) {
+        $scope.performTagSearch = function(tagsPlusSeparated, author) {
             $scope.searchString = SearchToolbox.explodePlusSeparatedStringIntoString(tagsPlusSeparated);
             var tagsArray = SearchToolbox.explodeByPlus(tagsPlusSeparated);
             if (tagsArray.length > 0) {
                 $rootScope.activateLoadingIndicator();
-                var promise = searchByTags(tagsArray);
+                var promise = searchByTags(tagsArray, author);
                 promise.finally(function() {
                     $rootScope.deactivateLoadingIndicator();
                     $scope.showTagSearchResults = true;
@@ -146,7 +166,7 @@ angular.module('module.search').controller("SearchController", ['$scope', '$root
                 coll: "root"
             });
         }
-        var searchByTags = function(tagsArray) {
+        var searchByTags = function(tagsArray, author) {
             var defer = $q.defer();
             new SSSearch(function(result) {
                     var entities = new Array()
@@ -163,8 +183,8 @@ angular.module('module.search').controller("SearchController", ['$scope', '$root
                 null, //wordsToSearchFor,
                 true, //includeTags,
                 tagsArray, //tagsToSearchFor,
-                false,                      //includeAuthors
-                null,                       //authorsToSearchFor
+                author != null,                      //includeAuthors
+                [author],                       //authorsToSearchFor
                 false, //includeMIs,
                 null, //misToSearchFor,
                 false, //includeLabel,
@@ -186,7 +206,7 @@ angular.module('module.search').controller("SearchController", ['$scope', '$root
             );
             return defer.promise;
         };
-        var searchByFullText = function(keywordsArray) {
+        var searchByFullText = function(keywordsArray, author) {
             var defer = $q.defer();
             new SSSearch(function(result) {
                     var entities = new Array()
@@ -203,8 +223,8 @@ angular.module('module.search').controller("SearchController", ['$scope', '$root
                 keywordsArray, //wordsToSearchFor,
                 false, //includeTags,
                 null, //tagsToSearchFor,
-                false,                      //includeAuthors
-                null,                       //authorsToSearchFor
+                author != null,                      //includeAuthors
+                [author],                       //authorsToSearchFor
                 false, //includeMIs,
                 null, //misToSearchFor,
                 true, //includeLabel,
