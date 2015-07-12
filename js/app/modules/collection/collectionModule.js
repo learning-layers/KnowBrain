@@ -331,9 +331,6 @@ angular.module('module.collection').controller("CollectionController", function(
             //$log.info('Modal dismissed at: ' + new Date());
         });
     };
-    $scope.setCollPublic = function() {
-        CurrentCollectionService.getCurrentCollection().setCollPublic();
-    };
     $scope.shareCollection = function() {
         $dialogs.shareEntities([CurrentCollectionService.getCurrentCollection()]);
     }
