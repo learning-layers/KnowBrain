@@ -1047,3 +1047,14 @@ tags-input .tags .tag-item {
     position:absolute;
     right:0px;
 }
+
+/* Styles for Tag Recommender User Tests
+
+.modal .modal-dialog .modal-content .entry-detail-info{
+	height: 500px;
+}
+ */
+.modal .modal-dialog .modal-content .kb-study{
+	height: 700px;
+	width: 700px;
+}

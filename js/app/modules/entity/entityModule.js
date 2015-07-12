@@ -44,7 +44,7 @@ entityModule.directive('kbAddEntity', function($dialogs) {
 
                 if (destination.type == 'coll')
                     scope.availableActions.push({title: 'Collection', id: 0, cssClass: 'icon-add-collection'});
-                if (destination.type == 'circle' || destination.type.enum == 'qa' || destination.type.enum == 'qaEntry')
+                if ( destination.type.enum == 'qa' || destination.type.enum == 'qaEntry')
                     scope.availableActions.push({title: 'Dropbox', id: 3, cssClass: 'icon-add-file'});
 
                 scope.clickedAction = function(action) {

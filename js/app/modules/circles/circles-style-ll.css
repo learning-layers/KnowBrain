@@ -417,3 +417,14 @@
 .position-fixed {
   position: fixed;
 }
+
+.category-circle {
+    width: 35px;
+    height: 16px;
+    background-color: #f6a551;
+    border: 1px solid;
+    border-color: #535353;
+    border-radius: 8px;
+    display: inline-block;
+    vertical-align: middle;
+}

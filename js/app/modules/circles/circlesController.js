@@ -113,7 +113,7 @@ angular.module('module.circles').controller("CircleController", function($compil
             $state.go("app.circles.circle.resources");
         };
     }
-    $scope.setTab(0);
+    $scope.setTab(1);
 
     $scope.showCircle = function(circleId) {
         $state.go('app.circles.circle', {
@@ -219,13 +219,15 @@ angular.module('module.circles').controller("CircleResourcesController", functio
     $scope.availableTags = [];
     $scope.searchResourcesString = null;
     $scope.selectedEntities = [];
+    
     $scope.actions = [{
         title: 'Download',
         cssClass: 'glyphicon glyphicon-download-alt'
-    }, {
-        title: 'Add to Dropbox',
-        cssClass: 'glyphicon glyphicon-floppy-open'
-    }, {
+    },  {
+        title: 'View File',
+        cssClass: 'glyphicon glyphicon-file'
+    }, 
+    {
         title: 'Delete',
         cssClass: 'glyphicon glyphicon-trash'
     }];
@@ -273,7 +275,15 @@ angular.module('module.circles').controller("CircleResourcesController", functio
             //$scope.entry.downloading = false;
         });
     };
-
+    
+    $scope.viewEntity = function(entity) {
+    	entity.viewFile();
+        //var promise = entity.viewFile();
+        //promise.finally(function() {
+            
+        //});
+    };
+    
     $scope.selectResource = function(entity) {
         if (entity.isSelected) {
             entity.isSelected = false;
@@ -295,7 +305,7 @@ angular.module('module.circles').controller("CircleResourcesController", functio
         $scope.selectedTag = tag;
     };
 
-
+    
     $scope.filterFunction = function(element) {
         var matchesSearch = true;
         if ($scope.searchResourcesString != null && element.label.toLowerCase().indexOf($scope.searchResourcesString.toLowerCase()) == -1) {
@@ -373,7 +383,8 @@ angular.module('module.circles').controller("CircleResourcesController", functio
 
     $scope.clickedAction = function(index) {
         if (index == 1) {
-            $scope.addEntitiesToHomeCollection();
+            //$scope.addEntitiesToHomeCollection();
+        	$scope.viewEntity($scope.selectedEntities[0]);
         } else if (index == 2) {
             $scope.removeEntities($scope.selectedEntities);
         }

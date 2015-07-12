@@ -422,6 +422,13 @@ angular.module('module.models').factory('EntityModel', ['$q', '$rootScope', 'Use
         
         return defer.promise;
     };
+    Entity.prototype.viewFile = function() {
+    	 if (this.type !== ENTITY_TYPES.file) return null;
+    	 
+      new SSFileDownloadGET(
+        UserSrv.getKey(), 
+        this.id);
+    };
     Entity.prototype.uploadFile = function() {
         var defer = $q.defer();
         var self = this;
