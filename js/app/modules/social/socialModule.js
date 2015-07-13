@@ -63,8 +63,8 @@ angular.module('module.social').controller("SocialController", ['$scope', '$stat
     
     var promise = UserFetchService.getUser($scope.profileId);
     promise.then(function(result) {
-        $scope.label = result.desc.label;
-        $scope.email = result.desc.email;
+        $scope.label = result.label;
+        $scope.email = result.email;
     });
     
     $scope.userId = UserSrv.getUser();

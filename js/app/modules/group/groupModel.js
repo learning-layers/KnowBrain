@@ -97,7 +97,6 @@ angular.module('module.group').service("GroupFetchService", ['$q','UserService',
         circle.id,    //entity, 
         label,        //label, 
         description, //description
-        null, //comments
         null); //read
 
         return defer.promise;        
