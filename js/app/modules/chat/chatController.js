@@ -201,7 +201,7 @@ angular.module('module.chat').controller("chatController", ['$scope', '$q', 'sha
 
     chatService.getUser(UserSrv.getUser())
         .then(function (result) {
-            $scope.myUser = result.entity;
+            $scope.myUser = result;
         });
 
     chatService.getAllUsers()

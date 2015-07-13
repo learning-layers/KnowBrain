@@ -106,7 +106,7 @@ angular.module('dialogs.controllers', ['ui.bootstrap.modal', 'module.i18n', 'mod
             $scope.$apply();
         }, function(error) {
             console.log(error);
-        }, UserSrv.getUser(), UserSrv.getKey(), entry.id);
+        }, UserSrv.getKey(), entry.id);
     };
     this.init = function() {
         var promise = FetchServiceHelper.getEntityDescribtion(entry, true, true, true);

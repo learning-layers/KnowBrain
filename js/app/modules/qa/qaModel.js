@@ -359,7 +359,7 @@ angular.module('module.qa').service("qaService", ['$q', '$rootScope', 'UserServi
     this.addNewComment = function (answer) {
       var defer = $q.defer();
       
-      new SSEntityUpdate(
+      new SSCommentsAdd(
         function (result) {
           defer.resolve(answer)
       },
@@ -369,10 +369,7 @@ angular.module('module.qa').service("qaService", ['$q', '$rootScope', 'UserServi
       },
       UserSrv.getKey(),
       answer.id, //entity
-      null, //label, 
-      null, // description, 
-      [answer.comments[answer.comments.length - 1]], //comments
-      null); //read
+      [answer.comments[answer.comments.length - 1]]); //comments
       
       return defer.promise;
     };

@@ -66,7 +66,6 @@ angular.module('module.models').factory('BaseModel', ['$q', '$rootScope', 'UserS
                 self.id, // entity, 
                 newLabel, //label
                 null, //description
-                null, //comments
                 null); //read
                 
             return defer.promise;
@@ -133,7 +132,6 @@ angular.module('module.models').factory('BaseModel', ['$q', '$rootScope', 'UserS
                 this.id, //entity
                 null, //label
                 description, //description
-                null, //comments
                 null //read
             );
             return defer.promise;
@@ -238,7 +236,7 @@ angular.module('module.models').factory('CollectionModel', ['$q', '$rootScope', 
         }, function(error) {
             defer.reject(error);
             $rootScope.$apply();
-        }, UserSrv.getUser(), UserSrv.getKey(), this.id, null, label, true);
+        }, UserSrv.getKey(), this.id, null, label, true);
         return defer.promise;
     };
     Collection.prototype.getHierarchy = function() {
@@ -250,7 +248,7 @@ angular.module('module.models').factory('CollectionModel', ['$q', '$rootScope', 
         }, function(error) {
             defer.reject(error);
             $rootScope.$apply();
-        }, UserSrv.getUser(), UserSrv.getKey(), this.id);
+        }, UserSrv.getKey(), this.id);
         return defer.promise;
     }
     Collection.prototype.uploadFile = function(file) {
@@ -284,7 +282,7 @@ angular.module('module.models').factory('CollectionModel', ['$q', '$rootScope', 
         }, function(error) {
             defer.reject(error);
             $rootScope.$apply();
-        }, UserSrv.getUser(), UserSrv.getKey(), this.id, entries, labels);
+        }, UserSrv.getKey(), this.id, entries, labels);
         return defer.promise;
     };
     Collection.prototype.createLink = function(label, url) {
@@ -306,7 +304,7 @@ angular.module('module.models').factory('CollectionModel', ['$q', '$rootScope', 
         }, function(error) {
             defer.reject(error);
             $rootScope.$apply();
-        }, UserSrv.getUser(), UserSrv.getKey(), this.id, url, label, false);
+        }, UserSrv.getKey(), this.id, url, label, false);
         return defer.promise;
     };
     Collection.prototype.deleteEntries = function(collEntries) {
@@ -348,7 +346,7 @@ angular.module('module.models').factory('CollectionModel', ['$q', '$rootScope', 
             $rootScope.$apply();
         }, function(error) {
             defer.reject(error);
-        }, UserSrv.getUser(), UserSrv.getKey(), this.id);
+        }, UserSrv.getKey(), this.id);
         return defer.promise;
     };
     return (Collection);
@@ -522,7 +520,7 @@ angular.module('module.models').service("CollectionFetchService", ['$q', '$rootS
         }, function(error) {
             defer.reject(error);
             $rootScope.$apply();
-        }, UserSrv.getUser(), UserSrv.getKey());
+        }, UserSrv.getKey());
         return defer.promise;
     };
     this.getCollectionByUri = function(coll) {
@@ -539,7 +537,7 @@ angular.module('module.models').service("CollectionFetchService", ['$q', '$rootS
             }, function(error) {
                 defer.reject(error);
                 $rootScope.$apply();
-            }, UserSrv.getUser(), UserSrv.getKey(), "http://sss.eu/" + coll //UserSrv.getUserSpace() + "entities/" + coll //TODO
+            }, UserSrv.getKey(), "http://sss.eu/" + coll //UserSrv.getUserSpace() + "entities/" + coll //TODO
         );
         return defer.promise;
     };
@@ -638,7 +636,9 @@ angular.module('module.models').service("FetchServiceHelper", ['$q', '$rootScope
         var self = this;
         new SSEntitiesGetFiltered(function(result) {
             var result = result.entities[0];
-            model.init({
+            var tags   = self.getLabelsFromTags(result.tags);
+            
+          model.init({
                 id: result.id
             });
             model.init({
@@ -648,7 +648,7 @@ angular.module('module.models').service("FetchServiceHelper", ['$q', '$rootScope
                 label: result.label
             });
             model.init({
-                tags: result.tags
+                tags: tags
             });
             model.init({
                 overallRating: result.overallRating
@@ -701,6 +701,18 @@ angular.module('module.models').service("FetchServiceHelper", ['$q', '$rootScope
             false); //includeComments
         return defer.promise;
     };
+    
+    this.getLabelsFromTags = function(tags) {
+        
+        var labels = new Array();
+        
+        for (var counter = 0; counter < tags.length; counter++){
+          labels.push(tags[counter].tagLabel);
+        }
+        
+        return labels;
+    };
+    
     //helper
     this.applyHelper = function() {
         if (!$rootScope.$$phase) {
