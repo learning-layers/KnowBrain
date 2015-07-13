@@ -77,8 +77,9 @@ angular.module('module.authorisation').controller("AuthController", [
       $rootScope.activateLoadingIndicator();
       UserSrv.login(auth).then(
         function(){
-          $state.transitionTo('app.collection.content', { coll: 'root'});
-          $rootScope.deactivateLoadingIndicator();
+          //$state.transitionTo('app.collection.content', { coll: 'root'});
+        	$state.transitionTo('app.circles');
+        	$rootScope.deactivateLoadingIndicator();
         },
         function(){
           auth.$error.incorrect = true;

@@ -177,6 +177,10 @@ angular.module('dialogs.controllers', ['ui.bootstrap.modal', 'module.i18n', 'mod
             $scope.entry.downloading = false;
         });
     };
+    $scope.viewEntity = function() {
+        if ($scope.entry.type != ENTITY_TYPES.file) return;
+        $scope.entry.viewFile();
+    };
     $scope.openLink = function() {
         if ($scope.entry.type != ENTITY_TYPES.link) return;
         $window.open(entry.id);
@@ -523,7 +527,20 @@ angular.module('dialogs.controllers', ['ui.bootstrap.modal', 'module.i18n', 'mod
     $scope.close = function() {
         $modalInstance.dismiss();
     };
-
+    
+    // kb-recommender user study
+    //$scope.availableCategories = ["Category 1", "Category 2", "Category 3", "Category 4"];
+    $scope.availableCategories = [{id:1, name:"Category 1"}, {id:2, name:"Category 2"}, {id:3, name:"Category 3"},{ id:4, name:"Category 4"}, {id:5, name:"Category 5"},
+                                  {id:6, name:"Category 6"}, {id:7, name:"Category 7"}, {id:8, name:"Category 8"}, {id:9, name:"Category 9"}, {id:10,name:"Category 10"}];
+    $scope.selectedCategory = null;
+    $scope.selectCategory = function(category) {
+        $scope.selectedCategory = category;
+        
+    };
+    $scope.getTagsforCategories = function (){
+    	
+    }
+    
     $scope.uploader.uploadAll = function() {
         if (!uploadFiles) {
             var files = [];
@@ -692,6 +709,7 @@ angular.module('dialogs.controllers', ['ui.bootstrap.modal', 'module.i18n', 'mod
             $scope.newColl.private = false;
         }
     };
+    
 })
 
 
