@@ -132,7 +132,7 @@ angular.module('module.i18n').constant('I18N_MESSAGES', {
   downloading: 'downloading',
   read_only: 'Read only',
   write: 'Write',
-  add_a_tag: 'add a tag',
+  add_a_tag: 'add a tag and press enter',
 
   //search
   found_by_tag_search:'found by tag search:',
