@@ -92,8 +92,8 @@
                 <ul class="dropdown-menu" style="padding-left:5px;" role="menu" aria-labelledby="categoriesDropdownMenu">
                     <li role="presentation"><a role="menuitem" tabindex="-1" ng-click="selectCategory(null)">Select a category</a></li>
                     <li role="presentation" class="divider"></li>
-                    <li role="presentation" ng-repeat="category in availableCategories"><label class="checkbox"><input type="checkbox" value="category.id" ng-checked="selectedCategories.indexOf(category) > -1"  ng-click="selectCategory($event,category.id)" > {{category.name}}</label></li>
-                	<div><button style="margin-left:110px;" ng-click="getTagsforCategories(selectedCategories)">OK</button></div>
+                	<li role="presentation" ng-repeat="category in predefinedCategories"><label class="checkbox" ng-click="selectCategory($event,category)"><input type="checkbox" value="category" ng-checked="selectedCategories.indexOf(category) > -1"  ng-click="selectCategory($event,category)" > {{category}}</label></li>
+                	<div class="clearfix"><button class="pull-right" style="margin-right:5px;"   ng-click="getTagsforCategories(selectedCategories)">OK</button></div>
                 </ul>
                 </div>
                 </div>

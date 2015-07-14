@@ -278,10 +278,6 @@ angular.module('module.circles').controller("CircleResourcesController", functio
     
     $scope.viewEntity = function(entity) {
     	entity.viewFile();
-        //var promise = entity.viewFile();
-        //promise.finally(function() {
-            
-        //});
     };
     
     $scope.selectResource = function(entity) {

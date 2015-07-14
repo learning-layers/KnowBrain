@@ -410,8 +410,7 @@ angular.module('module.models').factory('EntityModel', ['$q', '$rootScope', 'Use
         return defer.promise;
     };
     Entity.prototype.viewFile = function() {
-    	 if (this.type !== ENTITY_TYPES.file) return null;
-    	 
+      if (this.type !== ENTITY_TYPES.file) return null;
       new SSFileDownloadGET(
         UserSrv.getKey(), 
         this.id);
@@ -745,6 +744,19 @@ angular.module('module.models').service("TagFetchService", ['$q', '$rootScope', 
     this.fetchTagsByName = function(queryString) {
         var defer = $q.defer();
         var self = this;
+        return defer.promise;
+    };
+}]);
+////// KB-Study services
+angular.module('module.models').service("CategoryFetchService", ['$q', '$rootScope', 'UserService', function($q, $rootScope, UserSrv) {
+	this.fetchPredefinedCategories = function(){
+    	var defer = $q.defer();
+        var self = this;
+        new SSCategoriesPredefinedGet(function(result) {
+            defer.resolve(result);
+        }, function(error) {
+            console.log(error);
+        }, UserSrv.getKey());
         return defer.promise;
     };
 }]);

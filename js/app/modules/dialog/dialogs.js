@@ -496,7 +496,7 @@ angular.module('dialogs.controllers', ['ui.bootstrap.modal', 'module.i18n', 'mod
 
 
 
-.controller("UploadResourcesController", function($q, $scope, $modalInstance, $http, $location, $state, i18nService, CurrentCollectionService, UriToolbox, UserService, EntityModel, ENTITY_TYPES, FileUploader, saveInCollection, uploadFiles) {
+.controller("UploadResourcesController", function($q, $scope, $modalInstance, $http, $location, $state, i18nService, CurrentCollectionService, UriToolbox, UserService, EntityModel, ENTITY_TYPES, FileUploader, saveInCollection, uploadFiles, CategoryFetchService) {
     var self = this;
     
     $scope.uploader = new FileUploader();
@@ -529,32 +529,37 @@ angular.module('dialogs.controllers', ['ui.bootstrap.modal', 'module.i18n', 'mod
     };
     
     // kb-recommender user study
-    //$scope.availableCategories = ["Category 1", "Category 2", "Category 3", "Category 4"];
+   
     $scope.recTagsShow = false;
-    $scope.availableCategories = [{id:1, name:"Category 1"}, {id:2, name:"Category 2"}, {id:3, name:"Category 3"},{ id:4, name:"Category 4"}, {id:5, name:"Category 5"},
-                                  {id:6, name:"Category 6"}, {id:7, name:"Category 7"}, {id:8, name:"Category 8"}, {id:9, name:"Category 9"}, {id:10,name:"Category 10"}];
+  
+    $scope.predefinedCategories = [];
+    var categoriesPromise = CategoryFetchService.fetchPredefinedCategories();
+    categoriesPromise.then(function(result) {
+//        $scope.predefinedCategories = result.categories;
+    	for(var i=0; i < 16;/*result.categories.length; */i++) {
+            $scope.predefinedCategories.push(result.categories[i]);
+        }
+    });
+    
+    
     $scope.selectedCategories = [];
     $scope.selectCategory = function($event, category) {
         var idx = $scope.selectedCategories.indexOf(category);
-    	//$scope.selectedCategories = category;
         if (idx > -1) {
             $scope.selectedCategories.splice(idx, 1);
           }
-          // is newly selected
           else {
             $scope.selectedCategories.push(category);
           }
         $event.stopImmediatePropagation();
     };
-    	$scope.getTagsforCategories = function (){
-    		$scope.recTagsShow = true;
-    	//alert($scope.selectedCategories);
-    	
+    $scope.getTagsforCategories = function (){
+    	$scope.recTagsShow = true;
     }
    
     $scope.recommendedTags = ["rectag1", "rectag2", "rectag3", "rectag4"];
     $scope.addTagToInput = function (tag) {
-    	// alert(tag);
+    	
     }
     
     $scope.uploader.uploadAll = function() {
