@@ -275,7 +275,8 @@ angular.module('module.models').factory('CollectionModel', ['$q', '$rootScope', 
         UserSrv.getKey(), 
         file,
         null,  //tags
-        null); //categories);
+        null, //categories);
+        null); //circle
         
         return defer.promise;
     };
@@ -441,7 +442,9 @@ angular.module('module.models').factory('EntityModel', ['$q', '$rootScope', 'Use
             UserSrv.getKey(), 
         this.fileHandle,
         null,  //tags
-        null); //categories);
+        null, //categories);
+        null); //circle
+        
         return defer.promise;
         }
     }
@@ -645,7 +648,8 @@ angular.module('module.models').service("EntityFetchService", ['$q', '$rootScope
         UserSrv.getKey(), 
         file,
         null,  //tags
-        null); //categories);
+        null, //categories);
+        null); //circle
         
         return defer.promise;
     };

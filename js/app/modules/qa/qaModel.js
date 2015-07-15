@@ -411,7 +411,8 @@ angular.module('module.qa').service("qaService", ['$q', '$rootScope', 'UserServi
                           UserSrv.getKey(),
                           attachment._file,
                           null,  //tags
-                        null); //categories);
+                        null, //categories);
+                        null); //circle
                         
                         promiseList.push(deferFile.promise);
                       });
