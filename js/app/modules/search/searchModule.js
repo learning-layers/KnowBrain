@@ -159,17 +159,11 @@ angular.module('module.search').controller("SearchController", ['$scope', '$root
                     $rootScope.$apply();
                 }, function(error) {
                     console.log(error);
-                }, UserSrv.getKey(), false, //includeTextualContent,
+                }, UserSrv.getKey(), 
                 null, //wordsToSearchFor,
-                true, //includeTags,
                 tagsArray, //tagsToSearchFor,
-                false,                      //includeAuthors
                 null,                       //authorsToSearchFor
-                false, //includeMIs,
-                null, //misToSearchFor,
-                false, //includeLabel,
                 null, //labelsToSearchFor,
-                false, //includeDescription,
                 null, //descriptionsToSearchFor,
                 null, //typesToSearchOnlyFor,
                 false, //includeOnlySubEntities,
@@ -199,17 +193,11 @@ angular.module('module.search').controller("SearchController", ['$scope', '$root
                     $rootScope.$apply();
                 }, function(error) {
                     console.log(error);
-                }, UserSrv.getKey(), true, //includeTextualContent,
+                }, UserSrv.getKey(), 
                 keywordsArray, //wordsToSearchFor,
-                false, //includeTags,
                 null, //tagsToSearchFor,
-                false,                      //includeAuthors
                 null,                       //authorsToSearchFor
-                false, //includeMIs,
-                null, //misToSearchFor,
-                true, //includeLabel,
                 keywordsArray, //labelsToSearchFor,
-                false, //includeDescription,
                 null, //descriptionsToSearchFor,
                 null, //typesToSearchOnlyFor,
                 false, //includeOnlySubEntities,

@@ -700,17 +700,10 @@ angular.module('module.qa').service("qaService", ['$q', '$rootScope', 'UserServi
                         deferThreadList.reject(error);
                     },
                     UserSrv.getKey(),
-                    false,                       //includeTextualContent
                     keywordsToSearchFor,         //wordsToSearchFor
-                    tagList.length > 0,         //includeTags
                     tagList,                    //tagsToSearchFor
-                    false,                      //includeAuthors
                     null,                       //authorsToSearchFor
-                    false,                      //includeMIs
-                    null,                       //misToSearchFor
-                    true,                      //includeLabel
                     keywordsToSearchFor,       //labelsToSearchFor
-                    true,                      //includeDescription
                     keywordsToSearchFor,       //descriptionsToSearchFor
                     typesToSearchOnlyFor,       //typesToSearchOnlyFor
                     false,                      //includeOnlySubEntities
@@ -835,17 +828,10 @@ angular.module('module.qa').service("qaService", ['$q', '$rootScope', 'UserServi
                         deferThreadList.reject(error);
                     },
                     UserSrv.getKey(),
-                    false,                      //includeTextualContent
                     null,                       //wordsToSearchFor
-                    true,                       //includeTags
                     tagList,                     //tagsToSearchFor
-                    false,                      //includeAuthors
                     null,                       //authorsToSearchFor
-                    false,                      //includeMIs
-                    null,                       //misToSearchFor
-                    true,                       //includeLabel
                     thread.title.split(" "),    //labelsToSearchFor
-                    false,                      //includeDescription
                     null,                       //descriptionsToSearchFor
                     ["qa"],                     //typesToSearchOnlyFor
                     false,                      //includeOnlySubEntities
