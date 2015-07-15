@@ -403,17 +403,18 @@ angular.module('module.qa').service("qaService", ['$q', '$rootScope', 'UserServi
                 new SSFileUpload(
                         function (result, fileName) {
                             deferFile.resolve(new Attachment(result.file, result.file, 'file'));
-                        },
-                        function (error) {
+                          },
+                          function (error) {
                             console.log(error);
-                            deferFile.reject(error);
+                          deferFile.reject(error);
                         },
-                        UserSrv.getKey(),
-                        attachment._file
-                        );
-
-                promiseList.push(deferFile.promise);
-            });
+                          UserSrv.getKey(),
+                          attachment._file,
+                          null,  //tags
+                        null); //categories);
+                        
+                        promiseList.push(deferFile.promise);
+                      });
 
             $q.all(promiseList)
                     .then(function (result) {

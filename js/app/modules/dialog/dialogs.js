@@ -627,7 +627,9 @@ angular.module('dialogs.controllers', ['ui.bootstrap.modal', 'module.i18n', 'mod
                             defer.reject(error);
                         },
                         UserService.getKey(),
-                        file._file
+                        file._file,
+                        null,  //tags
+                        null //categories
                     );
             }
         });

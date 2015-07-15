@@ -271,7 +271,12 @@ angular.module('module.models').factory('CollectionModel', ['$q', '$rootScope', 
         }, function(error) {
             defer.reject(error);
             $rootScope.$apply();
-        }, UserSrv.getKey(), file);
+        }, 
+        UserSrv.getKey(), 
+        file,
+        null,  //tags
+        null); //categories);
+        
         return defer.promise;
     };
     Collection.prototype.addEntries = function(entries, labels) {
@@ -432,8 +437,12 @@ angular.module('module.models').factory('EntityModel', ['$q', '$rootScope', 'Use
                 console.log("Error");
                 defer.reject(error);
                 //$rootScope.$apply();
-            }, UserSrv.getKey(), this.fileHandle);
-            return defer.promise;
+            }, 
+            UserSrv.getKey(), 
+        this.fileHandle,
+        null,  //tags
+        null); //categories);
+        return defer.promise;
         }
     }
     Entity.prototype.iconClass = function() {
@@ -632,7 +641,12 @@ angular.module('module.models').service("EntityFetchService", ['$q', '$rootScope
         }, function(error) {
             defer.reject(error);
             $rootScope.$apply();
-        }, UserSrv.getKey(), file);
+        }, 
+        UserSrv.getKey(), 
+        file,
+        null,  //tags
+        null); //categories);
+        
         return defer.promise;
     };
 }]);
