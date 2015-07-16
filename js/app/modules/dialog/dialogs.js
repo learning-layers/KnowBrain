@@ -570,23 +570,32 @@ angular.module('dialogs.controllers', ['ui.bootstrap.modal', 'module.i18n', 'mod
         $event.stopImmediatePropagation();
     };
     $scope.recommendedTags = [];
-    //$scope.recommendedTagsDummy = ["rectag1", "rectag2", "rectag3", "rectag4"];  //  for test purposes 
+    $scope.recommendedTagsDummy = ["rectag1", "rectag2", "rectag3", "rectag4"];  //  for test purposes 
     $scope.allTags = [];
+    $scope.inputTags =[];
     $scope.getTagsforCategories = function (){
     	var tagsPromise = CategoryTagFetchService.fetchRecommendedTags( $scope.circleName, $scope.selectedCategories);
     	tagsPromise.then(function(result) {
     		//if (result.tags.length > 0)
-    			$scope.recommendedTags = result.tags;
+    			//$scope.recommendedTags = result.tags;
     		//else 
-    			//$scope.recommendedTags = $scope.recommendedTagsDummy;
+    			$scope.recommendedTags = $scope.recommendedTagsDummy;
     	});
     	$scope.recTagsShow = true;
     };
    
     $scope.addTagToInput = function (tag) {
-
-    	$scope.allTags.push({text: tag});
+    	$scope.inputTags.push({text: tag});
+    	$scope.allTags = $scope.inputTags.map(function(tag) { return tag.text; });
     }
+    $scope.addTagToAll = function (tag) {
+    	$scope.allTags.push( tag.text);
+    }
+    ///// TODO it does not work please test and fix
+    $scope.removeTagFromAll = function (tag) {
+    	$scope.allTags.splice( -1,1, tag.text);
+    }
+    
     ///////////////////////////////////////////////////
     ///  END: kb-recommender user study
     ///////////////////////////////////////////////////
@@ -755,6 +764,7 @@ angular.module('dialogs.controllers', ['ui.bootstrap.modal', 'module.i18n', 'mod
      $scope.recommendedTags = [];
      //$scope.recommendedTagsDummy = ["rectag1", "rectag2", "rectag3", "rectag4"];  //  for test purposes 
      $scope.allTags = [];
+     $scope.inputTags =[];
      $scope.getTagsforCategories = function (){
      	var tagsPromise = CategoryTagFetchService.fetchRecommendedTags( $scope.circleName, $scope.selectedCategories);
      	tagsPromise.then(function(result) {
@@ -767,8 +777,14 @@ angular.module('dialogs.controllers', ['ui.bootstrap.modal', 'module.i18n', 'mod
      };
     
      $scope.addTagToInput = function (tag) {
-
-     	$scope.allTags.push({text: tag});
+     	$scope.inputTags.push({text: tag});
+     	$scope.allTags = $scope.inputTags.map(function(tag) { return tag.text; });
+     }
+     $scope.addTagToAll = function (tag) {
+     	$scope.allTags.push( tag.text);
+     }
+     $scope.addTagToAll = function (tag) {
+     	$scope.allTags.push( tag.text);
      }
      ///////////////////////////////////////////////////
      ///  END: kb-recommender user study

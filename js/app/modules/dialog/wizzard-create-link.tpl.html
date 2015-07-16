@@ -55,7 +55,7 @@
                 <div id="divTags" class="div-separator">
                 	<h5>Tags:</h5>
                 	<!-- TODO: change tagAdded -->
-                	<tags-input ng-model="allTags" custom-class="bootstrap" placeholder="{{t('add_a_tag')}}" 
+                	<tags-input ng-model="inputTags" custom-class="bootstrap" placeholder="{{t('add_a_tag')}}" on-tag-added="addTagToAll($tag)"
                 	add-on-comma="true"
                 	add-on-space="false"
                 	add-on-blur="false"
