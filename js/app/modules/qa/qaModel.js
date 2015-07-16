@@ -447,6 +447,7 @@ angular.module('module.qa').service("qaService", ['$q', '$rootScope', 'UserServi
                         object.id, //entity
                         value.label, //label
                         value.space, //space
+                        null, //circle
                         null);  //creationTime
 
                 promiseListTag.push(deferTag.promise);
@@ -488,6 +489,7 @@ angular.module('module.qa').service("qaService", ['$q', '$rootScope', 'UserServi
                     [object.id], //entities
                     null, //labels
                     null, //space
+                    null, //circles
                     null //startime
                     );
             return defer.promise;

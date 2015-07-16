@@ -101,6 +101,7 @@ angular.module('module.models').factory('BaseModel', ['$q', '$rootScope', 'UserS
                 }, UserSrv.getKey(), self.id, //entity
                 tagString, //label
                 self.space, //space
+                null, //circle
                 null); //creationTime
             return defer.promise;
         },
@@ -756,7 +757,14 @@ angular.module('module.models').service("TagFetchService", ['$q', '$rootScope', 
             defer.resolve(tagArray);
         }, function(error) {
             console.log(error);
-        }, UserSrv.getKey(), null, null, null, SPACE_ENUM.private, null);
+        }, 
+        UserSrv.getKey(), 
+        null, 
+        null, 
+        null, 
+        SPACE_ENUM.private, 
+        null, //circles
+        null);
         return defer.promise;
     };
     this.fetchTagsByName = function(queryString) {
