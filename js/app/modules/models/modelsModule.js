@@ -27,7 +27,8 @@ angular.module('module.models', []);
 angular.module('module.models').constant('SPACE_ENUM', {
     private: 'privateSpace',
     shared: 'sharedSpace',
-    follow: 'followSpace'
+    follow: 'followSpace',
+    circle: 'circleSpace'
 });
 angular.module('module.models').constant('ENTITY_TYPES', {
     collection: 'coll',
@@ -100,7 +101,7 @@ angular.module('module.models').factory('BaseModel', ['$q', '$rootScope', 'UserS
                     $rootScope.$apply();
                 }, UserSrv.getKey(), self.id, //entity
                 tagString, //label
-                self.space, //space
+                SPACE_ENUM.circle, //space
                 circleId,
                 null); //creationTime
             return defer.promise;
@@ -116,7 +117,7 @@ angular.module('module.models').factory('BaseModel', ['$q', '$rootScope', 'UserS
                     $rootScope.$apply();
                 }, UserSrv.getKey(), self.id, //entity
                 tagString, //label
-                self.space //space
+                SPACE_ENUM.circle //space
             );
             return defer.promise;
         },
@@ -416,7 +417,7 @@ angular.module('module.models').factory('EntityModel', ['$q', '$rootScope', 'Use
         UserSrv.getKey(), 
         this.id);
     };
-    Entity.prototype.uploadFile = function() {
+    Entity.prototype.uploadFile = function(tags, categories, circleId) {
         var defer = $q.defer();
         var self = this;
         if (this.type == ENTITY_TYPES.file) {
@@ -433,7 +434,7 @@ angular.module('module.models').factory('EntityModel', ['$q', '$rootScope', 'Use
                 console.log("Error");
                 defer.reject(error);
                 //$rootScope.$apply();
-            }, UserSrv.getKey(), this.fileHandle);
+            }, UserSrv.getKey(), this.fileHandle, tags, categories, circleId);
             return defer.promise;
         }
     }
@@ -739,7 +740,7 @@ angular.module('module.models').service("TagFetchService", ['$q', '$rootScope', 
             defer.resolve(tagArray);
         }, function(error) {
             console.log(error);
-        }, UserSrv.getKey(), null, null, null, SPACE_ENUM.private, circleIds, null);
+        }, UserSrv.getKey(), null, null, null, SPACE_ENUM.circle, circleIds, null);
         return defer.promise;
     };
     this.fetchTagsByName = function(queryString) {
