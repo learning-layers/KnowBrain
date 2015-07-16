@@ -570,25 +570,26 @@ angular.module('dialogs.controllers', ['ui.bootstrap.modal', 'module.i18n', 'mod
         $event.stopImmediatePropagation();
     };
     $scope.recommendedTags = [];
-    $scope.recommendedTagsDummy = ["rectag1", "rectag2", "rectag3", "rectag4"];
+    //$scope.recommendedTagsDummy = ["rectag1", "rectag2", "rectag3", "rectag4"];  //  for test purposes 
     $scope.allTags = [];
     $scope.getTagsforCategories = function (){
     	var tagsPromise = CategoryTagFetchService.fetchRecommendedTags( $scope.circleName, $scope.selectedCategories);
     	tagsPromise.then(function(result) {
-//    		if (result.tags.length > 0)
-//    			$scope.recommendedTags = result.tags;
-    		 $scope.recommendedTags = $scope.recommendedTagsDummy;
+    		//if (result.tags.length > 0)
+    			$scope.recommendedTags = result.tags;
+    		//else 
+    			//$scope.recommendedTags = $scope.recommendedTagsDummy;
     	});
     	$scope.recTagsShow = true;
     };
    
-    
     $scope.addTagToInput = function (tag) {
 
     	$scope.allTags.push({text: tag});
-    	
     }
-    
+    ///////////////////////////////////////////////////
+    ///  END: kb-recommender user study
+    ///////////////////////////////////////////////////
     $scope.uploader.uploadAll = function() {
         if (!uploadFiles) {
             var files = [];
@@ -609,7 +610,7 @@ angular.module('dialogs.controllers', ['ui.bootstrap.modal', 'module.i18n', 'mod
 
                 if (saveInCollection == true) {
                     var currColl = CurrentCollectionService.getCurrentCollection();
-                    currColl.uploadFile(file._file, $scope.recommendedTags, $scope.selectedCategories).then(function(entry) {
+                    currColl.uploadFile(file._file, $scope.allTags, $scope.selectedCategories, $scope.circleId).then(function(entry) {
                         file.uploading = false;
                         file.uploaded = true;
                         file.uriPathnameHash = UriToolbox.extractUriPathnameHash(entry.id);
@@ -679,7 +680,7 @@ angular.module('dialogs.controllers', ['ui.bootstrap.modal', 'module.i18n', 'mod
     };
 })
 
-.controller("CreateLinkController", function($scope, $modalInstance, $http, $location, i18nService, GroupFetchService, targetEntity, EntityModel) {
+.controller("CreateLinkController", function($scope, $modalInstance, $http, $location, $state, i18nService, GroupFetchService, targetEntity, EntityModel, CategoryTagFetchService) {
     $scope.createLink = function(link) {
         if (link.label == undefined || link.url == undefined) {
             return;
@@ -709,7 +710,69 @@ angular.module('dialogs.controllers', ['ui.bootstrap.modal', 'module.i18n', 'mod
             $modalInstance.close(entry);
         }
     };
+    ///////////////////////////////////////////////////
+    ///  kb-recommender user study
+    ///////////////////////////////////////////////////
+    /**
+     * TRANSLATION INJECTION
+     */
+    $scope.t = function(identifier) {
+            return i18nService.t(identifier);
+        }
+    
+     $scope.recTagsShow = false;
+     $scope.circleId = $state.params.id;
+     $scope.circleName = "";
+     $scope.circle = null;
+     var promise = GroupFetchService.getGroup("http://sss.eu/" + $scope.circleId);
+     promise.then(function(result) {
+         $scope.circle = result.circle;
+         $scope.circleName = result.circle.label;
+     });
+     
+     $scope.predefinedCategories = [];
+     var categoriesPromise = CategoryTagFetchService.fetchPredefinedCategories();
+     categoriesPromise.then(function(result) {
+     	// When categories are defined uncomment the following line. As for now only 16 categories are shown
+//         $scope.predefinedCategories = result.categories;
+     	for(var i=0; i < 16;/*result.categories.length; */i++) {
+             $scope.predefinedCategories.push(result.categories[i]);
+         }
+     });
+     
+     
+     $scope.selectedCategories = [];
+     $scope.selectCategory = function($event, category) {
+         var idx = $scope.selectedCategories.indexOf(category);
+         if (idx > -1) {
+             $scope.selectedCategories.splice(idx, 1);
+           }
+           else {
+             $scope.selectedCategories.push(category);
+           }
+         $event.stopImmediatePropagation();
+     };
+     $scope.recommendedTags = [];
+     //$scope.recommendedTagsDummy = ["rectag1", "rectag2", "rectag3", "rectag4"];  //  for test purposes 
+     $scope.allTags = [];
+     $scope.getTagsforCategories = function (){
+     	var tagsPromise = CategoryTagFetchService.fetchRecommendedTags( $scope.circleName, $scope.selectedCategories);
+     	tagsPromise.then(function(result) {
+     		//if (result.tags.length > 0)
+     			$scope.recommendedTags = result.tags;
+     		//else 
+     			//$scope.recommendedTags = $scope.recommendedTagsDummy;
+     	});
+     	$scope.recTagsShow = true;
+     };
+    
+     $scope.addTagToInput = function (tag) {
 
+     	$scope.allTags.push({text: tag});
+     }
+     ///////////////////////////////////////////////////
+     ///  END: kb-recommender user study
+     ///////////////////////////////////////////////////
     $scope.close = function() {
         $modalInstance.close();
     };
