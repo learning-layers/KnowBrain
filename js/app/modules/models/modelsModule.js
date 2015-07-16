@@ -772,7 +772,7 @@ angular.module('module.models').service("CategoryTagFetchService", ['$q', '$root
            UserSrv.getUser(), //forUser
            null, //entity
            categories,
-           10 //maxTags
+           7 //maxTags
         );
         return defer.promise;
     };
