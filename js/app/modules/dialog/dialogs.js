@@ -570,16 +570,16 @@ angular.module('dialogs.controllers', ['ui.bootstrap.modal', 'module.i18n', 'mod
         $event.stopImmediatePropagation();
     };
     $scope.recommendedTags = [];
-    $scope.recommendedTagsDummy = ["rectag1", "rectag2", "rectag3", "rectag4"];  //  for test purposes 
+    //$scope.recommendedTagsDummy = ["rectag1", "rectag2", "rectag3", "rectag4"];  //  for test purposes 
     $scope.allTags = [];
     $scope.inputTags =[];
     $scope.getTagsforCategories = function (){
     	var tagsPromise = CategoryTagFetchService.fetchRecommendedTags( $scope.circleName, $scope.selectedCategories);
     	tagsPromise.then(function(result) {
     		//if (result.tags.length > 0)
-    			//$scope.recommendedTags = result.tags;
+    			$scope.recommendedTags = result.tags;
     		//else 
-    			$scope.recommendedTags = $scope.recommendedTagsDummy;
+    			//$scope.recommendedTags = $scope.recommendedTagsDummy;
     	});
     	$scope.recTagsShow = true;
     };
