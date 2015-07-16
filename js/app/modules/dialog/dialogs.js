@@ -76,13 +76,20 @@ angular.module('dialogs.controllers', ['ui.bootstrap.modal', 'module.i18n', 'mod
     $scope.yes = function() {
         $modalInstance.close('yes');
     }; // end yes
-}]).controller('entryDetailController', ['$scope', '$modalInstance', 'entry', '$q', 'i18nService', 'CurrentCollectionService', 'FetchServiceHelper', 'RATING_MAX', 'ENTITY_TYPES', 'TagFetchService', 'isSearchResult', 'UserService', 'UriToolbox', '$state', '$window', '$dialogs', function($scope, $modalInstance, entry, $q, i18nService, CurrentCollectionService, FetchServiceHelper, RATING_MAX, ENTITY_TYPES, TagFetchService, isSearchResult, UserSrv, UriToolbox, $state, $window, $dialogs) {
+}]).controller('entryDetailController', ['$scope', '$modalInstance', 'entry', '$q', 'i18nService', 'CurrentCollectionService', 'FetchServiceHelper', 'RATING_MAX', 'ENTITY_TYPES', 'TagFetchService', 'isSearchResult', 'UserService', 'UriToolbox', '$state', '$window', '$dialogs', 'GroupFetchService', function($scope, $modalInstance, entry, $q, i18nService, CurrentCollectionService, FetchServiceHelper, RATING_MAX, ENTITY_TYPES, TagFetchService, isSearchResult, UserSrv, UriToolbox, $state, $window, $dialogs, GroupFetchService) {
     $scope.entry = entry;
     $scope.tags = new Array();
     $scope.ratingReadOnly = false;
     $scope.ENTITY_TYPES = ENTITY_TYPES;
     $scope.isSearchResult = isSearchResult;
     $scope.locations = [];
+    $scope.circleId = $state.params.id;
+    
+    $scope.circles = [$scope.circleId];
+//    var promise = GroupFetchService.getUserGroups(null);
+//    promise.then(function(result) {
+//        $scope.circles = result.circles;
+//    });
 
     /**
      * TRANSLATION INJECTION
@@ -137,7 +144,7 @@ angular.module('dialogs.controllers', ['ui.bootstrap.modal', 'module.i18n', 'mod
     };
     $scope.tagAdded = function(tag) {
         // Passed variable is an object with structure { text : 'tagtext'}
-        entry.addTag(tag.text).then(function(result) {
+        entry.addTag(tag.text, $scope.circleId).then(function(result) {
             CurrentCollectionService.getCurrentCollection().getCumulatedTags();
         }, function(error) {
             console.log(error);
@@ -187,7 +194,7 @@ angular.module('dialogs.controllers', ['ui.bootstrap.modal', 'module.i18n', 'mod
     };
     $scope.queryTags = function($queryString) {
         var defer = $q.defer();
-        var promise = TagFetchService.fetchAllPublicTags();
+        var promise = TagFetchService.fetchAllPublicTags($scope.circles);
         promise.then(function(result) {
             defer.resolve(search(result, $queryString));
         });
@@ -496,7 +503,7 @@ angular.module('dialogs.controllers', ['ui.bootstrap.modal', 'module.i18n', 'mod
 
 
 
-.controller("UploadResourcesController", function($q, $scope, $modalInstance, $http, $location, $state, i18nService, CurrentCollectionService, UriToolbox, UserService, EntityModel, ENTITY_TYPES, FileUploader, saveInCollection, uploadFiles, CategoryFetchService) {
+.controller("UploadResourcesController", function($q, $scope, $modalInstance, $http, $location, $state, $stateParams, i18nService, CurrentCollectionService, UriToolbox, UserService, EntityModel, ENTITY_TYPES, FileUploader, saveInCollection, uploadFiles, GroupFetchService, CategoryTagFetchService) {
     var self = this;
     
     $scope.uploader = new FileUploader();
@@ -527,14 +534,23 @@ angular.module('dialogs.controllers', ['ui.bootstrap.modal', 'module.i18n', 'mod
     $scope.close = function() {
         $modalInstance.dismiss();
     };
-    
-    // kb-recommender user study
-   
+    ///////////////////////////////////////////////////
+   ///  kb-recommender user study
+   ///////////////////////////////////////////////////
     $scope.recTagsShow = false;
-  
+    $scope.circleId = $state.params.id;
+    $scope.circleName = "";
+    $scope.circle = null;
+    var promise = GroupFetchService.getGroup("http://sss.eu/" + $scope.circleId);
+    promise.then(function(result) {
+        $scope.circle = result.circle;
+        $scope.circleName = result.circle.label;
+    });
+    
     $scope.predefinedCategories = [];
-    var categoriesPromise = CategoryFetchService.fetchPredefinedCategories();
+    var categoriesPromise = CategoryTagFetchService.fetchPredefinedCategories();
     categoriesPromise.then(function(result) {
+    	// When categories are defined uncomment the following line. As for now only 16 categories are shown
 //        $scope.predefinedCategories = result.categories;
     	for(var i=0; i < 16;/*result.categories.length; */i++) {
             $scope.predefinedCategories.push(result.categories[i]);
@@ -553,12 +569,23 @@ angular.module('dialogs.controllers', ['ui.bootstrap.modal', 'module.i18n', 'mod
           }
         $event.stopImmediatePropagation();
     };
+    $scope.recommendedTags = [];
+    $scope.recommendedTagsDummy = ["rectag1", "rectag2", "rectag3", "rectag4"];
+    $scope.allTags = [];
     $scope.getTagsforCategories = function (){
+    	var tagsPromise = CategoryTagFetchService.fetchRecommendedTags( $scope.circleName, $scope.selectedCategories);
+    	tagsPromise.then(function(result) {
+//    		if (result.tags.length > 0)
+//    			$scope.recommendedTags = result.tags;
+    		 $scope.recommendedTags = $scope.recommendedTagsDummy;
+    	});
     	$scope.recTagsShow = true;
-    }
+    };
    
-    $scope.recommendedTags = ["rectag1", "rectag2", "rectag3", "rectag4"];
+    
     $scope.addTagToInput = function (tag) {
+
+    	$scope.allTags.push({text: tag});
     	
     }
     
@@ -582,7 +609,7 @@ angular.module('dialogs.controllers', ['ui.bootstrap.modal', 'module.i18n', 'mod
 
                 if (saveInCollection == true) {
                     var currColl = CurrentCollectionService.getCurrentCollection();
-                    currColl.uploadFile(file._file).then(function(entry) {
+                    currColl.uploadFile(file._file, $scope.recommendedTags, $scope.selectedCategories).then(function(entry) {
                         file.uploading = false;
                         file.uploaded = true;
                         file.uriPathnameHash = UriToolbox.extractUriPathnameHash(entry.id);
@@ -627,7 +654,10 @@ angular.module('dialogs.controllers', ['ui.bootstrap.modal', 'module.i18n', 'mod
                             defer.reject(error);
                         },
                         UserService.getKey(),
-                        file._file
+                        file._file,
+                        $scope.allTags, 
+                        $scope.selectedCategories,
+                        $scope.circleId
                     );
             }
         });

@@ -89,7 +89,7 @@ angular.module('module.models').factory('BaseModel', ['$q', '$rootScope', 'UserS
             }, UserSrv.getKey(), self.id, rating);
             return defer.promise;
         },
-        addTag: function(tagString) {
+        addTag: function(tagString, circleId) {
             var defer = $q.defer();
             var self = this;
             new SSTagAdd(function(result) {
@@ -101,6 +101,7 @@ angular.module('module.models').factory('BaseModel', ['$q', '$rootScope', 'UserS
                 }, UserSrv.getKey(), self.id, //entity
                 tagString, //label
                 self.space, //space
+                circleId,
                 null); //creationTime
             return defer.promise;
         },
@@ -251,7 +252,7 @@ angular.module('module.models').factory('CollectionModel', ['$q', '$rootScope', 
         }, UserSrv.getKey(), this.id);
         return defer.promise;
     }
-    Collection.prototype.uploadFile = function(file) {
+    Collection.prototype.uploadFile = function(file, tags, categories) {
         var defer = $q.defer();
         var self = this;
         new SSFileUpload(function(result, fileName) {
@@ -271,7 +272,7 @@ angular.module('module.models').factory('CollectionModel', ['$q', '$rootScope', 
         }, function(error) {
             defer.reject(error);
             $rootScope.$apply();
-        }, UserSrv.getKey(), file);
+        }, UserSrv.getKey(), file, tags, categories);
         return defer.promise;
     };
     Collection.prototype.addEntries = function(entries, labels) {
@@ -727,7 +728,7 @@ angular.module('module.models').service("FetchServiceHelper", ['$q', '$rootScope
     };
 }]);
 angular.module('module.models').service("TagFetchService", ['$q', '$rootScope', 'UserService', 'SPACE_ENUM', function($q, $rootScope, UserSrv, SPACE_ENUM) {
-    this.fetchAllPublicTags = function() {
+    this.fetchAllPublicTags = function(circleIds) {
         var defer = $q.defer();
         var self = this;
         new SSTagFrequsGetFiltered(function(result) {
@@ -738,7 +739,7 @@ angular.module('module.models').service("TagFetchService", ['$q', '$rootScope', 
             defer.resolve(tagArray);
         }, function(error) {
             console.log(error);
-        }, UserSrv.getKey(), null, null, null, SPACE_ENUM.private, null);
+        }, UserSrv.getKey(), null, null, null, SPACE_ENUM.private, circleIds, null);
         return defer.promise;
     };
     this.fetchTagsByName = function(queryString) {
@@ -748,7 +749,7 @@ angular.module('module.models').service("TagFetchService", ['$q', '$rootScope', 
     };
 }]);
 ////// KB-Study services
-angular.module('module.models').service("CategoryFetchService", ['$q', '$rootScope', 'UserService', function($q, $rootScope, UserSrv) {
+angular.module('module.models').service("CategoryTagFetchService", ['$q', '$rootScope', 'UserService', function($q, $rootScope, UserSrv) {
 	this.fetchPredefinedCategories = function(){
     	var defer = $q.defer();
         var self = this;
@@ -757,6 +758,22 @@ angular.module('module.models').service("CategoryFetchService", ['$q', '$rootSco
         }, function(error) {
             console.log(error);
         }, UserSrv.getKey());
+        return defer.promise;
+    };
+    this.fetchRecommendedTags = function (circleName, categories) {
+    	var defer = $q.defer();
+        var self = this;
+        new SSRecommTagsFiltered(function(result) {
+        	defer.resolve(result);
+        }, function(error) {
+        	console.log(error);
+        }, UserSrv.getKey(),
+           circleName, //currentCircle
+           UserSrv.getUser(), //forUser
+           null, //entity
+           categories,
+           10 //maxTags
+        );
         return defer.promise;
     };
 }]);
