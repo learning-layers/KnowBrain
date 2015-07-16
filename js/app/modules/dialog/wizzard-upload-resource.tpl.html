@@ -100,23 +100,21 @@
                 <div  ng-show="recTagsShow" class="div-separator ng-hide" id="recTags" >Recommended Tags: <button ng-repeat="tag in recommendedTags" ng-click='addTagToInput(tag)'>{{tag}}</button></div>
                 <div id="divTags" class="div-separator">
                 	<h5>Tags:</h5>
-                	<tags-input id="inputTags" ng-model="tags" custom-class="bootstrap" placeholder="{{t('add_a_tag')}}" on-tag-added="tagAdded($tag)"
-                	on-tag-removed="tagRemoved($tag)"
+                	<!-- TODO: change tagAdded -->
+                	<tags-input ng-model="allTags" custom-class="bootstrap" placeholder="{{t('add_a_tag')}}" 
                 	add-on-comma="true"
                 	add-on-space="false"
                 	add-on-blur="false"
                 	add-on-enter="true"
                 	allowed-tags-pattern="^[a-zA-Z0-9_-]*$"
                 	>
-                	<auto-complete source="queryTags($query)"
+                	<!--  <auto-complete source="queryTags($query)"
                 	min-length="1"
                 	max-results-to-show="15"
                 	>
-                	</auto-complete>
+                	</auto-complete>-->
                 	</tags-input>
-                <div class="entry-detail-info-tag-allowed-chars">
-                    <span class="glyphicon glyphicon-info-sign"></span>&nbsp;{{t('allowed_chars')}} a-z A-Z 0-9 _ -
-                </div>
+                	
             </div>
             </form>
             <div class="clearfix"></div>

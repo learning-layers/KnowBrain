@@ -94,12 +94,12 @@ angular.module('module.circles').controller("CircleController", function($compil
     $scope.circle = null;
     $scope.circles = [];
     $scope.tab = 0;
-
+    
     var circlesPromise = GroupFetchService.getUserGroups($scope.profileId);
     circlesPromise.then(function(result) {
         $scope.circles = result.circles;
     });
-
+    
     var promise = GroupFetchService.getGroup("http://sss.eu/" + $scope.circleId);
     promise.then(function(result) {
         $scope.circle = result.circle;

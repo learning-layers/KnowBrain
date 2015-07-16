@@ -403,17 +403,19 @@ angular.module('module.qa').service("qaService", ['$q', '$rootScope', 'UserServi
                 new SSFileUpload(
                         function (result, fileName) {
                             deferFile.resolve(new Attachment(result.file, result.file, 'file'));
-                        },
-                        function (error) {
+                          },
+                          function (error) {
                             console.log(error);
-                            deferFile.reject(error);
+                          deferFile.reject(error);
                         },
-                        UserSrv.getKey(),
-                        attachment._file
-                        );
-
-                promiseList.push(deferFile.promise);
-            });
+                          UserSrv.getKey(),
+                          attachment._file,
+                          null,  //tags
+                        null, //categories);
+                        null); //circle
+                        
+                        promiseList.push(deferFile.promise);
+                      });
 
             $q.all(promiseList)
                     .then(function (result) {
@@ -445,6 +447,7 @@ angular.module('module.qa').service("qaService", ['$q', '$rootScope', 'UserServi
                         object.id, //entity
                         value.label, //label
                         value.space, //space
+                        null, //circle
                         null);  //creationTime
 
                 promiseListTag.push(deferTag.promise);
@@ -486,6 +489,7 @@ angular.module('module.qa').service("qaService", ['$q', '$rootScope', 'UserServi
                     [object.id], //entities
                     null, //labels
                     null, //space
+                    null, //circles
                     null //startime
                     );
             return defer.promise;
@@ -699,17 +703,10 @@ angular.module('module.qa').service("qaService", ['$q', '$rootScope', 'UserServi
                         deferThreadList.reject(error);
                     },
                     UserSrv.getKey(),
-                    false,                       //includeTextualContent
                     keywordsToSearchFor,         //wordsToSearchFor
-                    tagList.length > 0,         //includeTags
                     tagList,                    //tagsToSearchFor
-                    false,                      //includeAuthors
                     null,                       //authorsToSearchFor
-                    false,                      //includeMIs
-                    null,                       //misToSearchFor
-                    true,                      //includeLabel
                     keywordsToSearchFor,       //labelsToSearchFor
-                    true,                      //includeDescription
                     keywordsToSearchFor,       //descriptionsToSearchFor
                     typesToSearchOnlyFor,       //typesToSearchOnlyFor
                     false,                      //includeOnlySubEntities
@@ -834,17 +831,10 @@ angular.module('module.qa').service("qaService", ['$q', '$rootScope', 'UserServi
                         deferThreadList.reject(error);
                     },
                     UserSrv.getKey(),
-                    false,                      //includeTextualContent
                     null,                       //wordsToSearchFor
-                    true,                       //includeTags
                     tagList,                     //tagsToSearchFor
-                    false,                      //includeAuthors
                     null,                       //authorsToSearchFor
-                    false,                      //includeMIs
-                    null,                       //misToSearchFor
-                    true,                       //includeLabel
                     thread.title.split(" "),    //labelsToSearchFor
-                    false,                      //includeDescription
                     null,                       //descriptionsToSearchFor
                     ["qa"],                     //typesToSearchOnlyFor
                     false,                      //includeOnlySubEntities
