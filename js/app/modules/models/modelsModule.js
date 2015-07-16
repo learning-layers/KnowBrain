@@ -252,7 +252,7 @@ angular.module('module.models').factory('CollectionModel', ['$q', '$rootScope', 
         }, UserSrv.getKey(), this.id);
         return defer.promise;
     }
-    Collection.prototype.uploadFile = function(file, tags, categories) {
+    Collection.prototype.uploadFile = function(file, tags, categories, circleId) {
         var defer = $q.defer();
         var self = this;
         new SSFileUpload(function(result, fileName) {
@@ -272,7 +272,7 @@ angular.module('module.models').factory('CollectionModel', ['$q', '$rootScope', 
         }, function(error) {
             defer.reject(error);
             $rootScope.$apply();
-        }, UserSrv.getKey(), file, tags, categories);
+        }, UserSrv.getKey(), file, tags, categories, circleId);
         return defer.promise;
     };
     Collection.prototype.addEntries = function(entries, labels) {
