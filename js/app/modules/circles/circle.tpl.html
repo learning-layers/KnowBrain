@@ -1,5 +1,5 @@
 <div class="row" style="margin-left:0px; margin-right:0px;">
-    <div class="col-md-3">
+    <!--<div class="col-md-3">
         <div id="circles-list">
             <ul class="nav nav-list affix-top">
                 <li ng-class="{ 'active': item.id == circle.id }" ng-click="showCircle(item.id)" ng-repeat="item in circles">
@@ -9,21 +9,22 @@
                 </li>
             </ul>
         </div>
-    </div>
+    </div>-->
     <div class="col-md-9">
         <section style="margin-top: 0px;">
             <div class="row" style="margin-left:0px; margin-right:0px;">
-                <h1 class="highlight" ng-click="editCircle()">{{circle.label}}</h1>
+                <!--<h1 class="highlight" ng-click="editCircle()">{{circle.label}}</h1>-->
+				<h1>{{circle.label}}</h1>
                 {{circle.description}}
             </div>
             <div class="row" style="margin-left:0px; margin-right:0px;">
                 <div id="members-container">
-                    <a ng-click="addMember()">
+                    <!--<a ng-click="addMember()">
                     <div id="add-member-container" class="user-small-container">
                         <div id="add-member-pic" class="icon-user-in-circle"></div>
                         <div id="add-member-label">Add</div>
                     </div>
-                    </a>
+                    </a>-->
                     <ng-user-small ng-repeat="user in circle.users"></ng-user-small>
                 </div>
             </div>

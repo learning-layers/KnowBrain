@@ -574,10 +574,14 @@ angular.module('dialogs.controllers', ['ui.bootstrap.modal', 'module.i18n', 'mod
     $scope.allTags = [];
     $scope.inputTags =[];
     $scope.getTagsforCategories = function (){
-    	var tagsPromise = CategoryTagFetchService.fetchRecommendedTags( $scope.circleName, $scope.selectedCategories);
+    	var tagsPromise = CategoryTagFetchService.fetchRecommendedTags( "circle1"/*$scope.circleName*/, $scope.selectedCategories);
     	tagsPromise.then(function(result) {
     		//if (result.tags.length > 0)
-    			$scope.recommendedTags = result.tags;
+				tagnames = [];
+				for (i = 0; i < result.tags.length; i++) {
+					tagnames.push(result.tags[i].label);
+				}
+    			$scope.recommendedTags = tagnames;//result.tags;
     		//else 
     			//$scope.recommendedTags = $scope.recommendedTagsDummy;
     	});
@@ -766,10 +770,14 @@ angular.module('dialogs.controllers', ['ui.bootstrap.modal', 'module.i18n', 'mod
      $scope.allTags = [];
      $scope.inputTags =[];
      $scope.getTagsforCategories = function (){
-     	var tagsPromise = CategoryTagFetchService.fetchRecommendedTags( $scope.circleName, $scope.selectedCategories);
+     	var tagsPromise = CategoryTagFetchService.fetchRecommendedTags( "circle1"/*$scope.circleName*/, $scope.selectedCategories); // TODO: uncomment!
      	tagsPromise.then(function(result) {
      		//if (result.tags.length > 0)
-     			$scope.recommendedTags = result.tags;
+				tagnames = [];
+				for (i = 0; i < result.tags.length; i++) {
+					tagnames.push(result.tags[i].label);
+				}
+    			$scope.recommendedTags = tagnames;//result.tags;
      		//else 
      			//$scope.recommendedTags = $scope.recommendedTagsDummy;
      	});
