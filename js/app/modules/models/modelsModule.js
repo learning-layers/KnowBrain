@@ -253,7 +253,7 @@ angular.module('module.models').factory('CollectionModel', ['$q', '$rootScope', 
         }, UserSrv.getKey(), this.id);
         return defer.promise;
     }
-    Collection.prototype.uploadFile = function(file, tags, categories, circleId) {
+    Collection.prototype.uploadFile = function(file) {
         var defer = $q.defer();
         var self = this;
         new SSFileUpload(function(result, fileName) {
@@ -273,7 +273,9 @@ angular.module('module.models').factory('CollectionModel', ['$q', '$rootScope', 
         }, function(error) {
             defer.reject(error);
             $rootScope.$apply();
-        }, UserSrv.getKey(), file, tags, categories, circleId);
+        }, 
+        UserSrv.getKey(), 
+        file);
         return defer.promise;
     };
     Collection.prototype.addEntries = function(entries, labels) {
@@ -417,7 +419,7 @@ angular.module('module.models').factory('EntityModel', ['$q', '$rootScope', 'Use
         UserSrv.getKey(), 
         this.id);
     };
-    Entity.prototype.uploadFile = function(tags, categories, circleId) {
+    Entity.prototype.uploadFile = function(tags) {
         var defer = $q.defer();
         var self = this;
         if (this.type == ENTITY_TYPES.file) {
@@ -434,7 +436,9 @@ angular.module('module.models').factory('EntityModel', ['$q', '$rootScope', 'Use
                 console.log("Error");
                 defer.reject(error);
                 //$rootScope.$apply();
-            }, UserSrv.getKey(), this.fileHandle, tags, categories, circleId);
+            }, 
+            UserSrv.getKey(), 
+            this.fileHandle);
             return defer.promise;
         }
     }

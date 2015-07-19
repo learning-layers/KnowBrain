@@ -409,10 +409,7 @@ angular.module('module.qa').service("qaService", ['$q', '$rootScope', 'UserServi
                           deferFile.reject(error);
                         },
                           UserSrv.getKey(),
-                          attachment._file,
-                          null,  //tags
-                        null, //categories);
-                        null); //circle
+                          attachment._file);
                         
                         promiseList.push(deferFile.promise);
                       });

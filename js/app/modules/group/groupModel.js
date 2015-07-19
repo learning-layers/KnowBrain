@@ -133,7 +133,9 @@ angular.module('module.group').service("GroupFetchService", ['$q','UserService',
             },
             UserSrv.getKey(),
             group,
-            entities
+            entities, 
+            null, //tags 
+            null //categories
         );
         
         return defer.promise;
