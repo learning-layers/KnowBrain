@@ -651,7 +651,7 @@ angular.module('dialogs.controllers', ['ui.bootstrap.modal', 'module.i18n', 'mod
 
                 if (saveInCollection == true) {
                     var currColl = CurrentCollectionService.getCurrentCollection();
-                    currColl.uploadFile(file._file, $scope.allTags, $scope.selectedCategories, $scope.circleId).then(function(entry) {
+                    currColl.uploadFile(file._file).then(function(entry) {
                         file.uploading = false;
                         file.uploaded = true;
                         file.uriPathnameHash = UriToolbox.extractUriPathnameHash(entry.id);
@@ -696,10 +696,7 @@ angular.module('dialogs.controllers', ['ui.bootstrap.modal', 'module.i18n', 'mod
                             defer.reject(error);
                         },
                         UserService.getKey(),
-                        file._file,
-                        $scope.allTags, 
-                        $scope.selectedCategories,
-                        $scope.circleId
+                        file._file
                     );
             }
         });
