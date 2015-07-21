@@ -115,7 +115,8 @@ angular.module('module.models').factory('BaseModel', ['$q', '$rootScope', 'UserS
                 }, function(error) {
                     defer.reject(error);
                     $rootScope.$apply();
-                }, UserSrv.getKey(), self.id, //entity
+                }, UserSrv.getKey(),
+                self.id, //entity
                 tagString, //label
                 SPACE_ENUM.circle //space
             );
@@ -749,9 +750,11 @@ angular.module('module.models').service("TagFetchService", ['$q', '$rootScope', 
         return defer.promise;
     };
 }]);
+
+
 ////// KB-Study services
 angular.module('module.models').service("CategoryTagFetchService", ['$q', '$rootScope', 'UserService', function($q, $rootScope, UserSrv) {
-	this.fetchPredefinedCategories = function(){
+	this.fetchPredefinedCategories = function() {
     	var defer = $q.defer();
         var self = this;
         new SSCategoriesPredefinedGet(function(result) {
@@ -769,13 +772,30 @@ angular.module('module.models').service("CategoryTagFetchService", ['$q', '$root
         }, function(error) {
         	console.log(error);
         }, UserSrv.getKey(),
-           circleName, //currentCircle
+           circleName, //currentCircle = realm
            UserSrv.getUser(), //forUser
            null, //entity
            categories,
            7 //maxTags
         );
         return defer.promise;
+    };
+    this.fetchTagFrequencies = function (circleName) {
+    	var defer = $q.defer();
+    	var self = this;
+    	new SSTagFrequsGetFiltered(function(result) {
+    		defer.resolve(result);
+    	}, function(error) {
+    		console.log(error);
+    	},  UserSrv.getKey(),
+    		null,
+    		null,
+    		null,
+    		null,
+    		circleName,
+    		null,
+    		null
+    	);
     };
 }]);
 angular.module('module.models').service('UserFetchService', ['$q', '$rootScope', 'UserService', function($q, $rootScope, UserSrv) {

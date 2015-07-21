@@ -145,7 +145,10 @@ angular.module('dialogs.controllers', ['ui.bootstrap.modal', 'module.i18n', 'mod
     $scope.tagAdded = function(tag) {
         // Passed variable is an object with structure { text : 'tagtext'}
         entry.addTag(tag.text, $scope.circleId).then(function(result) {
-            CurrentCollectionService.getCurrentCollection().getCumulatedTags();
+        	// dkowald: added null check
+        	if (CurrentCollectionService.getCurrentCollection() != null) {
+        		CurrentCollectionService.getCurrentCollection().getCumulatedTags();
+        	}
         }, function(error) {
             console.log(error);
         });
@@ -153,7 +156,10 @@ angular.module('dialogs.controllers', ['ui.bootstrap.modal', 'module.i18n', 'mod
     $scope.tagRemoved = function(tag) {
         // Passed variable is an object with structure { text : 'tagtext'}
         entry.removeTag(tag.text).then(function(result) {
-            CurrentCollectionService.getCurrentCollection().getCumulatedTags();
+        	// dkowald: added null check
+        	if (CurrentCollectionService.getCurrentCollection() != null) {
+        		CurrentCollectionService.getCurrentCollection().getCumulatedTags();
+        	}
         }, function(error) {
             console.log(error);
         });
@@ -162,7 +168,19 @@ angular.module('dialogs.controllers', ['ui.bootstrap.modal', 'module.i18n', 'mod
         $modalInstance.close();
     };
     $scope.deleteEntity = function() {
-        var toDelete = new Array();
+    	// dkowald: new code for KnowBrain study
+        var entityIds = [];
+        entityIds.push($scope.entry.id);
+
+        var promise = GroupFetchService.removeEntitiesFromGroup(entityIds, $scope.circleId);
+        promise.then(function(result) {
+            $scope.close();
+            window.location.reload();
+        }, function(error) {
+            console.log(error);
+        });
+    	
+        /*var toDelete = new Array();
         var entries = CurrentCollectionService.getCurrentCollection().entries;
         angular.forEach(entries, function(collEntry, key) {
             if (collEntry.id == $scope.entry.id) {
@@ -174,7 +192,7 @@ angular.module('dialogs.controllers', ['ui.bootstrap.modal', 'module.i18n', 'mod
             $scope.close();
         }, function(error) {
             console.log(error);
-        });
+        });*/
     };
     $scope.downloadEntity = function() {
         if ($scope.entry.type != ENTITY_TYPES.file) return;
@@ -588,16 +606,26 @@ angular.module('dialogs.controllers', ['ui.bootstrap.modal', 'module.i18n', 'mod
     	$scope.recTagsShow = true;
     };
    
+    // dkowald: fixed duplicate tags bug
     $scope.addTagToInput = function (tag) {
-    	$scope.inputTags.push({text: tag});
-    	$scope.allTags = $scope.inputTags.map(function(tag) { return tag.text; });
+    	var oldTags = $scope.inputTags.map(function(tag) { return tag.text; });
+    	var tagText = {text: tag};
+    	
+    	var index = oldTags.indexOf(tagText.text);
+    	if (index == -1) {
+		    $scope.inputTags.push(tagText);
+		    $scope.allTags = $scope.inputTags.map(function(tag) { return tag.text; });
+    	}
     }
     $scope.addTagToAll = function (tag) {
     	$scope.allTags.push( tag.text);
     }
-    ///// TODO it does not work please test and fix
+    // dkowald: fixed
     $scope.removeTagFromAll = function (tag) {
-    	$scope.allTags.splice( -1,1, tag.text);
+    	var index = $scope.allTags.indexOf(tag.text);
+    	if (index > -1) {
+    		$scope.allTags.splice(index, 1);
+    	}
     }
     
     ///////////////////////////////////////////////////
@@ -747,12 +775,12 @@ angular.module('dialogs.controllers', ['ui.bootstrap.modal', 'module.i18n', 'mod
      var categoriesPromise = CategoryTagFetchService.fetchPredefinedCategories();
      categoriesPromise.then(function(result) {
      	// When categories are defined uncomment the following line. As for now only 16 categories are shown
-//         $scope.predefinedCategories = result.categories;
+    	// $scope.predefinedCategories = result.categories;
      	for(var i=0; i < 16;/*result.categories.length; */i++) {
              $scope.predefinedCategories.push(result.categories[i]);
          }
      });
-     
+       
      
      $scope.selectedCategories = [];
      $scope.selectCategory = function($event, category) {
@@ -770,6 +798,7 @@ angular.module('dialogs.controllers', ['ui.bootstrap.modal', 'module.i18n', 'mod
      $scope.allTags = [];
      $scope.inputTags =[];
      $scope.getTagsforCategories = function (){
+    	// dkowald: TODO - must be changed to circleName for study! (same for upload file!)
      	var tagsPromise = CategoryTagFetchService.fetchRecommendedTags( "circle1"/*$scope.circleName*/, $scope.selectedCategories); // TODO: uncomment!
      	tagsPromise.then(function(result) {
      		//if (result.tags.length > 0)
@@ -784,15 +813,26 @@ angular.module('dialogs.controllers', ['ui.bootstrap.modal', 'module.i18n', 'mod
      	$scope.recTagsShow = true;
      };
     
+     // dkowald: fixed duplicate tags bug
      $scope.addTagToInput = function (tag) {
-     	$scope.inputTags.push({text: tag});
-     	$scope.allTags = $scope.inputTags.map(function(tag) { return tag.text; });
+     	var oldTags = $scope.inputTags.map(function(tag) { return tag.text; });
+     	var tagText = {text: tag};
+     	
+     	var index = oldTags.indexOf(tagText.text);
+     	if (index == -1) {
+ 		    $scope.inputTags.push(tagText);
+ 		    $scope.allTags = $scope.inputTags.map(function(tag) { return tag.text; });
+     	}
      }
      $scope.addTagToAll = function (tag) {
      	$scope.allTags.push( tag.text);
      }
-     $scope.addTagToAll = function (tag) {
-     	$scope.allTags.push( tag.text);
+     // dkowald: fixed
+     $scope.removeTagFromAll = function (tag) {
+     	var index = $scope.allTags.indexOf(tag.text);
+     	if (index > -1) {
+     		$scope.allTags.splice(index, 1);
+     	}
      }
      ///////////////////////////////////////////////////
      ///  END: kb-recommender user study
