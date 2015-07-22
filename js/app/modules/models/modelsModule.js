@@ -800,6 +800,7 @@ angular.module('module.models').service("CategoryTagFetchService", ['$q', '$root
     		null,
     		null
     	);
+    	return defer.promise;
     };
 }]);
 angular.module('module.models').service('UserFetchService', ['$q', '$rootScope', 'UserService', function($q, $rootScope, UserSrv) {

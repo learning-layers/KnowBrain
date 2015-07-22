@@ -119,4 +119,8 @@
     </div>
 </div>
 
-<!--   var tagFrequs = CategoryTagFetchService.fetchTagFrequencies($scope.circleName); -->
+<!-- KnowBrain Study Tagcloud area TODO: log click -->
+<div>
+	<b>Circle tags: </b> 
+	<button ng-repeat="tag in circleTags" ng-click="selectTag(tag.label)">{{tag.label}} ({{tag.frequ}})</button>
+</div>

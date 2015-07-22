@@ -53,7 +53,14 @@ angular.module('module.circles').config(function($stateProvider) {
  * CONTROLLER
  */
 angular.module('module.circles').controller("CirclesController", function($scope, $state, $modal, $controller, $dialogs, UserService, GroupFetchService, UriToolbox) {
-    $scope.circles = [];
+    // TODO: KnowBrain study - set to correct usernames or make better solution
+    if (UserService.getLabel() == "admin") {
+    	$scope.isAdmin = true;
+    } else {
+    	$scope.isAdmin = false;
+    }
+	
+	$scope.circles = [];
     var promise = GroupFetchService.getUserGroups(null);
     promise.then(function(result) {
         $scope.circles = result.circles;
@@ -65,7 +72,7 @@ angular.module('module.circles').controller("CirclesController", function($scope
             });
         }
     };
-    $scope.addCircle = function() {
+    $scope.addCircle = function() {   	
         $modal.open({
             templateUrl: MODULES_PREFIX + '/circles/createCircle.tpl.html',
             controller: 'createCircleController',
@@ -114,14 +121,14 @@ angular.module('module.circles').controller("CircleController", function($compil
         };
     }
     $scope.setTab(1);
-
+    
+    
     $scope.showCircle = function(circleId) {
         $state.go('app.circles.circle', {
             id: UriToolbox.extractUriPathnameHash(circleId)
         });
     };
-
-
+        
     $scope.editCircle = function() {
         $modal.open({
             templateUrl: MODULES_PREFIX + '/circles/createCircle.tpl.html',
@@ -210,7 +217,7 @@ angular.module('module.circles').controller("CircleActivitiesController", functi
     };
 });
 
-angular.module('module.circles').controller("CircleResourcesController", function($scope, $state, $q, $dialogs, cookiesSrv, GroupFetchService, UserFetchService, EntityFetchService, CollectionFetchService, UriToolbox, ENTITY_TYPES, SETTINGS_CONSTANTS) {
+angular.module('module.circles').controller("CircleResourcesController", function($scope, $state, $q, $dialogs, cookiesSrv, GroupFetchService, UserFetchService, EntityFetchService, CollectionFetchService, UriToolbox, ENTITY_TYPES, SETTINGS_CONSTANTS, CategoryTagFetchService) {
 
     $scope.entities = [];
     $scope.predicate = 'creationTime';
@@ -250,7 +257,7 @@ angular.module('module.circles').controller("CircleResourcesController", functio
     };
 
     $scope.loadRootCollection();
-
+ 
     var addEntitiesToCircle = function(entities) {
         for (var i = 0; i < entities.length; i++) {
             var entity = entities[i];
@@ -437,6 +444,31 @@ angular.module('module.circles').controller("CircleResourcesController", functio
             $('[data-toggle="tooltip"]').tooltip();
         })
     });
+    
+    
+    // Knowbrain study code for tag-cloud
+	var compare = function(a, b) {
+		if (a.frequ < b.frequ)
+			return 1;
+	  	if (a.frequ > b.frequ)
+	  		return -1;
+	  	return 0;
+	}
+    
+   	var unsortedTags = [];
+    var tagPromise = CategoryTagFetchService.fetchTagFrequencies($scope.circleName);
+    tagPromise.then(function(result) {
+	    for (var i = 0; i < result.tagFrequs.length; i++) {
+	    	var tag = result.tagFrequs[i];
+	    	unsortedTags.push(tag);
+	    }
+	    unsortedTags.sort(compare);   
+	    $scope.circleTags = unsortedTags;
+    });
+    
+    $scope.clickCircleTag = function(tag) {
+    	alert(tag.label);
+    };
 });
 
 angular.module('module.circles').controller("addMembersController", function($q, $scope, $rootScope, $modalInstance, UserFetchService, UserService, excludeUsers) {
