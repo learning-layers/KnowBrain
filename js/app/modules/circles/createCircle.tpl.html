@@ -14,6 +14,9 @@
                     <div class="new-circle-picture-label-frame">
                         <a class="new-circle-picture-label" ng-click="uploadPic()"> + Upload circle picture</a>
                     </div>
+                    <br />
+                    <input type="text" class="form-control" ng-model="mergeCircleName" />
+                    <button ng-click="mergeCircle(mergeCircleName)">Merge / Split</button>
                 </div>
             </div>
             <div class="col-md-8 column">

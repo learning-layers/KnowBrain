@@ -767,7 +767,6 @@ angular.module('dialogs.controllers', ['ui.bootstrap.modal', 'module.i18n', 'mod
          $scope.circle = result.circle;
          $scope.circleName = result.circle.label;
      });
-     
      $scope.predefinedCategories = [];
      var categoriesPromise = CategoryTagFetchService.fetchPredefinedCategories();
      categoriesPromise.then(function(result) {

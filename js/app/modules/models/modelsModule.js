@@ -748,6 +748,24 @@ angular.module('module.models').service("TagFetchService", ['$q', '$rootScope', 
         }, UserSrv.getKey(), null, null, null, SPACE_ENUM.circle, circleIds, null);
         return defer.promise;
     };
+    this.fetchTagFrequencies = function (circleIds) {
+    	var defer = $q.defer();
+    	var self = this;
+    	new SSTagFrequsGetFiltered(function(result) {
+    		defer.resolve(result);
+    	}, function(error) {
+    		console.log(error);
+    	},  UserSrv.getKey(),
+    		null,
+    		null,
+    		null,
+    		SPACE_ENUM.circle,
+    		circleIds,
+    		null,
+    		null
+    	);
+    	return defer.promise;
+    };
     this.fetchTagsByName = function(queryString) {
         var defer = $q.defer();
         var self = this;

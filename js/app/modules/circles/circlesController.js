@@ -54,7 +54,7 @@ angular.module('module.circles').config(function($stateProvider) {
  */
 angular.module('module.circles').controller("CirclesController", function($scope, $state, $modal, $controller, $dialogs, UserService, GroupFetchService, UriToolbox) {
     // TODO: KnowBrain study - set to correct usernames or make better solution
-    if (UserService.getLabel() == "admin") {
+    if (UserService.getLabel() == "dieter") {
     	$scope.isAdmin = true;
     } else {
     	$scope.isAdmin = false;
@@ -217,7 +217,7 @@ angular.module('module.circles').controller("CircleActivitiesController", functi
     };
 });
 
-angular.module('module.circles').controller("CircleResourcesController", function($scope, $state, $q, $dialogs, cookiesSrv, GroupFetchService, UserFetchService, EntityFetchService, CollectionFetchService, UriToolbox, ENTITY_TYPES, SETTINGS_CONSTANTS, CategoryTagFetchService) {
+angular.module('module.circles').controller("CircleResourcesController", function($scope, $state, $q, $dialogs, cookiesSrv, GroupFetchService, UserFetchService, EntityFetchService, CollectionFetchService, UriToolbox, ENTITY_TYPES, SETTINGS_CONSTANTS, TagFetchService) {
 
     $scope.entities = [];
     $scope.predicate = 'creationTime';
@@ -456,7 +456,9 @@ angular.module('module.circles').controller("CircleResourcesController", functio
 	}
     
    	var unsortedTags = [];
-    var tagPromise = CategoryTagFetchService.fetchTagFrequencies($scope.circleName);
+   	var circleIDs = [];
+   	circleIDs.push($scope.circleId);
+    var tagPromise = TagFetchService.fetchTagFrequencies(/*circleIDs*/);
     tagPromise.then(function(result) {
 	    for (var i = 0; i < result.tagFrequs.length; i++) {
 	    	var tag = result.tagFrequs[i];
@@ -522,6 +524,7 @@ angular.module('module.circles').controller("createCircleController", function($
     $scope.allUsers = [];
     $scope.friends = [];
     $scope.selectedUsers = [];
+    $scope.mergeCircleName = "";
 
     var friendsPromise = UserFetchService.getFriends();
     friendsPromise.then(function(result) {
@@ -572,9 +575,14 @@ angular.module('module.circles').controller("createCircleController", function($
         
     };
 
-
-
     $scope.close = function() {
         $modalInstance.close();
+    }
+    
+    // KnowBrain Study functionality
+    $scope.mergeCircle = function(circleName) {
+    	if (circleName != "") {
+    		alert(circleName);
+    	}
     }
 });
