@@ -485,7 +485,7 @@ angular.module('module.circles').controller("CircleResourcesController", functio
    	var unsortedTags = [];
    	var circleIDs = [];
    	circleIDs.push($scope.circleId);
-    var tagPromise = TagFetchService.fetchTagFrequencies(/*circleIDs*/);
+    var tagPromise = TagFetchService.fetchTagFrequencies(circleIDs);
     tagPromise.then(function(result) {
 	    for (var i = 0; i < result.tagFrequs.length; i++) {
 	    	var tag = result.tagFrequs[i];
