@@ -25,6 +25,12 @@
                         <div id="add-member-label">Add</div>
                     </div>
                     </a>
+                    <a ng-click="removeMember()" ng-show={{isAdmin}}>
+                    <div id="add-member-container" class="user-small-container">
+                        <div id="add-member-pic" class="icon-user-in-circle"></div>
+                        <div id="add-member-label">Remove</div>
+                    </div>
+                    </a>
                     <ng-user-small ng-repeat="user in circle.users"></ng-user-small>
                 </div>
             </div>

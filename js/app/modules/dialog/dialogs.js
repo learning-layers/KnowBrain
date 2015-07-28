@@ -557,6 +557,7 @@ angular.module('dialogs.controllers', ['ui.bootstrap.modal', 'module.i18n', 'mod
    ///////////////////////////////////////////////////
     $scope.recTagsShow = false;
     $scope.circleId = $state.params.id;
+    /*
     $scope.circleName = "";
     $scope.circle = null;
     var promise = GroupFetchService.getGroup("http://sss.eu/" + $scope.circleId);
@@ -564,6 +565,7 @@ angular.module('dialogs.controllers', ['ui.bootstrap.modal', 'module.i18n', 'mod
         $scope.circle = result.circle;
         $scope.circleName = result.circle.label;
     });
+    */
     
     $scope.predefinedCategories = [];
     var categoriesPromise = CategoryTagFetchService.fetchPredefinedCategories();
@@ -577,6 +579,11 @@ angular.module('dialogs.controllers', ['ui.bootstrap.modal', 'module.i18n', 'mod
     
     
     $scope.selectedCategories = [];
+    
+    $scope.stayOpen = function($event) {
+    	$event.stopImmediatePropagation();
+    }
+    
     $scope.selectCategory = function($event, category) {
         var idx = $scope.selectedCategories.indexOf(category);
         if (idx > -1) {
@@ -592,7 +599,7 @@ angular.module('dialogs.controllers', ['ui.bootstrap.modal', 'module.i18n', 'mod
     $scope.allTags = [];
     $scope.inputTags =[];
     $scope.getTagsforCategories = function (){
-    	var tagsPromise = CategoryTagFetchService.fetchRecommendedTags( "circle1"/*$scope.circleName*/, $scope.selectedCategories);
+    	var tagsPromise = CategoryTagFetchService.fetchRecommendedTags($scope.circleId, $scope.selectedCategories);
     	tagsPromise.then(function(result) {
     		//if (result.tags.length > 0)
 				tagnames = [];
@@ -690,6 +697,14 @@ angular.module('dialogs.controllers', ['ui.bootstrap.modal', 'module.i18n', 'mod
                             if (uploadCounter == fileCount) {
                                 defer.resolve();
                             }
+                            
+                            var fileUri = result.file;
+                            var promise = GroupFetchService.addEntitiesToGroup(fileUri, "http://sss.eu/" + $scope.circleId, $scope.allTags, $scope.selectedCategories);
+                            promise.then(function(result) {
+                            	console.log("Added file: " + fileUri);
+                            }, function(error) {
+                                console.log(error);
+                            });
                         },
                         function(error) {
                             console.log("Error");
@@ -725,7 +740,7 @@ angular.module('dialogs.controllers', ['ui.bootstrap.modal', 'module.i18n', 'mod
         }
 
         if (targetEntity.type === 'circle') {
-            var promise = GroupFetchService.addEntitiesToGroup([link.url], targetEntity.id);
+            var promise = GroupFetchService.addEntitiesToGroup([link.url], targetEntity.id, $scope.allTags, $scope.selectedCategories);
             promise.then(function(result) {
                 var entry = new EntityModel();
                 entry.init({ id: link.url,
@@ -760,6 +775,7 @@ angular.module('dialogs.controllers', ['ui.bootstrap.modal', 'module.i18n', 'mod
     
      $scope.recTagsShow = false;
      $scope.circleId = $state.params.id;
+     /*
      $scope.circleName = "";
      $scope.circle = null;
      var promise = GroupFetchService.getGroup("http://sss.eu/" + $scope.circleId);
@@ -767,6 +783,7 @@ angular.module('dialogs.controllers', ['ui.bootstrap.modal', 'module.i18n', 'mod
          $scope.circle = result.circle;
          $scope.circleName = result.circle.label;
      });
+     */
      $scope.predefinedCategories = [];
      var categoriesPromise = CategoryTagFetchService.fetchPredefinedCategories();
      categoriesPromise.then(function(result) {
@@ -777,6 +794,9 @@ angular.module('dialogs.controllers', ['ui.bootstrap.modal', 'module.i18n', 'mod
          }
      });
        
+     $scope.stayOpen = function($event) {
+     	$event.stopImmediatePropagation();
+     }
      
      $scope.selectedCategories = [];
      $scope.selectCategory = function($event, category) {
@@ -794,8 +814,7 @@ angular.module('dialogs.controllers', ['ui.bootstrap.modal', 'module.i18n', 'mod
      $scope.allTags = [];
      $scope.inputTags =[];
      $scope.getTagsforCategories = function (){
-    	// dkowald: TODO - must be changed to circleName for study! (same for upload file!)
-     	var tagsPromise = CategoryTagFetchService.fetchRecommendedTags( "circle1"/*$scope.circleName*/, $scope.selectedCategories); // TODO: uncomment!
+     	var tagsPromise = CategoryTagFetchService.fetchRecommendedTags($scope.circleId, $scope.selectedCategories);
      	tagsPromise.then(function(result) {
      		//if (result.tags.length > 0)
 				tagnames = [];

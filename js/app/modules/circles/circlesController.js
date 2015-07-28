@@ -167,6 +167,33 @@ angular.module('module.circles').controller("CircleController", function($compil
             });
         });
     }
+    
+    $scope.removeMember = function() {
+        $modal.open({
+            templateUrl: MODULES_PREFIX + '/circles/removeMembers.tpl.html',
+            controller: 'removeMembersController',
+            backdrop: true,
+            windowClass: "modal-huge",
+            resolve: {
+                circleUsers: function() {
+                    return $scope.circle.users;
+                }
+            }
+        }).result.then(function(result) {
+            var userUrls = [];
+            for (var i = 0; i < result.length; i++) {
+            	// TODO: remove
+                //$scope.circle.users.push(result[i]);
+                userUrls.push(result[i].id);
+            }
+            //alert(userUrls);
+            // TODO: remove
+            //var promise = GroupFetchService.addMembersToGroup(userUrls, $scope.circle.id);
+            //promise.then(function(result) {
+                //$rootScope.$apply();
+            //});
+        });
+    }
 
     $scope.friend = function(user) {
         UserService.addFriend(user.id);
@@ -334,10 +361,10 @@ angular.module('module.circles').controller("CircleResourcesController", functio
         for (var i = uploadedEntities.length - 1; i >= 0; i--) {
             entityIds.push(uploadedEntities[i].id);
         }
-        var promise = GroupFetchService.addEntitiesToGroup(entityIds, $scope.circle.id);
-        promise.then(function(result) {
+        //var promise = GroupFetchService.addEntitiesToGroup(entityIds, $scope.circle.id);
+        //promise.then(function(result) {
             addEntitiesToCircle(uploadedEntities);
-        });
+        //});
     };
 
     $scope.afterChooseEntity = function(chosenEntities) {
@@ -347,10 +374,10 @@ angular.module('module.circles').controller("CircleResourcesController", functio
                     entityIds.push(chosenEntities[i].id);
                 }
 
-                var promise = GroupFetchService.addEntitiesToGroup(entityIds, $scope.circle.id);
-                promise.then(function(result) {
+                //var promise = GroupFetchService.addEntitiesToGroup(entityIds, $scope.circle.id);
+                //promise.then(function(result) {
                     addEntitiesToCircle(chosenEntities);
-                });
+                //});
             }
     };
 
@@ -510,6 +537,31 @@ angular.module('module.circles').controller("addMembersController", function($q,
         $modalInstance.close();
     }
 });
+
+
+angular.module('module.circles').controller("removeMembersController", function($q, $scope, $rootScope, $modalInstance, UserFetchService, UserService, circleUsers) {
+    $scope.selectedUsers = [];
+    $scope.circleUsers = circleUsers;
+
+    $scope.selectUser = function(user) {
+        user.isSelected = !user.isSelected;
+        if (user.isSelected) {
+            $scope.selectedUsers.push(user);
+        } else {
+            $scope.selectedUsers = $.grep($scope.selectedUsers, function(o, i) {
+                return o.id === user.id;
+            }, true);
+        }
+    };
+    $scope.removeUsers = function(users) {
+        $modalInstance.close(users);
+    }
+
+    $scope.close = function() {
+        $modalInstance.close();
+    }
+});
+
 
 angular.module('module.circles').controller("createCircleController", function($q, $scope, $modal, $rootScope, $modalInstance, UserFetchService, GroupFetchService, UserService, ENTITY_TYPES, circle) {
     $scope.editingCircle = circle != null;

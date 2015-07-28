@@ -120,7 +120,7 @@ angular.module('module.group').service("GroupFetchService", ['$q','UserService',
         return defer.promise;
     };
     
-    this.addEntitiesToGroup = function(entities, group) {
+    this.addEntitiesToGroup = function(entities, group, tags, categories) {
         var defer = $q.defer();
         var self = this;
         
@@ -134,8 +134,8 @@ angular.module('module.group').service("GroupFetchService", ['$q','UserService',
             UserSrv.getKey(),
             group,
             entities, 
-            null, //tags 
-            null //categories
+            tags, //tags 
+            categories //categories
         );
         
         return defer.promise;
