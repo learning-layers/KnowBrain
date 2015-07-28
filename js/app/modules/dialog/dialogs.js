@@ -570,10 +570,14 @@ angular.module('dialogs.controllers', ['ui.bootstrap.modal', 'module.i18n', 'mod
     $scope.predefinedCategories = [];
     var categoriesPromise = CategoryTagFetchService.fetchPredefinedCategories();
     categoriesPromise.then(function(result) {
-    	// When categories are defined uncomment the following line. As for now only 16 categories are shown
-//        $scope.predefinedCategories = result.categories;
-    	for(var i=0; i < 16;/*result.categories.length; */i++) {
-            $scope.predefinedCategories.push(result.categories[i]);
+    	// When categories are defined uncomment the following line.
+    	//$scope.predefinedCategories = result.categories;
+     	for(var i=0; i < result.categories.length; i++) {
+    		 if (i < 10) {
+    			 $scope.predefinedCategories.push(result.categories[i]);
+    		 } else {
+    			 break;
+    		 }
         }
     });
     
@@ -787,10 +791,14 @@ angular.module('dialogs.controllers', ['ui.bootstrap.modal', 'module.i18n', 'mod
      $scope.predefinedCategories = [];
      var categoriesPromise = CategoryTagFetchService.fetchPredefinedCategories();
      categoriesPromise.then(function(result) {
-     	// When categories are defined uncomment the following line. As for now only 16 categories are shown
+     	// When categories are defined uncomment the following line.
     	// $scope.predefinedCategories = result.categories;
-     	for(var i=0; i < 16;/*result.categories.length; */i++) {
-             $scope.predefinedCategories.push(result.categories[i]);
+     	for(var i=0; i < result.categories.length; i++) {
+     		 if (i < 10) {
+     			 $scope.predefinedCategories.push(result.categories[i]);
+     		 } else {
+     			 break;
+     		 }
          }
      });
        
