@@ -795,7 +795,6 @@ angular.module('module.models').service("CategoryTagFetchService", ['$q', '$root
         	console.log(error);
         }, UserSrv.getKey(),
            circleName, //currentCircle = realm
-           UserSrv.getUser(), //forUser
            null, //entity
            categories,
            7 //maxTags
