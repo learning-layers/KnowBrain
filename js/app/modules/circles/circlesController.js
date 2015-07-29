@@ -182,16 +182,16 @@ angular.module('module.circles').controller("CircleController", function($compil
         }).result.then(function(result) {
             var userUrls = [];
             for (var i = 0; i < result.length; i++) {
-            	// TODO: remove
-                //$scope.circle.users.push(result[i]);
+                var index = $scope.circle.users.indexOf(result[i]);
+                if (index > -1) {
+                	$scope.circle.users.splice(index, 1);
+                }
                 userUrls.push(result[i].id);
             }
-            //alert(userUrls);
-            // TODO: remove
-            //var promise = GroupFetchService.addMembersToGroup(userUrls, $scope.circle.id);
-            //promise.then(function(result) {
+            var promise = GroupFetchService.removeMembersFromGroup(userUrls, $scope.circle.id);
+            promise.then(function(result) {
                 //$rootScope.$apply();
-            //});
+            });
         });
     }
 
@@ -278,6 +278,9 @@ angular.module('module.circles').controller("CircleResourcesController", functio
         var promise = GroupFetchService.getGroup("http://sss.eu/" + $scope.circleId);
         promise.then(function(result) {
             var circle = result.circle;
+            // TODO: call EntityFetchService.getEntityByUri(entityUri, getTags, getOverallRating, getDiscs)
+            // and set entity.tags
+            
             addEntitiesToCircle(circle.entities);
         });
         $scope.currentCollection = null;
@@ -357,10 +360,10 @@ angular.module('module.circles').controller("CircleResourcesController", functio
     };
 
     $scope.afterAddEntity = function(uploadedEntities) {
-        var entityIds = [];
-        for (var i = uploadedEntities.length - 1; i >= 0; i--) {
-            entityIds.push(uploadedEntities[i].id);
-        }
+        //var entityIds = [];
+        //for (var i = uploadedEntities.length - 1; i >= 0; i--) {
+        //   entityIds.push(uploadedEntities[i].id);
+        //}
         //var promise = GroupFetchService.addEntitiesToGroup(entityIds, $scope.circle.id);
         //promise.then(function(result) {
             addEntitiesToCircle(uploadedEntities);
@@ -369,10 +372,10 @@ angular.module('module.circles').controller("CircleResourcesController", functio
 
     $scope.afterChooseEntity = function(chosenEntities) {
             if (chosenEntities != undefined) {
-                var entityIds = [];
-                for (var i = 0; i < chosenEntities.length; i++) {
-                    entityIds.push(chosenEntities[i].id);
-                }
+                //var entityIds = [];
+                //for (var i = 0; i < chosenEntities.length; i++) {
+                //    entityIds.push(chosenEntities[i].id);
+                //}
 
                 //var promise = GroupFetchService.addEntitiesToGroup(entityIds, $scope.circle.id);
                 //promise.then(function(result) {
@@ -633,8 +636,41 @@ angular.module('module.circles').controller("createCircleController", function($
     
     // KnowBrain Study functionality
     $scope.mergeCircle = function(circleName) {
-    	if (circleName != "") {
-    		alert(circleName);
+    	if (circleName == "") {
+    		// split
+        	var doSplit = confirm("Do you really want to split this circle?");
+        	if (doSplit) {
+        		alert("When this is done, please close the dialog and press F5 on the circles page to reload the list");
+        		var circleUsers = [];
+        		for (var i = 0; i < $scope.circle.users.length; i++) {
+        			circleUsers.push($scope.circle.users[i].id);
+        		}
+                var promise = GroupFetchService.mergeCircle($scope.circle.id, null, circleUsers);
+                promise.then(function(result) {
+                	window.location.replace("#/circles");
+                }); 
+        	}
+    	} else {
+    		// merge
+        	var doMerge = confirm("Do you really want to merge this circle?");
+        	if (doMerge) {
+        		alert("When this is done, please close the dialog and press F5 on the circles page to reload the list");
+                var promise = GroupFetchService.mergeCircle($scope.circle.id, circleName, null);
+                promise.then(function(result) {
+                	window.location.replace("#/circles");
+                }); 
+        	}
+    	}
+    }
+    
+    $scope.deleteCircle = function() {
+    	var doDelete = confirm("Do you really want to delete this circle?");
+    	if (doDelete) {
+    		alert("When this is done, please close the dialog and press F5 on the circles page to reload the list");
+            var promise = GroupFetchService.removeCircle($scope.circle.id);
+            promise.then(function(result) {
+            	window.location.replace("#/circles");
+            }); 
     	}
     }
 });

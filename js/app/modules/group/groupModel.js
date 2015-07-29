@@ -120,6 +120,70 @@ angular.module('module.group').service("GroupFetchService", ['$q','UserService',
         return defer.promise;
     };
     
+    this.removeMembersFromGroup = function(users, group) {
+        var defer = $q.defer();
+        var self = this;
+        
+        new SSCircleUsersRemove(
+            function(result) {
+                defer.resolve(result);
+            },
+            function(error) {
+                console.log(error);
+            },
+            UserSrv.getKey(),
+            group,
+            users
+        );
+        return defer.promise;
+    };
+    
+    this.removeCircle = function(circle) {
+        var defer = $q.defer();
+        var self = this;
+        
+        new SSCircleRemove(
+            function(result) {
+                defer.resolve(result);
+            },
+            function(error) {
+                console.log(error);
+            },
+            UserSrv.getKey(),
+            circle
+        );
+        return defer.promise;
+    };
+    
+    this.mergeCircle = function(circle, targetCircle /* for merge */, circleUsers /* for split */) {
+        var defer = $q.defer();
+        var self = this;
+        var includeUsers = false;
+        if (targetCircle != null) {
+        	includeUsers = true;
+        }
+        
+        new SSEntityCopy(
+            function(result) {
+                defer.resolve(result);
+            },
+            function(error) {
+                console.log(error);
+            },
+            UserSrv.getKey(),
+            circle,							// entity
+            targetCircle,					// targetEntity
+            circleUsers,					// forUsers
+            null,							// label
+            includeUsers,					// includeUsers merge true split false
+            true,							// includeEntities
+            true,							// includeMetaSpecificToEntityAndItsEntities
+            null,							// entitiesToExclude
+            null							// comment
+        );
+        return defer.promise;
+    };   
+    
     this.addEntitiesToGroup = function(entities, group, tags, categories) {
         var defer = $q.defer();
         var self = this;
