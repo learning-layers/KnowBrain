@@ -71,7 +71,9 @@ angular.module('module.chat').service("chatService", ['$q', '$rootScope','UserSe
 			},
 			UserSrv.getKey(),
 			[id], //entities,
+			null, // circle
       null, //setTags,
+      null, // space
       null, //setOverallRating, 
       null, //setDiscs, 
       null, //setUEs, 

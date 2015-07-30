@@ -76,7 +76,7 @@ angular.module('module.models').factory('BaseModel', ['$q', '$rootScope', 'UserS
             var self = this;
             new SSRatingSet(function(result) {
                 if (result.worked) {
-                    var promise = FetchServiceHelper.getEntityDescribtion(self, true, true, true);
+                    var promise = FetchServiceHelper.getEntityDescribtion(self, true, true, true, null);
                     promise.then(function(result) {
                         defer.resolve(self);
                         FetchServiceHelper.applyHelper();
@@ -524,7 +524,7 @@ angular.module('module.models').service("CollectionFetchService", ['$q', '$rootS
         new SSCollRootGet(function(result) {
             var model = initCollection(result);
             model.isRoot = true;
-            FetchServiceHelper.getEntityDescribtion(model, true, true, true).then(function(result) {
+            FetchServiceHelper.getEntityDescribtion(model, true, true, true, null).then(function(result) {
                 defer.resolve(model);
             }, function(error) {
                 defer.reject(error);
@@ -541,7 +541,7 @@ angular.module('module.models').service("CollectionFetchService", ['$q', '$rootS
         var self = this;
         new SSCollWithEntries(function(result) {
                 var model = initCollection(result);
-                FetchServiceHelper.getEntityDescribtion(model, true, true, true).then(function(result) {
+                FetchServiceHelper.getEntityDescribtion(model, true, true, true, null).then(function(result) {
                     getHierarchy(model, defer);
                 }, function(error) {
                     defer.reject(error);
@@ -609,7 +609,9 @@ angular.module('module.models').service("EntityFetchService", ['$q', '$rootScope
         }, 
         UserSrv.getKey(), 
         [entityUri], //entities
+        null, // circle
         getTags,   //setTags
+        null, // circle
       getOverallRating,  //setOverallRating
       getDiscs, //setDiscs
       null, //setUEs, 
@@ -644,7 +646,12 @@ angular.module('module.models').service("EntityFetchService", ['$q', '$rootScope
     };
 }]);
 angular.module('module.models').service("FetchServiceHelper", ['$q', '$rootScope', 'UserService', 'UriToolbox', 'SPACE_ENUM', function($q, $rootScope, UserSrv, UriToolbox, SPACE_ENUM) {
-    this.getEntityDescribtion = function(model, getTags, getOverallRating, getDiscs) {
+    this.getEntityDescribtion = function(model, getTags, getOverallRating, getDiscs, circle) {
+    	var space = null;
+    	if (circle != null) {
+    		space = SPACE_ENUM.circle;
+    	}
+    	
         var defer = $q.defer();
         var self = this;
         new SSEntitiesGetFiltered(function(result) {
@@ -693,7 +700,9 @@ angular.module('module.models').service("FetchServiceHelper", ['$q', '$rootScope
           }, 
         UserSrv.getKey(), 
         [model.id],  //entities
+        circle, // circle
       getTags,  //setTags
+      space, // space
       getOverallRating,  //setOverallRating
       getDiscs, //setDiscs
       null, //setUEs, 
@@ -843,7 +852,9 @@ angular.module('module.models').service('UserFetchService', ['$q', '$rootScope',
       }, function(error) {}, 
       UserSrv.getKey(), 
       [userId], //entities
+      null, // circle
       null,   //setTags
+      null, // circle
       null,  //setOverallRating
       null, //setDiscs
       null, //setUEs, 

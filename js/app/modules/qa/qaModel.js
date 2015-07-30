@@ -235,7 +235,9 @@ angular.module('module.qa').service("qaService", ['$q', '$rootScope', 'UserServi
           },
           UserSrv.getKey(),
           [object.author.id], //entities,
+          null, // circle
           null, //setTags,
+          null, // space
           null, //setOverallRating, 
           null, //setDiscs, 
           null, //setUEs, 
@@ -260,7 +262,9 @@ angular.module('module.qa').service("qaService", ['$q', '$rootScope', 'UserServi
       },
       UserSrv.getKey(),
 			[id], //entities,
+			null, // circle
       null, //setTags,
+      null, // space
       null, //setOverallRating, 
       null, //setDiscs, 
       null, //setUEs, 

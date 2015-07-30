@@ -116,7 +116,8 @@ angular.module('dialogs.controllers', ['ui.bootstrap.modal', 'module.i18n', 'mod
         }, UserSrv.getKey(), entry.id);
     };
     this.init = function() {
-        var promise = FetchServiceHelper.getEntityDescribtion(entry, true, true, true);
+
+        var promise = FetchServiceHelper.getEntityDescribtion(entry, true, true, true, $scope.circleId);
         promise.then(function(result) {
             $scope.editedDescription = entry.description;
             //set tags
