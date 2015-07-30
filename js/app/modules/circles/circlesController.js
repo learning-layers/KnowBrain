@@ -265,21 +265,19 @@ angular.module('module.circles').controller("CircleResourcesController", functio
         title: 'Delete',
         cssClass: 'glyphicon glyphicon-trash'
     }];
-
+    
     var collectionViewMode = cookiesSrv.getCookie(SETTINGS_CONSTANTS.collectionViewModeCookieName);
     $scope.collectionViewMode = collectionViewMode != undefined ? collectionViewMode : 'grid';
-
+    
     $scope.setCollectionViewMode = function(mode) {
         cookiesSrv.setCookie(SETTINGS_CONSTANTS.collectionViewModeCookieName, mode);
         $scope.collectionViewMode = mode;
     };
-
+    
     $scope.loadRootCollection = function() {
         var promise = GroupFetchService.getGroup("http://sss.eu/" + $scope.circleId);
         promise.then(function(result) {
             var circle = result.circle;
-            // TODO: call EntityFetchService.getEntityByUri(entityUri, getTags, getOverallRating, getDiscs)
-            // and set entity.tags
             
             addEntitiesToCircle(circle.entities);
         });
@@ -477,7 +475,7 @@ angular.module('module.circles').controller("CircleResourcesController", functio
     
     
     // Knowbrain study code for tag-cloud
-	var compare = function(a, b) {
+	$scope.compare = function(a, b) {
 		if (a.frequ < b.frequ)
 			return 1;
 	  	if (a.frequ > b.frequ)
@@ -485,19 +483,23 @@ angular.module('module.circles').controller("CircleResourcesController", functio
 	  	return 0;
 	}
     
-   	var unsortedTags = [];
-   	var circleIDs = [];
-   	circleIDs.push($scope.circleId);
-    var tagPromise = TagFetchService.fetchTagFrequencies(circleIDs);
-    tagPromise.then(function(result) {
-	    for (var i = 0; i < result.tagFrequs.length; i++) {
-	    	var tag = result.tagFrequs[i];
-	    	unsortedTags.push(tag);
-	    }
-	    unsortedTags.sort(compare);   
-	    $scope.circleTags = unsortedTags;
-    });
-    
+	$scope.loadTagCloud = function() {
+	   	var unsortedTags = [];
+	   	var circleIDs = [];
+	   	circleIDs.push($scope.circleId);
+	    var tagPromise = TagFetchService.fetchTagFrequencies(circleIDs);
+	    tagPromise.then(function(result) {
+		    for (var i = 0; i < result.tagFrequs.length; i++) {
+		    	var tag = result.tagFrequs[i];
+		    	unsortedTags.push(tag);
+		    }
+		    unsortedTags.sort($scope.compare);   
+		    $scope.circleTags = unsortedTags;
+	    });
+	}
+	
+	$scope.loadTagCloud();
+	
     $scope.clickCircleTag = function(tag) {
     	alert(tag.label);
     };

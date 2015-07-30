@@ -36,7 +36,9 @@ angular.module('module.group').service("GroupFetchService", ['$q','UserService',
             },
             UserSrv.getKey(),
             groupId,
-            ['entity', 'coll', 'disc', 'qa', 'chat', 'file'] //entityTypesToIncludeOnly
+            ['entity', 'coll', 'disc', 'qa', 'chat', 'file'], //entityTypesToIncludeOnly
+            true, 				//includeTags
+            "circleSpace"		//tag-circle
         );
        return defer.promise;
     };
@@ -175,11 +177,12 @@ angular.module('module.group').service("GroupFetchService", ['$q','UserService',
             targetCircle,					// targetEntity
             circleUsers,					// forUsers
             null,							// label
-            includeUsers,					// includeUsers merge true split false
+            includeUsers,					// includeUsers (merge: true / split: false)
             true,							// includeEntities
             true,							// includeMetaSpecificToEntityAndItsEntities
             null,							// entitiesToExclude
-            null							// comment
+            null,							// comment
+            true							// include caller
         );
         return defer.promise;
     };   

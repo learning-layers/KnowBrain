@@ -794,30 +794,15 @@ angular.module('module.models').service("CategoryTagFetchService", ['$q', '$root
         }, function(error) {
         	console.log(error);
         }, UserSrv.getKey(),
-           circleName, //currentCircle = realm
-           null, //entity
-           categories,
-           7 //maxTags
+           circleName, 			//currentCircle = realm
+           UserSrv.getUser(), 	//forUser
+           null, 				//entity
+           categories,			//categories
+           7, 					//maxTags
+           true,				//includeOwnTags
+           false				//ignoreAccessRights
         );
         return defer.promise;
-    };
-    this.fetchTagFrequencies = function (circleName) {
-    	var defer = $q.defer();
-    	var self = this;
-    	new SSTagFrequsGetFiltered(function(result) {
-    		defer.resolve(result);
-    	}, function(error) {
-    		console.log(error);
-    	},  UserSrv.getKey(),
-    		null,
-    		null,
-    		null,
-    		null,
-    		circleName,
-    		null,
-    		null
-    	);
-    	return defer.promise;
     };
 }]);
 angular.module('module.models').service('UserFetchService', ['$q', '$rootScope', 'UserService', function($q, $rootScope, UserSrv) {
