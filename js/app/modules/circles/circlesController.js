@@ -278,6 +278,15 @@ angular.module('module.circles').controller("CircleResourcesController", functio
         var promise = GroupFetchService.getGroup("http://sss.eu/" + $scope.circleId);
         promise.then(function(result) {
             var circle = result.circle;
+            for (var i = 0; i < circle.entities.length; i++) {
+            	var entity = circle.entities[i];
+            	var tagLabels = [];
+            	for (var j = 0; j < entity.tags.length; j++) {
+            		var tag = entity.tags[j];
+            		tagLabels.push(tag.label);
+            	}
+            	entity.tags = tagLabels;
+            }
             
             addEntitiesToCircle(circle.entities);
         });
@@ -292,13 +301,13 @@ angular.module('module.circles').controller("CircleResourcesController", functio
             entity.isSelected = false;
             $scope.entities.push(entity);
 
-            if (entity.tags != null) {
+            /*if (entity.tags != null) {
                 for (var j = 0; j < entity.tags.length; j++) {
                     if ($.inArray(entity.tags[j], $scope.availableTags) == -1) {
-                        $scope.availableTags.push(entity.tags[j]);
+                    	$scope.availableTags.push(entity.tags[j]);
                     }
                 }
-            }
+            }*/
         }
     };
 
