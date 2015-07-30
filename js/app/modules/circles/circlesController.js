@@ -301,6 +301,7 @@ angular.module('module.circles').controller("CircleResourcesController", functio
             entity.isSelected = false;
             $scope.entities.push(entity);
 
+            // not needed for this
             /*if (entity.tags != null) {
                 for (var j = 0; j < entity.tags.length; j++) {
                     if ($.inArray(entity.tags[j], $scope.availableTags) == -1) {
@@ -309,6 +310,8 @@ angular.module('module.circles').controller("CircleResourcesController", functio
                 }
             }*/
         }
+        
+    	$scope.loadTagCloud();
     };
 
     $scope.downloadEntity = function(entity) {
@@ -506,8 +509,6 @@ angular.module('module.circles').controller("CircleResourcesController", functio
 		    $scope.circleTags = unsortedTags;
 	    });
 	}
-	
-	$scope.loadTagCloud();
 	
     $scope.clickCircleTag = function(tag) {
     	alert(tag.label);
