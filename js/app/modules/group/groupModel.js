@@ -180,9 +180,9 @@ angular.module('module.group').service("GroupFetchService", ['$q','UserService',
             includeUsers,					// includeUsers (merge: true / split: false)
             true,							// includeEntities
             true,							// includeMetaSpecificToEntityAndItsEntities
+            true,							// include caller
             null,							// entitiesToExclude
-            null,							// comment
-            true							// include caller
+            null							// comment
         );
         return defer.promise;
     };   
