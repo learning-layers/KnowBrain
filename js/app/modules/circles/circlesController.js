@@ -346,6 +346,11 @@ angular.module('module.circles').controller("CircleResourcesController", functio
 
     $scope.selectTag = function(tag) {
         $scope.selectedTag = tag;
+        
+        // log this in the SSS
+        var promise = TagFetchService.logTagClick(tag);
+        promise.then(function(result) {
+        });
     };
 
     

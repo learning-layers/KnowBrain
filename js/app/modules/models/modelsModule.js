@@ -780,6 +780,25 @@ angular.module('module.models').service("TagFetchService", ['$q', '$rootScope', 
         var self = this;
         return defer.promise;
     };
+    
+    this.logTagClick = function(tag) {
+    	var defer = $q.defer();
+    	var self = this;
+    	new SSEvalLog(function(result) {
+    		defer.resolve(result);
+    	}, function(error) {
+    		console.log(error);
+    	},  UserSrv.getKey(),
+    		null, 		//toolContext, 
+    		null, 		//forUser,
+    		"clickBit", //type,
+    		null, 		//entity,
+    		tag, 		//content,
+    		null, 		//entities,
+    		null 		//users
+    	);
+    	return defer.promise;
+    }
 }]);
 
 
