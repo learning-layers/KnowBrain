@@ -740,7 +740,7 @@ angular.module('dialogs.controllers', ['ui.bootstrap.modal', 'module.i18n', 'mod
 
 .controller("CreateLinkController", function($scope, $modalInstance, $http, $location, $state, i18nService, GroupFetchService, targetEntity, EntityModel, CategoryTagFetchService) {
     $scope.createLink = function(link) {
-        if (link.label == undefined || link.url == undefined) {
+        if (/*link.label == undefined || */link.url == undefined) {
             return;
         }
 
@@ -749,7 +749,7 @@ angular.module('dialogs.controllers', ['ui.bootstrap.modal', 'module.i18n', 'mod
             promise.then(function(result) {
                 var entry = new EntityModel();
                 entry.init({ id: link.url,
-                            label: link.label
+                            label: link.url
                             });
                 $modalInstance.close(entry);
             }, function(error) {
