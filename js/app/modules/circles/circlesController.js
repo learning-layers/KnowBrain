@@ -54,7 +54,7 @@ angular.module('module.circles').config(function($stateProvider) {
  */
 angular.module('module.circles').controller("CirclesController", function($scope, $state, $modal, $controller, $dialogs, UserService, GroupFetchService, UriToolbox) {
     // TODO: KnowBrain study - set to correct usernames or make better solution
-    if (UserService.getLabel() == "dieter") {
+    if (UserService.getLabel() == "paul") {
     	$scope.isAdmin = true;
     } else {
     	$scope.isAdmin = false;
