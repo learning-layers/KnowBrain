@@ -361,7 +361,7 @@ angular.module('module.circles').controller("CircleResourcesController", functio
         }
 
         var matchesTag = false
-        if ($scope.selectedTag != null) {
+        if ($scope.selectedTag != null && element.tags != null) {
             for (var i = 0; i < element.tags.length; i++) {
                 if ($.inArray($scope.selectedTag, element.tags) != -1) {
                     matchesTag = true;

@@ -751,6 +751,7 @@ angular.module('dialogs.controllers', ['ui.bootstrap.modal', 'module.i18n', 'mod
                 entry.init({ id: link.url,
                             label: link.url
                             });
+                //location.reload();
                 $modalInstance.close(entry);
             }, function(error) {
                 console.log(error);
@@ -767,6 +768,7 @@ angular.module('dialogs.controllers', ['ui.bootstrap.modal', 'module.i18n', 'mod
             entry.init({id: link.url, label: link.label});
             $modalInstance.close(entry);
         }
+
     };
     ///////////////////////////////////////////////////
     ///  kb-recommender user study
