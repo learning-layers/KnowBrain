@@ -156,7 +156,7 @@ angular.module('dialogs.controllers', ['ui.bootstrap.modal', 'module.i18n', 'mod
     };
     $scope.tagRemoved = function(tag) {
         // Passed variable is an object with structure { text : 'tagtext'}
-        entry.removeTag(tag.text).then(function(result) {
+        entry.removeTag(tag.text, $scope.circleId).then(function(result) {
         	// dkowald: added null check
         	if (CurrentCollectionService.getCurrentCollection() != null) {
         		CurrentCollectionService.getCurrentCollection().getCumulatedTags();

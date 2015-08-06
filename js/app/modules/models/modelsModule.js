@@ -99,14 +99,15 @@ angular.module('module.models').factory('BaseModel', ['$q', '$rootScope', 'UserS
                 }, function(error) {
                     defer.reject(error);
                     $rootScope.$apply();
-                }, UserSrv.getKey(), self.id, //entity
+                }, UserSrv.getKey(),
+                self.id, //entity
                 tagString, //label
                 SPACE_ENUM.circle, //space
                 circleId,
                 null); //creationTime
             return defer.promise;
         },
-        removeTag: function(tagString) {
+        removeTag: function(tagString, circleId) {
             var defer = $q.defer();
             var self = this;
             new SSTagsRemove(function(result) {
@@ -118,7 +119,8 @@ angular.module('module.models').factory('BaseModel', ['$q', '$rootScope', 'UserS
                 }, UserSrv.getKey(),
                 self.id, //entity
                 tagString, //label
-                SPACE_ENUM.circle //space
+                SPACE_ENUM.circle, //space
+                circleId
             );
             return defer.promise;
         },
