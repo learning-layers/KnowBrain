@@ -151,7 +151,8 @@ angular.module('knowbrain').service('messagingService', ['$q', '$rootScope','Use
 		        console.log(error);
 		        defer.reject(error);
             },
-            UserSrv.getKey()
+            UserSrv.getKey(),
+            UserSrv.getUser() //forUser
         );
 
         return defer.promise;  

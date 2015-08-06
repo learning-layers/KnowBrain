@@ -650,7 +650,8 @@ angular.module('module.qa').service("qaService", ['$q', '$rootScope', 'UserServi
                         console.log(error);
                         deferThreadList.reject(error);
                     },
-                    UserSrv.getKey()
+                    UserSrv.getKey(),
+                    UserSrv.getUser() //forUser
                     );
 
             return deferThreadList.promise;
