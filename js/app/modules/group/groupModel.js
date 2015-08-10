@@ -164,6 +164,7 @@ angular.module('module.group').service("GroupFetchService", ['$q','UserService',
         if (targetCircle != null) {
         	includeUsers = true;
         }
+        var appendUserName = !includeUsers;
         
         new SSEntityCopy(
             function(result) {
@@ -182,7 +183,8 @@ angular.module('module.group').service("GroupFetchService", ['$q','UserService',
             true,							// includeMetaSpecificToEntityAndItsEntities
             true,							// include caller
             null,							// entitiesToExclude
-            null							// comment
+            null,							// comment
+            appendUserName					// appendUserName (merge: false / split: true)
         );
         return defer.promise;
     };   
