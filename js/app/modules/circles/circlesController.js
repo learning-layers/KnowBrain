@@ -23,7 +23,7 @@
 /**
  * AUTHORISATION MODULE
  */
-angular.module('module.circles', []);
+angular.module('module.circles', ['angular-jqcloud']);
 /**
  * CONFIG
  */
@@ -352,7 +352,6 @@ angular.module('module.circles').controller("CircleResourcesController", functio
         promise.then(function(result) {
         });
     };
-
     
     $scope.filterFunction = function(element) {
         var matchesSearch = true;
@@ -503,12 +502,23 @@ angular.module('module.circles').controller("CircleResourcesController", functio
 	$scope.loadTagCloud = function() {
 	   	var unsortedTags = [];
 	   	var circleIDs = [];
+	   	$scope.words = [];
 	   	circleIDs.push($scope.circleId);
 	    var tagPromise = TagFetchService.fetchTagFrequencies(circleIDs);
 	    tagPromise.then(function(result) {
 		    for (var i = 0; i < result.tagFrequs.length; i++) {
 		    	var tag = result.tagFrequs[i];
 		    	unsortedTags.push(tag);
+		    	$scope.words.push ({
+					text: tag.label,
+					weight: tag.frequ,
+					handlers : {click: function() {
+						var x = tag;
+						return function() {
+							$scope.selectTag(x.label);
+						}
+					}()}
+				});
 		    }
 		    unsortedTags.sort($scope.compare);   
 		    $scope.circleTags = unsortedTags;
