@@ -278,17 +278,21 @@ angular.module('module.circles').controller("CircleResourcesController", functio
         var promise = GroupFetchService.getGroup("http://sss.eu/" + $scope.circleId);
         promise.then(function(result) {
             var circle = result.circle;
-            for (var i = 0; i < circle.entities.length; i++) {
-            	var entity = circle.entities[i];
-            	var tagLabels = [];
-            	for (var j = 0; j < entity.tags.length; j++) {
-            		var tag = entity.tags[j];
-            		tagLabels.push(tag.label);
-            	}
-            	entity.tags = tagLabels;
-            }
             
-            addEntitiesToCircle(circle.entities);
+            if(circle.entities){
+          
+              for (var i = 0; i < circle.entities.length; i++) {
+                var entity = circle.entities[i];
+                var tagLabels = [];
+                for (var j = 0; j < entity.tags.length; j++) {
+                  var tag = entity.tags[j];
+                  tagLabels.push(tag.label);
+                }
+                entity.tags = tagLabels;
+              }
+              
+              addEntitiesToCircle(circle.entities);
+           }
         });
         $scope.currentCollection = null;
     };
@@ -600,20 +604,28 @@ angular.module('module.circles').controller("createCircleController", function($
 
     var friendsPromise = UserFetchService.getFriends();
     friendsPromise.then(function(result) {
-        for (var i = 0; i < result.friends.length; i++) {
-            result.friends[i].isFriend = true;
-            $scope.friends.push(result.friends[i]);
+        if(result.friends){
+        
+          for (var i = 0; i < result.friends.length; i++) {
+              result.friends[i].isFriend = true;
+              $scope.friends.push(result.friends[i]);
+          }
         }
+        
         var allUsersPromise = UserFetchService.getAllUsers();
         allUsersPromise.then(function(result) {
-            $scope.allUsers = result.users;
-            $scope.allUsers.sort(function(a,b) {
-                if ( a.friend && !b.friend )
-                    return -1;
-                if ( !a.friend && b.friend )
-                    return 1;
-                return 0;
-            });
+            
+            if(result.users){
+            
+              $scope.allUsers = result.users;
+              $scope.allUsers.sort(function(a,b) {
+                  if ( a.friend && !b.friend )
+                      return -1;
+                  if ( !a.friend && b.friend )
+                      return 1;
+                  return 0;
+              });
+            }
         });
     });
 

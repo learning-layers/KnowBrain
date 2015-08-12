@@ -7,28 +7,36 @@ angular.module('module.group').service("GroupFetchService", ['$q','UserService',
         new SSCircleGetFiltered(
             function(result) {
                 var entities = [];
-                for (var i=0; i < result.circle.entities.length; i++) {
-                    var entity = new EntityModel();
-                    entity.init({id:result.circle.entities[i].id});
-                    entity.init({type:result.circle.entities[i].type});
-                    entity.init({label:result.circle.entities[i].label});
-                    entity.init({tags:result.circle.entities[i].tags});
-                    entity.init({overallRating:result.circle.entities[i].overallRating});
-                    entity.init({creationTime:result.circle.entities[i].creationTime});
-                    entity.init({author:result.circle.entities[i].author});
+                
+                if(
+                  result.circle &&
+                  result.circle.entities){
+              
+                  for (var i=0; i < result.circle.entities.length; i++) {
+                      var entity = new EntityModel();
+                      entity.init({id:result.circle.entities[i].id});
+                      entity.init({type:result.circle.entities[i].type});
+                      entity.init({label:result.circle.entities[i].label});
+                      entity.init({tags:result.circle.entities[i].tags});
+                      entity.init({overallRating:result.circle.entities[i].overallRating});
+                      entity.init({creationTime:result.circle.entities[i].creationTime});
+                      entity.init({author:result.circle.entities[i].author});
 
-                    if(entity.type == ENTITY_TYPES.file) {
-                        entity.mimeType = result.circle.entities[i].mimeType;
-                        entity.fileExtension = result.circle.entities[i].fileExt;
-                        if (result.circle.entities[i].mimeType.indexOf('/') > 0) {
-                            entity.fileType = result.circle.entities[i].mimeType.substr(0, result.circle.entities[i].mimeType.indexOf('/'));
-                        } else {
-                            entity.fileType = result.circle.entities[i].mimeType;
-                        }
-                    }
-                    entities.push(entity);
+                      if(entity.type == ENTITY_TYPES.file) {
+                          entity.mimeType = result.circle.entities[i].mimeType;
+                          entity.fileExtension = result.circle.entities[i].fileExt;
+                          if (result.circle.entities[i].mimeType.indexOf('/') > 0) {
+                              entity.fileType = result.circle.entities[i].mimeType.substr(0, result.circle.entities[i].mimeType.indexOf('/'));
+                          } else {
+                              entity.fileType = result.circle.entities[i].mimeType;
+                          }
+                      }
+                      entities.push(entity);
+                  }
+                  
+                  result.circle.entities = entities;
                 }
-                result.circle.entities = entities;
+                
                 defer.resolve(result);
             },
             function(error){

@@ -593,7 +593,7 @@ angular.module('module.models').service("EntityFetchService", ['$q', '$rootScope
                     entity.fileType = result.mimeType;
                 }
             }
-            if (result.discs.length > 0) {
+            if (result.discs) {
                 var discUri = result.discs[0];
                 var promise = FetchServiceHelper.getDiscussionByUri(discUri);
                 promise.then(function(result) {
@@ -684,7 +684,7 @@ angular.module('module.models').service("FetchServiceHelper", ['$q', '$rootScope
             model.init({
                 description: result.description
             });
-            if (result.discs.length > 0) {
+            if (result.discs) {
                 var discUri = result.discs[0];
                 var promise = self.getDiscussionByUri(discUri);
                 promise.then(function(result) {
