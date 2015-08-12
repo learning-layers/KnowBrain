@@ -730,8 +730,11 @@ angular.module('module.models').service("FetchServiceHelper", ['$q', '$rootScope
         
         var labels = new Array();
         
-        for (var counter = 0; counter < tags.length; counter++){
-          labels.push(tags[counter].tagLabel);
+        if(tags){
+        
+          for (var counter = 0; counter < tags.length; counter++){
+            labels.push(tags[counter].tagLabel);
+          }
         }
         
         return labels;

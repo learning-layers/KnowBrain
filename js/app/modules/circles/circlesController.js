@@ -284,11 +284,15 @@ angular.module('module.circles').controller("CircleResourcesController", functio
               for (var i = 0; i < circle.entities.length; i++) {
                 var entity = circle.entities[i];
                 var tagLabels = [];
-                for (var j = 0; j < entity.tags.length; j++) {
-                  var tag = entity.tags[j];
-                  tagLabels.push(tag.label);
+                
+                if(entity.tags){
+              
+                  for (var j = 0; j < entity.tags.length; j++) {
+                   var tag = entity.tags[j];
+                   tagLabels.push(tag.label);
+                 }
+                  entity.tags = tagLabels;
                 }
-                entity.tags = tagLabels;
               }
               
               addEntitiesToCircle(circle.entities);
@@ -364,13 +368,14 @@ angular.module('module.circles').controller("CircleResourcesController", functio
         }
 
         var matchesTag = false
-        if ($scope.selectedTag != null && element.tags != null) {
-            for (var i = 0; i < element.tags.length; i++) {
-                if ($.inArray($scope.selectedTag, element.tags) != -1) {
-                    matchesTag = true;
-                    break;
-                }
-            }
+        if ($scope.selectedTag != null && element.tags && element.tags != null) {
+            
+              for (var i = 0; i < element.tags.length; i++) {
+                  if ($.inArray($scope.selectedTag, element.tags) != -1) {
+                      matchesTag = true;
+                      break;
+                  }
+              }
         } else {
             matchesTag = true;
         }
@@ -510,20 +515,24 @@ angular.module('module.circles').controller("CircleResourcesController", functio
 	   	circleIDs.push($scope.circleId);
 	    var tagPromise = TagFetchService.fetchTagFrequencies(circleIDs);
 	    tagPromise.then(function(result) {
-		    for (var i = 0; i < result.tagFrequs.length; i++) {
-		    	var tag = result.tagFrequs[i];
-		    	unsortedTags.push(tag);
-		    	$scope.words.push ({
-					text: tag.label,
-					weight: tag.frequ,
-					handlers : {click: function() {
-						var x = tag;
-						return function() {
-							$scope.selectTag(x.label);
-						}
-					}()}
-				});
-		    }
+        
+        if(result.tagFrequs){
+        
+          for (var i = 0; i < result.tagFrequs.length; i++) {
+            var tag = result.tagFrequs[i];
+            unsortedTags.push(tag);
+            $scope.words.push ({
+            text: tag.label,
+            weight: tag.frequ,
+            handlers : {click: function() {
+              var x = tag;
+              return function() {
+                $scope.selectTag(x.label);
+              }
+            }()}
+          });
+          }
+        }
 		    unsortedTags.sort($scope.compare);   
 		    $scope.circleTags = unsortedTags;
 	    });
@@ -614,7 +623,8 @@ angular.module('module.circles').controller("createCircleController", function($
 
     var friendsPromise = UserFetchService.getFriends();
     friendsPromise.then(function(result) {
-        if(result.friends){
+        
+       if(result.friends){
         
           for (var i = 0; i < result.friends.length; i++) {
               result.friends[i].isFriend = true;

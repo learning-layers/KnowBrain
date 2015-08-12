@@ -608,9 +608,13 @@ angular.module('dialogs.controllers', ['ui.bootstrap.modal', 'module.i18n', 'mod
     	tagsPromise.then(function(result) {
     		//if (result.tags.length > 0)
 				tagnames = [];
-				for (i = 0; i < result.tags.length; i++) {
-					tagnames.push(result.tags[i].label);
-				}
+				
+        if(result.tags){
+        
+          for (i = 0; i < result.tags.length; i++) {
+            tagnames.push(result.tags[i].label);
+          }
+        }
     			$scope.recommendedTags = tagnames;//result.tags;
     		//else 
     			//$scope.recommendedTags = $scope.recommendedTagsDummy;
@@ -829,9 +833,13 @@ angular.module('dialogs.controllers', ['ui.bootstrap.modal', 'module.i18n', 'mod
      	tagsPromise.then(function(result) {
      		//if (result.tags.length > 0)
 				tagnames = [];
-				for (i = 0; i < result.tags.length; i++) {
-					tagnames.push(result.tags[i].label);
-				}
+				
+        if(result.tags){
+        
+          for (i = 0; i < result.tags.length; i++) {
+            tagnames.push(result.tags[i].label);
+          }
+        }
     			$scope.recommendedTags = tagnames;//result.tags;
      		//else 
      			//$scope.recommendedTags = $scope.recommendedTagsDummy;

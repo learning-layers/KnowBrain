@@ -231,7 +231,8 @@ angular.module('module.group').service("GroupFetchService", ['$q','UserService',
             },
             UserSrv.getKey(),
             group,
-            entities
+            entities,
+            true //removeCircleSpecificMetadata
         );
         
         return defer.promise;

@@ -50,7 +50,7 @@
             </div>
             <span class="glyphicon ajax-loader-grey-big"  id="context-info-loading-indicator" ng-show="cumulatedTagsLoading"></span>
             <div id="cumulated-tag-cloud" ng-show="!cumulatedTagsLoading">
-                <span id="cumulated-tag-cloud-no-tags" ng-hide="currentCollection.cumulatedTags.length">{{t('no_cumulated_tags')}}</span>
+                <span id="cumulated-tag-cloud-no-tags" ng-hide="currentCollection.cumulatedTags">{{t('no_cumulated_tags')}}</span>
                 <div ng-show="currentCollection.cumulatedTags.length" class="cumulated-tag-cloud-tag" style="font-size:{{value.fontSize+8}}px; display: inline-block;" ng-repeat="(key, value) in currentCollection.cumulatedTags" ng-click="tagSearchClicked(value.label)">
                     {{value.label}}
                 </div>
