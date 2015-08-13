@@ -524,12 +524,14 @@ angular.module('module.circles').controller("CircleResourcesController", functio
             $scope.words.push ({
             text: tag.label,
             weight: tag.frequ,
-            handlers : {click: function() {
-              var x = tag;
-              return function() {
-                $scope.selectTag(x.label);
-              }
-            }()}
+            handlers : {
+            	click: function() {
+            		var x = tag;
+            		return function() {
+            			$scope.selectTag(x.label);
+            		}
+            	}()
+            }
           });
           }
         }

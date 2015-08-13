@@ -15,6 +15,8 @@ div.jqcloud span {
   padding: 0;
 }
 
+
+
 /* fonts */
 div.jqcloud {
   font-family: "Helvetica", "Arial", sans-serif;
@@ -37,6 +39,19 @@ div.jqcloud span.w4 { font-size: 250%; }
 div.jqcloud span.w3 { font-size: 200%; }
 div.jqcloud span.w2 { font-size: 150%; }
 div.jqcloud span.w1 { font-size: 100%; }
+div.jqcloud span.w10:hover, 
+div.jqcloud span.w9:hover, 
+div.jqcloud span.w8:hover, 
+div.jqcloud span.w7:hover, 
+div.jqcloud span.w6:hover, 
+div.jqcloud span.w5:hover, 
+div.jqcloud span.w4:hover, 
+div.jqcloud span.w3:hover, 
+div.jqcloud span.w2:hover, 
+div.jqcloud span.w1:hover {
+							color:red;
+							cursor:pointer;
+						   }
 
 /* colors */
 div.jqcloud { color: #09f; }
