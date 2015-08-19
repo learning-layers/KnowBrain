@@ -123,7 +123,7 @@
         <div class="modal-footer">
             <div class="btn-group">
                 <button class="btn btn-success" ng-class="{'disabled' : uploader.queue.length == 0}" ng-click="uploader.uploadAll()"><i class="glyphicon glyphicon-cloud-upload"></i>&nbsp;Upload {{uploader.queue.length}}&nbsp;file{{uploader.queue.length == 1 ? '' : 's'}}</button>
-            	<!-- <button class="btn btn-danger" ng-class="{'disabled' : uploader.queue.length == 0}" ng-click="uploader.clearQueue()"><i class="glyphicon glyphicon-trash"></i>&nbsp;{{t('clear_file_list')}}</button> -->
+            	<button class="btn btn-danger" ng-class="{'disabled' : uploader.queue.length == 0}" ng-click="uploader.clearQueue()"><i class="glyphicon glyphicon-trash"></i>&nbsp;{{t('clear_file_list')}}</button>
             	
             </div>
         </div>

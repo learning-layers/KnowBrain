@@ -99,11 +99,12 @@ angular.module('module.models').factory('BaseModel', ['$q', '$rootScope', 'UserS
                 }, function(error) {
                     defer.reject(error);
                     $rootScope.$apply();
-                }, UserSrv.getKey(),
+                }, 
+                UserSrv.getKey(),
                 self.id, //entity
                 tagString, //label
-                SPACE_ENUM.circle, //space
-                circleId,
+                SPACE_ENUM.shared, //space
+                null, //circleId,
                 null); //creationTime
             return defer.promise;
         },
@@ -173,7 +174,7 @@ angular.module('module.models').factory('BaseModel', ['$q', '$rootScope', 'UserS
                 }, function(error) {
                     console.log(error);
                 }, UserSrv.getKey(), entity, //disc
-                self.id, //entity
+                [self.id], //targets
                 entry, //entry
                 addNewDisc, //addNewDisc
                 type, //type

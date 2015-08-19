@@ -159,7 +159,8 @@ angular.module('module.search').controller("SearchController", ['$scope', '$root
                     $rootScope.$apply();
                 }, function(error) {
                     console.log(error);
-                }, UserSrv.getKey(), 
+                }, 
+                UserSrv.getKey(), 
                 null, //wordsToSearchFor,
                 tagsArray, //tagsToSearchFor,
                 null,                       //authorsToSearchFor
@@ -178,6 +179,7 @@ angular.module('module.search').controller("SearchController", ['$scope', '$root
                 null, //localSearchOp,
                 null //globalSearchOp 
             );
+
             return defer.promise;
         };
         var searchByFullText = function(keywordsArray) {
@@ -193,7 +195,8 @@ angular.module('module.search').controller("SearchController", ['$scope', '$root
                     $rootScope.$apply();
                 }, function(error) {
                     console.log(error);
-                }, UserSrv.getKey(), 
+                }, 
+                UserSrv.getKey(), 
                 keywordsArray, //wordsToSearchFor,
                 null, //tagsToSearchFor,
                 null,                       //authorsToSearchFor
@@ -212,6 +215,7 @@ angular.module('module.search').controller("SearchController", ['$scope', '$root
                 null, //localSearchOp,
                 null //globalSearchOp 
             );
+
             return defer.promise;
         };
         var initEntitiesBySearchResult = function(searchResult) {

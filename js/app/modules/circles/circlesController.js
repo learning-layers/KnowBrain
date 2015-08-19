@@ -53,12 +53,11 @@ angular.module('module.circles').config(function($stateProvider) {
  * CONTROLLER
  */
 angular.module('module.circles').controller("CirclesController", function($scope, $state, $modal, $controller, $dialogs, UserService, GroupFetchService, UriToolbox) {
-    // TODO: KnowBrain study - set to correct usernames or make better solution
-    if (UserService.getLabel() == "paul") {
+//    if (UserService.getLabel() == "paul") {
     	$scope.isAdmin = true;
-    } else {
-    	$scope.isAdmin = false;
-    }
+//    } else {
+//    	$scope.isAdmin = false;
+//    }
 	
 	$scope.circles = [];
     var promise = GroupFetchService.getUserGroups(null);
@@ -87,10 +86,13 @@ angular.module('module.circles').controller("CirclesController", function($scope
                 }
             }
         }).result.then(function(result) {
+          
+          if(result){
             var promise = GroupFetchService.getGroup(result);
             promise.then(function(result) {
                 $scope.circles.push(result.circle);
             });
+          }
         });
     };
 
@@ -439,8 +441,7 @@ angular.module('module.circles').controller("CircleResourcesController", functio
 
     $scope.clickedAction = function(index) {
         if (index == 1) {
-            //$scope.addEntitiesToHomeCollection();
-        	$scope.viewEntity($scope.selectedEntities[0]);
+          $scope.addEntitiesToHomeCollection(); //dtheiler not sure about this: $scope.viewEntity($scope.selectedEntities[0]);
         } else if (index == 2) {
             $scope.removeEntities($scope.selectedEntities);
         }

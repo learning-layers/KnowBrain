@@ -303,7 +303,7 @@ angular.module('module.qa').service("qaService", ['$q', '$rootScope', 'UserServi
                     },
                     UserSrv.getKey(),
                     thread.id, //disc
-                    thread.entityId, //entity
+                    [thread.entityId], //entity
                     null, //entry
                     true, //addNewDisc
                     thread.type.enum, //type
@@ -344,7 +344,7 @@ angular.module('module.qa').service("qaService", ['$q', '$rootScope', 'UserServi
                         defer.reject(error);
                     },
                     UserSrv.getKey(),
-                    answer.threadId, //disc
+                    [answer.threadId], //disc
                     null, //entity
                     answer.content, //entry
                     false, //addNewDisc

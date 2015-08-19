@@ -77,12 +77,11 @@ angular.module('module.authorisation').controller("AuthController", [
       $rootScope.activateLoadingIndicator();
       UserSrv.login(auth).then(
         function(key){
-            //$state.transitionTo('app.collection.content', { coll: 'root'});
         	if (key == null) {
                 auth.$error.incorrect = true;
                 $rootScope.deactivateLoadingIndicator();
         	} else {
-            	$state.transitionTo('app.circles');
+            	$state.transitionTo('app.collection.content', { coll: 'root'});
             	$rootScope.deactivateLoadingIndicator();
         	}
         },

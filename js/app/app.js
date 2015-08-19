@@ -74,8 +74,8 @@ angular.module('knowbrain', [
             }
         });
 
-    //$urlRouterProvider.otherwise('/collection/root');
-    $urlRouterProvider.otherwise('/circles/root');
+    $urlRouterProvider.otherwise('/collection/root');
+//    $urlRouterProvider.otherwise('/circles/root');
 
   }]).run(['$rootScope', '$location', 'UserService', function($rootScope, $location, UserSrv) {
 
