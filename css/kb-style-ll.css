@@ -488,8 +488,9 @@ input[name="searchInput"] {
 
 .modal-footer {
     padding: 0px;
-    padding-top: 8px;
+    padding-top: 20px;
     text-align: left;
+    margin-top: 20px;
 }
 
 .modal-footer div {
@@ -1046,4 +1047,22 @@ tags-input .tags .tag-item {
 .nav .dropdown-menu .dropdown-header .right {
     position:absolute;
     right:0px;
+}
+
+/* Styles for Tag Recommender User Tests
+
+.modal .modal-dialog .modal-content .entry-detail-info{
+	height: 500px;
+}
+ */
+.modal .modal-dialog .modal-content .kb-study{
+	height: 700px;
+	width: 700px;
+}
+
+.div-separator {
+	border-top: 1px solid #E8E8E8;
+	margin-top: 20px;
+	margin-bottom: 10px;
+	padding-top: 10px;
 }

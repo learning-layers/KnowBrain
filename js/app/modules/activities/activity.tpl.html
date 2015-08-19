@@ -60,10 +60,10 @@
                         </td>
                         <td style="display: block;">
                             <div class="col-md-12" style="text-overflow:ellipsis; overflow:hidden;">
-                                <span class="list-entitity-clickable" ng-click="handleEntryClick(entry); $event.stopPropagation();">{{entry.label.length != 0 ? entry.label : entry.id}}
+                                <span class="list-entitity-clickable" ng-click="handleEntryClick(entry); $event.stopPropagation();">{{entry.label ? entry.label : entry.id}}
                                 </span>
                             </div>
-                            <div class="col-md-12" ng-show="entry.tags.length > 0">
+                            <div class="col-md-12" ng-show="entry.tags">
                                 <div class="qa-tag" ng-repeat="tag in entry.tags"><a ng-click="selectTag(tag); $event.stopPropagation();">{{tag.label}}</a>
                                 </div>
                             </div>

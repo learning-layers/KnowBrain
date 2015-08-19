@@ -13,7 +13,7 @@
 -  See the License for the specific language governing permissions and
 -  limitations under the License.
 -->
-<div class="modal-content" nv-file-drop uploader="uploader">
+<div class="modal-content kb-study" nv-file-drop uploader="uploader">
     <div class="modal-header">
         <button type="button" class="close" ng-click="close()" aria-hidden="true">&times;</button>
         <h4 class="modal-title"><span class="glyphicon glyphicon-cloud-upload" style="margin-right:10px;"></span>Add resource</h4>
@@ -81,13 +81,50 @@
                         </div>
                     </div>
                 </div>
+                <div class="clearfix"></div>
+                <div id="divCategories" class="div-separator">
+                <div class="dropdown">
+                <button class="btn btn-default" type="button" id="categories-dropdown" data-toggle="dropdown" aria-expanded="true"> 
+                <div class="category-circle" ng-show="selectedCategories = null"></div>
+                {{'Select categories'}}
+                <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu" style="padding-left:5px;" role="menu" aria-labelledby="categoriesDropdownMenu">
+                    <li role="presentation"><a role="menuitem" tabindex="-1" ng-click="selectCategory(null)">Select a category</a></li>
+                    <li role="presentation" class="divider"></li>
+                	<li role="presentation" ng-repeat="category in predefinedCategories"><label class="checkbox" ng-click="stayOpen($event)"><input type="checkbox" value="category" ng-checked="selectedCategories.indexOf(category) > -1"  ng-click="selectCategory($event,category)" > {{category}}</label></li>
+                	<div class="clearfix"><button class="pull-right" style="margin-right:5px;"   ng-click="getTagsforCategories(selectedCategories)">OK</button></div>
+                </ul>
+                </div>
+                </div>
+                <div  ng-show="recTagsShow" class="div-separator ng-hide" id="recTags" >Recommended Tags: <button ng-repeat="tag in recommendedTags" ng-click='addTagToInput(tag)'>{{tag}}</button></div>
+                <div id="divTags" class="div-separator">
+                	<h5>Tags:</h5>
+                	<!-- TODO: change tagAdded -->
+                	<tags-input ng-model="inputTags" custom-class="bootstrap" placeholder="{{t('add_a_tag')}}" on-tag-added="addTagToAll($tag)"
+                	on-tag-removed="removeTagFromAll($tag)"
+                	add-on-comma="true"
+                	add-on-space="false"
+                	add-on-blur="false"
+                	add-on-enter="true"
+                	allowed-tags-pattern="^[a-zA-Z0-9_-]*$"
+                	>
+                	<!--  <auto-complete source="queryTags($query)"
+                	min-length="1"
+                	max-results-to-show="15"
+                	>
+                	</auto-complete>-->
+                	</tags-input>
+                	
+            </div>
             </form>
             <div class="clearfix"></div>
         </div>
         <div class="modal-footer">
             <div class="btn-group">
-                <button class="btn btn-danger" ng-class="{'disabled' : uploader.queue.length == 0}" ng-click="uploader.clearQueue()"><i class="glyphicon glyphicon-trash"></i>&nbsp;{{t('clear_file_list')}}</button>
                 <button class="btn btn-success" ng-class="{'disabled' : uploader.queue.length == 0}" ng-click="uploader.uploadAll()"><i class="glyphicon glyphicon-cloud-upload"></i>&nbsp;Upload {{uploader.queue.length}}&nbsp;file{{uploader.queue.length == 1 ? '' : 's'}}</button>
+            	<!-- <button class="btn btn-danger" ng-class="{'disabled' : uploader.queue.length == 0}" ng-click="uploader.clearQueue()"><i class="glyphicon glyphicon-trash"></i>&nbsp;{{t('clear_file_list')}}</button> -->
+            	
             </div>
         </div>
     </div>

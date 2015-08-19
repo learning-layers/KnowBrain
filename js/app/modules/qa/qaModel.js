@@ -160,7 +160,6 @@ angular.module('module.qa').factory('Attachment', ['$q', 'UserService', 'ENTITY_
         new SSFileDownload(
           this.servHandleFileDownload(defer),
           function(error){ defer.reject(); console.log(error); },
-          UserSrv.getUser(),
           UserSrv.getKey(),
           this.id
           );
@@ -179,7 +178,6 @@ angular.module('module.qa').factory('Attachment', ['$q', 'UserService', 'ENTITY_
             defer.resolve(result);
           },
           function(error){ defer.reject(); console.log(error); },
-          UserSrv.getUser(),
           UserSrv.getKey(),
           this.id
           );
@@ -225,39 +223,55 @@ angular.module('module.qa').service("qaService", ['$q', '$rootScope', 'UserServi
             //    defer.resolve(object);
             //}, 10);
 
-            new SSEntityGet(
-                    function (result) {
-                        var author = new Author(result.entity.id,result.entity.label, result.entity.email);
-                        object.author = author;
-                        defer.resolve(object);
-                    },
-                    function (error) {
-                        console.log(error);
-                        defer.reject(error);
-                    },
-                    UserSrv.getUser(),
-                    UserSrv.getKey(),
-                    object.author.id
-                    );
+          new SSEntitiesGetFiltered(
+            function (result) {
+              var author = new Author(result.entities[0].id, result.entities[0].label, result.entities[0].email);
+            object.author = author;
+            defer.resolve(object);
+          },
+          function (error) {
+            console.log(error);
+            defer.reject(error);
+          },
+          UserSrv.getKey(),
+          [object.author.id], //entities,
+          null, // circle
+          null, //setTags,
+          null, // space
+          null, //setOverallRating, 
+          null, //setDiscs, 
+          null, //setUEs, 
+          null, //setThumb, 
+          null, //setFlags,
+          null //setCircles
+            );
 
             return defer.promise;
         };
 
-        var getEntityDetails = function (id) {
-            var defer = $q.defer();
-
-            new SSEntityGet(
-                    function (result) {
-                        defer.resolve(result);
-                    },
-                    function (error) {
-                        console.log(error);
-                        defer.reject(error);
-                    },
-                    UserSrv.getUser(),
-                    UserSrv.getKey(),
-                    id
-                    );
+    var getEntityDetails = function (id) {
+      var defer = $q.defer();
+      
+      new SSEntitiesGetFiltered(
+        function (result) {
+          defer.resolve(result.entities[0]);
+      },
+      function (error) {
+        console.log(error);
+        defer.reject(error);
+      },
+      UserSrv.getKey(),
+			[id], //entities,
+			null, // circle
+      null, //setTags,
+      null, // space
+      null, //setOverallRating, 
+      null, //setDiscs, 
+      null, //setUEs, 
+      null, //setThumb, 
+      null, //setFlags,
+      null //setCircles
+        );
 
             return defer.promise;
         };
@@ -349,7 +363,7 @@ angular.module('module.qa').service("qaService", ['$q', '$rootScope', 'UserServi
     this.addNewComment = function (answer) {
       var defer = $q.defer();
       
-      new SSEntityCommentsAdd(
+      new SSCommentsAdd(
         function (result) {
           defer.resolve(answer)
       },
@@ -358,7 +372,7 @@ angular.module('module.qa').service("qaService", ['$q', '$rootScope', 'UserServi
         defer.reject(error);
       },
       UserSrv.getKey(),
-      answer.id,
+      answer.id, //entity
       [answer.comments[answer.comments.length - 1]]); //comments
       
       return defer.promise;
@@ -391,20 +405,18 @@ angular.module('module.qa').service("qaService", ['$q', '$rootScope', 'UserServi
                 var deferFile = $q.defer();
 
                 new SSFileUpload(
-                        function (file_id) {
-                            deferFile.resolve(new Attachment(file_id, file_id, 'file'));
-                        },
-                        function (error) {
+                        function (result, fileName) {
+                            deferFile.resolve(new Attachment(result.file, result.file, 'file'));
+                          },
+                          function (error) {
                             console.log(error);
-                            deferFile.reject(error);
+                          deferFile.reject(error);
                         },
-                        UserSrv.getUser(),
-                        UserSrv.getKey(),
-                        attachment._file
-                        );
-
-                promiseList.push(deferFile.promise);
-            });
+                          UserSrv.getKey(),
+                          attachment._file);
+                        
+                        promiseList.push(deferFile.promise);
+                      });
 
             $q.all(promiseList)
                     .then(function (result) {
@@ -436,6 +448,7 @@ angular.module('module.qa').service("qaService", ['$q', '$rootScope', 'UserServi
                         object.id, //entity
                         value.label, //label
                         value.space, //space
+                        null, //circle
                         null);  //creationTime
 
                 promiseListTag.push(deferTag.promise);
@@ -458,7 +471,7 @@ angular.module('module.qa').service("qaService", ['$q', '$rootScope', 'UserServi
             //    defer.resolve(object);
             //}, 10);
 
-            new SSTagsGetPOST(
+            new SSTagsGetFiltered(
                     function (result) {
                         angular.forEach(result.tags, function (value, key) {
                             var tag = new Tag(value.id, value.entity, value.label);
@@ -477,6 +490,7 @@ angular.module('module.qa').service("qaService", ['$q', '$rootScope', 'UserServi
                     [object.id], //entities
                     null, //labels
                     null, //space
+                    null, //circles
                     null //startime
                     );
             return defer.promise;
@@ -485,7 +499,7 @@ angular.module('module.qa').service("qaService", ['$q', '$rootScope', 'UserServi
         this.getEntitiesForTag = function (tag) {
             var defer = $q.defer();
 
-            new SSEntitiesForTagsGet(
+            new SSEntitiesForTagsGetFiltered(
                     function (result) {
 
                         var promiseList = [];
@@ -569,10 +583,10 @@ angular.module('module.qa').service("qaService", ['$q', '$rootScope', 'UserServi
     var getThreadWithEntries = function (id) {
       var deferThread = $q.defer();
       
-      new SSDiscGet(
+      new SSDiscGetFiltered(
         function (result) {
           
-          var thread = new Thread(result.disc.id, result.disc.author, getThreadTypeByEnum(result.disc.type), result.disc.label, result.disc.description, result.disc.entity, result.disc.creationTime, result.disc.circleTypes, {likes : 10, dislikes : 5, like : null});
+          var thread = new Thread(result.disc.id, result.disc.author, getThreadTypeByEnum(result.disc.type), result.disc.label, result.disc.description, null, result.disc.creationTime, result.disc.circleTypes, {likes : 10, dislikes : 5, like : null});
         var entries = result.disc.entries;
         
         getAttachmentDetailsSync(thread, result.disc.attachedEntities);
@@ -608,60 +622,7 @@ angular.module('module.qa').service("qaService", ['$q', '$rootScope', 'UserServi
 
                         angular.forEach(result.discs, function (value, key) {
                             var type = getThreadTypeByEnum(value.type);
-                            var thread = new Thread(value.id, value.author, type, value.label, value.description, value.entity, value.creationTime, value.circleTypes, value.likes);
-
-                            getAttachmentDetailsSync(thread, value.attachedEntities);
-
-                            var deferThread = $q.defer();
-
-                            getAuthorDetails(thread)
-                                    .then(getTags)
-                                    .then(function (result) {
-                                        deferThread.resolve(result);
-                                    }, function (error) {
-                                        var test = error;
-                                    });
-
-                            promiseList.push(deferThread.promise);
-                        });
-
-                        $q.all(promiseList)
-                                .then(function (result) {
-                                    deferThreadList.resolve(result);
-                                }, function (error) {
-                                    var test = error;
-                                });
-                    },
-                    function (error) {
-                        console.log(error);
-                        deferThreadList.reject(error);
-                    },
-                    UserSrv.getKey()
-                    );
-
-            return deferThreadList.promise;
-        };
-
-        this.searchThreads = function (keywordsToSearchFor, tagsToSearchFor, searchAnswers) {
-
-            var tagList = [];
-            $.each(tagsToSearchFor, function( index, value ) {
-                tagList.push(value.label);
-            });
-
-            var deferThreadList = $q.defer();
-
-            var typesToSearchOnlyFor = ["qa"];
-            if (searchAnswers) {typesToSearchOnlyFor.push("qaEntry")};
-
-            new SSSearch(
-                    function (result) {
-
-                        var promiseList = [];
-
-                        angular.forEach(result.entities, function (value, key) {
-                            var type = getThreadTypeByEnum(value.type);
-                            var thread = new Thread(value.id, value.author, type, value.label, value.description, value.entity, value.creationTime, value.circleTypes, value.likes);
+                            var thread = new Thread(value.id, value.author, type, value.label, value.description, null, value.creationTime, value.circleTypes, value.likes);
 
                             getAttachmentDetailsSync(thread, value.attachedEntities);
 
@@ -690,17 +651,64 @@ angular.module('module.qa').service("qaService", ['$q', '$rootScope', 'UserServi
                         deferThreadList.reject(error);
                     },
                     UserSrv.getKey(),
-                    false,                       //includeTextualContent
+                    UserSrv.getUser() //forUser
+                    );
+
+            return deferThreadList.promise;
+        };
+
+        this.searchThreads = function (keywordsToSearchFor, tagsToSearchFor, searchAnswers) {
+
+            var tagList = [];
+            $.each(tagsToSearchFor, function( index, value ) {
+                tagList.push(value.label);
+            });
+
+            var deferThreadList = $q.defer();
+
+            var typesToSearchOnlyFor = ["qa"];
+            if (searchAnswers) {typesToSearchOnlyFor.push("qaEntry")};
+
+            new SSSearch(
+                    function (result) {
+
+                        var promiseList = [];
+
+                        angular.forEach(result.entities, function (value, key) {
+                            var type = getThreadTypeByEnum(value.type);
+                            var thread = new Thread(value.id, value.author, type, value.label, value.description, null, value.creationTime, value.circleTypes, value.likes);
+
+                            getAttachmentDetailsSync(thread, value.attachedEntities);
+
+                            var deferThread = $q.defer();
+
+                            getAuthorDetails(thread)
+                                    .then(getTags)
+                                    .then(function (result) {
+                                        deferThread.resolve(result);
+                                    }, function (error) {
+                                        var test = error;
+                                    });
+
+                            promiseList.push(deferThread.promise);
+                        });
+
+                        $q.all(promiseList)
+                                .then(function (result) {
+                                    deferThreadList.resolve(result);
+                                }, function (error) {
+                                    var test = error;
+                                });
+                    },
+                    function (error) {
+                        console.log(error);
+                        deferThreadList.reject(error);
+                    },
+                    UserSrv.getKey(),
                     keywordsToSearchFor,         //wordsToSearchFor
-                    tagList.length > 0,         //includeTags
                     tagList,                    //tagsToSearchFor
-                    false,                      //includeAuthors
                     null,                       //authorsToSearchFor
-                    false,                      //includeMIs
-                    null,                       //misToSearchFor
-                    true,                      //includeLabel
                     keywordsToSearchFor,       //labelsToSearchFor
-                    true,                      //includeDescription
                     keywordsToSearchFor,       //descriptionsToSearchFor
                     typesToSearchOnlyFor,       //typesToSearchOnlyFor
                     false,                      //includeOnlySubEntities
@@ -825,17 +833,10 @@ angular.module('module.qa').service("qaService", ['$q', '$rootScope', 'UserServi
                         deferThreadList.reject(error);
                     },
                     UserSrv.getKey(),
-                    false,                      //includeTextualContent
                     null,                       //wordsToSearchFor
-                    true,                       //includeTags
                     tagList,                     //tagsToSearchFor
-                    false,                      //includeAuthors
                     null,                       //authorsToSearchFor
-                    false,                      //includeMIs
-                    null,                       //misToSearchFor
-                    true,                       //includeLabel
                     thread.title.split(" "),    //labelsToSearchFor
-                    false,                      //includeDescription
                     null,                       //descriptionsToSearchFor
                     ["qa"],                     //typesToSearchOnlyFor
                     false,                      //includeOnlySubEntities

@@ -27,7 +27,8 @@ angular.module('module.models', []);
 angular.module('module.models').constant('SPACE_ENUM', {
     private: 'privateSpace',
     shared: 'sharedSpace',
-    follow: 'followSpace'
+    follow: 'followSpace',
+    circle: 'circleSpace'
 });
 angular.module('module.models').constant('ENTITY_TYPES', {
     collection: 'coll',
@@ -54,15 +55,20 @@ angular.module('module.models').factory('BaseModel', ['$q', '$rootScope', 'UserS
         saveLabel: function(newLabel) {
             var defer = $q.defer();
             var self = this;
-            new SSEntityLabelUpdate(function(result) {
+            new SSEntityUpdate(function(result) {
                     self.label = newLabel;
                     defer.resolve(result);
                     $rootScope.$apply();
                 }, function(error) {
                     defer.reject(error);
                     $rootScope.$apply();
-                }, UserSrv.getKey(), self.id, // entity, 
-                newLabel); //label
+                }, 
+                UserSrv.getKey(), 
+                self.id, // entity, 
+                newLabel, //label
+                null, //description
+                null); //read
+                
             return defer.promise;
         },
         saveRating: function(rating) {
@@ -70,7 +76,7 @@ angular.module('module.models').factory('BaseModel', ['$q', '$rootScope', 'UserS
             var self = this;
             new SSRatingSet(function(result) {
                 if (result.worked) {
-                    var promise = FetchServiceHelper.getEntityDescribtion(self, true, true, true);
+                    var promise = FetchServiceHelper.getEntityDescribtion(self, true, true, true, null);
                     promise.then(function(result) {
                         defer.resolve(self);
                         FetchServiceHelper.applyHelper();
@@ -84,7 +90,7 @@ angular.module('module.models').factory('BaseModel', ['$q', '$rootScope', 'UserS
             }, UserSrv.getKey(), self.id, rating);
             return defer.promise;
         },
-        addTag: function(tagString) {
+        addTag: function(tagString, circleId) {
             var defer = $q.defer();
             var self = this;
             new SSTagAdd(function(result) {
@@ -93,13 +99,15 @@ angular.module('module.models').factory('BaseModel', ['$q', '$rootScope', 'UserS
                 }, function(error) {
                     defer.reject(error);
                     $rootScope.$apply();
-                }, UserSrv.getKey(), self.id, //entity
+                }, UserSrv.getKey(),
+                self.id, //entity
                 tagString, //label
-                self.space, //space
+                SPACE_ENUM.circle, //space
+                circleId,
                 null); //creationTime
             return defer.promise;
         },
-        removeTag: function(tagString) {
+        removeTag: function(tagString, circleId) {
             var defer = $q.defer();
             var self = this;
             new SSTagsRemove(function(result) {
@@ -108,23 +116,28 @@ angular.module('module.models').factory('BaseModel', ['$q', '$rootScope', 'UserS
                 }, function(error) {
                     defer.reject(error);
                     $rootScope.$apply();
-                }, UserSrv.getKey(), self.id, //entity
+                }, UserSrv.getKey(),
+                self.id, //entity
                 tagString, //label
-                self.space //space
+                SPACE_ENUM.circle, //space
+                circleId
             );
             return defer.promise;
         },
         setDescription: function(description) {
             var defer = $q.defer();
-            new SSEntityDescriptionUpdate(function(result) {
+            new SSEntityUpdate(function(result) {
                     defer.resolve(result);
                     $rootScope.$apply();
                 }, function(error) {
                     defer.reject(error);
                     $rootScope.$apply();
-                }, UserSrv.getKey(),
-                this.id, //label
-                description //space
+                }, 
+                UserSrv.getKey(),
+                this.id, //entity
+                null, //label
+                description, //description
+                null //read
             );
             return defer.promise;
         },
@@ -228,7 +241,7 @@ angular.module('module.models').factory('CollectionModel', ['$q', '$rootScope', 
         }, function(error) {
             defer.reject(error);
             $rootScope.$apply();
-        }, UserSrv.getUser(), UserSrv.getKey(), this.id, null, label, true);
+        }, UserSrv.getKey(), this.id, null, label, true);
         return defer.promise;
     };
     Collection.prototype.getHierarchy = function() {
@@ -240,30 +253,32 @@ angular.module('module.models').factory('CollectionModel', ['$q', '$rootScope', 
         }, function(error) {
             defer.reject(error);
             $rootScope.$apply();
-        }, UserSrv.getUser(), UserSrv.getKey(), this.id);
+        }, UserSrv.getKey(), this.id);
         return defer.promise;
     }
     Collection.prototype.uploadFile = function(file) {
         var defer = $q.defer();
         var self = this;
-        new SSFileUpload(function(fileUri, fileName) {
+        new SSFileUpload(function(result, fileName) {
             var entry = new EntityModel();
             entry.init({
-                id: fileUri,
+                id: result.file,
                 label: fileName,
                 parentColl: self.id,
                 space: self.space,
                 type: ENTITY_TYPES.file
             });
             entry.init({
-                uriPathnameHash: UriToolbox.extractUriPathnameHash(fileUri)
+                uriPathnameHash: UriToolbox.extractUriPathnameHash(result.file)
             });
             defer.resolve(entry);
             $rootScope.$apply();
         }, function(error) {
             defer.reject(error);
             $rootScope.$apply();
-        }, UserSrv.getUser(), UserSrv.getKey(), file);
+        }, 
+        UserSrv.getKey(), 
+        file);
         return defer.promise;
     };
     Collection.prototype.addEntries = function(entries, labels) {
@@ -274,7 +289,7 @@ angular.module('module.models').factory('CollectionModel', ['$q', '$rootScope', 
         }, function(error) {
             defer.reject(error);
             $rootScope.$apply();
-        }, UserSrv.getUser(), UserSrv.getKey(), this.id, entries, labels);
+        }, UserSrv.getKey(), this.id, entries, labels);
         return defer.promise;
     };
     Collection.prototype.createLink = function(label, url) {
@@ -296,7 +311,7 @@ angular.module('module.models').factory('CollectionModel', ['$q', '$rootScope', 
         }, function(error) {
             defer.reject(error);
             $rootScope.$apply();
-        }, UserSrv.getUser(), UserSrv.getKey(), this.id, url, label, false);
+        }, UserSrv.getKey(), this.id, url, label, false);
         return defer.promise;
     };
     Collection.prototype.deleteEntries = function(collEntries) {
@@ -329,17 +344,6 @@ angular.module('module.models').factory('CollectionModel', ['$q', '$rootScope', 
         });
         return ret;
     };
-    Collection.prototype.setCollPublic = function() {
-        var self = this;
-        new SSEntityPublicSet(function(result) {
-            if (result.worked) {
-                self.space = SPACE_ENUM.shared;
-                $rootScope.$apply();
-            }
-        }, function(error) {
-            console.log(error);
-        }, UserSrv.getUser(), UserSrv.getKey(), this.id);
-    };
     Collection.prototype.getCumulatedTags = function(model) {
         var defer = $q.defer();
         var self = this;
@@ -349,7 +353,7 @@ angular.module('module.models').factory('CollectionModel', ['$q', '$rootScope', 
             $rootScope.$apply();
         }, function(error) {
             defer.reject(error);
-        }, UserSrv.getUser(), UserSrv.getKey(), this.id);
+        }, UserSrv.getKey(), this.id);
         return defer.promise;
     };
     return (Collection);
@@ -400,22 +404,34 @@ angular.module('module.models').factory('EntityModel', ['$q', '$rootScope', 'Use
     Entity.prototype.downloadFile = function() {
         var defer = $q.defer();
         if (this.type !== ENTITY_TYPES.file) return null;
-        new SSFileDownload(this.servHandleFileDownload(defer), function(error) {
+        
+      new SSFileDownload(
+          this.servHandleFileDownload(defer), 
+        function(error) {
             defer.reject();
             console.log(error);
-        }, UserSrv.getUser(), UserSrv.getKey(), this.id);
+        }, 
+        UserSrv.getKey(), 
+        this.id);
+        
         return defer.promise;
     };
-    Entity.prototype.uploadFile = function() {
+    Entity.prototype.viewFile = function() {
+      if (this.type !== ENTITY_TYPES.file) return null;
+      new SSFileDownloadGET(
+        UserSrv.getKey(), 
+        this.id);
+    };
+    Entity.prototype.uploadFile = function(tags) {
         var defer = $q.defer();
         var self = this;
         if (this.type == ENTITY_TYPES.file) {
-            new SSFileUpload(function(fileUri, fileName) {
-                console.log(fileUri);
-                self.id = fileUri;
+            new SSFileUpload(function(result, fileName) {
+                console.log(result.file);
+                self.id = result.file;
                 self.label = fileName;
                 self.type = ENTITY_TYPES.file;
-                self.uriPathnameHash = UriToolbox.extractUriPathnameHash(fileUri);
+                self.uriPathnameHash = UriToolbox.extractUriPathnameHash(result.file);
                 self.uploaded = true;
                 defer.resolve(self);
                 //$rootScope.$apply();
@@ -423,7 +439,9 @@ angular.module('module.models').factory('EntityModel', ['$q', '$rootScope', 'Use
                 console.log("Error");
                 defer.reject(error);
                 //$rootScope.$apply();
-            }, UserSrv.getUser(), UserSrv.getKey(), this.fileHandle, null);
+            }, 
+            UserSrv.getKey(), 
+            this.fileHandle);
             return defer.promise;
         }
     }
@@ -508,7 +526,7 @@ angular.module('module.models').service("CollectionFetchService", ['$q', '$rootS
         new SSCollRootGet(function(result) {
             var model = initCollection(result);
             model.isRoot = true;
-            FetchServiceHelper.getEntityDescribtion(model, true, true, true).then(function(result) {
+            FetchServiceHelper.getEntityDescribtion(model, true, true, true, null).then(function(result) {
                 defer.resolve(model);
             }, function(error) {
                 defer.reject(error);
@@ -517,7 +535,7 @@ angular.module('module.models').service("CollectionFetchService", ['$q', '$rootS
         }, function(error) {
             defer.reject(error);
             $rootScope.$apply();
-        }, UserSrv.getUser(), UserSrv.getKey());
+        }, UserSrv.getKey());
         return defer.promise;
     };
     this.getCollectionByUri = function(coll) {
@@ -525,7 +543,7 @@ angular.module('module.models').service("CollectionFetchService", ['$q', '$rootS
         var self = this;
         new SSCollWithEntries(function(result) {
                 var model = initCollection(result);
-                FetchServiceHelper.getEntityDescribtion(model, true, true, true).then(function(result) {
+                FetchServiceHelper.getEntityDescribtion(model, true, true, true, null).then(function(result) {
                     getHierarchy(model, defer);
                 }, function(error) {
                     defer.reject(error);
@@ -534,7 +552,7 @@ angular.module('module.models').service("CollectionFetchService", ['$q', '$rootS
             }, function(error) {
                 defer.reject(error);
                 $rootScope.$apply();
-            }, UserSrv.getUser(), UserSrv.getKey(), "http://sss.eu/" + coll //UserSrv.getUserSpace() + "entities/" + coll //TODO
+            }, UserSrv.getKey(), "http://sss.eu/" + coll //UserSrv.getUserSpace() + "entities/" + coll //TODO
         );
         return defer.promise;
     };
@@ -542,8 +560,8 @@ angular.module('module.models').service("CollectionFetchService", ['$q', '$rootS
 angular.module('module.models').service("EntityFetchService", ['$q', '$rootScope', 'UserService', 'EntityModel', 'UriToolbox', 'ENTITY_TYPES', 'FetchServiceHelper', function($q, $rootScope, UserSrv, EntityModel, UriToolbox, ENTITY_TYPES, FetchServiceHelper) {
     this.getEntityByUri = function(entityUri, getTags, getOverallRating, getDiscs) {
         var defer = $q.defer();
-        new SSEntityDescGet(function(result) {
-            var result = result.desc;
+        new SSEntitiesGetFiltered(function(result) {
+            var result = result.entities[0];
             var entity = new EntityModel();
             entity.init({
                 id: result.id
@@ -575,7 +593,9 @@ angular.module('module.models').service("EntityFetchService", ['$q', '$rootScope
                     entity.fileType = result.mimeType;
                 }
             }
-            if (result.discs.length > 0) {
+            if (
+              result.discs &&
+              result.discs.length > 0) {
                 var discUri = result.discs[0];
                 var promise = FetchServiceHelper.getDiscussionByUri(discUri);
                 promise.then(function(result) {
@@ -590,40 +610,59 @@ angular.module('module.models').service("EntityFetchService", ['$q', '$rootScope
         }, function(error) {
             defer.reject(error);
             $rootScope.$apply();
-        }, UserSrv.getUser(), UserSrv.getKey(), entityUri, getTags, getOverallRating, getDiscs);
+        }, 
+        UserSrv.getKey(), 
+        [entityUri], //entities
+        null, // circle
+        getTags,   //setTags
+        null, // circle
+      getOverallRating,  //setOverallRating
+      getDiscs, //setDiscs
+      null, //setUEs, 
+      null, //setThumb, 
+      null, //setFlags,
+      null); //setCircles);
+      
         return defer.promise;
     };
     this.uploadEntity = function(file) {
         var defer = $q.defer();
         var self = this;
-        new SSFileUpload(function(parentUri, fileUri, fileName) {
+        new SSFileUpload(function(result, fileName) {
             var entry = new Entity();
             entry.init({
-                id: fileUri,
+                id: result.file,
                 label: fileName,
-                parentColl: parentUri,
+                parentColl: null,
                 space: self.space,
                 type: ENTITY_TYPES.file
             });
             entry.init({
-                uriPathnameHash: UriToolbox.extractUriPathnameHash(fileUri)
+                uriPathnameHash: UriToolbox.extractUriPathnameHash(result.file)
             });
             defer.resolve(entry);
             $rootScope.$apply();
         }, function(error) {
             defer.reject(error);
             $rootScope.$apply();
-        }, UserSrv.getUser(), UserSrv.getKey(), file, this.id);
+        }, UserSrv.getKey(), file);
         return defer.promise;
     };
 }]);
 angular.module('module.models').service("FetchServiceHelper", ['$q', '$rootScope', 'UserService', 'UriToolbox', 'SPACE_ENUM', function($q, $rootScope, UserSrv, UriToolbox, SPACE_ENUM) {
-    this.getEntityDescribtion = function(model, getTags, getOverallRating, getDiscs) {
+    this.getEntityDescribtion = function(model, getTags, getOverallRating, getDiscs, circle) {
+    	var space = null;
+    	if (circle != null) {
+    		space = SPACE_ENUM.circle;
+    	}
+    	
         var defer = $q.defer();
         var self = this;
-        new SSEntityDescGet(function(result) {
-            var result = result.desc;
-            model.init({
+        new SSEntitiesGetFiltered(function(result) {
+            var result = result.entities[0];
+            var tags   = self.getLabelsFromTags(result.tags);
+            
+          model.init({
                 id: result.id
             });
             model.init({
@@ -633,7 +672,7 @@ angular.module('module.models').service("FetchServiceHelper", ['$q', '$rootScope
                 label: result.label
             });
             model.init({
-                tags: result.tags
+                tags: tags
             });
             model.init({
                 overallRating: result.overallRating
@@ -647,7 +686,11 @@ angular.module('module.models').service("FetchServiceHelper", ['$q', '$rootScope
             model.init({
                 description: result.description
             });
-            if (result.discs.length > 0) {
+            
+          if (
+              result.discs &&
+              result.discs.length > 0) {
+              
                 var discUri = result.discs[0];
                 var promise = self.getDiscussionByUri(discUri);
                 promise.then(function(result) {
@@ -662,13 +705,25 @@ angular.module('module.models').service("FetchServiceHelper", ['$q', '$rootScope
         }, function(error) {
             defer.reject(error);
             self.applyHelper();
-        }, UserSrv.getUser(), UserSrv.getKey(), model.id, getTags, getOverallRating, getDiscs);
+          }, 
+        UserSrv.getKey(), 
+        [model.id],  //entities
+        circle, // circle
+      getTags,  //setTags
+      space, // space
+      getOverallRating,  //setOverallRating
+      getDiscs, //setDiscs
+      null, //setUEs, 
+      null, //setThumb, 
+      null, //setFlags,
+      null); //setCircles);
+        
         return defer.promise;
     };
     this.getDiscussionByUri = function(discUri) {
         var defer = $q.defer();
         var self = this;
-        new SSDiscGet(function(result) {
+        new SSDiscGetFiltered(function(result) {
                 defer.resolve(result);
             }, function(error) {
                 console.log(error);
@@ -676,6 +731,21 @@ angular.module('module.models').service("FetchServiceHelper", ['$q', '$rootScope
             false); //includeComments
         return defer.promise;
     };
+    
+    this.getLabelsFromTags = function(tags) {
+        
+        var labels = new Array();
+        
+        if(tags){
+        
+          for (var counter = 0; counter < tags.length; counter++){
+            labels.push(tags[counter].tagLabel);
+          }
+        }
+        
+        return labels;
+    };
+    
     //helper
     this.applyHelper = function() {
         if (!$rootScope.$$phase) {
@@ -684,10 +754,10 @@ angular.module('module.models').service("FetchServiceHelper", ['$q', '$rootScope
     };
 }]);
 angular.module('module.models').service("TagFetchService", ['$q', '$rootScope', 'UserService', 'SPACE_ENUM', function($q, $rootScope, UserSrv, SPACE_ENUM) {
-    this.fetchAllPublicTags = function() {
+    this.fetchAllPublicTags = function(circleIds) {
         var defer = $q.defer();
         var self = this;
-        new SSTagFrequsGetPOST(function(result) {
+        new SSTagFrequsGetFiltered(function(result) {
             var tagArray = new Array();
             angular.forEach(result.tagFrequs, function(value, key) {
                 tagArray.push(value.label);
@@ -695,12 +765,82 @@ angular.module('module.models').service("TagFetchService", ['$q', '$rootScope', 
             defer.resolve(tagArray);
         }, function(error) {
             console.log(error);
-        }, UserSrv.getKey(), null, null, null, SPACE_ENUM.private, null);
+        }, UserSrv.getKey(), null, null, null, SPACE_ENUM.circle, circleIds, null);
         return defer.promise;
+    };
+    this.fetchTagFrequencies = function (circleIds) {
+    	var defer = $q.defer();
+    	var self = this;
+    	new SSTagFrequsGetFiltered(function(result) {
+    		defer.resolve(result);
+    	}, function(error) {
+    		console.log(error);
+    	},  UserSrv.getKey(),
+    		null,
+    		null,
+    		null,
+    		SPACE_ENUM.circle,
+    		circleIds,
+    		null,
+    		null
+    	);
+    	return defer.promise;
     };
     this.fetchTagsByName = function(queryString) {
         var defer = $q.defer();
         var self = this;
+        return defer.promise;
+    };
+    
+    this.logTagClick = function(tag) {
+    	var defer = $q.defer();
+    	var self = this;
+    	new SSEvalLog(function(result) {
+    		defer.resolve(result);
+    	}, function(error) {
+    		console.log(error);
+    	},  UserSrv.getKey(),
+    		null, 		//toolContext, 
+    		null, 		//forUser,
+    		"clickTag", //type,
+    		null, 		//entity,
+    		tag, 		//content,
+    		null, 		//entities,
+    		null 		//users
+    	);
+    	return defer.promise;
+    }
+}]);
+
+
+////// KB-Study services
+angular.module('module.models').service("CategoryTagFetchService", ['$q', '$rootScope', 'UserService', function($q, $rootScope, UserSrv) {
+	this.fetchPredefinedCategories = function() {
+    	var defer = $q.defer();
+        var self = this;
+        new SSCategoriesPredefinedGet(function(result) {
+            defer.resolve(result);
+        }, function(error) {
+            console.log(error);
+        }, UserSrv.getKey());
+        return defer.promise;
+    };
+    this.fetchRecommendedTags = function (circleName, categories) {
+    	var defer = $q.defer();
+        var self = this;
+        new SSRecommTagsFiltered(function(result) {
+        	defer.resolve(result);
+        }, function(error) {
+        	console.log(error);
+        }, UserSrv.getKey(),
+           circleName, 			//currentCircle = realm
+           UserSrv.getUser(), 	//forUser
+           null, 				//entity
+           categories,			//categories
+           7, 					//maxTags
+           true,				//includeOwnTags
+           false				//ignoreAccessRights
+        );
         return defer.promise;
     };
 }]);
@@ -736,10 +876,22 @@ angular.module('module.models').service('UserFetchService', ['$q', '$rootScope',
         return defer.promise;
     };
     this.getUser = function(userId) {
-            var defer = $q.defer();
-            new SSEntityDescGet(function(result) {
-                defer.resolve(result);
-            }, function(error) {}, UserSrv.getUser(), UserSrv.getKey(), userId, null, null, null, null, null, null);
+      var defer = $q.defer();
+      new SSEntitiesGetFiltered(function(result) {
+        defer.resolve(result.entities[0]);
+      }, function(error) {}, 
+      UserSrv.getKey(), 
+      [userId], //entities
+      null, // circle
+      null,   //setTags
+      null, // circle
+      null,  //setOverallRating
+      null, //setDiscs
+      null, //setUEs, 
+      null, //setThumb, 
+      null, //setFlags,
+      null); //setCircles);
+      
             return defer.promise;
         },
         this.getUserLabel = function(uri) {
@@ -752,21 +904,28 @@ angular.module('module.models').service('SharingModel', ['$q', 'UserService', fu
     this.getEntityUsers = function(entity) {
         var defer = $q.defer();
         var self = this;
-        new SSEntityEntityUsersGet(function(result) {
+        new SSEntityUsersGet(function(result) {
             defer.resolve(result);
         }, function(error) {
             console.log(error);
-        }, UserSrv.getUser(), UserSrv.getKey(), entity.id);
+        }, UserSrv.getKey(), entity.id);
         return defer.promise;
     };
     this.shareEntityPublic = function(entity) {
         var defer = $q.defer();
-        new SSEntityPublicSet(function(result) {
+        new SSEntityShare(function(result) {
             defer.resolve(result);
             console.log(result);
         }, function(error) {
             console.log(error);
-        }, UserSrv.getUser(), UserSrv.getKey(), entity.id);
+        }, 
+        UserSrv.getKey(), 
+        entity.id, //entity
+        null, //users
+        null, //comment, 
+        null, //circles,
+        true); //setPublic
+      
         return defer.promise;
     };
     this.shareEntityCustom = function(entity, shareWithArray, comment) {
@@ -783,6 +942,12 @@ angular.module('module.models').service('SharingModel', ['$q', 'UserService', fu
             console.log(result);
         }, function(error) {
             console.log(error);
-        }, UserSrv.getUser(), UserSrv.getKey(), entity.id, shareWithUsers, comment, shareWithCircles);
+        }, 
+        UserSrv.getKey(), 
+        entity.id,  //entity
+        shareWithUsers,  //users
+        comment,  //comment
+        shareWithCircles, //circles
+        false); //setPublic
     };
 }]);

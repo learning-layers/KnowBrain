@@ -63,8 +63,8 @@ angular.module('module.social').controller("SocialController", ['$scope', '$stat
     
     var promise = UserFetchService.getUser($scope.profileId);
     promise.then(function(result) {
-        $scope.label = result.desc.label;
-        $scope.email = result.desc.email;
+        $scope.label = result.label;
+        $scope.email = result.email;
     });
     
     $scope.userId = UserSrv.getUser();
@@ -72,11 +72,15 @@ angular.module('module.social').controller("SocialController", ['$scope', '$stat
 
     var promise = UserFetchService.getFriends();
     promise.then(function(result) {
-        for (var i = 0; i < result.friends.length; i++) {
-            if (result.friends[i].id == $scope.profileId) {
-                $scope.isFriend = true;
-            }
-        }
+        
+        if(result.friends){
+
+          for (var i = 0; i < result.friends.length; i++) {
+              if (result.friends[i].id == $scope.profileId) {
+                  $scope.isFriend = true;
+              }
+          }
+      }
     });
     
     $scope.addAsFriend = function() {

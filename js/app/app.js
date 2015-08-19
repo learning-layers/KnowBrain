@@ -74,7 +74,8 @@ angular.module('knowbrain', [
             }
         });
 
-    $urlRouterProvider.otherwise('/collection/root');
+    //$urlRouterProvider.otherwise('/collection/root');
+    $urlRouterProvider.otherwise('/circles/root');
 
   }]).run(['$rootScope', '$location', 'UserService', function($rootScope, $location, UserSrv) {
 
@@ -150,7 +151,8 @@ angular.module('knowbrain').service('messagingService', ['$q', '$rootScope','Use
 		        console.log(error);
 		        defer.reject(error);
             },
-            UserSrv.getKey()
+            UserSrv.getKey(),
+            UserSrv.getUser() //forUser
         );
 
         return defer.promise;  

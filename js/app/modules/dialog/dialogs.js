@@ -76,13 +76,20 @@ angular.module('dialogs.controllers', ['ui.bootstrap.modal', 'module.i18n', 'mod
     $scope.yes = function() {
         $modalInstance.close('yes');
     }; // end yes
-}]).controller('entryDetailController', ['$scope', '$modalInstance', 'entry', '$q', 'i18nService', 'CurrentCollectionService', 'FetchServiceHelper', 'RATING_MAX', 'ENTITY_TYPES', 'TagFetchService', 'isSearchResult', 'UserService', 'UriToolbox', '$state', '$window', '$dialogs', function($scope, $modalInstance, entry, $q, i18nService, CurrentCollectionService, FetchServiceHelper, RATING_MAX, ENTITY_TYPES, TagFetchService, isSearchResult, UserSrv, UriToolbox, $state, $window, $dialogs) {
+}]).controller('entryDetailController', ['$scope', '$modalInstance', 'entry', '$q', 'i18nService', 'CurrentCollectionService', 'FetchServiceHelper', 'RATING_MAX', 'ENTITY_TYPES', 'TagFetchService', 'isSearchResult', 'UserService', 'UriToolbox', '$state', '$window', '$dialogs', 'GroupFetchService', function($scope, $modalInstance, entry, $q, i18nService, CurrentCollectionService, FetchServiceHelper, RATING_MAX, ENTITY_TYPES, TagFetchService, isSearchResult, UserSrv, UriToolbox, $state, $window, $dialogs, GroupFetchService) {
     $scope.entry = entry;
     $scope.tags = new Array();
     $scope.ratingReadOnly = false;
     $scope.ENTITY_TYPES = ENTITY_TYPES;
     $scope.isSearchResult = isSearchResult;
     $scope.locations = [];
+    $scope.circleId = $state.params.id;
+    
+    $scope.circles = [$scope.circleId];
+//    var promise = GroupFetchService.getUserGroups(null);
+//    promise.then(function(result) {
+//        $scope.circles = result.circles;
+//    });
 
     /**
      * TRANSLATION INJECTION
@@ -106,10 +113,11 @@ angular.module('dialogs.controllers', ['ui.bootstrap.modal', 'module.i18n', 'mod
             $scope.$apply();
         }, function(error) {
             console.log(error);
-        }, UserSrv.getUser(), UserSrv.getKey(), entry.id);
+        }, UserSrv.getKey(), entry.id);
     };
     this.init = function() {
-        var promise = FetchServiceHelper.getEntityDescribtion(entry, true, true, true);
+
+        var promise = FetchServiceHelper.getEntityDescribtion(entry, true, true, true, $scope.circleId);
         promise.then(function(result) {
             $scope.editedDescription = entry.description;
             //set tags
@@ -137,16 +145,22 @@ angular.module('dialogs.controllers', ['ui.bootstrap.modal', 'module.i18n', 'mod
     };
     $scope.tagAdded = function(tag) {
         // Passed variable is an object with structure { text : 'tagtext'}
-        entry.addTag(tag.text).then(function(result) {
-            CurrentCollectionService.getCurrentCollection().getCumulatedTags();
+        entry.addTag(tag.text, $scope.circleId).then(function(result) {
+        	// dkowald: added null check
+        	if (CurrentCollectionService.getCurrentCollection() != null) {
+        		CurrentCollectionService.getCurrentCollection().getCumulatedTags();
+        	}
         }, function(error) {
             console.log(error);
         });
     };
     $scope.tagRemoved = function(tag) {
         // Passed variable is an object with structure { text : 'tagtext'}
-        entry.removeTag(tag.text).then(function(result) {
-            CurrentCollectionService.getCurrentCollection().getCumulatedTags();
+        entry.removeTag(tag.text, $scope.circleId).then(function(result) {
+        	// dkowald: added null check
+        	if (CurrentCollectionService.getCurrentCollection() != null) {
+        		CurrentCollectionService.getCurrentCollection().getCumulatedTags();
+        	}
         }, function(error) {
             console.log(error);
         });
@@ -155,7 +169,19 @@ angular.module('dialogs.controllers', ['ui.bootstrap.modal', 'module.i18n', 'mod
         $modalInstance.close();
     };
     $scope.deleteEntity = function() {
-        var toDelete = new Array();
+    	// dkowald: new code for KnowBrain study
+        var entityIds = [];
+        entityIds.push($scope.entry.id);
+
+        var promise = GroupFetchService.removeEntitiesFromGroup(entityIds, $scope.circleId);
+        promise.then(function(result) {
+            $scope.close();
+            window.location.reload();
+        }, function(error) {
+            console.log(error);
+        });
+    	
+        /*var toDelete = new Array();
         var entries = CurrentCollectionService.getCurrentCollection().entries;
         angular.forEach(entries, function(collEntry, key) {
             if (collEntry.id == $scope.entry.id) {
@@ -167,7 +193,7 @@ angular.module('dialogs.controllers', ['ui.bootstrap.modal', 'module.i18n', 'mod
             $scope.close();
         }, function(error) {
             console.log(error);
-        });
+        });*/
     };
     $scope.downloadEntity = function() {
         if ($scope.entry.type != ENTITY_TYPES.file) return;
@@ -177,13 +203,17 @@ angular.module('dialogs.controllers', ['ui.bootstrap.modal', 'module.i18n', 'mod
             $scope.entry.downloading = false;
         });
     };
+    $scope.viewEntity = function() {
+        if ($scope.entry.type != ENTITY_TYPES.file) return;
+        $scope.entry.viewFile();
+    };
     $scope.openLink = function() {
         if ($scope.entry.type != ENTITY_TYPES.link) return;
         $window.open(entry.id);
     };
     $scope.queryTags = function($queryString) {
         var defer = $q.defer();
-        var promise = TagFetchService.fetchAllPublicTags();
+        var promise = TagFetchService.fetchAllPublicTags($scope.circles);
         promise.then(function(result) {
             defer.resolve(search(result, $queryString));
         });
@@ -492,7 +522,7 @@ angular.module('dialogs.controllers', ['ui.bootstrap.modal', 'module.i18n', 'mod
 
 
 
-.controller("UploadResourcesController", function($q, $scope, $modalInstance, $http, $location, $state, i18nService, CurrentCollectionService, UriToolbox, UserService, EntityModel, ENTITY_TYPES, FileUploader, saveInCollection, uploadFiles) {
+.controller("UploadResourcesController", function($q, $scope, $modalInstance, $http, $location, $state, $stateParams, i18nService, CurrentCollectionService, UriToolbox, UserService, EntityModel, ENTITY_TYPES, FileUploader, saveInCollection, uploadFiles, GroupFetchService, CategoryTagFetchService) {
     var self = this;
     
     $scope.uploader = new FileUploader();
@@ -523,7 +553,100 @@ angular.module('dialogs.controllers', ['ui.bootstrap.modal', 'module.i18n', 'mod
     $scope.close = function() {
         $modalInstance.dismiss();
     };
-
+    ///////////////////////////////////////////////////
+   ///  kb-recommender user study
+   ///////////////////////////////////////////////////
+    $scope.recTagsShow = false;
+    $scope.circleId = $state.params.id;
+    /*
+    $scope.circleName = "";
+    $scope.circle = null;
+    var promise = GroupFetchService.getGroup("http://sss.eu/" + $scope.circleId);
+    promise.then(function(result) {
+        $scope.circle = result.circle;
+        $scope.circleName = result.circle.label;
+    });
+    */
+    
+    $scope.predefinedCategories = [];
+    var categoriesPromise = CategoryTagFetchService.fetchPredefinedCategories();
+    categoriesPromise.then(function(result) {
+    	// When categories are defined uncomment the following line.
+    	//$scope.predefinedCategories = result.categories;
+     	for(var i=0; i < result.categories.length; i++) {
+    		 if (i < 10) {
+    			 $scope.predefinedCategories.push(result.categories[i]);
+    		 } else {
+    			 break;
+    		 }
+        }
+    });
+    
+    
+    $scope.selectedCategories = [];
+    
+    $scope.stayOpen = function($event) {
+    	$event.stopImmediatePropagation();
+    }
+    
+    $scope.selectCategory = function($event, category) {
+        var idx = $scope.selectedCategories.indexOf(category);
+        if (idx > -1) {
+            $scope.selectedCategories.splice(idx, 1);
+          }
+          else {
+            $scope.selectedCategories.push(category);
+          }
+        $event.stopImmediatePropagation();
+    };
+    $scope.recommendedTags = [];
+    //$scope.recommendedTagsDummy = ["rectag1", "rectag2", "rectag3", "rectag4"];  //  for test purposes 
+    $scope.allTags = [];
+    $scope.inputTags =[];
+    $scope.getTagsforCategories = function (){
+    	var tagsPromise = CategoryTagFetchService.fetchRecommendedTags($scope.circleId, $scope.selectedCategories);
+    	tagsPromise.then(function(result) {
+    		//if (result.tags.length > 0)
+				tagnames = [];
+				
+        if(result.tags){
+        
+          for (i = 0; i < result.tags.length; i++) {
+            tagnames.push(result.tags[i].label);
+          }
+        }
+    			$scope.recommendedTags = tagnames;//result.tags;
+    		//else 
+    			//$scope.recommendedTags = $scope.recommendedTagsDummy;
+    	});
+    	$scope.recTagsShow = true;
+    };
+   
+    // dkowald: fixed duplicate tags bug
+    $scope.addTagToInput = function (tag) {
+    	var oldTags = $scope.inputTags.map(function(tag) { return tag.text; });
+    	var tagText = {text: tag};
+    	
+    	var index = oldTags.indexOf(tagText.text);
+    	if (index == -1) {
+		    $scope.inputTags.push(tagText);
+		    $scope.allTags = $scope.inputTags.map(function(tag) { return tag.text; });
+    	}
+    }
+    $scope.addTagToAll = function (tag) {
+    	$scope.allTags.push( tag.text);
+    }
+    // dkowald: fixed
+    $scope.removeTagFromAll = function (tag) {
+    	var index = $scope.allTags.indexOf(tag.text);
+    	if (index > -1) {
+    		$scope.allTags.splice(index, 1);
+    	}
+    }
+    
+    ///////////////////////////////////////////////////
+    ///  END: kb-recommender user study
+    ///////////////////////////////////////////////////
     $scope.uploader.uploadAll = function() {
         if (!uploadFiles) {
             var files = [];
@@ -560,38 +683,44 @@ angular.module('dialogs.controllers', ['ui.bootstrap.modal', 'module.i18n', 'mod
                     });
                 } else {
                     new SSFileUpload(
-                        function(fileUri, fileName) {
+                        function(result, fileName) {
                             var entry = new EntityModel();
 
                             entry.init({
-                                id: fileUri,
+                                id: result.file,
                                 label: fileName,
                                 parentColl: null,
                                 space: null,
                                 type: ENTITY_TYPES.file
                             });
                             entry.init({
-                                uriPathnameHash: UriToolbox.extractUriPathnameHash(fileUri)
+                                uriPathnameHash: UriToolbox.extractUriPathnameHash(result.file)
                             });
 
                             file.uploading = false;
                             file.uploaded = true;
-                            file.uriPathnameHash = UriToolbox.extractUriPathnameHash(fileUri);
+                            file.uriPathnameHash = UriToolbox.extractUriPathnameHash(result.file);
                             entries.push(entry);
                             uploadCounter++;
                             newEntrieObjects.push(entry);
                             if (uploadCounter == fileCount) {
                                 defer.resolve();
                             }
+                            
+                            var fileUri = result.file;
+                            var promise = GroupFetchService.addEntitiesToGroup(fileUri, "http://sss.eu/" + $scope.circleId, $scope.allTags, $scope.selectedCategories);
+                            promise.then(function(result) {
+                            	console.log("Added file: " + fileUri);
+                            }, function(error) {
+                                console.log(error);
+                            });
                         },
                         function(error) {
                             console.log("Error");
                             defer.reject(error);
                         },
-                        UserService.getUser(),
                         UserService.getKey(),
-                        file._file,
-                        null
+                        file._file
                     );
             }
         });
@@ -613,19 +742,20 @@ angular.module('dialogs.controllers', ['ui.bootstrap.modal', 'module.i18n', 'mod
     };
 })
 
-.controller("CreateLinkController", function($scope, $modalInstance, $http, $location, i18nService, GroupFetchService, targetEntity, EntityModel) {
+.controller("CreateLinkController", function($scope, $modalInstance, $http, $location, $state, i18nService, GroupFetchService, targetEntity, EntityModel, CategoryTagFetchService) {
     $scope.createLink = function(link) {
-        if (link.label == undefined || link.url == undefined) {
+        if (/*link.label == undefined || */link.url == undefined) {
             return;
         }
 
         if (targetEntity.type === 'circle') {
-            var promise = GroupFetchService.addEntitiesToGroup([link.url], targetEntity.id);
+            var promise = GroupFetchService.addEntitiesToGroup([link.url], targetEntity.id, $scope.allTags, $scope.selectedCategories);
             promise.then(function(result) {
                 var entry = new EntityModel();
                 entry.init({ id: link.url,
-                            label: link.label
+                            label: link.url
                             });
+                //location.reload();
                 $modalInstance.close(entry);
             }, function(error) {
                 console.log(error);
@@ -642,8 +772,105 @@ angular.module('dialogs.controllers', ['ui.bootstrap.modal', 'module.i18n', 'mod
             entry.init({id: link.url, label: link.label});
             $modalInstance.close(entry);
         }
-    };
 
+    };
+    ///////////////////////////////////////////////////
+    ///  kb-recommender user study
+    ///////////////////////////////////////////////////
+    /**
+     * TRANSLATION INJECTION
+     */
+    $scope.t = function(identifier) {
+            return i18nService.t(identifier);
+        }
+    
+     $scope.recTagsShow = false;
+     $scope.circleId = $state.params.id;
+     /*
+     $scope.circleName = "";
+     $scope.circle = null;
+     var promise = GroupFetchService.getGroup("http://sss.eu/" + $scope.circleId);
+     promise.then(function(result) {
+         $scope.circle = result.circle;
+         $scope.circleName = result.circle.label;
+     });
+     */
+     $scope.predefinedCategories = [];
+     var categoriesPromise = CategoryTagFetchService.fetchPredefinedCategories();
+     categoriesPromise.then(function(result) {
+     	// When categories are defined uncomment the following line.
+    	// $scope.predefinedCategories = result.categories;
+     	for(var i=0; i < result.categories.length; i++) {
+     		 if (i < 10) {
+     			 $scope.predefinedCategories.push(result.categories[i]);
+     		 } else {
+     			 break;
+     		 }
+         }
+     });
+       
+     $scope.stayOpen = function($event) {
+     	$event.stopImmediatePropagation();
+     }
+     
+     $scope.selectedCategories = [];
+     $scope.selectCategory = function($event, category) {
+         var idx = $scope.selectedCategories.indexOf(category);
+         if (idx > -1) {
+             $scope.selectedCategories.splice(idx, 1);
+           }
+           else {
+             $scope.selectedCategories.push(category);
+           }
+         $event.stopImmediatePropagation();
+     };
+     $scope.recommendedTags = [];
+     //$scope.recommendedTagsDummy = ["rectag1", "rectag2", "rectag3", "rectag4"];  //  for test purposes 
+     $scope.allTags = [];
+     $scope.inputTags =[];
+     $scope.getTagsforCategories = function (){
+     	var tagsPromise = CategoryTagFetchService.fetchRecommendedTags($scope.circleId, $scope.selectedCategories);
+     	tagsPromise.then(function(result) {
+     		//if (result.tags.length > 0)
+				tagnames = [];
+				
+        if(result.tags){
+        
+          for (i = 0; i < result.tags.length; i++) {
+            tagnames.push(result.tags[i].label);
+          }
+        }
+    			$scope.recommendedTags = tagnames;//result.tags;
+     		//else 
+     			//$scope.recommendedTags = $scope.recommendedTagsDummy;
+     	});
+     	$scope.recTagsShow = true;
+     };
+    
+     // dkowald: fixed duplicate tags bug
+     $scope.addTagToInput = function (tag) {
+     	var oldTags = $scope.inputTags.map(function(tag) { return tag.text; });
+     	var tagText = {text: tag};
+     	
+     	var index = oldTags.indexOf(tagText.text);
+     	if (index == -1) {
+ 		    $scope.inputTags.push(tagText);
+ 		    $scope.allTags = $scope.inputTags.map(function(tag) { return tag.text; });
+     	}
+     }
+     $scope.addTagToAll = function (tag) {
+     	$scope.allTags.push( tag.text);
+     }
+     // dkowald: fixed
+     $scope.removeTagFromAll = function (tag) {
+     	var index = $scope.allTags.indexOf(tag.text);
+     	if (index > -1) {
+     		$scope.allTags.splice(index, 1);
+     	}
+     }
+     ///////////////////////////////////////////////////
+     ///  END: kb-recommender user study
+     ///////////////////////////////////////////////////
     $scope.close = function() {
         $modalInstance.close();
     };
@@ -694,6 +921,7 @@ angular.module('dialogs.controllers', ['ui.bootstrap.modal', 'module.i18n', 'mod
             $scope.newColl.private = false;
         }
     };
+    
 })
 
 

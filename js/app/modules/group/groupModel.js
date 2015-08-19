@@ -4,31 +4,39 @@ angular.module('module.group').service("GroupFetchService", ['$q','UserService',
         var defer = $q.defer();
         var self = this;
 
-        new SSCircleGet(
+        new SSCircleGetFiltered(
             function(result) {
                 var entities = [];
-                for (var i=0; i < result.circle.entities.length; i++) {
-                    var entity = new EntityModel();
-                    entity.init({id:result.circle.entities[i].id});
-                    entity.init({type:result.circle.entities[i].type});
-                    entity.init({label:result.circle.entities[i].label});
-                    entity.init({tags:result.circle.entities[i].tags});
-                    entity.init({overallRating:result.circle.entities[i].overallRating});
-                    entity.init({creationTime:result.circle.entities[i].creationTime});
-                    entity.init({author:result.circle.entities[i].author});
+                
+                if(
+                  result.circle &&
+                  result.circle.entities){
+              
+                  for (var i=0; i < result.circle.entities.length; i++) {
+                      var entity = new EntityModel();
+                      entity.init({id:result.circle.entities[i].id});
+                      entity.init({type:result.circle.entities[i].type});
+                      entity.init({label:result.circle.entities[i].label});
+                      entity.init({tags:result.circle.entities[i].tags});
+                      entity.init({overallRating:result.circle.entities[i].overallRating});
+                      entity.init({creationTime:result.circle.entities[i].creationTime});
+                      entity.init({author:result.circle.entities[i].author});
 
-                    if(entity.type == ENTITY_TYPES.file) {
-                        entity.mimeType = result.circle.entities[i].mimeType;
-                        entity.fileExtension = result.circle.entities[i].fileExt;
-                        if (result.circle.entities[i].mimeType.indexOf('/') > 0) {
-                            entity.fileType = result.circle.entities[i].mimeType.substr(0, result.circle.entities[i].mimeType.indexOf('/'));
-                        } else {
-                            entity.fileType = result.circle.entities[i].mimeType;
-                        }
-                    }
-                    entities.push(entity);
+                      if(entity.type == ENTITY_TYPES.file) {
+                          entity.mimeType = result.circle.entities[i].mimeType;
+                          entity.fileExtension = result.circle.entities[i].fileExt;
+                          if (result.circle.entities[i].mimeType.indexOf('/') > 0) {
+                              entity.fileType = result.circle.entities[i].mimeType.substr(0, result.circle.entities[i].mimeType.indexOf('/'));
+                          } else {
+                              entity.fileType = result.circle.entities[i].mimeType;
+                          }
+                      }
+                      entities.push(entity);
+                  }
+                  
+                  result.circle.entities = entities;
                 }
-                result.circle.entities = entities;
+                
                 defer.resolve(result);
             },
             function(error){
@@ -36,7 +44,9 @@ angular.module('module.group').service("GroupFetchService", ['$q','UserService',
             },
             UserSrv.getKey(),
             groupId,
-            ['entity', 'coll', 'disc', 'qa', 'chat', 'file'] //entityTypesToIncludeOnly
+            ['entity', 'coll', 'disc', 'qa', 'chat', 'file'], //entityTypesToIncludeOnly
+            true, 				//includeTags
+            "circleSpace"		//tag-circle
         );
        return defer.promise;
     };
@@ -96,7 +106,8 @@ angular.module('module.group').service("GroupFetchService", ['$q','UserService',
         UserSrv.getKey(),
         circle.id,    //entity, 
         label,        //label, 
-        description); //description
+        description, //description
+        null); //read
 
         return defer.promise;        
     };
@@ -119,7 +130,74 @@ angular.module('module.group').service("GroupFetchService", ['$q','UserService',
         return defer.promise;
     };
     
-    this.addEntitiesToGroup = function(entities, group) {
+    this.removeMembersFromGroup = function(users, group) {
+        var defer = $q.defer();
+        var self = this;
+        
+        new SSCircleUsersRemove(
+            function(result) {
+                defer.resolve(result);
+            },
+            function(error) {
+                console.log(error);
+            },
+            UserSrv.getKey(),
+            group,
+            users
+        );
+        return defer.promise;
+    };
+    
+    this.removeCircle = function(circle) {
+        var defer = $q.defer();
+        var self = this;
+        
+        new SSCircleRemove(
+            function(result) {
+                defer.resolve(result);
+            },
+            function(error) {
+                console.log(error);
+            },
+            UserSrv.getKey(),
+            circle
+        );
+        return defer.promise;
+    };
+    
+    this.mergeCircle = function(circle, targetCircle /* for merge */, circleUsers /* for split */) {
+        var defer = $q.defer();
+        var self = this;
+        var includeUsers = false;
+        if (targetCircle != null) {
+        	includeUsers = true;
+        }
+        var appendUserName = !includeUsers;
+        
+        new SSEntityCopy(
+            function(result) {
+                defer.resolve(result);
+            },
+            function(error) {
+                console.log(error);
+            },
+            UserSrv.getKey(),
+            circle,							// entity
+            targetCircle,					// targetEntity
+            circleUsers,					// forUsers
+            null,							// label
+            includeUsers,					// includeUsers (merge: true / split: false)
+            true,							// includeEntities
+            true,							// includeMetaSpecificToEntityAndItsEntities
+            true,							// include caller
+            null,							// entitiesToExclude
+            null,							// comment
+            appendUserName					// appendUserName (merge: false / split: true)
+        );
+        return defer.promise;
+    };   
+    
+    this.addEntitiesToGroup = function(entities, group, tags, categories) {
         var defer = $q.defer();
         var self = this;
         
@@ -132,7 +210,9 @@ angular.module('module.group').service("GroupFetchService", ['$q','UserService',
             },
             UserSrv.getKey(),
             group,
-            entities
+            entities, 
+            tags, //tags 
+            categories //categories
         );
         
         return defer.promise;
@@ -151,7 +231,8 @@ angular.module('module.group').service("GroupFetchService", ['$q','UserService',
             },
             UserSrv.getKey(),
             group,
-            entities
+            entities,
+            true //removeCircleSpecificMetadata
         );
         
         return defer.promise;
@@ -161,7 +242,7 @@ angular.module('module.group').service("GroupFetchService", ['$q','UserService',
         var defer = $q.defer();
         var self = this;
         
-        new SSActivitiesGet(
+        new SSActivitiesGetFiltered(
             function(result) {
                 var activities = [];
                 for(var i = 0; i < result.activities.length; i++) {
@@ -201,17 +282,16 @@ angular.module('module.group').service("GroupFetchService", ['$q','UserService',
             function(error) {
                 console.log(error);
             },
-            UserSrv.getUser(),
             UserSrv.getKey(),
-            null,
-            null,
-            null,
-            [circle],
-            null,
-            null,
-            true
+            null, //types
+            null, //users
+            null, //entities
+            [circle], //circles
+            null, //startTime
+            null, //endTime
+            true //includeOnlyLastActivities
         );
-        
+      
         return defer.promise;
     };
 

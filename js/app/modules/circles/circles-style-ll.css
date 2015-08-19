@@ -319,7 +319,7 @@
 }
 
 #tags-dropdown {
-    width: 100%;
+    /*width: 100%;*/
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
@@ -416,4 +416,15 @@
 
 .position-fixed {
   position: fixed;
+}
+
+.category-circle {
+    width: 35px;
+    height: 16px;
+    background-color: #f6a551;
+    border: 1px solid;
+    border-color: #535353;
+    border-radius: 8px;
+    display: inline-block;
+    vertical-align: middle;
 }

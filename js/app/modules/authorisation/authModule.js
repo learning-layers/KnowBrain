@@ -76,9 +76,15 @@ angular.module('module.authorisation').controller("AuthController", [
     {
       $rootScope.activateLoadingIndicator();
       UserSrv.login(auth).then(
-        function(){
-          $state.transitionTo('app.collection.content', { coll: 'root'});
-          $rootScope.deactivateLoadingIndicator();
+        function(key){
+            //$state.transitionTo('app.collection.content', { coll: 'root'});
+        	if (key == null) {
+                auth.$error.incorrect = true;
+                $rootScope.deactivateLoadingIndicator();
+        	} else {
+            	$state.transitionTo('app.circles');
+            	$rootScope.deactivateLoadingIndicator();
+        	}
         },
         function(){
           auth.$error.incorrect = true;
@@ -151,7 +157,7 @@ angular.module('module.authorisation').service('UserService', ['$q', '$rootScope
            cookiesSrv.setSessionCookie(AUTH_CONSTANTS.authCookieName, JSON.stringify(authData));
          }
 
-         defer.resolve();
+         defer.resolve(authData.key);
          $rootScope.$apply();
        },
        function(result){
