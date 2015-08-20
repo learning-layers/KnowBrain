@@ -130,7 +130,7 @@ angular.module('module.qa').controller("qaController", ['$scope', '$state', '$q'
         });
     };
     $scope.searchThreads = function() {
-        if ((this.searchThreadsString === undefined) && ($scope.searchTags) && ($scope.searchTags.length === 0)) {
+        if ((this.searchThreadsString === undefined || this.searchThreadsString.length === 0) && ($scope.searchTags) && ($scope.searchTags.length === 0)) {
             return loadThreadList();
         }
         var keywords = Array();
