@@ -74,7 +74,7 @@ angular.module('module.social').controller("SocialController", ['$modal', '$scop
     promise.then(function(result) {
         $scope.label = result.label;
         $scope.email = result.email;
-        $scope.thumb = result.profilePicture.thumb;
+        $scope.thumb = result.thumb.file.downloadLink;
     });
     
     $scope.userId = UserSrv.getUser();

@@ -889,10 +889,10 @@ angular.module('module.models').service('UserFetchService', ['$q', '$rootScope',
       null,  //setOverallRating
       null, //setDiscs
       null, //setUEs, 
-      null, //setThumb, 
+      true, //setThumb, 
       null, //setFlags,
       null, //setCircles
-      true  // setProfilePicture
+      false  // setProfilePicture
       );
       
             return defer.promise;
