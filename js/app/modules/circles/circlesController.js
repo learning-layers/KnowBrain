@@ -59,6 +59,18 @@ angular.module('module.circles').controller("CirclesController", function($scope
     } else {
     	$scope.isAdmin = false;
     }
+    
+    $scope.isNotAdmin = function(user) {
+    	if ($scope.isAdmin) {
+    		return true;
+    	} else {
+    		if (user.label == "paul") {
+    			return false;
+    		} else {
+    			return true;
+    		}
+    	}
+    }
 	
 	$scope.circles = [];
     var promise = GroupFetchService.getUserGroups(null);
