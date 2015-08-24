@@ -57,14 +57,24 @@ angular.module('module.social').config(function($stateProvider) {
 /**
 * CONTROLLER
 */
-angular.module('module.social').controller("SocialController", ['$scope', '$state', '$stateParams', 'UserService', 'UserFetchService', function($scope, $state, $stateParams, UserSrv, UserFetchService){
+angular.module('module.social').controller("SocialController", ['$modal', '$scope', '$state', '$stateParams', 'UserService', 'UserFetchService', function($modal, $scope, $state, $stateParams, UserSrv, UserFetchService){
 
     $scope.profileId = $stateParams.profileId;
+    $scope.uploadProfilePicture = function() {
+        $modal.open({
+                    templateUrl: MODULES_PREFIX + '/social/update-profile-picture.tpl.html',
+                    controller: 'ProfilePictureController',
+                    keyboard: true,
+                    backdrop: true,
+                    windowClass: 'modal-small'
+                });  
+    } 
     
     var promise = UserFetchService.getUser($scope.profileId);
     promise.then(function(result) {
         $scope.label = result.label;
         $scope.email = result.email;
+        $scope.thumb = result.profilePicture.thumb;
     });
     
     $scope.userId = UserSrv.getUser();
@@ -90,7 +100,47 @@ angular.module('module.social').controller("SocialController", ['$scope', '$stat
         });
     }
 
-}]);
+}])
+
+.controller("ProfilePictureController", function($scope, $modalInstance, $state, $stateParams, FileUploader, UserService, UserFetchService){
+    $scope.uploader = new FileUploader();
+    $scope.uploader.filters.push({
+            name: 'imageFilter',
+            fn: function(item /*{File|FileLikeObject}*/, options) {
+                var type = '|' + item.type.slice(item.type.lastIndexOf('/') + 1) + '|';
+                return '|jpg|png|jpeg|bmp|gif|'.indexOf(type) !== -1;
+            }
+        });
+    $scope.item = null;
+    $scope.uploader.onAfterAddingFile = function(item) {
+        $scope.item = item;
+    };
+
+    $scope.save = function() {
+        new SSFileUpload(
+            function(result, fileName) {
+
+                new SSImageProfilePictureSet(
+                    function(result) {
+                    },
+                    function(error) {
+                        console.log("Error");
+                        defer.reject(error);
+                    },
+                    UserService.getUser(),
+                    UserService.getKey(),
+                    result.file
+                );
+            },
+            function(error) {
+                console.log("Error");
+                defer.reject(error);
+            },
+            UserService.getKey(),
+            $scope.item._file
+        );
+    };
+});
 
 
 

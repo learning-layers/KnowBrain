@@ -1,0 +1,66 @@
+<!--
+-  Copyright 2014 Graz University of Technology - KTI (Knowledge Technologies Institute)
+-
+-  Licensed under the Apache License, Version 2.0 (the "License");
+-  you may not use this file except in compliance with the License.
+-  You may obtain a copy of the License at
+-
+-  http://www.apache.org/licenses/LICENSE-2.0
+-
+-  Unless required by applicable law or agreed to in writing, software
+-  distributed under the License is distributed on an "AS IS" BASIS,
+-  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+-  See the License for the specific language governing permissions and
+-  limitations under the License.
+-->
+<div class="modal-content" nv-file-drop uploader="uploader">
+    <div class="modal-header">
+        <button type="button" class="close" ng-click="close()" aria-hidden="true">&times;</button>
+        <h4 class="modal-title"><span class="glyphicon glyphicon-cloud-upload" style="margin-right:10px;"></span>Set profile picture</h4>
+    </div>
+    <div class="modal-body">
+        <div>
+            <form name="upload" role="form" class="form-horizontal">
+                <div class="form-group">
+                    <div class="col-lg-7 text-center ">
+                        <div class="wizzard-heading">
+                            <!--  <div class="wizzard-heading-top">{{t('upload_resource_info')}}</div>-->
+                            <div class="wizzard-heading-bottom">jkkjhkjh<br>ijlj</div>
+                            <span class="btn btn-default fileinput-button">
+                            <i class="glyphicon glyphicon-plus"></i>
+                            <span>Select file</span>
+                            <input type="file" nv-file-select uploader="uploader"/>
+                            </span>
+                        </div>
+                    </div>
+                    <div class="col-lg-5 text-center ">
+                        <div class="upload-drop-container" nv-file-over over-class="upload-drop-container-file-over" uploader="uploader">
+                            <div id="drop-container-text">{{t('drag_and_drop')}}</div>
+                            <div id="drop-container-subline">{{t('drag_and_drop_subline')}}</div>
+                            <span class="glyphicon glyphicon-hand-down"></span>
+                        </div>
+                    </div>
+                    <div class="clearfix"></div>
+                </div>
+                <div class="clearfix"></div>
+            </form>
+            <div class="clearfix"></div>
+        </div>
+        <div>
+            <table>
+                <tbody>
+                    <tr ng-repeat="item in uploader.queue">
+                        <td>
+                            <div ng-show="uploader.isHTML5" ng-thumb="{ file: item._file, height: 100 }"></div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="modal-footer">
+            <div class="btn-group">
+                <button class="btn btn-success" ng-class="{'disabled' : uploader.queue.length == 0}" ng-click="save()"><i class="glyphicon glyphicon-cloud-upload"></i>&nbsp;Save</button>
+            </div>
+        </div>
+    </div>
+</div>

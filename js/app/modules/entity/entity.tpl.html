@@ -3,15 +3,14 @@
     ng-class="{'collection-entry-selected': entry.isSelected}"
     class="collection-entry kb-fluid-container pull-left">
     <div class="collection-entry-preview-box">
-    	<!--  dkowald: turned off for the KnowBrain study -->
-        <!--<div
+    	<div
             ng-class="{'collection-entry-checkbox-wrapper-selected': entry.isSelected}"
             class="collection-entry-checkbox-wrapper">
             <input ng-checked="entry.isSelected"
             class="collection-entry-checkbox" type="checkbox"
             ng-click="selectResource(entry);$event.stopPropagation()" />
-        </div>-->
-        <div ng-switch="entry.type"<!--ng-click="selectResource(entry)-->">
+        </div>
+        <div ng-switch="entry.type" ng-click="selectResource(entry)">
             <img ng-switch-when="group" src="images/group_pic_dummy.jpg" class="collection-entry-profile-pic"/>
             <img ng-switch-when="priv" src="images/group_pic_dummy.jpg" class="collection-entry-profile-pic"/>
             <div ng-switch-when="coll" style="position: relative; z-index: 9;"
@@ -43,9 +42,9 @@
         ng-show="(entry.type == entityTypes.collection) && entry.space == spaceEnum.shared">{{t('shared')}}</div>
     </div>
     <div class="collection-entry-description-box">
-        <!--<div class="collection-entry-tags-box">
+        <div class="collection-entry-tags-box">
             <div class="tag-circle" ng-class="{'grid-tag-circle' : !$first}" ng-repeat="tag in entry.tags" ng-click="selectTag(tag)" data-toggle="tooltip" data-trigger="hover" data-placement="bottom" title="{{tag}}" on-finish-ng-repeat-load="ngRepeatFinished"></div>
-        </div>-->
+        </div>
 
         <div class="collection-entry-label" ng-click="handleEntryClick(entry)">{{entry.label ? entry.label : entry.id}}</div>
     </div>

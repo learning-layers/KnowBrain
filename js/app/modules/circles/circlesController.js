@@ -310,18 +310,14 @@ angular.module('module.circles').controller("CircleResourcesController", functio
             var entity = entities[i];
             entity.isSelected = false;
             $scope.entities.push(entity);
-
-            // not needed for this
-            /*if (entity.tags != null) {
+            if (entity.tags != null) {
                 for (var j = 0; j < entity.tags.length; j++) {
                     if ($.inArray(entity.tags[j], $scope.availableTags) == -1) {
-                    	$scope.availableTags.push(entity.tags[j]);
+                        $scope.availableTags.push(entity.tags[j]);
                     }
                 }
-            }*/
+            }
         }
-        
-    	$scope.loadTagCloud();
     };
 
     $scope.downloadEntity = function(entity) {
@@ -499,48 +495,7 @@ angular.module('module.circles').controller("CircleResourcesController", functio
         })
     });
     
-    
-    // Knowbrain study code for tag-cloud
-	$scope.compare = function(a, b) {
-		if (a.frequ < b.frequ)
-			return 1;
-	  	if (a.frequ > b.frequ)
-	  		return -1;
-	  	return 0;
-	}
-    
-	$scope.loadTagCloud = function() {
-	   	var unsortedTags = [];
-	   	var circleIDs = [];
-	   	$scope.words = [];
-	   	circleIDs.push($scope.circleId);
-	    var tagPromise = TagFetchService.fetchTagFrequencies(circleIDs);
-	    tagPromise.then(function(result) {
-        
-        if(result.tagFrequs){
-        
-          for (var i = 0; i < result.tagFrequs.length; i++) {
-            var tag = result.tagFrequs[i];
-            unsortedTags.push(tag);
-            $scope.words.push ({
-            text: tag.label,
-            weight: tag.frequ,
-            handlers : {
-            	click: function() {
-            		var x = tag;
-            		return function() {
-            			$scope.selectTag(x.label);
-            		}
-            	}()
-            }
-          });
-          }
-        }
-		    unsortedTags.sort($scope.compare);   
-		    $scope.circleTags = unsortedTags;
-	    });
-	}
-	
+    	
     $scope.clickCircleTag = function(tag) {
     	alert(tag.label);
     };

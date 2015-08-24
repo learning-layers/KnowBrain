@@ -92,12 +92,12 @@
                 <ul class="dropdown-menu" style="padding-left:5px;" role="menu" aria-labelledby="categoriesDropdownMenu">
                     <li role="presentation"><a role="menuitem" tabindex="-1" ng-click="selectCategory(null)">Select a category</a></li>
                     <li role="presentation" class="divider"></li>
-                	<li role="presentation" ng-repeat="category in predefinedCategories"><label class="checkbox" ng-click="stayOpen($event)"><input type="checkbox" value="category" ng-checked="selectedCategories.indexOf(category) > -1"  ng-click="selectCategory($event,category)" > {{category}}</label></li>
-                	<div class="clearfix"><button class="pull-right" style="margin-right:5px;"   ng-click="getTagsforCategories(selectedCategories)">OK</button></div>
+                	<li role="presentation" ng-repeat="category in predefinedCategories"><label class="checkbox" ng-click="stayOpen($event)"><input type="checkbox" value="category" ng-checked="selectedCategories.indexOf(category) > -1"  ng-click="selectCategory($event,category); getTagsforCategories(selectedCategories);" > {{category}}</label></li>
+                	<div class="clearfix"></div>
                 </ul>
                 </div>
                 </div>
-                <div  ng-show="recTagsShow" class="div-separator ng-hide" id="recTags" >Recommended Tags: <button ng-repeat="tag in recommendedTags" ng-click='addTagToInput(tag)'>{{tag}}</button></div>
+                <div  ng-show="recTagsShow && recommendedTags.length > 0" class="div-separator ng-hide" id="recTags" >Recommended Tags: <button ng-repeat="tag in recommendedTags" ng-click='addTagToInput(tag)'>{{tag}}</button></div>
                 <div id="divTags" class="div-separator">
                 	<h5>Tags:</h5>
                 	<!-- TODO: change tagAdded -->

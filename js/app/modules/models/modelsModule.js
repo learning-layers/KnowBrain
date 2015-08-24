@@ -891,7 +891,9 @@ angular.module('module.models').service('UserFetchService', ['$q', '$rootScope',
       null, //setUEs, 
       null, //setThumb, 
       null, //setFlags,
-      null); //setCircles);
+      null, //setCircles
+      true  // setProfilePicture
+      );
       
             return defer.promise;
         },
