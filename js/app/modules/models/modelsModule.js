@@ -597,13 +597,9 @@ angular.module('module.models').service("EntityFetchService", ['$q', '$rootScope
             if (
               result.discs &&
               result.discs.length > 0) {
-                var discUri = result.discs[0];
-                var promise = FetchServiceHelper.getDiscussionByUri(discUri);
-                promise.then(function(result) {
-                    entity.disc = result.disc;
-                    defer.resolve(entity);
-                    FetchServiceHelper.applyHelper();
-                });
+                entity.disc = result.discs[0];
+                defer.resolve(entity);
+                $rootScope.$apply();
             } else {
                 defer.resolve(entity);
                 $rootScope.$apply();
@@ -715,7 +711,7 @@ angular.module('module.models').service("FetchServiceHelper", ['$q', '$rootScope
       getOverallRating,  //setOverallRating
       getDiscs, //setDiscs
       null, //setUEs, 
-      null, //setThumb, 
+      true, //setThumb, 
       null, //setFlags,
       null); //setCircles);
         

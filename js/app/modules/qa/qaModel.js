@@ -114,11 +114,12 @@ angular.module('module.qa').factory('Tag', function () {
 angular.module('module.qa').factory('Author', function () {
 
     // Constructor
-    function Author(id, name, email) {
+    function Author(id, name, email, thumb) {
         // Public properties
         this.id = id;
         this.name = name;
         this.email = email;
+        this.thumb = thumb;
     }
 
     return Author;
@@ -225,7 +226,7 @@ angular.module('module.qa').service("qaService", ['$q', '$rootScope', 'UserServi
 
           new SSEntitiesGetFiltered(
             function (result) {
-              var author = new Author(result.entities[0].id, result.entities[0].label, result.entities[0].email);
+              var author = new Author(result.entities[0].id, result.entities[0].label, result.entities[0].email, result.entities[0].thumb.file.downloadLink);
             object.author = author;
             defer.resolve(object);
           },
@@ -241,7 +242,7 @@ angular.module('module.qa').service("qaService", ['$q', '$rootScope', 'UserServi
           null, //setOverallRating, 
           null, //setDiscs, 
           null, //setUEs, 
-          null, //setThumb, 
+          true, //setThumb, 
           null, //setFlags,
           null //setCircles
             );

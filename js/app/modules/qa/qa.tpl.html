@@ -83,8 +83,7 @@
                     <div class="row">
                         <div class="col-md-4 column">
                             <a ng-href="#/social/{{thread.author.id}}">
-                                <div class="icon-user-small icon-small">
-                                </div>
+                                <img src="{{thread.author.thumb}}" class="icon-user-small icon-small">
                                 <div class="icon-attached">
                                     <div>{{thread.author.name}}</div>
                                     <span class="text-muted" data-livestamp="{{thread.creationTime.toISOString()}}" ng-mouseenter="thread_date_hover = true" ng-mouseleave="thread_date_hover = false" ng-hide="thread_date_hover === true"></span>

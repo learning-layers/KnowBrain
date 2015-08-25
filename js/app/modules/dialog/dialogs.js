@@ -924,7 +924,45 @@ angular.module('dialogs.controllers', ['ui.bootstrap.modal', 'module.i18n', 'mod
     
 })
 
+.controller("ProfilePictureController", function($scope, $modalInstance, $state, $stateParams, FileUploader, UserService, UserFetchService){
+    $scope.uploader = new FileUploader();
+    $scope.uploader.filters.push({
+            name: 'imageFilter',
+            fn: function(item /*{File|FileLikeObject}*/, options) {
+                var type = '|' + item.type.slice(item.type.lastIndexOf('/') + 1) + '|';
+                return '|jpg|png|jpeg|bmp|gif|'.indexOf(type) !== -1;
+            }
+        });
+    $scope.item = null;
+    $scope.uploader.onAfterAddingFile = function(item) {
+        $scope.item = item;
+    };
 
+    $scope.save = function() {
+        new SSFileUpload(
+            function(result, fileName) {
+
+                new SSImageProfilePictureSet(
+                    function(result) {
+                    },
+                    function(error) {
+                        console.log("Error");
+                        defer.reject(error);
+                    },
+                    UserService.getUser(),
+                    UserService.getKey(),
+                    result.file
+                );
+            },
+            function(error) {
+                console.log("Error");
+                defer.reject(error);
+            },
+            UserService.getKey(),
+            $scope.item._file
+        );
+    };
+})
 // end ConfirmDialogCtrl / dialogs.controllers
 .controller("baseModalController", ['$controller', '$scope', '$rootScope', 'i18nService', 'states', 'ctrlFunction', function($controller, $scope, $rootScope, $modalInstance, i18nService, states, ctrlFunction) {
     $scope.baseCtrl = $controller(ctrlFunction, {
@@ -1169,6 +1207,20 @@ angular.module('dialogs.services', ['ui.bootstrap.modal', 'dialogs.controllers']
                     keyboard: true,
                     backdrop: true,
                     windowClass: 'modal-small'
+                });
+            },
+            uploadProfilePicture: function(targetEntity) {
+                return $modal.open({
+                    templateUrl: MODULES_PREFIX + '/social/update-profile-picture.tpl.html',
+                    controller: 'ProfilePictureController',
+                    keyboard: true,
+                    backdrop: true,
+                    windowClass: 'modal-small',
+                    resolve: {
+                        targetEntity: function() {
+                            return targetEntity;
+                        }
+                    }
                 });
             }
         };
