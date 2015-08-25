@@ -159,11 +159,16 @@ angular.module('knowbrain').service('messagingService', ['$q', '$rootScope','Use
     }
 }])
 
-angular.module('knowbrain').controller('MainController', ['$scope', 'sharedService', 'messagingService', 'UserService', function ($scope, sharedService, messagingService, UserSrv) {
+angular.module('knowbrain').controller('MainController', ['$scope', 'sharedService', 'messagingService', 'UserService', 'UserFetchService', function ($scope, sharedService, messagingService, UserSrv, UserFetchService) {
     
     $scope.chats = [];
     $scope.user = UserSrv.getUser();
     $scope.label = UserSrv.getLabel();
+
+    var promise = UserFetchService.getUser($scope.user);
+    promise.then(function(result) {
+        $scope.userThumb = result.thumb.file.downloadLink;
+    });
 
     $scope.newChat = function () {
         sharedService.prepareForBroadcast('openChatBox', null);

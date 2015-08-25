@@ -1,5 +1,6 @@
 <div class="user-container" ng-class="user.isSelected ? 'selected' : (user.friend ? 'friend' : '')" ng-class="">
     <div class="user-pic">
+    	<img src="{{user.thumb.file.downloadLink}}" class="user-img">
     	<div class="user-plus" ng-show="user.isSelected">
     		<span class="glyphicon glyphicon-ok"></span>
     	</div>

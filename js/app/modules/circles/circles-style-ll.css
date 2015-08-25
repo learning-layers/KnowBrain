@@ -114,7 +114,7 @@
     margin-right: auto;
     width: 45px;
     height: 45px;
-    background-image: url(http://lorempixel.com/400/200/);
+    background-image: url(../../../../images/circles/user.svg);
     background-size: cover;
     display: block;
     border-radius: 50%;
@@ -149,12 +149,17 @@
     margin-right: auto;
     width: 85px;
     height: 85px;
-    background-image: url(http://lorempixel.com/400/200/);
-    background-size: cover;
     display: block;
+}
+
+.user-img {
+    width: 100%;
+    height: 100%;
     border-radius: 50%;
     -webkit-border-radius: 50%;
     -moz-border-radius: 100px;
+    background-image: url(../../../../images/circles/user.svg);
+    background-size: cover;
     border: 3px solid;
     border-color: #7C7C7C;
     transition: border-color 0.2s ease;
