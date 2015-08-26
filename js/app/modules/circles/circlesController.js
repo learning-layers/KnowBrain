@@ -564,7 +564,7 @@ angular.module('module.circles').controller("removeMembersController", function(
 });
 
 
-angular.module('module.circles').controller("createCircleController", function($q, $scope, $modal, $rootScope, $modalInstance, UserFetchService, GroupFetchService, UserService, ENTITY_TYPES, circle) {
+angular.module('module.circles').controller("createCircleController", function($q, $scope, $modal, $rootScope, $modalInstance, UserFetchService, GroupFetchService, UserService, ENTITY_TYPES, circle, FileUploader) {
     $scope.editingCircle = circle != null;
     if (circle != null) {
         $scope.circle = circle;
@@ -578,6 +578,18 @@ angular.module('module.circles').controller("createCircleController", function($
     $scope.friends = [];
     $scope.selectedUsers = [];
     $scope.mergeCircleName = "";
+    $scope.uploader = new FileUploader();
+    $scope.uploader.filters.push({
+            name: 'imageFilter',
+            fn: function(item /*{File|FileLikeObject}*/, options) {
+                var type = '|' + item.type.slice(item.type.lastIndexOf('/') + 1) + '|';
+                return '|jpg|png|jpeg|bmp|gif|'.indexOf(type) !== -1;
+            }
+        });
+    $scope.item = null;
+    $scope.uploader.onAfterAddingFile = function(item) {
+        $scope.item = item;
+    };
 
     var friendsPromise = UserFetchService.getFriends();
     friendsPromise.then(function(result) {
@@ -622,7 +634,30 @@ angular.module('module.circles').controller("createCircleController", function($
         if ($scope.editingCircle) {
             var promise = GroupFetchService.editCircle($scope.circle.label, $scope.circle.description, $scope.circle);
             promise.then(function(result) {
-                $modalInstance.close(result);
+                if ($scope.item != undefined) {
+                    new SSFileUpload(
+                    function(result, fileName) {
+                        new SSImageProfilePictureSet(
+                            function(result) {
+                                $modalInstance.close(result);
+                            },
+                            function(error) {
+                                console.log("Error");
+                            },
+                            $scope.circle.id,
+                            UserService.getKey(),
+                            result.file
+                        );
+                    },
+                    function(error) {
+                        console.log("Error");
+                    },
+                    UserService.getKey(),
+                    $scope.item._file
+                    );
+                } else {
+                    $modalInstance.close(result);
+                }
             }); 
         } else {
             var userUrls = [];

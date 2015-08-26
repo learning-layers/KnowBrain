@@ -12,7 +12,12 @@
                 <div id="upload-pic">
                     <div class="icon-circle circle-preview-pic"></div>
                     <div class="new-circle-picture-label-frame">
-                        <a class="new-circle-picture-label" ng-click="uploadPic()"> + Upload circle picture</a>
+                              <span class="btn btn-default fileinput-button">
+                            <i class="glyphicon glyphicon-plus"></i>
+                            <span>Upload circle picture</span>
+                            <input type="file" nv-file-select uploader="uploader"/>
+                            </span>
+
                     </div>
                     <div ng-hide="!editingCircle">
 	                    <br />

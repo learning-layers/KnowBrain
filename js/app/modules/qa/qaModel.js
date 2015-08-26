@@ -69,7 +69,7 @@ angular.module('module.qa').factory('Thread', ['UriToolbox', function (UriToolbo
 angular.module('module.qa').factory('ThreadEntry', function () {
 
     // Constructor
-    function ThreadEntry(id, author, type, content, position, creationTime, likes) {
+    function ThreadEntry(id, author, type, content, position, creationTime, likes, accepted) {
         // Public properties
         this.id = id;
         this.threadId = null;
@@ -84,6 +84,7 @@ angular.module('module.qa').factory('ThreadEntry', function () {
         this.attachedFiles = new Array();
         this.likes = likes;
         this.mimeType = null;
+        this.accepted = accepted;
         if (!likes)
             this.likes = {likes : 0, dislikes : 0, like : null};
     }
@@ -397,6 +398,23 @@ angular.module('module.qa').service("qaService", ['$q', '$rootScope', 'UserServi
       return defer.promise;
     };
 
+    this.setAnswerAcceptedStatus = function (answer, status) {
+      var defer = $q.defer();
+      
+      new SSDiscEntryAccept(
+        function (result) {
+            defer.resolve(answer)
+        },
+        function (error) {
+            console.log(error);
+            defer.reject(error);
+        },
+        UserSrv.getKey(),
+        answer.id);
+      
+      return defer.promise;
+    };
+
         this.uploadFiles = function (files, object) {
             var defer = $q.defer();
 
@@ -543,7 +561,7 @@ angular.module('module.qa').service("qaService", ['$q', '$rootScope', 'UserServi
             var promiseListEntryAuthor = [];
 
             angular.forEach(entries, function (value, key) {
-                var entry = new ThreadEntry(value.id, value.author, getThreadEntryTypeByEnum(value.type), value.content, value.pos, value.creationTime, value.likes);
+                var entry = new ThreadEntry(value.id, value.author, getThreadEntryTypeByEnum(value.type), value.content, value.pos, value.creationTime, value.likes, value.accepted);
 
                 if (value.comments != null) {
                     entry.comments = value.comments;

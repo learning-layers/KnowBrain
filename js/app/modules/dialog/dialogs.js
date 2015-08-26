@@ -947,7 +947,6 @@ angular.module('dialogs.controllers', ['ui.bootstrap.modal', 'module.i18n', 'mod
                     },
                     function(error) {
                         console.log("Error");
-                        defer.reject(error);
                     },
                     UserService.getUser(),
                     UserService.getKey(),
@@ -956,7 +955,6 @@ angular.module('dialogs.controllers', ['ui.bootstrap.modal', 'module.i18n', 'mod
             },
             function(error) {
                 console.log("Error");
-                defer.reject(error);
             },
             UserService.getKey(),
             $scope.item._file

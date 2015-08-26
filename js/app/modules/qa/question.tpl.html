@@ -77,7 +77,7 @@
             <!-- answer begin -->
             <div class="answer underline" ng-repeat="answer in question.entries | orderBy : (sortBy === 'date' ? 'creationTime' : 'likes.likes') : true">
                 <div class="row clearfix">
-                    <div class="col-md-10 column">
+                    <div class="col-md-8 column">
                         <a ng-href="#/social/{{answer.author.id}}">
                         <img src="{{answer.author.thumb}}" class="icon-user-medium icon-medium">
                         <div class="icon-attached">
@@ -85,6 +85,13 @@
                             <span class="text-muted" data-livestamp="{{answer.creationTime.toISOString()}}" ng-mouseenter="answer_date_hover = true" ng-mouseleave="answer_date_hover = false" ng-hide="answer_date_hover === true"></span>
                             <span class="text-muted" ng-mouseenter="answer_date_hover = true" ng-mouseleave="answer_date_hover = false" ng-hide="answer_date_hover !== true">{{answer.getFormattedCreationTime()}}</span>
                         </div>
+                        </a>
+                    </div>
+                    <div class="col-md-2 column">
+                        <a ng-show="isAuthor && (!hasAcceptedAnswer || answer.accepted)" ng-click="toggleAcceptedState(answer)">
+                            <div class="icon-small" ng-class="answer.accepted ? 'icon-answer-accepted' : 'icon-answer-accept'">
+                            </div>
+                        {{answer.accepted ? 'Accepted' : 'Mark as accepted'}}
                         </a>
                     </div>
                     <div class="col-md-2 column">

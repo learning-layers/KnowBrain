@@ -180,6 +180,14 @@ a:hover {
     background-image: url(../../../../images/qa/answer_80x80.svg);
 }
 
+.icon-answer-accept {
+    background-image: url(../../../../images/qa/answer_accept.svg);
+}
+
+.icon-answer-accepted {
+    background-image: url(../../../../images/qa/answer_accepted.svg);
+}
+
 .icon-discussion-large {
     background-image: url(../../../../images/qa/discussion_80x80.png);
 }

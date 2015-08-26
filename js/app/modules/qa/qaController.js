@@ -314,17 +314,25 @@ angular.module('module.qa').controller('ModalSimilarThreadsController', ['$scope
         $modalInstance.close(true);
     };
 }]);
-angular.module('module.qa').controller("questionController", function($scope, $state, $stateParams, $dialogs, $q, $filter, qaService, ThreadEntry, THREAD_ENTRY_TYPE, UriToolbox, FileUploader) {
+angular.module('module.qa').controller("questionController", function($scope, $state, $stateParams, $dialogs, $q, $filter, qaService, ThreadEntry, THREAD_ENTRY_TYPE, UriToolbox, FileUploader, UserService) {
     $scope.question = null;
     $scope.similarThreadList = null;
     $scope.sortBy = 'date';
     $scope.uploader = new FileUploader();
     $scope.newAnswer = new ThreadEntry(null, null, THREAD_ENTRY_TYPE.answer, null, null, null);
+    $scope.hasAcceptedAnswer = false;
     // used for sorting
     $scope.predicate = '+position';
     var loadThreadWithEntries = function(id) {
         return qaService.getThreadWithEntries(id).then(function(result) {
             $scope.question = result;
+            $scope.isAuthor = result.author.id === UserService.getUser();
+
+            $scope.question.entries.forEach(function(entry) {
+                if (entry.accepted) {
+                    $scope.hasAcceptedAnswer = true;
+                }
+            });
             return result;
         });
     };
@@ -390,6 +398,11 @@ angular.module('module.qa').controller("questionController", function($scope, $s
             answer.likes.dislikes += newStatus === -1 ? 1 : -1;
             answer.likes.likes -= answer.likes.like === 1 ? 1 : 0;
             answer.likes.like = newStatus;
+        });
+    }
+    $scope.toggleAcceptedState = function(answer) {
+        qaService.setAnswerAcceptedStatus(answer, true).then(function(result) {
+            answer.accepted = true;
         });
     }
     loadThreadWithEntries("http://sss.eu/" + $stateParams.id) //UserSrv.getUserSpace() + "entities/"  + $stateParams.id
