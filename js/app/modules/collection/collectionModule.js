@@ -324,6 +324,7 @@ angular.module('module.collection').controller("CollectionController", function(
                     }
                 });
             }
+            $scope.deselectAllEntities();
         });
     };
     $scope.addEntity = function() {

@@ -333,7 +333,10 @@ angular.module('module.models').factory('CollectionModel', ['$q', '$rootScope', 
             defer.resolve(result);
         }, function(error) {
             console.log(error);
-        }, UserSrv.getUser(), UserSrv.getKey(), self.id, collEntries);
+        },
+        UserSrv.getKey(), 
+        self.id, 
+        collEntries);
         return defer.promise;
     };
     Collection.prototype.getEntryByUriPathnameHash = function(uriPathnameHash) {
