@@ -75,7 +75,7 @@
                 </div>
             </div>
             <!-- answer begin -->
-            <div class="answer underline" ng-repeat="answer in question.entries | orderBy : (sortBy === 'date' ? 'creationTime' : 'likes.likes') : true">
+            <div class="answer underline" ng-repeat="answer in question.entries | orderBy : (sortBy === 'date' ? 'creationTime' : 'likes.likes - likes.dislikes') : true">
                 <div class="row clearfix">
                     <div class="col-md-8 column">
                         <a ng-href="#/social/{{answer.author.id}}">
