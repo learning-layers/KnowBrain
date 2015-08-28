@@ -79,3 +79,9 @@
     margin-top: 3px;
     line-height: 70px;
 }
+
+.upload-profile-pic-container {
+  width: 156px;
+  height: 156px;
+  padding: 0px;
+}

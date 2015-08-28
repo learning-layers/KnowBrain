@@ -927,17 +927,23 @@ angular.module('dialogs.controllers', ['ui.bootstrap.modal', 'module.i18n', 'mod
 .controller("ProfilePictureController", function($scope, $modalInstance, $state, $stateParams, FileUploader, UserService, UserFetchService){
     $scope.uploader = new FileUploader();
     $scope.uploader.filters.push({
-            name: 'imageFilter',
-            fn: function(item /*{File|FileLikeObject}*/, options) {
-                var type = '|' + item.type.slice(item.type.lastIndexOf('/') + 1) + '|';
-                return '|jpg|png|jpeg|bmp|gif|'.indexOf(type) !== -1;
-            }
-        });
-    $scope.item = null;
+        name: 'imageFilter',
+        fn: function(item /*{File|FileLikeObject}*/, options) {
+            var type = '|' + item.type.slice(item.type.lastIndexOf('/') + 1) + '|';
+            return '|jpg|png|jpeg|bmp|gif|'.indexOf(type) !== -1;
+        }
+    });
     $scope.uploader.onAfterAddingFile = function(item) {
+        if ($scope.uploader.queue.length > 1) {
+            $scope.uploader.removeFromQueue(0);
+        }
         $scope.item = item;
     };
 
+    $scope.close = function() {
+        $modalInstance.dismiss();
+    };
+    
     $scope.save = function() {
         new SSFileUpload(
             function(result, fileName) {

@@ -20,12 +20,25 @@
     </div>
     <div class="modal-body">
         <div>
-            <form name="upload" role="form" class="form-horizontal">
-                <div class="form-group">
-                    <div class="col-lg-7 text-center ">
+            <form name="upload" role="form" class="form-horizontal" style="margin-bottom: 0px;">
+                <div class="form-group" style="margin-bottom: 0px;">
+                    <div class="text-center" style="margin-bottom: 0px;">
                         <div class="wizzard-heading">
                             <!--  <div class="wizzard-heading-top">{{t('upload_resource_info')}}</div>-->
-                            <div class="wizzard-heading-bottom">jkkjhkjh<br>ijlj</div>
+                            <div class="upload-profile-pic-container upload-drop-container center" nv-file-over uploader="uploader" over-class="upload-drop-container-file-over">
+                                <div ng-hide="uploader.queue.length > 0" style="padding: 50px;">
+                                    Drag picture here
+                                </div>
+                                <table>
+                                    <tbody>
+                                        <tr ng-repeat="item in uploader.queue">
+                                            <td>
+                                                <div ng-show="uploader.isHTML5" ng-thumb="{ file: item._file, width: 150, height: 150 }"></div>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
                             <span class="btn btn-default fileinput-button">
                             <i class="glyphicon glyphicon-plus"></i>
                             <span>Select file</span>
@@ -33,29 +46,11 @@
                             </span>
                         </div>
                     </div>
-                    <div class="col-lg-5 text-center ">
-                        <div class="upload-drop-container" nv-file-over over-class="upload-drop-container-file-over" uploader="uploader">
-                            <div id="drop-container-text">{{t('drag_and_drop')}}</div>
-                            <div id="drop-container-subline">{{t('drag_and_drop_subline')}}</div>
-                            <span class="glyphicon glyphicon-hand-down"></span>
-                        </div>
-                    </div>
                     <div class="clearfix"></div>
                 </div>
                 <div class="clearfix"></div>
             </form>
             <div class="clearfix"></div>
-        </div>
-        <div>
-            <table>
-                <tbody>
-                    <tr ng-repeat="item in uploader.queue">
-                        <td>
-                            <div ng-show="uploader.isHTML5" ng-thumb="{ file: item._file, height: 100 }"></div>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
         </div>
         <div class="modal-footer">
             <div class="btn-group">

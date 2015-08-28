@@ -61,7 +61,9 @@ angular.module('module.social').controller("SocialController", ['$modal', '$scop
 
     $scope.profileId = $stateParams.profileId;
     $scope.uploadProfilePicture = function() {
-        $dialogs.uploadProfilePicture($scope.profileId);
+        if ($scope.userId === $scope.profileId) {
+            $dialogs.uploadProfilePicture($scope.profileId);
+        }
     } 
     
     var promise = UserFetchService.getUser($scope.profileId);

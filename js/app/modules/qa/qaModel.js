@@ -227,26 +227,32 @@ angular.module('module.qa').service("qaService", ['$q', '$rootScope', 'UserServi
 
           new SSEntitiesGetFiltered(
             function (result) {
-              var author = new Author(result.entities[0].id, result.entities[0].label, result.entities[0].email, result.entities[0].thumb.file.downloadLink);
-            object.author = author;
-            defer.resolve(object);
-          },
-          function (error) {
-            console.log(error);
-            defer.reject(error);
-          },
-          UserSrv.getKey(),
-          [object.author.id], //entities,
-          null, // circle
-          null, //setTags,
-          null, // space
-          null, //setOverallRating, 
-          null, //setDiscs, 
-          null, //setUEs, 
-          true, //setThumb, 
-          null, //setFlags,
-          null //setCircles
-            );
+                if (result.entities.length > 0) {
+                    var thumb = undefined;
+                    if (result.entities[0].thumb != undefined) {
+                        thumb = result.entities[0].thumb.file.downloadLink;
+                    };
+                    var author = new Author(result.entities[0].id, result.entities[0].label, result.entities[0].email, thumb);
+                    object.author = author;
+                }
+                defer.resolve(object);
+              },
+              function (error) {
+                console.log(error);
+                defer.reject(error);
+              },
+              UserSrv.getKey(),
+              [object.author.id], //entities,
+              null, // circle
+              null, //setTags,
+              null, // space
+              null, //setOverallRating, 
+              null, //setDiscs, 
+              null, //setUEs, 
+              true, //setThumb, 
+              null, //setFlags,
+              null //setCircles
+                );
 
             return defer.promise;
         };
