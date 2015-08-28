@@ -15,7 +15,7 @@
                     <div class="row">
                         <div class="col-md-12 column">
                             <a ng-href="#/social/{{question.author.id}}">
-                            <img src="{{question.author.thumb}}" class="user-medium-pic">
+                            <img ng-src="{{question.author.thumb}}" class="user-medium-pic">
                             </a>
                             <div class="icon-attached">
                                 <div>{{question.author.name}}</div>
@@ -79,7 +79,7 @@
                 <div class="row clearfix">
                     <div class="col-md-8 column">
                         <a ng-href="#/social/{{answer.author.id}}">
-                        <img src="{{answer.author.thumb}}" class="icon-user-medium icon-medium">
+                        <img ng-src="{{answer.author.thumb}}" class="icon-medium">
                         <div class="icon-attached">
                             <div class="text-muted" >{{answer.author.name}}</div>
                             <span class="text-muted" data-livestamp="{{answer.creationTime.toISOString()}}" ng-mouseenter="answer_date_hover = true" ng-mouseleave="answer_date_hover = false" ng-hide="answer_date_hover === true"></span>

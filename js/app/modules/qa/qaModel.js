@@ -228,7 +228,7 @@ angular.module('module.qa').service("qaService", ['$q', '$rootScope', 'UserServi
           new SSEntitiesGetFiltered(
             function (result) {
                 if (result.entities.length > 0) {
-                    var thumb = undefined;
+                    var thumb = "images/circles/user.svg";
                     if (result.entities[0].thumb != undefined) {
                         thumb = result.entities[0].thumb.file.downloadLink;
                     };

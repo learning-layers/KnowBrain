@@ -70,7 +70,11 @@ angular.module('module.social').controller("SocialController", ['$modal', '$scop
     promise.then(function(result) {
         $scope.label = result.label;
         $scope.email = result.email;
-        $scope.thumb = result.thumb.file.downloadLink;
+
+        $scope.thumb = "images/circles/user.svg";
+        if (result.thumb != undefined) {
+            $scope.thumb = result.thumb.file.downloadLink;
+        };
     });
     
     $scope.userId = UserSrv.getUser();

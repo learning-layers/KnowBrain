@@ -1,5 +1,5 @@
 
 <a class="user-small-container" ng-href="#/social/{{user.id}}">
-    <img src="{{user.thumb.file.downloadLink}}" class="user-small-pic">
+    <img ng-src="{{user.thumb != undefined ? user.thumb.file.downloadLink : 'images/circles/user.svg'}}" class="user-small-pic">
     <div class="user-small-label">{{user.label}}</div>
 </a>

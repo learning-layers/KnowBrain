@@ -167,7 +167,10 @@ angular.module('knowbrain').controller('MainController', ['$scope', 'sharedServi
 
     var promise = UserFetchService.getUser($scope.user);
     promise.then(function(result) {
-        $scope.userThumb = result.thumb.file.downloadLink;
+        $scope.userThumb = "images/circles/user.svg";
+        if (result.thumb != undefined) {
+            $scope.userThumb = result.thumb.file.downloadLink;
+        };
     });
 
     $scope.newChat = function () {

@@ -1,7 +1,7 @@
 <div class="card">
     <div class="card-heading image">
         <a ng-href="#/social/{{activity.users[0].id}}">
-            <img src="http://lorempixel.com/46/46/" alt=""/>
+            <img ng-src="{{activity.users[0].thumb != undefined ? activity.users[0].thumb.file.downloadLink : 'images/circles/user.svg'}}" alt=""/>
             <div class="card-heading-header">
                 <h3>{{activity.users[0].label}}</h3>
                 <span>{{activity.date}} {{activity.time}}</span>
