@@ -47,6 +47,7 @@ angular.module('module.qa').config(function($stateProvider) {
  */
 angular.module('module.qa').constant('THREAD_LIST_TYPE', {
     all: 'All',
+    public: 'public',
     own: 'My Own',
     group: 'My Group'
 });
@@ -57,6 +58,7 @@ angular.module('module.qa').controller("qaController", ['$scope', '$state', '$q'
     $scope.THREAD_TYPE = THREAD_TYPE;
     $scope.threadList = null;
     $scope.tagThreadList = null;
+    $scope.publicThreadList = [];
     $scope.myOwnThreadList = [];
     $scope.myGroupThreadList = [];
     $scope.threadResponseLabel = "answer";
@@ -78,6 +80,8 @@ angular.module('module.qa').controller("qaController", ['$scope', '$state', '$q'
         switch ($scope.selectedThreadListType) {
             case THREAD_LIST_TYPE.all:
                 return $scope.tagThreadList;
+            case THREAD_LIST_TYPE.public:
+                return $scope.publicThreadList;
             case THREAD_LIST_TYPE.own:
                 return $scope.myOwnThreadList;
             case THREAD_LIST_TYPE.group:
@@ -103,6 +107,9 @@ angular.module('module.qa').controller("qaController", ['$scope', '$state', '$q'
         $scope.tagThreadList = $scope.threadList.filter(function(val) {
             return true;
         });
+        $scope.publicThreadList = $scope.threadList.filter(function(val) {
+            return $.inArray('pub', val.circleTypes) >= 0;
+        });
         $scope.myOwnThreadList = $scope.threadList.filter(function(val) {
             return $.inArray('priv', val.circleTypes) >= 0;
         });
@@ -120,6 +127,9 @@ angular.module('module.qa').controller("qaController", ['$scope', '$state', '$q'
                 return val.type.enum == "qa" || val.type.enum == "chat";
             });
             $scope.tagThreadList = $scope.threadList;
+            $scope.publicThreadList = $scope.threadList.filter(function(val) {
+                return $.inArray('pub', val.circleTypes) >= 0;
+            });
             $scope.myOwnThreadList = $scope.threadList.filter(function(val) {
                 return $.inArray('priv', val.circleTypes) >= 0;
             });
@@ -290,6 +300,9 @@ angular.module('module.qa').controller('ModalSimilarThreadsController', ['$scope
     $scope.myGroupSimilarThreadList = similarThreadList.filter(function(val) {
         return $.inArray('group', val.circleTypes) >= 0;
     });
+    $scope.publicSimilarThreadList = similarThreadList.filter(function(val) {
+        return $.inArray('pub', val.circleTypes) >= 0;
+    });
     $scope.changeSelectedSimilarThreadListType = function(threadListType) {
         $scope.selectedSimilarThreadListType = threadListType;
     };
@@ -299,6 +312,8 @@ angular.module('module.qa').controller('ModalSimilarThreadsController', ['$scope
                 return $scope.myOwnSimilarThreadList;
             case THREAD_LIST_TYPE.group:
                 return $scope.myGroupSimilarThreadList;
+            case THREAD_LIST_TYPE.public:
+                return $scope.publicSimilarThreadList;
         };
     };
     $scope.loadDetailPage = function(thread) {

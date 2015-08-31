@@ -14,6 +14,11 @@
                     <li ng-class="(selectedThreadListType == THREAD_LIST_TYPE.all) ? 'active' : ''">
                         <a ng-click="changeSelectedThreadListType(THREAD_LIST_TYPE.all)">All</a>
                     </li>
+                    <li ng-class="(selectedThreadListType == THREAD_LIST_TYPE.public) ? 'active' : ''">
+                        <a ng-click="changeSelectedThreadListType(THREAD_LIST_TYPE.public)">
+                        <span id="my-own-badge" class="badge">{{publicThreadList.length}}</span> Public
+                        </a>
+                    </li>
                     <li ng-class="(selectedThreadListType == THREAD_LIST_TYPE.own) ? 'active' : ''">
                         <a ng-click="changeSelectedThreadListType(THREAD_LIST_TYPE.own)">
                         <span id="my-own-badge" class="badge">{{myOwnThreadList.length}}</span> My own
