@@ -288,9 +288,16 @@ angular.module('module.qa').service("qaService", ['$q', '$rootScope', 'UserServi
             var defer = $q.defer();
 
             var attachmentIdList = new Array();
+            var attachmentLabelList = new Array();
             angular.forEach(thread.attachments, function (attachment, key) {
-                if (attachment.id !== undefined)
+                if (attachment.id !== undefined) {
                     attachmentIdList.push(attachment.id);
+                }
+                if (attachment.label !== undefined) {
+                    attachmentLabelList.push(attachment.label);
+                } else if (attachment.name !== undefined) {
+                    attachmentLabelList.push(attachment.name);
+                }
             });
 
             new SSDiscEntryAdd(
@@ -319,7 +326,7 @@ angular.module('module.qa').service("qaService", ['$q', '$rootScope', 'UserServi
                     thread.description, //description 
                     null, //users
                     attachmentIdList, //entities
-                    null, //entityLabels
+                    attachmentLabelList, //entityLabels
                     null //circles
                     );
 
