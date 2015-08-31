@@ -950,6 +950,7 @@ angular.module('dialogs.controllers', ['ui.bootstrap.modal', 'module.i18n', 'mod
 
                 new SSImageProfilePictureSet(
                     function(result) {
+                        $modalInstance.dismiss(result);
                     },
                     function(error) {
                         console.log("Error");

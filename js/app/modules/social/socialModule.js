@@ -62,20 +62,26 @@ angular.module('module.social').controller("SocialController", ['$modal', '$scop
     $scope.profileId = $stateParams.profileId;
     $scope.uploadProfilePicture = function() {
         if ($scope.userId === $scope.profileId) {
-            $dialogs.uploadProfilePicture($scope.profileId);
+            var dialog = $dialogs.uploadProfilePicture($scope.profileId);
+            dialog.result.finally(function() {
+                updateUser();
+            });
         }
     } 
     
-    var promise = UserFetchService.getUser($scope.profileId);
-    promise.then(function(result) {
-        $scope.label = result.label;
-        $scope.email = result.email;
+    var updateUser = function() {
+        var promise = UserFetchService.getUser($scope.profileId);
+        promise.then(function(result) {
+            $scope.label = result.label;
+            $scope.email = result.email;
 
-        $scope.thumb = "images/circles/user.svg";
-        if (result.thumb != undefined) {
-            $scope.thumb = result.thumb.file.downloadLink;
-        };
-    });
+            $scope.thumb = "images/circles/user.svg";
+            if (result.thumb != undefined) {
+                $scope.thumb = result.thumb.file.downloadLink;
+            };
+        });
+    };
+    updateUser();
     
     $scope.userId = UserSrv.getUser();
     $scope.isFriend = false;
