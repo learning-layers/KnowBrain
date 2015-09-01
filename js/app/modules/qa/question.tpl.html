@@ -88,11 +88,11 @@
                         </a>
                     </div>
                     <div class="col-md-2 column">
-                        <a ng-show="isAuthor && (!hasAcceptedAnswer || answer.accepted)" ng-click="toggleAcceptedState(answer)">
+                        <div ng-show="(!hasAcceptedAnswer || answer.accepted)" ng-click="toggleAcceptedState(answer)" ng-class="isAuthor ? 'highlight' : ''">
                             <div class="icon-small" ng-class="answer.accepted ? 'icon-answer-accepted' : 'icon-answer-accept'">
                             </div>
                         {{answer.accepted ? 'Accepted' : 'Mark as accepted'}}
-                        </a>
+                        </div>
                     </div>
                     <div class="col-md-2 column">
                         <div class="col-md-6 column">

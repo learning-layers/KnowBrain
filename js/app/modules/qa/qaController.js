@@ -416,9 +416,11 @@ angular.module('module.qa').controller("questionController", function($scope, $s
         });
     }
     $scope.toggleAcceptedState = function(answer) {
-        qaService.setAnswerAcceptedStatus(answer, true).then(function(result) {
-            answer.accepted = true;
-        });
+        if ($scope.isAuthor) {
+            qaService.setAnswerAcceptedStatus(answer, true).then(function(result) {
+                answer.accepted = true;
+            });
+        }
     }
     loadThreadWithEntries("http://sss.eu/" + $stateParams.id) //UserSrv.getUserSpace() + "entities/"  + $stateParams.id
         .then(loadSimilarThreadList);
