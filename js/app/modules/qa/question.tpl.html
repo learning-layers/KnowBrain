@@ -57,6 +57,24 @@
                     <button type="button" ng-click="shareThread(question)" class="btn btn-xs btn-default"><span class="glyphicon glyphicon-share"></span>&nbsp;share</button>
                 </div>
             </div>
+            <!-- comment begin -->
+            <div class="row clearfix" ng-repeat="comment in question.comments">
+                <div class="col-md-2 column hidden-sm hidden-xs">
+                    &nbsp;
+                </div>
+                <div class="col-md-8 column answer-comment">
+                    <div>{{comment}}</div>
+                </div>
+            </div>
+            <div class="row clearfix">
+                <div class="col-md-2 column hidden-sm hidden-xs">
+                    &nbsp;
+                </div>
+                <div class="col-md-8 column">
+                    <textarea ng-model="question.newComment" class="form-control" rows="1" placeholder="Add a comment" ng-enter="addComment(question)"></textarea>
+                </div>
+            </div>
+            <!-- comment end -->
         </div>
     </div>
 </section>
@@ -91,7 +109,7 @@
                         <div ng-show="(!hasAcceptedAnswer || answer.accepted)" ng-click="toggleAcceptedState(answer)" ng-class="isAuthor ? 'highlight' : ''">
                             <div class="icon-small" ng-class="answer.accepted ? 'icon-answer-accepted' : 'icon-answer-accept'">
                             </div>
-                        {{answer.accepted ? 'Accepted' : 'Mark as accepted'}}
+                            {{answer.accepted ? 'Accepted' : 'Mark as accepted'}}
                         </div>
                     </div>
                     <div class="col-md-2 column">
@@ -99,7 +117,7 @@
                             <a>
                             <div
                                 class="icon-small"
-                                ng-class="up_hover === true ? 'icon-up-small' : 
+                                ng-class="up_hover === true ? 'icon-up-small' :
                                 (answer.likes.like === 1 ? 'icon-up-small' : 'icon-up-neutral-small')"
                                 ng-mouseenter="up_hover = true"
                                 ng-mouseleave="up_hover = false"
@@ -164,7 +182,6 @@
                         <div>{{comment}}</div>
                     </div>
                 </div>
-                <!-- comment end -->
                 <div class="row clearfix">
                     <div class="col-md-2 column hidden-sm hidden-xs">
                         &nbsp;
@@ -173,6 +190,7 @@
                         <textarea ng-model="answer.newComment" class="form-control" rows="1" placeholder="Add a comment" ng-enter="addComment(answer)"></textarea>
                     </div>
                 </div>
+                <!-- comment end -->
             </div>
             <!-- answer end -->
         </div>

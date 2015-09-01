@@ -50,6 +50,7 @@ angular.module('module.qa').factory('Thread', ['UriToolbox', function (UriToolbo
             this.author = author;
             this.tags = new Array();
             this.attachments = new Array();
+            this.comments = new Array();
             this.attachedFiles = new Array();
             this.circleTypes = circleTypes;
             this.likes = likes;
@@ -619,6 +620,10 @@ angular.module('module.qa').service("qaService", ['$q', '$rootScope', 'UserServi
         function (result) {
           
           var thread = new Thread(result.disc.id, result.disc.author, getThreadTypeByEnum(result.disc.type), result.disc.label, result.disc.description, null, result.disc.creationTime, result.disc.circleTypes, {likes : 10, dislikes : 5, like : null});
+        if (result.disc.comments != null) {
+            thread.comments = result.disc.comments;
+        }
+
         var entries = result.disc.entries;
         
         getAttachmentDetailsSync(thread, result.disc.attachedEntities);
