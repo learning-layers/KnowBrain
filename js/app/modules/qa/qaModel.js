@@ -438,7 +438,7 @@ angular.module('module.qa').service("qaService", ['$q', '$rootScope', 'UserServi
 
                 new SSFileUpload(
                         function (result, fileName) {
-                            deferFile.resolve(new Attachment(result.file, result.file, 'file'));
+                            deferFile.resolve(new Attachment(result.file, fileName, 'file'));
                           },
                           function (error) {
                             console.log(error);

@@ -182,11 +182,7 @@ angular.module('module.qa').controller("qaController", ['$scope', '$state', '$q'
         $dialogs.shareEntities([thread]);
     }
     $scope.showAttachment = function(attachment) {
-            if (attachment.type === 'entity') {
-                window.open(attachment.id, '_blank');
-            } else {
-                $dialogs.attachmentDetail(attachment);
-            }
+            $dialogs.attachmentDetail(attachment);
         }
     $scope.askQuestion = function() {
         $state.go('app.ask', {});
