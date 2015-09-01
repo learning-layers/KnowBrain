@@ -99,7 +99,7 @@
                             <a>
                             <div
                                 class="icon-small"
-                                ng-class="up_hover === true ? (answer.likes.like === 0 ? 'icon-up-small' : 'icon-up-neutral-small') :
+                                ng-class="up_hover === true ? 'icon-up-small' : 
                                 (answer.likes.like === 1 ? 'icon-up-small' : 'icon-up-neutral-small')"
                                 ng-mouseenter="up_hover = true"
                                 ng-mouseleave="up_hover = false"
@@ -112,7 +112,7 @@
                             <a>
                             <div
                                 class="icon-small"
-                                ng-class="down_hover === true ? (answer.likes.like === false ? 'icon-down-neutral-small' : 'icon-down-small') :
+                                ng-class="down_hover === true ? 'icon-down-small' :
                                 (answer.likes.like === -1 ? 'icon-down-small' : 'icon-down-neutral-small')"
                                 ng-mouseenter="down_hover = true"
                                 ng-mouseleave="down_hover = false"
