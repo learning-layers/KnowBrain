@@ -691,7 +691,7 @@ angular.module('module.models').service("FetchServiceHelper", ['$q', '$rootScope
               result.discs &&
               result.discs.length > 0) {
               
-                var discUri = result.discs[0];
+                var discUri = result.discs[0].id;
                 var promise = self.getDiscussionByUri(discUri);
                 promise.then(function(result) {
                     model.disc = result.disc;

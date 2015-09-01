@@ -260,7 +260,7 @@ angular.module('module.circles').controller("CircleResourcesController", functio
         title: 'Download',
         cssClass: 'glyphicon glyphicon-download-alt'
     },  {
-        title: 'View File',
+        title: 'Add to Dropbox',
         cssClass: 'glyphicon glyphicon-file'
     }, 
     {
@@ -437,7 +437,7 @@ angular.module('module.circles').controller("CircleResourcesController", functio
 
     $scope.clickedAction = function(index) {
         if (index == 1) {
-          $scope.addEntitiesToHomeCollection(); //dtheiler not sure about this: $scope.viewEntity($scope.selectedEntities[0]);
+          $scope.addEntitiesToHomeCollection();
         } else if (index == 2) {
             $scope.removeEntities($scope.selectedEntities);
         }
