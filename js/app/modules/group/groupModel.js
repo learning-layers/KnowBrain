@@ -56,14 +56,16 @@ angular.module('module.group').service("GroupFetchService", ['$q','UserService',
         var defer = $q.defer();
         var self = this;
 
-        new SSCirclesGet(
+        new SSCirclesFilteredGet(
             function(result){
                 defer.resolve(result);
             },
             function(error){
                 console.log(error);
             },
-            UserSrv.getKey()
+            UserSrv.getKey(),
+            'uploadedEntity',
+            true
 //            user // TODO pmarton: user always undefined here
         );
        return defer.promise;
