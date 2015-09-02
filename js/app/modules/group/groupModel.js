@@ -44,7 +44,7 @@ angular.module('module.group').service("GroupFetchService", ['$q','UserService',
             },
             UserSrv.getKey(),
             groupId,
-            ['entity', 'coll', 'disc', 'qa', 'chat', 'file'], //entityTypesToIncludeOnly
+            ['entity', 'coll', 'disc', 'qa', 'chat', 'uploadedFile'], //entityTypesToIncludeOnly
             true, 				//includeTags
             "circleSpace"		//tag-circle
         );
