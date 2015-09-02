@@ -64,7 +64,7 @@ angular.module('module.group').service("GroupFetchService", ['$q','UserService',
                 console.log(error);
             },
             UserSrv.getKey(),
-            'uploadedEntity',
+            ['uploadedEntity'],
             true
 //            user // TODO pmarton: user always undefined here
         );
