@@ -708,7 +708,7 @@ angular.module('dialogs.controllers', ['ui.bootstrap.modal', 'module.i18n', 'mod
                             }
                             
                             var fileUri = result.file;
-                            var promise = GroupFetchService.addEntitiesToGroup(fileUri, "http://sss.eu/" + $scope.circleId, $scope.allTags, $scope.selectedCategories);
+                            var promise = GroupFetchService.addEntitiesToGroup([fileUri], "http://sss.eu/" + $scope.circleId, $scope.allTags, $scope.selectedCategories);
                             promise.then(function(result) {
                             	console.log("Added file: " + fileUri);
                             }, function(error) {
