@@ -282,21 +282,6 @@ angular.module('module.circles').controller("CircleResourcesController", functio
             var circle = result.circle;
             
             if(circle.entities){
-          
-              for (var i = 0; i < circle.entities.length; i++) {
-                var entity = circle.entities[i];
-                var tagLabels = [];
-                
-                if(entity.tags){
-              
-                  for (var j = 0; j < entity.tags.length; j++) {
-                   var tag = entity.tags[j];
-                   tagLabels.push(tag.label);
-                 }
-                  entity.tags = tagLabels;
-                }
-              }
-              
               addEntitiesToCircle(circle.entities);
            }
         });
@@ -312,8 +297,8 @@ angular.module('module.circles').controller("CircleResourcesController", functio
             $scope.entities.push(entity);
             if (entity.tags != null) {
                 for (var j = 0; j < entity.tags.length; j++) {
-                    if ($.inArray(entity.tags[j], $scope.availableTags) == -1) {
-                        $scope.availableTags.push(entity.tags[j]);
+                    if ($.inArray(entity.tags[j].label, $scope.availableTags) == -1) {
+                        $scope.availableTags.push(entity.tags[j].label);
                     }
                 }
             }
@@ -369,7 +354,13 @@ angular.module('module.circles').controller("CircleResourcesController", functio
         if ($scope.selectedTag != null && element.tags && element.tags != null) {
             
               for (var i = 0; i < element.tags.length; i++) {
-                  if ($.inArray($scope.selectedTag, element.tags) != -1) {
+                var tagLabels = [];
+
+              for (var j = 0; j < element.tags.length; j++) {
+                    tagLabels.push(element.tags[j].label);
+                }
+
+                  if ($.inArray($scope.selectedTag, tagLabels) != -1) {
                       matchesTag = true;
                       break;
                   }

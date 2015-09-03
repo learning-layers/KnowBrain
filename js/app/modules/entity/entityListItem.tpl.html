@@ -1,4 +1,4 @@
-<tr ng-class="{'list-item-selected' : entry.isSelected}">
+<tr ng-class="{'list-item-selected' : entry.isSelected}" ng-dblclick="handleEntryClick(entry); $event.stopPropagation();">
     <td>
         <div ng-switch="entry.type">
             <div class="list-entitity-clickable" ng-click="handleEntryClick(entry); $event.stopPropagation();">
