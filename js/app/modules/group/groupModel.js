@@ -46,7 +46,7 @@ angular.module('module.group').service("GroupFetchService", ['$q','UserService',
             groupId,
             ['entity', 'coll', 'disc', 'qa', 'chat', 'uploadedFile'], //entityTypesToIncludeOnly
             true, 				//includeTags
-            "circleSpace"		//tag-circle
+            null		//tag-circle
         );
        return defer.promise;
     };
