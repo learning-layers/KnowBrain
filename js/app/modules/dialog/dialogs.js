@@ -169,19 +169,7 @@ angular.module('dialogs.controllers', ['ui.bootstrap.modal', 'module.i18n', 'mod
         $modalInstance.close();
     };
     $scope.deleteEntity = function() {
-    	// dkowald: new code for KnowBrain study
-        var entityIds = [];
-        entityIds.push($scope.entry.id);
-
-        var promise = GroupFetchService.removeEntitiesFromGroup(entityIds, $scope.circleId);
-        promise.then(function(result) {
-            $scope.close();
-            window.location.reload();
-        }, function(error) {
-            console.log(error);
-        });
-    	
-        /*var toDelete = new Array();
+    	var toDelete = new Array();
         var entries = CurrentCollectionService.getCurrentCollection().entries;
         angular.forEach(entries, function(collEntry, key) {
             if (collEntry.id == $scope.entry.id) {
@@ -193,7 +181,7 @@ angular.module('dialogs.controllers', ['ui.bootstrap.modal', 'module.i18n', 'mod
             $scope.close();
         }, function(error) {
             console.log(error);
-        });*/
+        });
     };
     $scope.downloadEntity = function() {
         if ($scope.entry.type != ENTITY_TYPES.file) return;
