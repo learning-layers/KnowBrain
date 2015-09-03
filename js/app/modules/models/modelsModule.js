@@ -653,7 +653,7 @@ angular.module('module.models').service("FetchServiceHelper", ['$q', '$rootScope
     this.getEntityDescribtion = function(model, getTags, getOverallRating, getDiscs, circle) {
     	var space = null;
     	if (circle != null) {
-    		space = SPACE_ENUM.circle;
+    		space = null; //SPACE_ENUM.circle;
     	}
     	
         var defer = $q.defer();
