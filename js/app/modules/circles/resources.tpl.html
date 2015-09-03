@@ -1,8 +1,8 @@
-<div id="path">
+<div id="path" ng-show="currentCollection.collHierarchy.length > 0">
     <span class="glyphicon ajax-loader-white" ng-show="ajaxLoading"></span>
-    <!--<a href="" ng-click="loadRootCollection()" class="breadcrumbs-inactive" ng-show="!ajaxLoading">
+    <a href="" ng-click="loadRootCollection()" class="breadcrumbs-inactive" ng-show="!ajaxLoading">
     <span class="glyphicon glyphicon-home glyphicon-home-kb"></span>
-    </a>-->
+    </a>
     <span ng-repeat="entry in currentCollection.collHierarchy" ng-show="!ajaxLoading && !$first" on-Finish-Ng-Repeat-Load>
     <span class="glyphicon path-glyph-chevron glyphicon-chevron-right"></span>&nbsp;
     <a href="" ng-click="handleEntryClick(entry)" class="breadcrumbs-inactive">

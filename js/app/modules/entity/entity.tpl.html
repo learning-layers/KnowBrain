@@ -41,7 +41,7 @@
     </div>
     <div class="collection-entry-description-box">
         <div class="collection-entry-tags-box">
-            <div class="tag-circle" ng-class="{'grid-tag-circle' : !$first}" ng-repeat="tag in entry.tags" ng-click="selectTag(tag)" data-toggle="tooltip" data-trigger="hover" data-placement="bottom" title="{{tag}}" on-finish-ng-repeat-load="ngRepeatFinished"></div>
+            <div class="tag-circle" ng-class="{'grid-tag-circle' : !$first}" ng-repeat="tag in entry.tags" ng-click="selectTag(tag.label)" data-toggle="tooltip" data-trigger="hover" data-placement="bottom" title="{{tag.label}}" on-finish-ng-repeat-load="ngRepeatFinished"></div>
         </div>
 
         <div class="collection-entry-label" ng-click="handleEntryClick(entry)">{{entry.label ? entry.label : entry.id}}</div>
