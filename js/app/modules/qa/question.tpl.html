@@ -39,7 +39,7 @@
                     &nbsp;
                 </div>
                 <div class="col-md-11 column">
-                    <div class="icon-small" ng-class="{'icon-file-small' : attachment.type === 'file',
+                    <div class="icon-small" ng-class="{'icon-file-small' : attachment.type === 'uploadedFile',
                         'icon-entity-small' : attachment.type === 'coll',
                         'icon-link-small' : attachment.type === 'entity'}" ng-repeat-start="attachment in question.attachments">
                     </div>
@@ -163,7 +163,7 @@
                         &nbsp;
                     </div>
                     <div class="col-md-11 column">
-                        <div class="icon-small" ng-class="{'icon-file-small' : attachment.type === 'file',
+                        <div class="icon-small" ng-class="{'icon-file-small' : attachment.type === 'uploadedFile',
                             'icon-entity-small' : attachment.type === 'coll',
                             'icon-link-small' : attachment.type === 'entity'}" ng-repeat-start="attachment in answer.attachments">
                         </div>
@@ -218,7 +218,7 @@
             <kb-add-entity destination='newAnswer' after-add-link="afterAddLink" after-choose-entity="afterChooseEntity" after-add-entity='afterAddEntity'></kb-add-entity>
             <div ng-repeat="attachment in newAnswer.attachments">
                 <div class="col-xs-10" style="margin-bottom: 10px; padding-left: 4px;" >
-                    <div ng-class="{'icon-file-small icon-small' : attachment.type === 'file',
+                    <div ng-class="{'icon-file-small icon-small' : attachment.type === 'uploadedFile',
                         'icon-entity-small icon-small' : attachment.type === 'coll',
                         'icon-link-small icon-small' : attachment.type === 'entity'}" >
                     </div>

@@ -588,6 +588,9 @@ angular.module('module.circles').controller("createCircleController", function($
         });
     $scope.item = null;
     $scope.uploader.onAfterAddingFile = function(item) {
+        if ($scope.uploader.queue.length > 1) {
+            $scope.uploader.removeFromQueue(0);
+        }
         $scope.item = item;
     };
 
@@ -630,16 +633,12 @@ angular.module('module.circles').controller("createCircleController", function($
         }
     };
 
-    $scope.save = function() {
-        if ($scope.editingCircle) {
-            var promise = GroupFetchService.editCircle($scope.circle.label, $scope.circle.description, $scope.circle);
-            promise.then(function(result) {
-                if ($scope.item != undefined) {
-                    new SSFileUpload(
+    var saveProfilePicture = function() {
+        new SSFileUpload(
                     function(result, fileName) {
                         new SSImageProfilePictureSet(
                             function(result) {
-                                $modalInstance.close(result);
+                                $modalInstance.close($scope.circle.id);
                             },
                             function(error) {
                                 console.log("Error");
@@ -655,8 +654,16 @@ angular.module('module.circles').controller("createCircleController", function($
                     UserService.getKey(),
                     $scope.item._file
                     );
+    }
+
+    $scope.save = function() {
+        if ($scope.editingCircle) {
+            var promise = GroupFetchService.editCircle($scope.circle.label, $scope.circle.description, $scope.circle);
+            promise.then(function(result) {
+                if ($scope.item != undefined) {
+                    saveProfilePicture();
                 } else {
-                    $modalInstance.close(result);
+                    $modalInstance.close(result.circle.id);
                 }
             }); 
         } else {
@@ -666,7 +673,12 @@ angular.module('module.circles').controller("createCircleController", function($
             }
             var promise = GroupFetchService.createGroup($scope.circle.label, null, userUrls, $scope.circle.description);
             promise.then(function(result) {
-                $modalInstance.close(result.circle);
+                $scope.circle.id = result.circle;
+                if ($scope.item != undefined) {
+                    saveProfilePicture();
+                } else {
+                    $modalInstance.close(result.circle);
+                }
             }); 
         }
         
@@ -711,6 +723,7 @@ angular.module('module.circles').controller("createCircleController", function($
     		alert("When this is done, please close the dialog and press F5 on the circles page to reload the list");
             var promise = GroupFetchService.removeCircle($scope.circle.id);
             promise.then(function(result) {
+                $modalInstance.close();
             	window.location.replace("#/circles");
             }); 
     	}

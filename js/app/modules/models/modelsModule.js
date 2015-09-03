@@ -32,7 +32,7 @@ angular.module('module.models').constant('SPACE_ENUM', {
 });
 angular.module('module.models').constant('ENTITY_TYPES', {
     collection: 'coll',
-    file: 'file',
+    file: 'uploadedFile',
     link: 'entity'
 });
 angular.module('module.models').constant('RATING_MAX', 5);
@@ -450,7 +450,7 @@ angular.module('module.models').factory('EntityModel', ['$q', '$rootScope', 'Use
         }
     }
     Entity.prototype.iconClass = function() {
-        if (this.type == 'file') {
+        if (this.type == 'uploadedFile') {
             if (this.fileType == 'image') {
                 return 'icon-file-image';
             } else if (this.fileType == 'audio') {

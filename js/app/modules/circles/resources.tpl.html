@@ -58,7 +58,7 @@
 </div>
 <div ng-repeat="entity in entities | orderBy: predicate : reverse | filter : filterFunction" class="dropdown position-fixed" id="menu-{{ $index }}" style="z-index:10;">
     <ul class="dropdown-menu" role="menu">
-        <li ng-hide="entity.type != 'file'">
+        <li ng-hide="entity.type != 'uploadedFile'">
             <a class="pointer" role="menuitem" tabindex="1"
             ng-click="downloadEntity(entity)">
             Download

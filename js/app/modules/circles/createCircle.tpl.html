@@ -6,25 +6,36 @@
         class="share-entity-modal-title modal-title">{{editingCircle ? 'Edit Circle' : 'New Circle'}}</span>
         <div class="clearfix"></div>
     </div>
-    <div class="container" style="width: 100%">
+    <div class="container" style="width: 100%" nv-file-drop uploader="uploader">
         <div class="row clearfix">
             <div class="col-md-4 column v-center">
                 <div id="upload-pic">
-                    <div class="icon-circle circle-preview-pic"></div>
-                    <div class="new-circle-picture-label-frame">
-                              <span class="btn btn-default fileinput-button">
-                            <i class="glyphicon glyphicon-plus"></i>
-                            <span>Upload circle picture</span>
-                            <input type="file" nv-file-select uploader="uploader"/>
-                            </span>
-
+                    <div class="upload-profile-pic-container upload-drop-container center" nv-file-over uploader="uploader" over-class="upload-drop-container-file-over1" style="margin-top: 10px;">
+                        <div ng-hide="uploader.queue.length > 0" style="padding: 50px;">
+                            Drag picture here
+                        </div>
+                        <table>
+                            <tbody>
+                                <tr ng-repeat="item in uploader.queue">
+                                    <td>
+                                        <div ng-show="uploader.isHTML5" ng-thumb="{ file: item._file, width: 150, height: 150 }"></div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
+                    <span class="btn btn-default fileinput-button">
+                    <i class="glyphicon glyphicon-plus"></i>
+                    <span>Select file</span>
+                    <input type="file" nv-file-select uploader="uploader"/>
+                    </span>
+
                     <div ng-hide="!editingCircle">
-	                    <br />
-	                    <input type="text" class="form-control" ng-model="mergeCircleName" />
-	                    <button ng-click="mergeCircle(mergeCircleName)">Merge / Split</button>
-	                    <br />
-	                    <button ng-click="deleteCircle()">Delete</button>
+                        <br />
+                        <input type="text" class="form-control" ng-model="mergeCircleName" />
+                        <button ng-click="mergeCircle(mergeCircleName)">Merge / Split</button>
+                        <br />
+                        <button ng-click="deleteCircle()">Delete</button>
                     </div>
                 </div>
             </div>

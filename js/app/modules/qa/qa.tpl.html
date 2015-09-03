@@ -97,7 +97,7 @@
                             </a>
                         </div>
                         <div class="col-md-8 column" ng-show="thread.attachments.length > 0">
-                            <div class="icon-small" ng-class="{'icon-file-small' : thread.attachments[0].type === 'file',
+                            <div class="icon-small" ng-class="{'icon-file-small' : thread.attachments[0].type === 'uploadedFile',
                                 'icon-entity-small' : thread.attachments[0].type === 'coll',
                                 'icon-link-small' : thread.attachments[0].type === 'entity'}">
                             </div>
@@ -107,7 +107,7 @@
                             </div>
                             <div ng-switch="thread.attachments.length" ng-show="thread.attachments.length > 1">
                                 <div ng-switch-when="2">
-                                    <div class="icon-small" ng-class="{'icon-file-small' : thread.attachments[1].type === 'file',
+                                    <div class="icon-small" ng-class="{'icon-file-small' : thread.attachments[1].type === 'uploadedFile',
                                         'icon-entity-small' : thread.attachments[1].type === 'coll',
                                         'icon-link-small' : thread.attachments[1].type === 'entity'}">
                                     </div>

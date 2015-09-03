@@ -134,7 +134,7 @@ angular.module('module.qa').factory('Attachment', ['$q', 'UserService', 'ENTITY_
         // Public properties
         this.id = id;
         this.name = label;
-        this.type = type == null ? 'file' : type;
+        this.type = type == null ? ENTITY_TYPES.file : type;
         this.mimeType = jSGlobals.substring(id, jSGlobals.lastIndexOf(id, jSGlobals.dot) + 1, jSGlobals.length(id));
         
         this.servHandleFileDownload = function(defer){
@@ -439,7 +439,7 @@ angular.module('module.qa').service("qaService", ['$q', '$rootScope', 'UserServi
 
                 new SSFileUpload(
                         function (result, fileName) {
-                            deferFile.resolve(new Attachment(result.file, fileName, 'file'));
+                            deferFile.resolve(new Attachment(result.file, fileName, 'uploadedFile'));
                           },
                           function (error) {
                             console.log(error);
