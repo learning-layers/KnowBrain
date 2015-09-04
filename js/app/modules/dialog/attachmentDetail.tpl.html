@@ -18,38 +18,29 @@
 - See the License for the specific language governing permissions and
 - limitations under the License.
 -->
-
 <div class="attachment-detail-header modal-header">
     <button type="button" class="attachment-detail-close-button close" ng-click="close()" style="margin-top:5px;" aria-hidden="true">&times;</button>
     <span class="attachment-detail-type-icon glyphicon" ng-class="{'glyphicon-file': (attachment.type == ENTITY_TYPES.file), 'glyphicon-link' : (attachment.type == ENTITY_TYPES.link)}"></span>
     <span class="share-entity-modal-title modal-title">{{attachment.name}}</span>
     <div class="clearfix"></div>
 </div>
-  
-  
-  <div class="attachment-detail-modal-body modal-body">
-
-   <div class="attachment-detail-preview col-xs-12">
-
-    <img id="attachment-preview-image" class="attachment-preview" ng-show="fileType ==='image'"></img>
-    <pre id="attachment-preview-code" class="highlight" ng-show="fileType ==='code'"></pre>
 
 
-    <div class="attachment-detail-preview-actions">
+<div class="attachment-detail-modal-body modal-body">
+    <div class="attachment-detail-preview col-xs-12">
+        <img class="attachment-preview" ng-show="fileType ==='image'" ng-src="{{attachment.downloadLink}}"></img>
+        <pre id="attachment-preview-code" class="highlight" ng-show="fileType ==='code'"></pre>
+                <div class="attachment-detail-preview-actions">
+        <button type="button" class="btn btn-success" ng-show="(attachment.type == ENTITY_TYPES.file) && !attachment.downloading" ng-click="downloadAttachment()">
+        <span class="glyphicon glyphicon-cloud-download"> Download</span>
+        </button>
+        <button type="button" class="btn btn-default attachment-detail-download-indicator" ng-show="(attachment.type == ENTITY_TYPES.file) && attachment.downloading" >
+        <span class="glyphicon ajax-loader-light-grey-xs"  tooltip-placement="top" tooltip="{{t('downloading')}}"></span>
+        </button>
+        <button type="button" class="btn btn-default" ng-show="attachment.type == ENTITY_TYPES.link" ng-click="openLink()">
+        <span class="glyphicon glyphicon-globe" tooltip-placement="top" tooltip="{{t('follow_link')}}"></span>
+        </button>
+        </div>
 
-      <button type="button" class="btn btn-success" ng-show="(attachment.type == ENTITY_TYPES.file) && !attachment.downloading" ng-click="downloadAttachment()">
-       <span class="glyphicon glyphicon-cloud-download"> Download</span>
-      </button>
-
-      <button type="button" class="btn btn-default attachment-detail-download-indicator" ng-show="(attachment.type == ENTITY_TYPES.file) && attachment.downloading" >
-       <span class="glyphicon ajax-loader-light-grey-xs"  tooltip-placement="top" tooltip="{{t('downloading')}}"></span>
-      </button>
-
-      <button type="button" class="btn btn-default" ng-show="attachment.type == ENTITY_TYPES.link" ng-click="openLink()">
-       <span class="glyphicon glyphicon-globe" tooltip-placement="top" tooltip="{{t('follow_link')}}"></span>
-      </button>
-   </div>
-  
- </div>
-
+    </div>
 </div>

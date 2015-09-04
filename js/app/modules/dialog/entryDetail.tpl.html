@@ -27,7 +27,8 @@
 </div>
 <div class="entry-detail-modal-body modal-body">
     <div class="entry-detail-preview col-xs-7">
-        <div class="entry-detail-preview-icon glyphicon" class="glyphicon" ng-class="{'glyphicon-file': (entry.type == ENTITY_TYPES.file), 'glyphicon-link' : (entry.type == ENTITY_TYPES.link)}"></div>
+        <div ng-hide="entry.downloadLink !== undefined" class="entry-detail-preview-icon glyphicon" class="glyphicon" ng-class="{'glyphicon-file': (entry.type == ENTITY_TYPES.file), 'glyphicon-link' : (entry.type == ENTITY_TYPES.link)}"></div>
+        <img class="attachment-preview" ng-src="{{entry.downloadLink}}">
         <div class="entry-detail-preview-actions btn-group">
             <button type="button" class="btn btn-default" ng-show="(entry.type == ENTITY_TYPES.file) && !entry.downloading" ng-click="downloadEntity()" tooltip-placement="top" tooltip="Download" container="body">
             <span class="glyphicon glyphicon-cloud-download"></span>

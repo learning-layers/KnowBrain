@@ -119,6 +119,7 @@ angular.module('dialogs.controllers', ['ui.bootstrap.modal', 'module.i18n', 'mod
 
         var promise = FetchServiceHelper.getEntityDescribtion(entry, true, true, true, $scope.circleId);
         promise.then(function(result) {
+            $scope.entry.downloadLink = result.downloadLink;
             $scope.editedDescription = entry.description;
             //set tags
             angular.forEach(entry.tags, function(tag, key) {
@@ -287,27 +288,8 @@ angular.module('dialogs.controllers', ['ui.bootstrap.modal', 'module.i18n', 'mod
         if ($scope.attachment.type != ENTITY_TYPES.link) return;
         $window.open(attachment.id);
     };
-    if ($scope.attachment.type === ENTITY_TYPES.file || $scope.fileType === 'code') {
-        var promise = $scope.attachment.getFile().then(function(result) {
-            var oFReader = new FileReader();
-            switch ($scope.fileType) {
-                case "image":
-                    oFReader.readAsDataURL(result);
-                    break;
-                case "code":
-                    oFReader.readAsText(result);
-            }
-            oFReader.onload = function(oFREvent) {
-                switch ($scope.fileType) {
-                    case "image":
-                        document.getElementById("attachment-preview-image").src = oFREvent.target.result;
-                        break;
-                    case "code":
-                        document.getElementById("attachment-preview-code").innerHTML = oFREvent.target.result;
-                        break;
-                }
-            };
-        });
+    if ($scope.fileType === 'code') {
+        document.getElementById("attachment-preview-code").innerHTML = attachment.downloadLink;
     }
 }])
 
