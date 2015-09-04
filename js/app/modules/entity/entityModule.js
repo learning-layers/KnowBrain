@@ -42,10 +42,15 @@ entityModule.directive('kbAddEntity', function($dialogs) {
                 scope.availableActions = [{title: 'Link', id: 1, cssClass: 'icon-add-link'}, 
                                           {title: 'Upload', id: 2, cssClass: 'icon-add-file'}];
 
+                var enableSelectingCollections = true;
                 if (destination.type == 'coll')
                     scope.availableActions.push({title: 'Collection', id: 0, cssClass: 'icon-add-collection'});
-                if ( destination.type == 'circle' || destination.type.enum == 'qa' || destination.type.enum == 'qaEntry')
+                if ( destination.type == 'circle' || destination.type.enum == 'qa' || destination.type.enum == 'qaEntry') {
                     scope.availableActions.push({title: 'Dropbox', id: 3, cssClass: 'icon-add-file'});
+                }
+                if (destination.type.enum == 'qa' || destination.type.enum == 'qaEntry') {
+                    enableSelectingCollections = false;
+                }
 
                 scope.clickedAction = function(action) {
                     switch(action.id) {
@@ -66,7 +71,7 @@ entityModule.directive('kbAddEntity', function($dialogs) {
                             }, function() {});
                             break;
                         case 3:
-                            $dialogs.chooseFromDropbox().result.then(function(chosenEntities) {
+                            $dialogs.chooseFromDropbox(enableSelectingCollections).result.then(function(chosenEntities) {
                                 var expressionHandler = scope.afterChooseEntity();
                                 expressionHandler(chosenEntities);
                             }, function() {

@@ -100,7 +100,7 @@
                 <div class="col-md-2 hidden-xs">
                     <a ng-class="{'sort-order-filter-active' : predicate == 'creationTime'}" ng-click=" reverse = predicate != 'creationTime' ? false : !reverse; predicate = 'creationTime';">Date <span ng-show="predicate == 'creationTime'">{{reverse ? '&#9650;' : '&#9660;'}}</span></a>
                 </div>
-                <div class="col-md-2 hidden-xs">
+                <div class="col-md-2 hidden-xs" ng-show="collectionViewMode == 'grid'">
                     <a ng-class="{'sort-order-filter-active' : predicate == 'author.label'}" ng-click=" reverse = predicate != 'author.label' ? false : !reverse; predicate = 'author.label';">Author <span ng-show="predicate == 'author.label'">{{reverse ? '&#9650;' : '&#9660;'}}</span></a>
                 </div>
             </div>

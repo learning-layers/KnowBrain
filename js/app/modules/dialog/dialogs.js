@@ -312,7 +312,7 @@ angular.module('dialogs.controllers', ['ui.bootstrap.modal', 'module.i18n', 'mod
 }])
 
 
-.controller("ChooseFromDropboxController", function($scope, $q, $location, $rootScope, $state, i18nService, CollectionFetchService, CurrentCollectionService, EntityFetchService, $modal, EntityModel, ENTITY_TYPES, SPACE_ENUM, RATING_MAX, $dialogs, $modalInstance) {
+.controller("ChooseFromDropboxController", function($scope, $q, $location, $rootScope, $state, i18nService, CollectionFetchService, CurrentCollectionService, EntityFetchService, $modal, EntityModel, ENTITY_TYPES, SPACE_ENUM, RATING_MAX, $dialogs, $modalInstance, enableSelectingCollections) {
 
     var self = this;
     var selectedCounter = 0;
@@ -320,7 +320,7 @@ angular.module('dialogs.controllers', ['ui.bootstrap.modal', 'module.i18n', 'mod
     $scope.entityTypes = ENTITY_TYPES;
     $scope.spaceEnum = SPACE_ENUM;
     $scope.selectedResources = [];
-
+    $scope.disableSelectingCollections = !enableSelectingCollections;
 
     /**
      * TRANSLATION INJECTION
@@ -394,7 +394,10 @@ angular.module('dialogs.controllers', ['ui.bootstrap.modal', 'module.i18n', 'mod
     };
 
     $scope.selectResource = function(entry) {
-
+        if (entry.type === ENTITY_TYPES.collection && $scope.disableSelectingCollections) {
+            $scope.handleEntryClick(entry);
+            return;
+        }
         if (entry.isSelected) {
             $scope.deselectResource($scope.selectedResources.indexOf(entry));
         } else {
@@ -1171,12 +1174,17 @@ angular.module('dialogs.services', ['ui.bootstrap.modal', 'dialogs.controllers']
                     }
                 });
             },
-            chooseFromDropbox: function() {
+            chooseFromDropbox: function(enableSelectingCollections) {
                 return $modal.open({
                     templateUrl: MODULES_PREFIX + '/dialog/wizzard-choose-from-dropbox.tpl.html',
                     controller: 'ChooseFromDropboxController',
                     keyboard: true,
-                    backdrop: true
+                    backdrop: true,
+                    resolve: {
+                        enableSelectingCollections: function() {
+                            return enableSelectingCollections;
+                        }
+                    }
                 });
             },
             createLink: function(targetEntity) {

@@ -4,6 +4,7 @@
     class="collection-entry kb-fluid-container pull-left">
     <div class="collection-entry-preview-box" ng-dblclick="handleEntryClick(entry)">
     	<div
+        ng-hide="disableSelectingCollections && entry.type === 'coll'"
             ng-class="{'collection-entry-checkbox-wrapper-selected': entry.isSelected}"
             class="collection-entry-checkbox-wrapper">
             <input ng-checked="entry.isSelected"
