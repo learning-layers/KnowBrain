@@ -11,12 +11,47 @@
     <div class="card-body">
         <p>
         <span ng-switch="activity.type">
+
+        <!-- friendAdd -->
+        <span ng-switch-when="friendAdd">
+        <span>Friend was added</span>
+        </span>
+
+        <!-- addCategory -->
+        <span ng-switch-when="addCategory">
+        <span>Category was added</span>
+        </span>
+
+        <!-- addCategory -->
+        <span ng-switch-when="addCategory">
+        <span>Category was added</span>
+        </span>
+
+        <!-- removeCategories -->
+        <span ng-switch-when="removeCategories">
+        <span>Categories were removed</span>
+        </span>
+
+        <!-- tagEntity -->
+        <span ng-switch-when="tagEntity">
+        <span>Entity was tagged</span>
+        </span>
+
+        <!-- removeTags -->
+        <span ng-switch-when="tagEntity">
+        <span>Entity was tagged</span>
+        </span>
+
+        <!-- rateEntity -->
         <span ng-switch-when="rateEntity">
         <span>Resource was rated </span>
         </span>
+
+        <!-- removeCollEntry -->
         <span ng-switch-when="removeCollEntry">
         <span>Resource was removed</span>
         </span>
+
         <!-- addCollEntry -->
         <span ng-switch-when="addCollEntry">
         <span ng-switch="activity.entities.length > 2">
@@ -24,12 +59,53 @@
         <span ng-switch-when="false">Resource was added</span>
         </span>
         </span>
+
+        <!-- createCircle -->
+        <span ng-switch-when="createCircle">
+        <span>Circle was created</span>
+        </span>
+
+        <!-- addUsersToCircle -->
+        <span ng-switch-when="addUsersToCircle">
+        <span>Users were added to circle</span>
+        </span>
+
         <!-- addEntitiesToCircle -->
         <span ng-switch-when="addEntitiesToCircle">
         <span ng-switch="activity.entities.length > 2">
         <span ng-switch-when="true">Resources were added</span>
         <span ng-switch-when="false">Resource was added</span>
         </span>
+        </span>
+
+        <!-- setEntityPublic -->
+        <span ng-switch-when="setEntityPublic">
+        <span>Resource was set public</span>
+        </span>
+
+        <!-- copyEntityForUsers -->
+        <span ng-switch-when="copyEntityForUsers">
+        <span>Resource was copied for users</span>
+        </span>
+
+        <!-- shareEntityWithUsers -->
+        <span ng-switch-when="shareEntityWithUsers">
+        <span>Resource was shared with users</span>
+        </span>
+
+        <!-- shareEntityWithCircles -->
+        <span ng-switch-when="shareEntityWithCircles">
+        <span>Resource was shared with circles</span>
+        </span>
+
+        <!-- discussEntity -->
+        <span ng-switch-when="discussEntity">
+        <span>Entity was discusssed</span>
+        </span>
+
+        <!-- addDiscEntry -->
+        <span ng-switch-when="addDiscEntry">
+        <span>Entity was discusssed</span>
         </span>
         <!-- removeDisc -->
         </span>

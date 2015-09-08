@@ -215,20 +215,9 @@ angular.module('module.circles').controller("CircleController", function($compil
 });
 
 angular.module('module.circles').controller("CircleActivitiesController", function($scope, $state, $q, $dialogs, GroupFetchService, UserFetchService, EntityFetchService, CollectionFetchService, UriToolbox, ENTITY_TYPES, Activity) {
-
-    $scope.leftActivities = [];
-    $scope.rightActivities = [];
-
     var promise = GroupFetchService.getActivities("http://sss.eu/" + $scope.circleId);
-
-
     promise.then(function(result) {
-        for (var i = 0; i < result.length; i++) {
-            if (i % 2 == 0)
-                $scope.leftActivities.push(result[i]);
-            else
-                $scope.rightActivities.push(result[i]);
-        }
+        $scope.activities = result;
     });
     
     $scope.handleEntryClick = function(entry) {

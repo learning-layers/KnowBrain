@@ -44,7 +44,7 @@ angular.module('module.group').service("GroupFetchService", ['$q','UserService',
             },
             UserSrv.getKey(),
             groupId,
-            ['entity', 'coll', 'disc', 'qa', 'chat', 'uploadedFile'], //entityTypesToIncludeOnly
+            ['entity', 'coll', 'qa', 'chat', 'uploadedFile'], //entityTypesToIncludeOnly
             true, 				//includeTags
             null		//tag-circle
         );
@@ -66,7 +66,6 @@ angular.module('module.group').service("GroupFetchService", ['$q','UserService',
             UserSrv.getKey(),
             ['uploadedFile'],
             true
-//            user // TODO pmarton: user always undefined here
         );
        return defer.promise;
     };
