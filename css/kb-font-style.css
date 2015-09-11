@@ -59,6 +59,14 @@
 	content: "\e605";
 }
 
+.icon-user-plus:before {
+	content: "\f234";
+}
+
+.icon-user-times:before {
+	content: "\f235";
+}
+
 .icon-user:before {
 	content: "\e604";
 }
