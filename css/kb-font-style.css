@@ -23,6 +23,18 @@
 	-moz-osx-font-smoothing: grayscale;
 }
 
+.icon-disc-entry:before {
+	content: "\f0e5";
+}
+
+.icon-disc:before {
+	content: "\f0e6";
+}
+
+.icon-entity:before {
+	content: "\f219";
+}
+
 .icon-tag:before {
 	content: "\e617";
 }
