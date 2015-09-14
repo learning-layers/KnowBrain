@@ -271,6 +271,7 @@ angular.module('module.circles').controller("CircleResourcesController", functio
             var circle = result.circle;
             
             if(circle.entities){
+              $scope.entities = [];
               addEntitiesToCircle(circle.entities);
            }
         });
@@ -361,27 +362,27 @@ angular.module('module.circles').controller("CircleResourcesController", functio
     };
 
     $scope.afterAddEntity = function(uploadedEntities) {
-        //var entityIds = [];
-        //for (var i = uploadedEntities.length - 1; i >= 0; i--) {
-        //   entityIds.push(uploadedEntities[i].id);
-        //}
-        //var promise = GroupFetchService.addEntitiesToGroup(entityIds, $scope.circle.id);
-        //promise.then(function(result) {
-            addEntitiesToCircle(uploadedEntities);
-        //});
+        var entityIds = [];
+        for (var i = uploadedEntities.length - 1; i >= 0; i--) {
+           entityIds.push(uploadedEntities[i].id);
+        }
+        var promise = GroupFetchService.addEntitiesToGroup(entityIds, $scope.circle.id);
+        promise.then(function(result) {
+         addEntitiesToCircle(uploadedEntities);
+        });
     };
 
     $scope.afterChooseEntity = function(chosenEntities) {
             if (chosenEntities != undefined) {
-                //var entityIds = [];
-                //for (var i = 0; i < chosenEntities.length; i++) {
-                //    entityIds.push(chosenEntities[i].id);
-                //}
+                var entityIds = [];
+                for (var i = 0; i < chosenEntities.length; i++) {
+                    entityIds.push(chosenEntities[i].id);
+                }
 
-                //var promise = GroupFetchService.addEntitiesToGroup(entityIds, $scope.circle.id);
-                //promise.then(function(result) {
-                    addEntitiesToCircle(chosenEntities);
-                //});
+                var promise = GroupFetchService.addEntitiesToGroup(entityIds, $scope.circle.id);
+                promise.then(function(result) {
+                  addEntitiesToCircle(chosenEntities);
+                });
             }
     };
 
