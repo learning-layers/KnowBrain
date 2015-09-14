@@ -27,8 +27,18 @@
 </div>
 <div class="entry-detail-modal-body modal-body">
     <div class="entry-detail-preview col-xs-7">
-        <div ng-hide="entry.downloadLink !== undefined" class="entry-detail-preview-icon glyphicon" class="glyphicon" ng-class="{'glyphicon-file': (entry.type == ENTITY_TYPES.file), 'glyphicon-link' : (entry.type == ENTITY_TYPES.link)}"></div>
-        <img class="attachment-preview" ng-src="{{entry.downloadLink}}">
+        <div ng-hide="entry.thumb !== undefined" class="entry-detail-preview-icon glyphicon" class="glyphicon" ng-class="{'glyphicon-file': (entry.type == ENTITY_TYPES.file), 'glyphicon-link' : (entry.type == ENTITY_TYPES.link)}">
+            
+            <div style="font-size: 14px; color: #666666" class="center">
+                No preview available for this type
+            </div>
+            <div style="font-size: 44px;">
+                <button type="button" class="btn btn-default" ng-show="(entry.type == ENTITY_TYPES.file)">
+                Download
+                </button>
+            </div>
+        </div>
+        <img ng-show="entry.thumb !== undefined" class="attachment-preview" ng-src="{{entry.thumb}}">
         <div class="entry-detail-preview-actions btn-group">
             <button type="button" class="btn btn-default" ng-show="(entry.type == ENTITY_TYPES.file) && !entry.downloading" ng-click="downloadEntity()" tooltip-placement="top" tooltip="Download" container="body">
             <span class="glyphicon glyphicon-cloud-download"></span>

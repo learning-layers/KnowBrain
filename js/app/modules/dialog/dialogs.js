@@ -119,7 +119,7 @@ angular.module('dialogs.controllers', ['ui.bootstrap.modal', 'module.i18n', 'mod
 
         var promise = FetchServiceHelper.getEntityDescribtion(entry, true, true, true, $scope.circleId);
         promise.then(function(result) {
-            $scope.entry.downloadLink = result.downloadLink;
+            $scope.entry.thumb = result.thumb.file.downloadLink;
             $scope.editedDescription = entry.description;
             //set tags
             angular.forEach(entry.tags, function(tag, key) {
