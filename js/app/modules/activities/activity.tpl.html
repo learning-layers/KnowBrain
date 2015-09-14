@@ -114,6 +114,46 @@
     <div class="card-media" ng-show="activity.entities.length > 0">
         <table class="table vertical-aligned-table" style="table-layout: fixed;">
             <tbody>
+                <tr ng-show="activity.entity != unefined">
+                    <div class="row">
+                        <td style="width:40px;">
+                            <div ng-switch="activity.entity.type">
+                                <div class="list-entitity-clickable" ng-click="handleEntryClick(activity.entity); $event.stopPropagation();">
+                                    <img ng-switch-when="group" src="images/group_pic_dummy.jpg" class="collection-entry-profile-pic"/>
+                                    <img ng-switch-when="priv" src="images/group_pic_dummy.jpg" class="collection-entry-profile-pic"/>
+                                    <div ng-switch-when="coll" class="list-entity-icon icon-folder">
+                                    </div>
+                                    <div ng-switch-when="uploadedFile" class="list-entity-icon" ng-class="entry.iconClass()">
+                                    </div>
+                                    <div ng-switch-when="entity" class="list-entity-icon icon-entity">
+                                    </div>
+                                    <div ng-switch-when="qa" class="list-entity-icon icon-question-mark">
+                                    </div>
+                                    <div ng-switch-when="disc" class="list-entity-icon icon-disc">
+                                    </div>
+                                    <div ng-switch-when="discEntry" class="list-entity-icon icon-disc-entry">
+                                    </div>
+                                    <div ng-switch-when="qaEntry" class="list-entity-icon icon-question-mark">
+                                    </div>
+                                    <div ng-switch-when="circle" class="list-entity-icon icon-circle">
+                                    </div>
+                                    <div ng-switch-default class="list-entity-icon glyphicon glyphicon-link">
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                        <td style="display: block;">
+                            <div class="col-md-12" style="text-overflow:ellipsis; overflow:hidden;">
+                                <span class="list-entitity-clickable" ng-click="handleEntryClick(activity.entity); $event.stopPropagation();">{{activity.entity.label ? activity.entity.label : activity.entity.id}}
+                                </span>
+                            </div>
+                            <div class="col-md-12" ng-show="activity.entity.tags">
+                                <div class="qa-tag" ng-repeat="tag in activity.entity.tags"><a ng-click="selectTag(tag); $event.stopPropagation();">{{tag.label}}</a>
+                                </div>
+                            </div>
+                        </td>
+                    </div>
+                </tr>
                 <tr ng-repeat="entry in activity.entities">
                     <div class="row">
                         <td style="width:40px;">

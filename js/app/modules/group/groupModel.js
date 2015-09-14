@@ -273,7 +273,7 @@ angular.module('module.group').service("GroupFetchService", ['$q','UserService',
                         entities.push(entity);
                     }
 
-                    var activity = new Activity(act.author, act.activityType, act.creationTime, entities, act.users);
+                    var activity = new Activity(act.author, act.activityType, act.creationTime, entities, act.users, act.entity);
                     activities.push(activity);
                 }
 

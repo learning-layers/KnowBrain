@@ -26,13 +26,14 @@
 * MODEL
 */
 angular.module('module.activities').factory('Activity', [function() {
-    function Activity(user, type, time, entities, users){
+    function Activity(user, type, time, entities, users, entity){
         this.user = user;
         this.type = type;
         this.time = parseTime(time);
         this.date = parseDate(time);
         this.entities = entities;
         this.users = users;
+        this.entity = entity;
       }
     
     var months = [ "January", "February", "March", "April", "May", "June", 
