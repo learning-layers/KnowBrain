@@ -828,7 +828,7 @@ angular.module('module.models').service("CategoryTagFetchService", ['$q', '$root
         }, function(error) {
         	console.log(error);
         }, UserSrv.getKey(),
-           circleName, 			//currentCircle = realm
+           null, 			//currentCircle = realm
            UserSrv.getUser(), 	//forUser
            null, 				//entity
            categories,			//categories
