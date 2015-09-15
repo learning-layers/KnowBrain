@@ -503,6 +503,7 @@ angular.module('dialogs.controllers', ['ui.bootstrap.modal', 'module.i18n', 'mod
     var self = this;
     
     $scope.uploader = new FileUploader();
+    $scope.showTagInput = !saveInCollection;
 
     /**
      * TRANSLATION INJECTION
