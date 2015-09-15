@@ -13,7 +13,7 @@
 -  See the License for the specific language governing permissions and
 -  limitations under the License.
 -->
-<div class="modal-content kb-study" nv-file-drop uploader="uploader">
+<div class="modal-content" nv-file-drop uploader="uploader">
     <div class="modal-header">
         <button type="button" class="close" ng-click="close()" aria-hidden="true">&times;</button>
         <h4 class="modal-title"><span class="glyphicon glyphicon-cloud-upload" style="margin-right:10px;"></span>Add resource</h4>
@@ -81,6 +81,7 @@
                         </div>
                     </div>
                 </div>
+                <!--
                 <div class="clearfix"></div>
                 <div id="divCategories" class="div-separator">
                 <div class="dropdown">
@@ -100,7 +101,6 @@
                 <div  ng-show="recTagsShow && recommendedTags.length > 0" class="div-separator ng-hide" id="recTags" >Recommended Tags: <button ng-repeat="tag in recommendedTags" ng-click='addTagToInput(tag)'>{{tag}}</button></div>
                 <div id="divTags" class="div-separator">
                 	<h5>Tags:</h5>
-                	<!-- TODO: change tagAdded -->
                 	<tags-input ng-model="inputTags" custom-class="bootstrap" placeholder="{{t('add_a_tag')}}" on-tag-added="addTagToAll($tag)"
                 	on-tag-removed="removeTagFromAll($tag)"
                 	add-on-comma="true"
@@ -109,14 +109,14 @@
                 	add-on-enter="true"
                 	allowed-tags-pattern="^[a-zA-Z0-9_-]*$"
                 	>
-                	<!--  <auto-complete source="queryTags($query)"
+                	  <auto-complete source="queryTags($query)"
                 	min-length="1"
                 	max-results-to-show="15"
                 	>
-                	</auto-complete>-->
+                	</auto-complete>
                 	</tags-input>
                 	
-            </div>
+            </div>-->
             </form>
             <div class="clearfix"></div>
         </div>
