@@ -56,13 +56,12 @@
                     </div>
                 </div>
             </div>
-
-            <div class="modal-footer">
-            <div class="btn-group">
-                <button class="btn btn-danger" ng-class="{'disabled' : selectedResources.length == 0}" ng-click="resetAttachedResources()"><i class="glyphicon glyphicon-trash"></i>&nbsp;Clear list</button>
-                <button class="btn btn-success" ng-class="{'disabled' : selectedResources.length == 0}" ng-click="doneClicked()"><i class="glyphicon glyphicon-cloud-upload"></i>&nbsp;Attach {{selectedResources.length}}&nbsp;resource{{selectedResources.length == 1 ? '' : 's'}}</button>
-            </div>
-            </div>
         </div>
+            <div class="modal-footer">
+                <div class="btn-group">
+                    <button class="btn btn-danger" ng-class="{'disabled' : selectedResources.length == 0}" ng-click="resetAttachedResources()"><i class="glyphicon glyphicon-trash"></i>&nbsp;Clear list</button>
+                    <button class="btn btn-success" ng-class="{'disabled' : selectedResources.length == 0}" ng-click="doneClicked()"><i class="glyphicon glyphicon-cloud-upload"></i>&nbsp;Attach {{selectedResources.length}}&nbsp;resource{{selectedResources.length == 1 ? '' : 's'}}</button>
+                </div>
+            </div>
     </div>
 </div>
