@@ -167,11 +167,7 @@ angular.module('module.search').controller("SearchController", ['$scope', '$root
                 null, //labelsToSearchFor,
                 null, //descriptionsToSearchFor,
                 null, //typesToSearchOnlyFor,
-                false, //includeOnlySubEntities,
-                null, //entitiesToSearchWithin,
-                false, //extendToParents,
                 false, //includeRecommendedResults,
-                false, //provideEntries,
                 null, //pagesID
                 null, //pageNumber
                 null, //minRating,
@@ -203,11 +199,7 @@ angular.module('module.search').controller("SearchController", ['$scope', '$root
                 keywordsArray, //labelsToSearchFor,
                 null, //descriptionsToSearchFor,
                 null, //typesToSearchOnlyFor,
-                false, //includeOnlySubEntities,
-                null, //entitiesToSearchWithin,
-                false, //extendToParents,
                 false, //includeRecommendedResults,
-                false, //provideEntries,
                 null, //pagesID
                 null, //pageNumber
                 null, //minRating,

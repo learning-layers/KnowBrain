@@ -748,11 +748,7 @@ angular.module('module.qa').service("qaService", ['$q', '$rootScope', 'UserServi
                     keywordsToSearchFor,       //labelsToSearchFor
                     keywordsToSearchFor,       //descriptionsToSearchFor
                     typesToSearchOnlyFor,       //typesToSearchOnlyFor
-                    false,                      //includeOnlySubEntities
-                    null,                       //entitiesToSearchWithin
-                    false,                      //extendToParents
                     false,                      //includeRecommendedResults
-                    false,                      //provideEntries
                     null,                       //pagesID
                     null,                       //pageNumber
                     null,                       //minRating,
@@ -876,11 +872,7 @@ angular.module('module.qa').service("qaService", ['$q', '$rootScope', 'UserServi
                     thread.title.split(" "),    //labelsToSearchFor
                     null,                       //descriptionsToSearchFor
                     ["qa"],                     //typesToSearchOnlyFor
-                    false,                      //includeOnlySubEntities
-                    null,                       //entitiesToSearchWithin
-                    false,                      //extendToParents
                     true,                       //includeRecommendedResults
-                    false,                      //provideEntries
                     null,                       //pagesID
                     null,                       //pageNumber
                     null,                       //minRating,
