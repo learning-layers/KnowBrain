@@ -470,12 +470,15 @@ angular.module('module.models').factory('EntityModel', ['$q', '$rootScope', 'Use
     };
     return (Entity);
 }]);
-angular.module('module.models').factory('UserModel', ['$q', '$rootScope', 'UserService', function($q, $rootScope, UserSrv) {
+angular.module('module.models').factory('UserModel', ['$q', '$rootScope', 'UserService', 'BaseModel', function($q, $rootScope, UserSrv, BaseModel) {
     function User() {
-        this.label = "";
-        this.id = "";
-        this.type = "user";
     }
+
+    User.prototype = Object.create(BaseModel.prototype);
+    User.prototype.constructor = User;
+    User.prototype.init = function(configuration) {
+        BaseModel.prototype.init.call(this, configuration);
+    };
     return (User);
 }]);
 /**
@@ -839,7 +842,7 @@ angular.module('module.models').service("CategoryTagFetchService", ['$q', '$root
         return defer.promise;
     };
 }]);
-angular.module('module.models').service('UserFetchService', ['$q', '$rootScope', 'UserService', function($q, $rootScope, UserSrv) {
+angular.module('module.models').service('UserFetchService', ['$q', '$rootScope', 'UserService', 'UserModel', function($q, $rootScope, UserSrv, UserModel) {
     this.getAllUsers = function() {
         var defer = $q.defer();
         var self = this;
@@ -873,19 +876,34 @@ angular.module('module.models').service('UserFetchService', ['$q', '$rootScope',
     this.getUser = function(userId) {
       var defer = $q.defer();
       new SSEntitiesGetFiltered(function(result) {
-        defer.resolve(result.entities[0]);
+        var user = result.entities[0];
+
+        var userModel = new UserModel();
+        var thumb = "images/circles/user.svg";
+        if (user.thumb != undefined) {
+            thumb = user.thumb.file.downloadLink;
+        }
+        userModel.init({
+            id: user.id,
+            label: user.label,
+            email: user.email,
+            description: user.description,
+            tags: user.tags,
+            thumb: thumb
+        });
+        defer.resolve(userModel);
       }, function(error) {}, 
       UserSrv.getKey(), 
       [userId], //entities
       null, // circle
-      null,   //setTags
+      true,   //setTags
       null, // circle
       null,  //setOverallRating
       null, //setDiscs
       null, //setUEs, 
       true, //setThumb, 
       null, //setFlags,
-      null, //setCircles
+      true, //setCircles
       false  // setProfilePicture
       );
       

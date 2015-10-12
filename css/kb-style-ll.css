@@ -33,6 +33,16 @@ body {
     padding-top: 90px;
 }
 
+h5 {
+    font-weight: 500;
+    color: #606060;
+}
+
+h4 {
+    font-weight: 400;
+    color: #606060;
+}
+
 #collection-header {
     position: fixed;
     background-color: white;

@@ -1,13 +1,50 @@
 <div class="container">
     <div class="row clearfix">
-        <div class="col-md-3 column card center">
-            <img class="profile-pic" ng-click="uploadProfilePicture()" ng-src="{{thumb}}">
-            </img>
-            <div class="center" style="margin-top:10px; margin-bottom:10px;">
-                <div style="font-size: 20px;">{{label}}</div>
-                <a href="mailto:{{email}}">{{email}}</a>
+        <div class="col-md-12 column card">
+            <div class="col-md-2 column">
+                <img class="profile-pic" ng-click="uploadProfilePicture()" ng-src="{{user.thumb}}">
+                </img>
+                <div class="center" style="margin-top:10px; margin-bottom:10px;">
+                    <a href="mailto:{{email}}">{{user.email}}</a>
+                </div>
+                <button type="button" ng-click="addAsFriend()" ng-show="profileId != userId && !isFriend" class="btn btn-success center" style="margin-bottom:20px;"><span class="glyphicon glyphicon-plus"></span><span class="glyphicon glyphicon-user"></span> Add as friend</button>
             </div>
-            <button type="button" ng-click="addAsFriend()" ng-show="profileId != userId && !isFriend" class="btn btn-success center" style="margin-bottom:20px;"><span class="glyphicon glyphicon-plus"></span><span class="glyphicon glyphicon-user"></span> Add as friend</button>
+            <div class="col-md-8 column">
+                <div style="font-size: 20px;">{{user.label}}</div>
+                <div>
+                    <div ng-show="user.description.length == 0 && !editingDescription">No description</div>
+                    <div ng-show="user.description.length > 0 && !editingDescription" ng-bind-html="user.description | nl2br"></div>
+                    <div ng-show="profileIsMyself">
+                        <textarea class="form-control" ng-show="editingDescription" ng-model="editedDescription" style="font-size:12px; padding-left:5px;" rows="5" placeholder="Enter description">
+                        {{entry.description}}
+                        </textarea>
+                        <button ng-click="editingDescription = false;" ng-show="editingDescription" class="btn btn-default btn-xs" style="margin-top:3px; position:relative;">
+                        Cancel
+                        </button>
+                        <button ng-click="saveDescription(editedDescription); editingDescription = !editingDescription;" class="btn btn-xs" ng-class="editingDescription ? 'btn-success' : 'btn-default'" style="margin-top:3px; position:relative;">
+                        {{editingDescription ? 'Save' : 'Edit'}}
+                        </button>
+                    </div>
+                </div>
+                <div id="skills">
+                    <h4>Skills</h4>
+                    <div ng-hide="profileIsMyself" class="qa-tag" ng-repeat="tag in user.tags"><a ng-click="onTagClicked(tag)">{{tag.label}}</a></div>
+                    <tags-input ng-show="profileIsMyself" ng-model="tags" custom-class="bootstrap" placeholder="Add a skill" on-tag-added="tagAdded($tag)"
+                    on-tag-removed="tagRemoved($tag)"
+                    add-on-comma="true"
+                    add-on-space="false"
+                    add-on-blur="false"
+                    add-on-enter="true"
+                    allowed-tags-pattern="^[a-zA-Z0-9_-]*$"
+                    >
+                    <!--<auto-complete source="queryTags($query)"
+                                    min-length="1"
+                                    max-results-to-show="15"
+                                    >
+                    </auto-complete>-->
+                    </tags-input>
+                </div>
+            </div>
         </div>
     </div>
 </div>

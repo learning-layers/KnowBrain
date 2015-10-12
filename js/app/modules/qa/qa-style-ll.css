@@ -256,7 +256,7 @@ div.thread-statistic-box {
 .qa-tag {
     display: inline-block;
     font-size:smaller;
-    background: #fef3e9;
+    background: #f6a551;
     border-radius: 2px;
     padding-left: 8px;
     padding-right: 8px;
@@ -266,7 +266,7 @@ div.thread-statistic-box {
 }
 
 .qa-tag a {
-    color: #222;
+    color: #fff;
 }
 
 /* Modals */

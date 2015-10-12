@@ -60,8 +60,12 @@ angular.module('module.social').config(function($stateProvider) {
 angular.module('module.social').controller("SocialController", ['$modal', '$scope', '$state', '$stateParams', 'UserService', 'UserFetchService', '$dialogs', function($modal, $scope, $state, $stateParams, UserSrv, UserFetchService, $dialogs){
 
     $scope.profileId = $stateParams.profileId;
+    $scope.userId = UserSrv.getUser();
+    $scope.profileIsMyself = $scope.profileId == $scope.userId;
+    $scope.tags = new Array();
+
     $scope.uploadProfilePicture = function() {
-        if ($scope.userId === $scope.profileId) {
+        if ($scope.profileIsMyself) {
             var dialog = $dialogs.uploadProfilePicture($scope.profileId);
             dialog.result.finally(function() {
                 updateUser();
@@ -72,31 +76,28 @@ angular.module('module.social').controller("SocialController", ['$modal', '$scop
     var updateUser = function() {
         var promise = UserFetchService.getUser($scope.profileId);
         promise.then(function(result) {
-            $scope.label = result.label;
-            $scope.email = result.email;
+            $scope.user = result;
 
-            $scope.thumb = "images/circles/user.svg";
-            if (result.thumb != undefined) {
-                $scope.thumb = result.thumb.file.downloadLink;
-            };
+            $scope.editedDescription = result.description;
+            //set tags
+            angular.forEach(result.tags, function(tag, key) {
+                $scope.tags.push({text: tag.label});
+            })
         });
     };
     updateUser();
     
-    $scope.userId = UserSrv.getUser();
     $scope.isFriend = false;
 
     var promise = UserFetchService.getFriends();
     promise.then(function(result) {
-        
-        if(result.friends){
-
-          for (var i = 0; i < result.friends.length; i++) {
-              if (result.friends[i].id == $scope.profileId) {
-                  $scope.isFriend = true;
-              }
-          }
-      }
+        if(result.friends) {
+            for (var i = 0; i < result.friends.length; i++) {
+                if (result.friends[i].id == $scope.profileId) {
+                    $scope.isFriend = true;
+                }
+            }
+        }
     });
     
     $scope.addAsFriend = function() {
@@ -106,6 +107,25 @@ angular.module('module.social').controller("SocialController", ['$modal', '$scop
         });
     }
 
+    $scope.saveDescription = function(description) {
+        if (this.editingDescription) {
+            var promise = $scope.user.setDescription(description);
+            promise.then(function(result) {
+                $scope.user.description = description;
+            }, function(error) {
+                console.log(error);
+            });
+        }
+    };
+
+    $scope.tagAdded = function(tag) {
+        // Passed variable is an object with structure { text : 'tagtext'}
+        $scope.user.addTag(tag.text);
+    };
+    $scope.tagRemoved = function(tag) {
+        // Passed variable is an object with structure { text : 'tagtext'}
+        $scope.user.removeTag(tag.text);
+    };
 }])
 
 angular.module('module.social').controller("FriendsController", ['$scope',function($scope){
