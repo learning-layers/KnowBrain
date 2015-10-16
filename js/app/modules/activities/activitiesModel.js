@@ -26,9 +26,9 @@
 * MODEL
 */
 angular.module('module.activities').factory('Activity', [function() {
-    function Activity(user, type, time, entities, users, entity){
+    function Activity(user, label, time, entities, users, entity){
         this.user = user;
-        this.type = type;
+        this.label = label;
         this.time = parseTime(time);
         this.date = parseDate(time);
         this.entities = entities;
@@ -65,7 +65,7 @@ angular.module('module.activities').factory('Activity', [function() {
 /**
 * SERVICE
 */
-angular.module('module.activities').service('ActivityFetchService', ['$q','UserService', function($q, UserSrv) {
+angular.module('module.activities').service('ActivityFetchService', ['$q','UserService', 'Activity', 'EntityModel', function($q, UserSrv, Activity, EntityModel) {
     
     this.getActivities = function(types, users, entities, circles, startTime, endTime) {
         
@@ -73,7 +73,21 @@ angular.module('module.activities').service('ActivityFetchService', ['$q','UserS
         var self = this;
         
         new SSActivitiesGetFiltered(function(result){
-                defer.resolve(result);
+                var activities = [];
+                angular.forEach(result.activities, function(activity, key) {
+                    var entities = [];
+                    angular.forEach(activity.entities, function(entry, key) {
+                        var entity = new EntityModel();
+                        entity.init(entry);
+                        entities.push(entity);
+                    });
+                    var entity = new EntityModel();
+                    entity.init(activity.entity);
+                    var act = new Activity(activity.author, activity.label, activity.creationTime, entities, activity.users, entity);
+                    activities.push(act);
+                });
+                defer.resolve(activities);
+
             },
             function(error){
                 console.log(error);

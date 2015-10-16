@@ -9,7 +9,7 @@
                 </div>
                 <button type="button" ng-click="addAsFriend()" ng-show="profileId != userId && !isFriend" class="btn btn-success center" style="margin-bottom:20px;"><span class="glyphicon glyphicon-plus"></span><span class="glyphicon glyphicon-user"></span> Add as friend</button>
             </div>
-            <div class="col-md-8 column">
+            <div class="col-md-7 column">
                 <div style="font-size: 20px;">{{user.label}}</div>
                 <div>
                     <div ng-show="user.description.length == 0 && !editingDescription">No description</div>
@@ -38,11 +38,25 @@
                     allowed-tags-pattern="^[a-zA-Z0-9_-]*$"
                     >
                     <!--<auto-complete source="queryTags($query)"
-                                    min-length="1"
-                                    max-results-to-show="15"
-                                    >
+                                                        min-length="1"
+                                                        max-results-to-show="15"
+                                                        >
                     </auto-complete>-->
                     </tags-input>
+                </div>
+            </div>
+            <div class="col-md-3 column">
+            </div>
+        </div>
+    </div>
+    <div class="col-md-12 column">
+        <div class="row clearfix">
+            <div class="col-md-3 column">
+            </div>
+            <div class="col-md-9 column">
+                <h4>Activities</h4>
+                <div class="row" ng-repeat="activity in activities">
+                    <ng-activity></ng-activity>
                 </div>
             </div>
         </div>

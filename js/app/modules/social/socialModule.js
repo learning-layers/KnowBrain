@@ -57,7 +57,7 @@ angular.module('module.social').config(function($stateProvider) {
 /**
 * CONTROLLER
 */
-angular.module('module.social').controller("SocialController", ['$modal', '$scope', '$state', '$stateParams', 'UserService', 'UserFetchService', '$dialogs', function($modal, $scope, $state, $stateParams, UserSrv, UserFetchService, $dialogs){
+angular.module('module.social').controller("SocialController", ['$modal', '$scope', '$state', '$stateParams', 'UserService', 'UserFetchService', 'ActivityFetchService', '$dialogs', 'UriToolbox', function($modal, $scope, $state, $stateParams, UserSrv, UserFetchService, ActivityFetchService, $dialogs, UriToolbox){
 
     $scope.profileId = $stateParams.profileId;
     $scope.userId = UserSrv.getUser();
@@ -86,6 +86,11 @@ angular.module('module.social').controller("SocialController", ['$modal', '$scop
         });
     };
     updateUser();
+
+    var promise = ActivityFetchService.getActivities(null, [$scope.profileId], null, null, null, null);
+    promise.then(function(result) {
+        $scope.activities = result;
+    });
     
     $scope.isFriend = false;
 
@@ -125,6 +130,18 @@ angular.module('module.social').controller("SocialController", ['$modal', '$scop
     $scope.tagRemoved = function(tag) {
         // Passed variable is an object with structure { text : 'tagtext'}
         $scope.user.removeTag(tag.text);
+    };
+
+    $scope.handleEntryClick = function(entry) {
+        if (entry.isCollection()) {
+            $scope.loadCollectionByUri(UriToolbox.extractUriPathnameHash(entry.id));
+        } else if (entry.type == "qa") {
+            $state.transitionTo('app.qa.qa', {
+                id: UriToolbox.extractUriPathnameHash(entry.id)
+            });
+        } else {
+            var dialog = $dialogs.entryDetail(entry);
+        }
     };
 }])
 

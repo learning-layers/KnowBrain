@@ -1076,3 +1076,7 @@ tags-input .tags .tag-item {
 	margin-bottom: 10px;
 	padding-top: 10px;
 }
+
+.card {
+    overflow: hidden;
+}

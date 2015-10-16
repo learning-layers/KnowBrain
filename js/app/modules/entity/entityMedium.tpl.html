@@ -1,0 +1,43 @@
+<div ng-show="!ajaxLoading"
+    class="collection-entry kb-fluid-container pull-left highlight" ng-click="$parent.handleEntryClick(entry)">
+    <div class="collection-entry-preview-box">
+        <div ng-switch="entry.type">
+            <img ng-switch-when="group" src="images/group_pic_dummy.jpg" class="collection-entry-profile-pic"/>
+            <img ng-switch-when="priv" src="images/group_pic_dummy.jpg" class="collection-entry-profile-pic"/>
+            <div ng-switch-when="coll" style="position: relative; z-index: 9;"
+                id="collection-entry-preview-box-glyphicon" class="icon-folder">
+            </div>
+            <div ng-switch-when="uploadedFile" style="position: relative; z-index: 9;"
+                id="collection-entry-preview-box-glyphicon" ng-class="entry.iconClass()">
+            </div>
+            <div ng-switch-when="entity" style="position: relative; z-index: 9;"
+                id="collection-entry-preview-box-glyphicon" class="glyphicon icon-entity">
+            </div>
+            <div ng-switch-when="qa" style="position: relative; z-index: 9;"
+                id="collection-entry-preview-box-glyphicon" class="icon-question-mark">
+            </div>
+            <div ng-switch-when="qaEntry" style="position: relative; z-index: 9;"
+                id="collection-entry-preview-box-glyphicon" class="fa fa-exclamation">
+            </div>
+            <img ng-switch-when="user" style="position: relative; z-index: 9; padding-top:0;" ng-src="{{entry.thumb != undefined ? entry.thumb.file.downloadLink : 'images/circles/user.svg'}}" id="collection-entry-preview-box-glyphicon" class="collection-entry-profile-pic">
+            <div ng-switch-when="circle" style="position: relative; z-index: 9;"
+                id="collection-entry-preview-box-glyphicon" class="collection-entry-profile-pic">
+            </div>
+            <div ng-switch-when="tag" style="position: relative; z-index: 9;"
+                id="collection-entry-preview-box-glyphicon" class="icon-tag">
+            </div>
+            <div ng-switch-when="disc" style="position: relative; z-index: 9;"
+                id="collection-entry-preview-box-glyphicon" class="icon-disc">
+            </div>
+            <div ng-switch-when="discEntry" style="position: relative; z-index: 9;"
+                id="collection-entry-preview-box-glyphicon" class="icon-disc-entry">
+            </div>
+            <div ng-switch-default style="position: relative; z-index: 9;"
+                id="collection-entry-preview-box-glyphicon"  class="glyphicon glyphicon-link">
+            </div>
+        </div>
+    </div>
+    <div class="collection-entry-description-box">
+        <div class="collection-entry-label">{{entry.label ? entry.label : entry.id}}</div>
+    </div>
+</div>
